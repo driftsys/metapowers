@@ -1,0 +1,7 @@
+#:schema https://driftsys.github.io/git-std/schemas/v1/git-std.schema.json
+
+# scheme = "semver"          # semver | calver | patch
+# strict = false             # enforce types/scopes without --strict flag
+# types = ["feat", "fix", "docs", "style", "refactor",
+#           "perf", "test", "chore", "ci", "build", "revert"]
+# scopes = "auto"            # "auto" | ["scope1", "scope2"] | omit

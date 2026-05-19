@@ -1,0 +1,11 @@
+# Claude Code
+.claude/
+!.claude/skills/
+!.claude/skills/**
+
+# Git worktrees
+.worktrees/
+
+# Superpowers working memory (specs, plans — kept local, not tracked)
+.scratch/
+docs/superpowers/

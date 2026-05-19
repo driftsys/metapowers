@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  dprint:
+    name: dprint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: dprint/check@v2.3
+
+  markdownlint:
+    name: markdownlint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: DavidAnson/markdownlint-cli2-action@v20
+
+  upskill-lint:
+    name: upskill lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install upskill
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/driftsys/upskill/main/install.sh | sh
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+      - run: upskill lint skills --strict
+
+  convco:
+    name: Conventional commits
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Install convco
+        run: |
+          curl -sSfL https://github.com/convco/convco/releases/latest/download/convco-ubuntu.zip -o /tmp/convco.zip
+          unzip -o /tmp/convco.zip -d /usr/local/bin
+          chmod +x /usr/local/bin/convco
+      - run: convco check ${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}
+
+  ci:
+    name: CI
+    if: always()
+    needs: [dprint, markdownlint, upskill-lint, convco]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check results
+        run: |
+          results="${{ join(needs.*.result, ' ') }}"
+          for r in $results; do
+            if [ "$r" = "failure" ] || [ "$r" = "cancelled" ]; then
+              exit 1
+            fi
+          done

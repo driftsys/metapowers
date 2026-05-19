@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=https://driftsys.github.io/schemas/project/v1.json
+$schema: https://driftsys.github.io/schemas/project/v1.json
+
+name: io.driftsys.metapowers
+version: 0.1.0
+category: library
+description: Skills registry extending Superpowers with a documentation framework
+license: MIT
+keywords:
+  - skills
+  - rules
+  - bundles
+  - ai-agents
+  - superpowers
+  - upskill
+  - documentation
+authors:
+  - driftsys
+homepage: https://github.com/driftsys/metapowers
+bugs: https://github.com/driftsys/metapowers/issues
+repository: https://github.com/driftsys/metapowers
+
+references:
+  - url: https://github.com/obra/superpowers
+    name: Superpowers
+  - url: https://github.com/driftsys/upskill
+    name: upskill
