@@ -34,12 +34,11 @@ See the [upskill format spec][format-spec] for the on-disk contract.
 
 ```text
 metapowers/
-├── skills/                   # SSOT items — skills and rules
-│   └── <name>/
-│       ├── SKILL.md          # or RULE.md
-│       └── ...               # optional supporting resources
-├── bundles/                  # bundle manifests
-│   └── <name>.bundle.md
+├── skills/                   # SSOT items and bundle manifests
+│   ├── <name>/
+│   │   ├── SKILL.md          # or RULE.md or AGENT.md
+│   │   └── ...               # optional supporting resources
+│   └── <name>.bundle.yaml    # bundle manifests live alongside items
 └── docs/                     # reference documentation
 ```
 

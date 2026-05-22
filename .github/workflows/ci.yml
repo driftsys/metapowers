@@ -34,6 +34,23 @@ jobs:
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
       - run: upskill lint skills --strict
 
+  e2e:
+    name: e2e install round-trip
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install upskill
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/driftsys/upskill/main/install.sh | sh
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+      - name: Configure git identity
+        # bash_unit's setup() creates per-test repos that need a git identity
+        # so `git init` + add work non-interactively on CI runners.
+        run: |
+          git config --global user.email "ci@metapowers.test"
+          git config --global user.name "metapowers ci"
+      - run: bash tools/bash_unit tests/e2e/install_test.sh
+
   convco:
     name: Conventional commits
     if: github.event_name == 'pull_request'
@@ -52,7 +69,7 @@ jobs:
   ci:
     name: CI
     if: always()
-    needs: [dprint, markdownlint, upskill-lint, convco]
+    needs: [dprint, markdownlint, upskill-lint, e2e, convco]
     runs-on: ubuntu-latest
     steps:
       - name: Check results

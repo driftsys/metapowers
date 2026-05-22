@@ -54,18 +54,20 @@ contractual — stop. Those framings belong to other methodologies, not this one
 
 ```text
 metapowers/
-├── skills/                   # SSOT items — skills and rules
-│   └── <name>/
-│       ├── SKILL.md          # or RULE.md
-│       └── ...               # optional supporting resources
-├── bundles/                  # bundle manifests
-│   └── <name>.bundle.md
+├── skills/                   # SSOT items and bundle manifests
+│   ├── <name>/
+│   │   ├── SKILL.md          # or RULE.md or AGENT.md
+│   │   └── ...               # optional supporting resources
+│   └── <name>.bundle.yaml    # bundle manifests live alongside items
 ├── docs/                     # reference documentation
 └── .scratch/superpowers/     # gitignored working memory (specs, plans)
 ```
 
-`<item-root>` is `skills/`. Both skills and rules live here, each in their own
-directory, distinguished by entrypoint filename (`SKILL.md` vs `RULE.md`).
+`<item-root>` and `<bundle-root>` are both `skills/`. Items live in their own
+directories (kind determined by entrypoint filename: `SKILL.md`, `RULE.md`, or
+`AGENT.md`). Bundle manifests are flat `*.bundle.yaml` files alongside item
+directories. Tracked upstream: a future upskill release may allow separating
+bundles into a sibling `bundles/` directory ([upskill#161](https://github.com/driftsys/upskill/issues/161)).
 
 ## Conventions metapowers establishes in consuming repos
 

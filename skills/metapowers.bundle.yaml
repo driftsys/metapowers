@@ -1,0 +1,11 @@
+schema: 1
+name: metapowers
+description: The metapowers baseline — Superpowers (via plugin) plus durable engineering-documentation rules and skills
+license: MIT
+items:
+  rules:
+  - karpathy-guidelines
+requires:
+- name: superpowers
+metadata:
+  version: 0.1.0
