@@ -9,6 +9,10 @@ plugins:
       source: obra/superpowers-marketplace
       plugin: superpowers
       install_url: https://github.com/obra/superpowers#install
+    copilot:
+      source: obra/superpowers-marketplace
+      plugin: superpowers
+      install_url: https://github.com/obra/superpowers#install
 metadata:
   version: 0.1.0
   upstream: https://github.com/obra/superpowers
