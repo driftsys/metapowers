@@ -6,7 +6,6 @@
   ],
   "excludes": [
     "skills/**",
-    "bundles/**",
     ".scratch/**",
     "node_modules/**"
   ],

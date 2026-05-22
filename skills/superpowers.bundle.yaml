@@ -1,0 +1,14 @@
+schema: 1
+name: superpowers
+description: Install Superpowers — TDD-disciplined brainstorming, planning, and verification skills for AI coding agents
+license: MIT
+items: {}
+plugins:
+  superpowers:
+    claude:
+      source: obra/superpowers-marketplace
+      plugin: superpowers
+      install_url: https://github.com/obra/superpowers#install
+metadata:
+  version: 0.1.0
+  upstream: https://github.com/obra/superpowers

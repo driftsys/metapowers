@@ -14,10 +14,15 @@ lint:
     npx markdownlint-cli2
     upskill lint skills --strict
 
-# Validate commits on branch and lint — run before PR
+# Run end-to-end install round-trip tests
+test:
+    bash tools/bash_unit tests/e2e/install_test.sh
+
+# Validate commits on branch + lint + e2e tests — run before PR
 verify:
     git std lint --range main..HEAD
     just lint
+    just test
 
 # Bump version, update changelog, commit, and tag
 release:

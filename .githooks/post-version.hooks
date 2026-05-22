@@ -10,3 +10,5 @@
 #   ! cargo build --release
 #   ? cp target/release/mybin dist/
 #
+
+! tools/bump-upskill-versions.sh $1

@@ -5,3 +5,14 @@
 # types = ["feat", "fix", "docs", "style", "refactor",
 #           "perf", "test", "chore", "ci", "build", "revert"]
 # scopes = "auto"            # "auto" | ["scope1", "scope2"] | omit
+
+# Version bumping
+#
+# `project.yaml` is auto-detected by git-std. Every upskill SSOT file that
+# carries `metadata.version` is bumped by `tools/bump-upskill-versions.sh`,
+# wired into `.githooks/post-version.hooks` so it runs during `git std bump`.
+#
+# We use a hook instead of `[[version_files]]` entries because git-std does
+# not (yet) support globs in `[[version_files]].path`. Adding one entry per
+# file would require editing this config every time a new skill/rule/agent/
+# bundle is added — tracked upstream: driftsys/git-std#506.

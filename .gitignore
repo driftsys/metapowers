@@ -9,3 +9,12 @@
 # Superpowers working memory (specs, plans — kept local, not tracked)
 .scratch/
 docs/superpowers/
+
+# Upskill consumer-side install artifacts. metapowers is a source registry;
+# generated per-client outputs (Claude/Copilot/opencode) and the lockfile
+# belong to consumer projects, not the SSOT registry. Each contributor can
+# install whatever bundles they want locally without polluting the tree.
+.agents/
+.github/skills/
+.upskill-lock.json
+.vscode/
