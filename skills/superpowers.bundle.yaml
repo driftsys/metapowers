@@ -13,6 +13,9 @@ plugins:
       source: obra/superpowers-marketplace
       plugin: superpowers
       install_url: https://github.com/obra/superpowers#install
+    opencode:
+      plugin_uri: superpowers@git+https://github.com/obra/superpowers.git
+      install_url: https://github.com/obra/superpowers/blob/main/.opencode/INSTALL.md
 metadata:
   version: 0.1.0
   upstream: https://github.com/obra/superpowers
