@@ -1,11 +1,19 @@
 schema: 1
 name: metapowers
-description: The metapowers baseline — Superpowers (via plugin) plus durable engineering-documentation rules and skills
+description: Curated starter pack — architecture, safety, domain expertise, documentation, and product discipline
 license: MIT
 items:
   rules:
-  - karpathy-guidelines
+    - karpathy-guidelines
+    - software-architecture
+    - product-discipline
+  skills:
+    - software-architecture
+    - security-review
+    - tech-writing
+    - diagramming
+    - product-discipline
 requires:
-- name: superpowers
+  - name: superpowers
 metadata:
-  version: 0.1.0
+  version: 0.2.0
