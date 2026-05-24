@@ -34,6 +34,7 @@ skills/
 ## Task 1: software-architecture RULE.md
 
 **Files:**
+
 - Create: `skills/software-architecture/RULE.md`
 
 - [ ] **Step 1: Scaffold the rule**
@@ -68,6 +69,7 @@ doing too much.
 ### 2. Explicit Contracts Between Components
 
 All inter-component communication uses explicitly defined contracts:
+
 - API schemas (OpenAPI, protobuf, GraphQL SDL)
 - Event schemas (CloudEvents, Avro, JSON Schema)
 - Shared-nothing: no shared databases, no shared mutable state
@@ -78,6 +80,7 @@ Never rely on implicit knowledge of another component's internals.
 
 A failure in component A must not cascade to component B unless B explicitly
 depends on A's output. Design for:
+
 - Timeouts on all external calls
 - Circuit breakers on repeated failures
 - Fallback behavior (degraded mode, cached response, or explicit error)
@@ -87,6 +90,7 @@ depends on A's output. Design for:
 
 Every piece of data has exactly one authoritative source. Other components may
 cache or project that data, but the owner is the only writer. Ask:
+
 - Who creates this data?
 - Who is allowed to mutate it?
 - Who is the source of truth when copies diverge?
@@ -94,6 +98,7 @@ cache or project that data, but the owner is the only writer. Ask:
 ### 5. Async by Default at Integration Points
 
 Synchronous calls between services create temporal coupling. Prefer:
+
 - Events/messages for notifications and state propagation
 - Request/reply only when the caller cannot proceed without the response
 - Idempotent consumers (at-least-once delivery is the baseline assumption)
@@ -101,6 +106,7 @@ Synchronous calls between services create temporal coupling. Prefer:
 ### 6. Evolutionary Architecture
 
 Design for change, not for prediction:
+
 - Prefer reversible decisions over optimal ones
 - Record irreversible decisions in ADRs with context and consequences
 - Fitness functions: define measurable criteria (latency p99, coupling metrics,
@@ -109,6 +115,7 @@ Design for change, not for prediction:
 ## When to load the software-architecture skill
 
 Load the `software-architecture` skill when:
+
 - Designing a new system or subsystem from scratch
 - Evaluating trade-offs between architectural patterns
 - Facing a decision that affects multiple components
@@ -137,6 +144,7 @@ git commit -m "feat: add software-architecture rule — architectural invariants
 ## Task 2: software-architecture SKILL.md
 
 **Files:**
+
 - Create: `skills/software-architecture/SKILL.md`
 
 - [ ] **Step 1: Scaffold the skill**
@@ -149,7 +157,7 @@ manually.
 
 - [ ] **Step 2: Write the skill content**
 
-```markdown
+````markdown
 ---
 schema: 1
 name: software-architecture
@@ -169,6 +177,7 @@ trade-offs, designing system boundaries, or writing ADRs.
 ### 1. Identify the Decision
 
 Before choosing a pattern, name the decision explicitly:
+
 - What capability are we adding or changing?
 - What quality attributes matter most? (latency, throughput, consistency,
   availability, maintainability, cost)
@@ -179,22 +188,24 @@ Before choosing a pattern, name the decision explicitly:
 
 For each candidate pattern, assess:
 
-| Criterion | Questions |
-|-----------|-----------|
-| Fitness | Does it optimize for the quality attributes that matter? |
-| Complexity | Can the team operate it? What's the cognitive load? |
-| Reversibility | How hard is it to migrate away if it's wrong? |
-| Precedent | Is there prior art in this codebase or organization? |
+| Criterion     | Questions                                                |
+| ------------- | -------------------------------------------------------- |
+| Fitness       | Does it optimize for the quality attributes that matter? |
+| Complexity    | Can the team operate it? What's the cognitive load?      |
+| Reversibility | How hard is it to migrate away if it's wrong?            |
+| Precedent     | Is there prior art in this codebase or organization?     |
 
 ### 3. Common Patterns — Decision Tree
 
 **Data flow:**
+
 - Request/response needed? → REST, gRPC, GraphQL
 - Fire-and-forget notification? → Events (Kafka, NATS, SQS)
 - Need to replay history? → Event Sourcing
 - Need different read/write models? → CQRS
 
 **Component structure:**
+
 - Single team, single deploy? → Modular monolith
 - Multiple teams, independent deploy? → Microservices
 - Complex domain logic? → Domain-Driven Design (load `domain-driven-design` skill)
@@ -202,6 +213,7 @@ For each candidate pattern, assess:
 - Long-running multi-step process? → Saga / orchestration (load `event-driven-architecture` skill)
 
 **Resilience:**
+
 - External dependency unreliable? → Circuit breaker + fallback
 - Need to survive partial failures? → Bulkhead isolation
 - Need consistency across services? → Saga with compensation
@@ -216,18 +228,23 @@ Every irreversible architectural decision gets an ADR:
 ## Status: [Proposed | Accepted | Deprecated | Superseded by NNNN]
 
 ## Context
+
 [What forces are at play? What constraints exist?]
 
 ## Decision
+
 [What did we decide? Be specific.]
 
 ## Consequences
+
 [What becomes easier? What becomes harder? What risks remain?]
 ```
+````
 
 ### 5. Validate with Fitness Functions
 
 After implementing, define measurable criteria:
+
 - Latency: p50, p95, p99 targets
 - Coupling: number of cross-service synchronous calls
 - Autonomy: can each service deploy independently?
@@ -236,11 +253,12 @@ After implementing, define measurable criteria:
 ## Expert Skills
 
 For deeper guidance on specific patterns:
+
 - **Domain-Driven Design** → `domain-driven-design` skill
 - **Event Sourcing / CQRS / Sagas** → `event-driven-architecture` skill
 - **Reactive Manifesto / Back-pressure** → `reactive-systems` skill
-```
 
+````text
 - [ ] **Step 3: Validate**
 
 Run: `upskill lint skills/software-architecture/SKILL.md --strict`
@@ -257,12 +275,14 @@ Expected: 0 files changed
 git add skills/software-architecture/SKILL.md
 git commit -m "feat: add software-architecture skill — pattern selection and trade-off analysis"
 ```
+````
 
 ---
 
 ## Task 3: security-review SKILL.md
 
 **Files:**
+
 - Create: `skills/security-review/SKILL.md`
 
 - [ ] **Step 1: Scaffold**
@@ -271,7 +291,7 @@ Run: `upskill new skill security-review`
 
 - [ ] **Step 2: Write the skill content**
 
-```markdown
+````markdown
 ---
 schema: 1
 name: security-review
@@ -291,6 +311,7 @@ or authorization, handling secrets, or auditing dependencies.
 ### 1. Injection (OWASP A03)
 
 **Check for:**
+
 - SQL: parameterized queries only, never string concatenation
 - Command injection: no `shell=True`, no unsanitized user input in commands
 - XSS: output encoding, CSP headers, no `dangerouslySetInnerHTML` without sanitization
@@ -298,7 +319,8 @@ or authorization, handling secrets, or auditing dependencies.
 - Path traversal: canonicalize paths, reject `..`, validate against allowlist
 
 **Pattern:**
-```
+
+```text
 User input → Validation → Sanitization → Parameterized API
 Never: User input → String interpolation → Execution
 ```
@@ -306,6 +328,7 @@ Never: User input → String interpolation → Execution
 ### 2. Authentication & Authorization (OWASP A01, A07)
 
 **Check for:**
+
 - Authentication bypass: every endpoint has auth middleware unless explicitly public
 - Broken access control: authorization checked at the resource level, not just the route
 - Session management: secure flags, httpOnly, SameSite, rotation on privilege change
@@ -314,6 +337,7 @@ Never: User input → String interpolation → Execution
 - JWT: verify signature, check expiration, validate issuer and audience
 
 **Questions to ask:**
+
 - Can user A access user B's data by changing an ID in the URL?
 - What happens if the auth token is expired but cached?
 - Is there a rate limit on login attempts?
@@ -321,6 +345,7 @@ Never: User input → String interpolation → Execution
 ### 3. Secrets Management (OWASP A02)
 
 **Never:**
+
 - Hardcoded secrets in source code
 - Secrets in environment variables without rotation strategy
 - Secrets in logs (mask/redact)
@@ -328,6 +353,7 @@ Never: User input → String interpolation → Execution
 - Secrets committed to git (even if later removed — history persists)
 
 **Always:**
+
 - Use a secrets manager (Vault, AWS Secrets Manager, GCP Secret Manager)
 - Rotate secrets on a schedule
 - Audit secret access
@@ -339,6 +365,7 @@ Never: User input → String interpolation → Execution
 ### 4. Data Exposure (OWASP A01)
 
 **Check for:**
+
 - API responses returning more fields than the client needs
 - Error messages exposing stack traces, SQL queries, or internal paths
 - Logs containing PII, tokens, or request bodies
@@ -350,6 +377,7 @@ entire domain objects to the wire.
 ### 5. Supply Chain (OWASP A06)
 
 **Check for:**
+
 - Dependency versions pinned (lockfile committed)
 - Known vulnerabilities (`npm audit`, `cargo audit`, `pip-audit`)
 - Typosquatting: verify package names match official sources
@@ -359,6 +387,7 @@ entire domain objects to the wire.
 ### 6. Cryptography
 
 **Never:**
+
 - Roll your own crypto
 - Use ECB mode
 - Use MD5 or SHA-1 for security purposes
@@ -366,6 +395,7 @@ entire domain objects to the wire.
 - Use random number generators that aren't cryptographically secure
 
 **Always:**
+
 - AES-256-GCM or ChaCha20-Poly1305 for symmetric encryption
 - RSA-OAEP or ECDH for asymmetric
 - HKDF for key derivation
@@ -373,27 +403,28 @@ entire domain objects to the wire.
 
 ## Severity Classification
 
-| Severity | Definition | Action |
-|----------|-----------|--------|
+| Severity | Definition                                             | Action                       |
+| -------- | ------------------------------------------------------ | ---------------------------- |
 | Critical | Exploitable without authentication, data breach likely | Block merge, fix immediately |
-| High | Exploitable with low-privilege access | Block merge, fix in this PR |
-| Medium | Requires specific conditions to exploit | Fix before release |
-| Low | Defense-in-depth improvement | Track as debt |
+| High     | Exploitable with low-privilege access                  | Block merge, fix in this PR  |
+| Medium   | Requires specific conditions to exploit                | Fix before release           |
+| Low      | Defense-in-depth improvement                           | Track as debt                |
 
 ## Output Format
 
 When performing a security review, report findings as:
 
-```
+```text
 ## Security Findings
 
 ### [CRITICAL/HIGH/MEDIUM/LOW] — [Title]
+
 **Location:** `file:line`
 **Issue:** [What's wrong]
 **Impact:** [What an attacker could do]
 **Fix:** [Specific remediation]
 ```
-```
+````
 
 - [ ] **Step 3: Validate**
 
@@ -417,6 +448,7 @@ git commit -m "feat: add security-review skill — OWASP, injection, auth, secre
 ## Task 4: tech-writing SKILL.md
 
 **Files:**
+
 - Create: `skills/tech-writing/SKILL.md`
 
 - [ ] **Step 1: Scaffold**
@@ -425,7 +457,7 @@ Run: `upskill new skill tech-writing`
 
 - [ ] **Step 2: Write the skill content**
 
-```markdown
+````markdown
 ---
 schema: 1
 name: tech-writing
@@ -444,12 +476,12 @@ any prose that developers will read.
 
 Every piece of documentation serves one of four purposes. Don't mix them.
 
-| Type | Purpose | Oriented to | Example |
-|------|---------|-------------|---------|
-| **Tutorial** | Learning | Doing (guided) | "Build your first API" |
-| **How-to** | Accomplishing | Doing (goal) | "How to add authentication" |
-| **Explanation** | Understanding | Thinking (why) | "Why we chose event sourcing" |
-| **Reference** | Information | Thinking (what) | "API endpoint specification" |
+| Type            | Purpose       | Oriented to     | Example                       |
+| --------------- | ------------- | --------------- | ----------------------------- |
+| **Tutorial**    | Learning      | Doing (guided)  | "Build your first API"        |
+| **How-to**      | Accomplishing | Doing (goal)    | "How to add authentication"   |
+| **Explanation** | Understanding | Thinking (why)  | "Why we chose event sourcing" |
+| **Reference**   | Information   | Thinking (what) | "API endpoint specification"  |
 
 **Common mistake:** Mixing tutorial content with reference content. A tutorial
 says "type this command." A reference says "this command accepts these flags."
@@ -459,20 +491,20 @@ They serve different readers at different moments.
 
 ### 1. Active Voice
 
-| Bad | Good |
-|-----|------|
-| The request is validated by the middleware | The middleware validates the request |
-| Errors are logged by the service | The service logs errors |
-| The configuration file is read at startup | The application reads configuration at startup |
+| Bad                                        | Good                                           |
+| ------------------------------------------ | ---------------------------------------------- |
+| The request is validated by the middleware | The middleware validates the request           |
+| Errors are logged by the service           | The service logs errors                        |
+| The configuration file is read at startup  | The application reads configuration at startup |
 
 ### 2. Front-Load Information
 
 Put the most important information first. The reader may stop at any point.
 
-| Bad | Good |
-|-----|------|
+| Bad                                                                                    | Good                                    |
+| -------------------------------------------------------------------------------------- | --------------------------------------- |
 | After considering various approaches and evaluating trade-offs, we decided to use gRPC | We chose gRPC for service communication |
-| In order to ensure that the system maintains consistency... | The system maintains consistency by... |
+| In order to ensure that the system maintains consistency...                            | The system maintains consistency by...  |
 
 ### 3. One Idea Per Sentence
 
@@ -480,10 +512,10 @@ If a sentence has "and" or "but" joining two independent clauses, split it.
 
 ### 4. Concrete Over Abstract
 
-| Bad | Good |
-|-----|------|
+| Bad                                     | Good                                                                                     |
+| --------------------------------------- | ---------------------------------------------------------------------------------------- |
 | The system handles errors appropriately | The system retries transient errors 3 times with exponential backoff, then returns a 503 |
-| Performance is acceptable | p99 latency is under 200ms at 1000 RPS |
+| Performance is acceptable               | p99 latency is under 200ms at 1000 RPS                                                   |
 
 ### 5. Consistent Terminology
 
@@ -498,28 +530,37 @@ Never: "user" in one paragraph, "customer" in the next, "account holder" later.
 # NNNN — [Title: Verb Phrase]
 
 ## Status
+
 [Proposed | Accepted | Deprecated | Superseded by NNNN]
 
 ## Context
+
 [2-5 sentences: what forces exist, what constraints apply, what triggered this]
 
 ## Decision
+
 [1-3 sentences: what we will do, stated clearly]
 
 ## Consequences
+
 ### Positive
+
 - [What becomes easier]
 
 ### Negative
+
 - [What becomes harder]
 
 ### Risks
+
 - [What could go wrong]
 ```
+````
 
 ### Changelog Entry
 
 Follow Keep a Changelog format:
+
 - **Added** for new features
 - **Changed** for changes in existing functionality
 - **Deprecated** for soon-to-be removed features
@@ -532,6 +573,7 @@ Each entry: imperative mood, one line, issue/PR reference.
 ### API Documentation
 
 For each endpoint:
+
 1. Method + path
 2. One-sentence description
 3. Request (headers, params, body with example)
@@ -552,14 +594,15 @@ For each endpoint:
 ## Quality Checklist
 
 Before publishing any documentation:
+
 - [ ] Does it serve exactly one Diataxis purpose?
 - [ ] Is the audience explicit? (developer, operator, end-user)
 - [ ] Can someone follow it without asking clarifying questions?
 - [ ] Are all code examples tested/runnable?
 - [ ] Is terminology consistent with the glossary?
 - [ ] Is it findable? (linked from relevant places, good title)
-```
 
+````text
 - [ ] **Step 3: Validate**
 
 Run: `upskill lint skills/tech-writing/SKILL.md --strict`
@@ -576,12 +619,14 @@ Expected: 0 files changed
 git add skills/tech-writing/SKILL.md
 git commit -m "feat: add tech-writing skill — Diataxis, ADRs, API docs, prose clarity"
 ```
+````
 
 ---
 
 ## Task 5: diagramming SKILL.md
 
 **Files:**
+
 - Create: `skills/diagramming/SKILL.md`
 
 - [ ] **Step 1: Scaffold**
@@ -590,7 +635,7 @@ Run: `upskill new skill diagramming`
 
 - [ ] **Step 2: Write the skill content**
 
-```markdown
+````markdown
 ---
 schema: 1
 name: diagramming
@@ -607,14 +652,15 @@ machines, or any visual representation of system design.
 
 ## Format Selection
 
-| Format | Best for | Pros | Cons |
-|--------|----------|------|------|
-| **Mermaid** | Inline in Markdown, GitHub rendering | Version-controlled, renders in PRs, simple syntax | Limited layout control, no custom styling |
-| **PlantUML** | Complex UML, detailed sequence diagrams | Full UML support, extensive styling | Requires renderer, verbose syntax |
-| **draw.io** | Collaborative editing, complex layouts | WYSIWYG, export to SVG/PNG, editable XML | Binary-ish XML, merge conflicts, not inline |
-| **SVG** | Final publication, precise control | Scalable, embeddable, full styling | Manual editing painful, not semantic |
+| Format       | Best for                                | Pros                                              | Cons                                        |
+| ------------ | --------------------------------------- | ------------------------------------------------- | ------------------------------------------- |
+| **Mermaid**  | Inline in Markdown, GitHub rendering    | Version-controlled, renders in PRs, simple syntax | Limited layout control, no custom styling   |
+| **PlantUML** | Complex UML, detailed sequence diagrams | Full UML support, extensive styling               | Requires renderer, verbose syntax           |
+| **draw.io**  | Collaborative editing, complex layouts  | WYSIWYG, export to SVG/PNG, editable XML          | Binary-ish XML, merge conflicts, not inline |
+| **SVG**      | Final publication, precise control      | Scalable, embeddable, full styling                | Manual editing painful, not semantic        |
 
 **Decision rule:**
+
 - Living documentation in a repo? → **Mermaid** (renders in GitHub/GitLab)
 - Formal UML for stakeholders? → **PlantUML**
 - Collaborative whiteboarding? → **draw.io**
@@ -622,15 +668,15 @@ machines, or any visual representation of system design.
 
 ## Diagram Types — When to Use What
 
-| Question you're answering | Diagram type |
-|---------------------------|-------------|
-| What are the major components and how do they relate? | C4 Context / Container |
-| How do components interact for a specific flow? | Sequence diagram |
-| What states can this entity be in? | State machine |
-| What steps does this process follow? | Activity / flowchart |
-| How is data structured? | Entity-relationship (ER) |
-| How do classes/modules relate? | Class diagram |
-| How is the system deployed? | Deployment diagram |
+| Question you're answering                             | Diagram type             |
+| ----------------------------------------------------- | ------------------------ |
+| What are the major components and how do they relate? | C4 Context / Container   |
+| How do components interact for a specific flow?       | Sequence diagram         |
+| What states can this entity be in?                    | State machine            |
+| What steps does this process follow?                  | Activity / flowchart     |
+| How is data structured?                               | Entity-relationship (ER) |
+| How do classes/modules relate?                        | Class diagram            |
+| How is the system deployed?                           | Deployment diagram       |
 
 ## C4 Model (Recommended for Architecture)
 
@@ -658,6 +704,7 @@ C4Context
     Rel(oms, payment, "Processes payment", "HTTPS")
     Rel(oms, shipping, "Requests delivery", "HTTPS")
 ```
+````
 
 ## Sequence Diagrams
 
@@ -743,7 +790,7 @@ stop
 5. **Color with purpose:** Use color to encode meaning (e.g., red = external, blue = internal), not decoration.
 6. **Keep it simple:** If a diagram has more than 7±2 elements at one level, zoom in.
 
-## Quality Checklist
+## Quality Checklist (diagrams)
 
 - [ ] Does the diagram answer exactly one question?
 - [ ] Can someone unfamiliar with the system understand it in 30 seconds?
@@ -751,8 +798,8 @@ stop
 - [ ] Is the notation consistent? (don't mix UML and informal boxes)
 - [ ] Is it version-controlled? (text format preferred over binary)
 - [ ] Does it match the current system? (stale diagrams are worse than none)
-```
 
+````text
 - [ ] **Step 3: Validate**
 
 Run: `upskill lint skills/diagramming/SKILL.md --strict`
@@ -769,12 +816,14 @@ Expected: 0 files changed
 git add skills/diagramming/SKILL.md
 git commit -m "feat: add diagramming skill — Mermaid, PlantUML, C4, format selection"
 ```
+````
 
 ---
 
 ## Task 6: product-discipline RULE.md
 
 **Files:**
+
 - Create: `skills/product-discipline/RULE.md`
 
 - [ ] **Step 1: Scaffold**
@@ -783,7 +832,7 @@ Run: `upskill new rule product-discipline`
 
 - [ ] **Step 2: Write the rule content**
 
-```markdown
+````markdown
 ---
 schema: 1
 name: product-discipline
@@ -802,6 +851,7 @@ clarity, and disciplined prioritization.
 
 No story enters a sprint or gets assigned without explicit acceptance criteria.
 Acceptance criteria are:
+
 - Written in Given/When/Then or checklist format
 - Testable (an engineer can write a test from them)
 - Complete (cover happy path + key error cases)
@@ -810,12 +860,12 @@ A story without AC is a wish, not a requirement.
 
 ### 2. Issue Hierarchy Is Enforced
 
-```
+```text
 Initiative (label only)
-  → Epic (issue + labels)
-    → Story (user-facing requirement)
-    → Task (technical requirement)
-    → Debt (refactoring / review findings)
+→ Epic (issue + labels)
+→ Story (user-facing requirement)
+→ Task (technical requirement)
+→ Debt (refactoring / review findings)
 ```
 
 - Every story/task/debt links to its parent epic
@@ -825,6 +875,7 @@ Initiative (label only)
 ### 3. Prioritization Is Explicit
 
 Every item has:
+
 - **Severity** (K0: must-have, K1: should-fix, K2: nice-to-have)
 - **Effort** (XS, S, M, L, XL)
 - **Priority** (derived from severity × effort matrix)
@@ -840,6 +891,7 @@ word "and" to describe, split it.
 ### 5. Definition of Done
 
 An issue is done when:
+
 - Code is merged to main
 - Tests pass (unit + integration + acceptance)
 - Documentation is updated (if behavior changed)
@@ -850,11 +902,12 @@ An issue is done when:
 ## When to load the product-discipline skill
 
 Load the `product-discipline` skill when:
+
 - Grooming or refining a backlog
 - Prioritizing work across competing demands
 - Defining acceptance criteria for a new feature
 - Choosing a prioritization framework (RICE, MoSCoW, severity×effort)
-```
+````
 
 - [ ] **Step 3: Validate**
 
@@ -878,6 +931,7 @@ git commit -m "feat: add product-discipline rule — AC, issue hierarchy, priori
 ## Task 7: product-discipline SKILL.md
 
 **Files:**
+
 - Create: `skills/product-discipline/SKILL.md`
 
 - [ ] **Step 1: Scaffold**
@@ -886,7 +940,7 @@ Run: `upskill new skill product-discipline`
 
 - [ ] **Step 2: Write the skill content**
 
-```markdown
+````markdown
 ---
 schema: 1
 name: product-discipline
@@ -905,11 +959,12 @@ criteria, or helping a PO structure their workflow.
 
 ### Severity × Effort Matrix
 
-```
-          XS    S     M     L     XL
-K0     P0    P0    P0    P1    P1
-K1     P0    P1    P1    P2    drop
-K2     P1    P2    P2    drop  drop
+```text
+    XS    S     M     L     XL
+
+K0 P0 P0 P0 P1 P1
+K1 P0 P1 P1 P2 drop
+K2 P1 P2 P2 drop drop
 ```
 
 - **P0:** Do immediately (current sprint)
@@ -919,16 +974,16 @@ K2     P1    P2    P2    drop  drop
 
 ### RICE Scoring
 
-```
+```text
 Score = (Reach × Impact × Confidence) / Effort
 ```
 
-| Factor | Scale |
-|--------|-------|
-| Reach | Number of users/events per quarter |
-| Impact | 0.25 (minimal), 0.5 (low), 1 (medium), 2 (high), 3 (massive) |
-| Confidence | 0.5 (low), 0.8 (medium), 1.0 (high) |
-| Effort | Person-weeks |
+| Factor     | Scale                                                        |
+| ---------- | ------------------------------------------------------------ |
+| Reach      | Number of users/events per quarter                           |
+| Impact     | 0.25 (minimal), 0.5 (low), 1 (medium), 2 (high), 3 (massive) |
+| Confidence | 0.5 (low), 0.8 (medium), 1.0 (high)                          |
+| Effort     | Person-weeks                                                 |
 
 Use RICE when comparing unrelated initiatives. Use severity×effort when
 triaging within a known domain.
@@ -953,6 +1008,7 @@ Then [expected outcome / observable result]
 ```
 
 **Rules:**
+
 - One behavior per scenario
 - Preconditions are explicit (not assumed)
 - Outcomes are observable (not internal state)
@@ -978,24 +1034,26 @@ Scenario: Unregistered email
 
 ## Issue Types
 
-| Type | Purpose | Required fields |
-|------|---------|-----------------|
-| **Epic** | Groups related work toward a business goal | Goal, success metrics, child issues |
-| **Story** | User-facing requirement | AC (Given/When/Then), epic link, severity, effort |
-| **Task** | Technical requirement | Description, epic link, severity, effort |
-| **Debt** | Refactoring or review finding | Origin (PR/review), epic link, severity, effort |
-| **Bug** | Defect in existing behavior | Repro steps, expected vs actual, severity, effort |
+| Type      | Purpose                                    | Required fields                                   |
+| --------- | ------------------------------------------ | ------------------------------------------------- |
+| **Epic**  | Groups related work toward a business goal | Goal, success metrics, child issues               |
+| **Story** | User-facing requirement                    | AC (Given/When/Then), epic link, severity, effort |
+| **Task**  | Technical requirement                      | Description, epic link, severity, effort          |
+| **Debt**  | Refactoring or review finding              | Origin (PR/review), epic link, severity, effort   |
+| **Bug**   | Defect in existing behavior                | Repro steps, expected vs actual, severity, effort |
 
-## Expert Skills
+## Expert Skills (product)
 
 For deeper guidance on specific techniques:
+
 - **Acceptance Test-Driven Development** → `atdd` skill
 - **Domain discovery workshops** → `event-storming` skill
 - **Release planning and slicing** → `story-mapping` skill
 - **User journey analysis** → `cuj-analysis` skill
 - **Issue hierarchy and triage** → `issue-modeling` skill
-```
+````
 
+````text
 - [ ] **Step 3: Validate**
 
 Run: `upskill lint skills/product-discipline/SKILL.md --strict`
@@ -1012,12 +1070,14 @@ Expected: 0 files changed
 git add skills/product-discipline/SKILL.md
 git commit -m "feat: add product-discipline skill — prioritization, AC writing, issue types"
 ```
+````
 
 ---
 
 ## Task 8: Update metapowers.bundle.yaml
 
 **Files:**
+
 - Modify: `skills/metapowers.bundle.yaml`
 
 - [ ] **Step 1: Update the bundle manifest**

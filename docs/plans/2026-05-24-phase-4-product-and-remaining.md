@@ -160,10 +160,10 @@
 
 4. **Severity × Effort → Priority Matrix**
 
-   |        | XS | S  | M  | L  | XL   |
-   |--------|----|----|----|----|------|
-   | **K0** | P0 | P0 | P0 | P1 | P1   |
-   | **K1** | P0 | P1 | P1 | P2 | drop |
+   |        | XS | S  | M  | L    | XL   |
+   | ------ | -- | -- | -- | ---- | ---- |
+   | **K0** | P0 | P0 | P0 | P1   | P1   |
+   | **K1** | P0 | P1 | P1 | P2   | drop |
    | **K2** | P1 | P2 | P2 | drop | drop |
 
    P0 = do now, P1 = do next sprint, P2 = backlog, drop = won't do (close with explanation).
@@ -264,7 +264,7 @@
 
 4. **Table Design** — Use tables for structured comparisons (rows are items, columns are attributes). Don't use tables for simple lists or sequential steps. Right-align numbers, left-align text. Keep headers short and unambiguous. Use consistent units. If a table exceeds 5-6 columns, consider splitting or restructuring. Empty cells suggest the table structure is wrong.
 
-5. **Code Block Formatting** — Always specify the language for syntax highlighting (```rust, ```yaml). Use meaningful variable names in examples (not `foo`, `bar`, `x`). Keep examples focused: show ONE concept per block. Ideal length: 5-20 lines. If longer, break into multiple blocks with explanatory text between. Add comments only for non-obvious lines. Show output/result when it aids understanding.
+5. **Code Block Formatting** — Always specify the language for syntax highlighting (`rust,`yaml). Use meaningful variable names in examples (not `foo`, `bar`, `x`). Keep examples focused: show ONE concept per block. Ideal length: 5-20 lines. If longer, break into multiple blocks with explanatory text between. Add comments only for non-obvious lines. Show output/result when it aids understanding.
 
 6. **Lists** — Ordered lists for sequential steps, ranked items, or numbered references. Unordered lists for parallel items with no inherent order. Parallel structure: every item should be the same grammatical form (all nouns, all imperatives, all sentences). Consistent punctuation: either all items end with periods (if sentences) or none do (if fragments). Nested lists: maximum 2 levels deep — deeper nesting signals need for restructuring.
 
@@ -296,6 +296,7 @@
 Tasks 1-8 are fully independent and can be dispatched as parallel subagents. Task 9 depends on all 8 skills existing. Task 10 depends on Task 9.
 
 Recommended dispatch: 4 parallel agents, 2 skills each:
+
 - Agent A: `atdd` + `event-storming`
 - Agent B: `story-mapping` + `cuj-analysis`
 - Agent C: `issue-modeling` + `code-safety`

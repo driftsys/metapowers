@@ -27,6 +27,7 @@ description: >
 ## Activation
 
 Trigger this skill when:
+
 - Designing a new bounded context or decomposing a monolith
 - Defining aggregate boundaries and consistency rules
 - Resolving naming conflicts that signal implicit context boundaries
@@ -43,12 +44,14 @@ A bounded context is a linguistic and model boundary — the same word means dif
 in different contexts.
 
 **Discovery signals:**
+
 - Same term, different meanings across teams ("Account" in billing vs identity)
 - Different change cadences in parts of the system
 - Different domain experts for different areas
 - Natural team boundaries
 
 **Rules:**
+
 1. One ubiquitous language per bounded context — no ambiguity within the boundary
 2. Models do NOT leak across boundaries — translate at the edge
 3. Size guided by team cognitive load, not technical convenience
@@ -56,33 +59,34 @@ in different contexts.
 
 ### Context Mapping Patterns
 
-| Pattern | When to Use | Direction |
-|---------|-------------|-----------|
-| **Shared Kernel** | Two teams co-own a small model subset; high trust | Symmetric |
-| **Customer-Supplier** | Upstream serves downstream; downstream can negotiate | Upstream → Downstream |
-| **Conformist** | Downstream accepts upstream model as-is; no negotiation power | Upstream → Downstream |
-| **Anti-Corruption Layer (ACL)** | Protect your model from external/legacy model pollution | Downstream defense |
-| **Open Host Service (OHS)** | Upstream publishes a well-defined protocol for many consumers | Upstream publishes |
-| **Published Language** | Shared interchange format (often combined with OHS) | Shared schema |
-| **Separate Ways** | No integration — contexts are independent | None |
-| **Partnership** | Two teams coordinate releases; mutual dependency | Symmetric |
+| Pattern                         | When to Use                                                   | Direction             |
+| ------------------------------- | ------------------------------------------------------------- | --------------------- |
+| **Shared Kernel**               | Two teams co-own a small model subset; high trust             | Symmetric             |
+| **Customer-Supplier**           | Upstream serves downstream; downstream can negotiate          | Upstream → Downstream |
+| **Conformist**                  | Downstream accepts upstream model as-is; no negotiation power | Upstream → Downstream |
+| **Anti-Corruption Layer (ACL)** | Protect your model from external/legacy model pollution       | Downstream defense    |
+| **Open Host Service (OHS)**     | Upstream publishes a well-defined protocol for many consumers | Upstream publishes    |
+| **Published Language**          | Shared interchange format (often combined with OHS)           | Shared schema         |
+| **Separate Ways**               | No integration — contexts are independent                     | None                  |
+| **Partnership**                 | Two teams coordinate releases; mutual dependency              | Symmetric             |
 
 **Decision tree:**
 ```
+
 Do you trust/control the upstream?
 ├── Yes, co-owned → Shared Kernel
 ├── Yes, can negotiate → Customer-Supplier
 ├── No, but model is acceptable → Conformist
 ├── No, and model would corrupt yours → Anti-Corruption Layer
 └── No relationship needed → Separate Ways
-```
 
+```text
 ### Anti-Corruption Layer Implementation
-
 ```
+
 [Your Context] → [ACL: Translator + Adapter] → [External Context]
-```
 
+```text
 The ACL contains:
 - **Translator**: Converts external concepts to your ubiquitous language
 - **Adapter**: Handles protocol/transport differences
@@ -188,9 +192,10 @@ Use factories when aggregate creation is complex:
 
 Each bounded context maintains a glossary:
 ```
-| Term | Definition | Examples | NOT (anti-examples) |
-```
 
+| Term | Definition | Examples | NOT (anti-examples) |
+
+```text
 Review the glossary in design sessions. Update it as understanding evolves.
 
 ## Event Storming Integration
@@ -210,19 +215,19 @@ Event storming sessions produce DDD artifacts naturally:
 **Flow:** Events → Commands → Aggregates → Bounded Contexts → Context Map
 
 ## Decision Framework
-
 ```
+
 Is the domain complex (many rules, edge cases, evolving)?
 ├── No → Skip DDD. Use transaction scripts or simple CRUD.
 └── Yes →
-    Is there access to domain experts?
-    ├── No → DDD will fail. Get access first.
-    └── Yes →
-        Start with strategic design (contexts + mapping).
-        Then apply tactical patterns ONLY where complexity justifies it.
-        Not every context needs full tactical DDD — some are CRUD.
-```
+Is there access to domain experts?
+├── No → DDD will fail. Get access first.
+└── Yes →
+Start with strategic design (contexts + mapping).
+Then apply tactical patterns ONLY where complexity justifies it.
+Not every context needs full tactical DDD — some are CRUD.
 
+```text
 ## Anti-Patterns
 
 | Anti-Pattern | Symptom | Fix |
@@ -260,6 +265,7 @@ description: >
 ## Activation
 
 Trigger this skill when:
+
 - Designing event-sourced systems or evaluating event sourcing as a persistence strategy
 - Implementing CQRS (separating read and write models)
 - Designing sagas for distributed transactions
@@ -275,13 +281,13 @@ Do NOT trigger for synchronous request-response systems without messaging.
 
 Store state as a sequence of immutable events rather than current state.
 Rebuild current state by replaying events from the beginning.
-
 ```
+
 Command → Aggregate → Event(s) → Event Store
-                                      ↓
-                              Projection → Read Model
-```
+↓
+Projection → Read Model
 
+```text
 ### Event Store
 
 **Requirements:**
@@ -309,12 +315,12 @@ Projections (read models) are derived from events. They are disposable and rebui
 ### Snapshots
 
 When replay becomes slow (thousands of events), snapshot periodically:
-
 ```
+
 Events 1-1000 → Snapshot @ version 1000
 New replay: Load snapshot + replay events 1001-current
-```
 
+```text
 **Rules:**
 - Snapshots are optimization, not source of truth — always rebuildable from events
 - Snapshot every N events (100-1000 depending on aggregate complexity)
@@ -324,11 +330,11 @@ New replay: Load snapshot + replay events 1001-current
 ### Event Versioning and Upcasting
 
 Events are immutable, but their shape evolves. Handle with upcasters:
-
 ```
+
 Event v1 (stored) → Upcaster → Event v2 (in memory)
-```
 
+```text
 **Strategies:**
 1. **Weak schema** — consumers ignore unknown fields, use defaults for missing
 2. **Upcasting** — transform old shapes to new on read (pipeline of transformers)
@@ -344,13 +350,13 @@ Event v1 (stored) → Upcaster → Event v2 (in memory)
 ## CQRS (Command Query Responsibility Segregation)
 
 ### Architecture
-
 ```
+
 Commands → Command Handler → Domain Model → Events → Event Store
-                                                          ↓
+↓
 Queries → Query Handler → Read Model ← Projection ← Event Stream
-```
 
+```text
 ### Command Side
 - Validates business rules
 - Enforces invariants
@@ -396,17 +402,17 @@ When projection logic changes, rebuild from event stream:
 when debugging distributed flows becomes painful (usually >4 services).
 
 ### Orchestration Implementation
-
 ```
+
 Saga Orchestrator:
-  Step 1: ReserveInventory → success/failure
-  Step 2: ChargePayment → success/failure
-  Step 3: ShipOrder → success/failure
+Step 1: ReserveInventory → success/failure
+Step 2: ChargePayment → success/failure
+Step 3: ShipOrder → success/failure
 
-  On failure at step N:
-    Compensate steps N-1 → 1 in reverse order
-```
+On failure at step N:
+Compensate steps N-1 → 1 in reverse order
 
+```text
 **State machine:** Each saga instance has a state (pending, step1_complete, compensating, etc.)
 Persist state — sagas must survive process restarts.
 
@@ -435,19 +441,20 @@ Dual-write problem: updating database AND publishing event must be atomic.
 If either fails independently, system becomes inconsistent.
 
 ### Solution: Transactional Outbox
-
 ```
+
 BEGIN TRANSACTION
-  1. Update domain table
-  2. Insert event into outbox table (same database)
-COMMIT
+
+1. Update domain table
+2. Insert event into outbox table (same database)
+   COMMIT
 
 Separate process:
-  3. Poll outbox table for unpublished events
-  4. Publish to message broker
-  5. Mark as published (or delete)
-```
+3. Poll outbox table for unpublished events
+4. Publish to message broker
+5. Mark as published (or delete)
 
+````text
 ### Delivery Mechanisms
 
 | Mechanism | Pros | Cons |
@@ -468,7 +475,7 @@ CREATE TABLE outbox (
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     published_at TIMESTAMP NULL
 );
-```
+````
 
 ## Idempotency
 
@@ -480,7 +487,8 @@ Every consumer must handle duplicates safely.
 ### Strategies
 
 1. **Idempotency key** — sender assigns unique key; receiver deduplicates
-   ```
+
+   ```text
    Event { id: "evt-123", ... }
    Consumer: IF NOT processed("evt-123") THEN process AND mark("evt-123")
    ```
@@ -490,11 +498,13 @@ Every consumer must handle duplicates safely.
    - `SET balance = balance + 10` is NOT idempotent
 
 3. **Conditional writes** — only apply if current state matches expected
-   ```
+
+   ```text
    UPDATE accounts SET balance = 90 WHERE id = X AND balance = 100
    ```
 
 4. **Deduplication table** — store processed event IDs with TTL
+
    ```sql
    CREATE TABLE processed_events (
        event_id UUID PRIMARY KEY,
@@ -527,6 +537,7 @@ Exactly-once delivery is impossible in distributed systems. What people mean is
 ### CloudEvents Spec
 
 Standard envelope for events:
+
 ```json
 {
   "specversion": "1.0",
@@ -550,16 +561,16 @@ For breaking changes: new event type with version suffix (`OrderPlaced.v2`).
 
 ## Anti-Patterns
 
-| Anti-Pattern | Symptom | Fix |
-|-------------|---------|-----|
-| Event as command | Events named as imperatives (`SendEmail`) | Past tense; events are facts |
-| Too chatty | Hundreds of tiny events per operation | Batch related changes; right granularity |
-| Event soup | No clear ownership; events everywhere | Bounded context ownership |
-| Missing idempotency | Duplicate processing on redelivery | Deduplication + idempotent handlers |
-| Distributed monolith | Services coupled by shared event schemas | Separate schemas per context; translate at ACL |
-| CQRS everywhere | Simple CRUD forced into CQRS | Reserve for complex read/write asymmetry |
-```
+| Anti-Pattern         | Symptom                                   | Fix                                            |
+| -------------------- | ----------------------------------------- | ---------------------------------------------- |
+| Event as command     | Events named as imperatives (`SendEmail`) | Past tense; events are facts                   |
+| Too chatty           | Hundreds of tiny events per operation     | Batch related changes; right granularity       |
+| Event soup           | No clear ownership; events everywhere     | Bounded context ownership                      |
+| Missing idempotency  | Duplicate processing on redelivery        | Deduplication + idempotent handlers            |
+| Distributed monolith | Services coupled by shared event schemas  | Separate schemas per context; translate at ACL |
+| CQRS everywhere      | Simple CRUD forced into CQRS              | Reserve for complex read/write asymmetry       |
 
+````text
 - [ ] Validate: `upskill lint skills/event-driven-architecture/SKILL.md --strict`
 - [ ] Format: `upskill fmt`
 - [ ] Commit: `git commit -m "feat(skills): add event-driven-architecture expert skill"`
@@ -597,15 +608,18 @@ Do NOT trigger for simple async code, basic HTTP servers, or systems without res
 ## The Reactive Manifesto
 
 Four interconnected properties:
+````
 
-```
-        Responsive
-       /          \
-  Resilient    Elastic
-       \          /
-     Message-Driven
+```text
+     Responsive
+    /          \
+
+Resilient Elastic
+\ /
+Message-Driven
 ```
 
+````text
 | Property | Means | Achieved By |
 |----------|-------|-------------|
 | **Responsive** | Consistent response times; usable | Resilience + elasticity underneath |
@@ -647,13 +661,13 @@ When a producer is faster than a consumer, something must give:
 | **Dynamic (reactive pull)** | Consumer requests N items | Reactive streams; optimal |
 
 ### Reactive Streams Protocol
-
 ```
+
 Subscriber → request(n) → Publisher
 Publisher → onNext(item) [up to n times] → Subscriber
 Publisher → onComplete/onError → Subscriber
-```
 
+```text
 **Key rule:** Publisher MUST NOT emit more items than requested. This is the
 back-pressure contract. Violating it defeats the entire purpose.
 
@@ -661,36 +675,40 @@ back-pressure contract. Violating it defeats the entire purpose.
 
 **Bounded mailbox (actor model):**
 ```
+
 Actor mailbox capacity: 1000
 On full: drop oldest / reject / apply back-pressure to sender
-```
 
+```text
 **Flow control (streaming):**
 ```
+
 Consumer pulls: "give me 100 items"
 Producer sends up to 100
 Consumer processes, then pulls again
-```
 
+```text
 **Rate limiter (gateway):**
 ```
+
 Token bucket: 1000 req/s capacity
 Exceeding: return 429 / queue / shed load
-```
 
+```text
 ## Supervision
 
 ### Concept
 
 Instead of handling every failure inline, delegate failure handling to a supervisor
 that has broader context.
-
-```
-         [Supervisor]
-        /     |      \
-  [Worker] [Worker] [Worker]
 ```
 
+     [Supervisor]
+    /     |      \
+
+[Worker] [Worker] [Worker]
+
+```text
 The supervisor decides what to do when a child fails. Workers focus only on
 their happy path.
 
@@ -711,20 +729,20 @@ or the system shuts down gracefully.
 **Restart intensity:** `max_restarts` within `time_window`. Exceeding = escalate.
 
 ### Supervision Tree Design
-
 ```
+
 [Application Supervisor] — one-for-one
 ├── [Database Supervisor] — one-for-one
-│   ├── [Connection Pool]
-│   └── [Migration Worker]
+│ ├── [Connection Pool]
+│ └── [Migration Worker]
 ├── [HTTP Supervisor] — one-for-one
-│   ├── [Listener]
-│   └── [Request Workers] — one-for-one (dynamic)
+│ ├── [Listener]
+│ └── [Request Workers] — one-for-one (dynamic)
 └── [Background Jobs Supervisor] — one-for-one
-    ├── [Scheduler]
-    └── [Job Workers] — one-for-one (dynamic)
-```
+├── [Scheduler]
+└── [Job Workers] — one-for-one (dynamic)
 
+```text
 **Rules:**
 - Leaf nodes do work; interior nodes supervise
 - Keep supervision trees shallow (2-3 levels typical)
@@ -742,15 +760,15 @@ Don't write defensive code for every edge case inside workers:
 ## Circuit Breakers
 
 ### States
-
 ```
+
 [Closed] ──failures exceed threshold──→ [Open]
-   ↑                                       │
-   │                                  timeout expires
-   │                                       ↓
-   └──── success ────── [Half-Open] ──failure──→ [Open]
-```
+↑ │
+│ timeout expires
+│ ↓
+└──── success ────── [Half-Open] ──failure──→ [Open]
 
+```text
 | State | Behavior |
 |-------|----------|
 | **Closed** | Requests pass through; failures counted |
@@ -799,11 +817,11 @@ When circuit is open, don't just fail — provide graceful degradation:
 ### Sharding
 
 Distribute state across N nodes using a partition key:
-
 ```
+
 hash(entity_id) % shard_count → shard assignment
-```
 
+```text
 **Consistent hashing:** Minimizes redistribution when nodes added/removed.
 Only `K/N` keys move (K=keys, N=nodes) vs. full reshuffle.
 
@@ -811,10 +829,11 @@ Only `K/N` keys move (K=keys, N=nodes) vs. full reshuffle.
 
 Components communicate via logical addresses, not physical:
 ```
-send(message, to: "/orders/processor")  // logical
-                                        // router resolves to physical node
-```
 
+send(message, to: "/orders/processor") // logical
+// router resolves to physical node
+
+```text
 This enables:
 - Moving actors/services between nodes without code changes
 - Load balancing across instances transparently
@@ -869,14 +888,14 @@ Asynchronous stream processing with built-in back-pressure.
 ### Event Loop (Single-Threaded Async)
 
 One thread handles many connections via non-blocking I/O:
-
 ```
+
 while true:
-  events = poll(registered_fds, timeout)
-  for event in events:
-    handle(event)  // non-blocking callback
-```
+events = poll(registered_fds, timeout)
+for event in events:
+handle(event) // non-blocking callback
 
+```text
 **When to use:**
 - I/O-bound workloads (web servers, proxies)
 - Simpler mental model than full actor systems
@@ -887,22 +906,22 @@ while true:
 **Rule:** Never block the event loop. Offload CPU-heavy work to a thread pool.
 
 ## Decision Framework
-
 ```
+
 Need resilience + elasticity + responsiveness?
 ├── No → Standard request-response is fine
 └── Yes →
-    Need stateful entities with supervision?
-    ├── Yes → Actor model (Akka, Erlang/OTP, Orleans)
-    └── No →
-        Need streaming data with back-pressure?
-        ├── Yes → Reactive streams (Reactor, RxJava, Akka Streams)
-        └── No →
-            Need high-concurrency I/O?
-            ├── Yes → Event loop (Tokio, Node.js, Netty)
-            └── No → Re-evaluate if you need reactive at all
-```
+Need stateful entities with supervision?
+├── Yes → Actor model (Akka, Erlang/OTP, Orleans)
+└── No →
+Need streaming data with back-pressure?
+├── Yes → Reactive streams (Reactor, RxJava, Akka Streams)
+└── No →
+Need high-concurrency I/O?
+├── Yes → Event loop (Tokio, Node.js, Netty)
+└── No → Re-evaluate if you need reactive at all
 
+```text
 ## Anti-Patterns
 
 | Anti-Pattern | Symptom | Fix |
@@ -925,6 +944,7 @@ Need resilience + elasticity + responsiveness?
 
 - [ ] Edit `metapowers.bundle.yaml`:
   - Add under `items:`:
+
     ```yaml
     - kind: skill
       name: domain-driven-design
@@ -938,6 +958,7 @@ Need resilience + elasticity + responsiveness?
       name: reactive-systems
       path: skills/reactive-systems/SKILL.md
     ```
+
   - Bump `version:` to `0.4.0`
 - [ ] Validate bundle: `upskill lint`
 - [ ] Format: `upskill fmt`
@@ -952,7 +973,8 @@ Need resilience + elasticity + responsiveness?
 - [ ] Run `dprint check` (no changes)
 - [ ] Push branch: `git push -u origin feat/phase-3-architecture-experts`
 - [ ] Create PR:
-  ```
+
+  ```text
   Title: feat(skills): Phase 3 — Architecture expert skills
   Body:
   ## Summary
@@ -968,4 +990,6 @@ Need resilience + elasticity + responsiveness?
   - [x] Formatted with `upskill fmt` + `dprint`
   - [x] Bundle manifest updated and validated
   ```
+
 - [ ] Verify CI passes
+````

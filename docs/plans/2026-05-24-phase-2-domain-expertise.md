@@ -13,7 +13,7 @@
 - [ ] Run `upskill new skill rust-expert`
 - [ ] Write full skill content to `skills/rust-expert/SKILL.md`:
 
-```markdown
+````markdown
 ---
 description: >
   Use when working with Rust language, FFI/JNI integration with Android/Kotlin,
@@ -37,13 +37,16 @@ Need the value after this call?
         ├── Single-threaded → Rc<T>
         └── Multi-threaded  → Arc<T>
 ```
+````
 
 **Clone only when:**
+
 - The type is cheap to clone (small Copy types, short strings)
 - You genuinely need independent ownership in two places
 - Satisfying the borrow checker would require unsafe or lifetime gymnastics
 
 **Anti-pattern — Defensive `.clone()`:**
+
 ```rust
 // BAD: cloning to silence the borrow checker
 let name = self.name.clone();
@@ -57,11 +60,13 @@ self.process(&result);
 ### Lifetime Annotations
 
 **When you need explicit lifetimes:**
+
 - Function returns a reference derived from an input
 - Struct holds a reference
 - Multiple reference params and the compiler can't infer which output borrows from
 
 **Elision rules (you get these free):**
+
 1. Each input reference gets its own lifetime
 2. If exactly one input lifetime, output gets that lifetime
 3. If `&self` or `&mut self`, output gets `self`'s lifetime
@@ -75,6 +80,7 @@ fn first_word(s: &str) -> &str
 ```
 
 **Anti-pattern — Overly broad lifetimes:**
+
 ```rust
 // BAD: forces both to live as long as the longest
 struct Parser<'a> {
@@ -127,6 +133,7 @@ loop {
 ```
 
 **Cancellation safety checklist:**
+
 - Is the future in each `select!` branch cancellation-safe?
 - `tokio::sync::mpsc::Receiver::recv()` — SAFE
 - `tokio::io::AsyncReadExt::read()` — NOT SAFE (partial reads lost)
@@ -134,12 +141,12 @@ loop {
 
 ### Channel Selection
 
-| Channel | Use when |
-|---------|----------|
-| `mpsc` | Multiple producers, one consumer |
-| `oneshot` | Single response (request/reply) |
+| Channel     | Use when                                  |
+| ----------- | ----------------------------------------- |
+| `mpsc`      | Multiple producers, one consumer          |
+| `oneshot`   | Single response (request/reply)           |
 | `broadcast` | Multiple consumers, all get every message |
-| `watch` | Latest-value only, multiple consumers |
+| `watch`     | Latest-value only, multiple consumers     |
 
 ### Graceful Shutdown
 
@@ -165,10 +172,10 @@ tokio::time::timeout(Duration::from_secs(30), join_all(handles)).await?;
 
 ### When to use which
 
-| Crate | Use for |
-|-------|---------|
-| `thiserror` | Library code, public error types, errors that callers match on |
-| `anyhow` | Application code, CLI tools, where you just propagate + context |
+| Crate       | Use for                                                         |
+| ----------- | --------------------------------------------------------------- |
+| `thiserror` | Library code, public error types, errors that callers match on  |
+| `anyhow`    | Application code, CLI tools, where you just propagate + context |
 
 ### Context pattern (anyhow)
 
@@ -198,6 +205,7 @@ pub enum ParseError {
 ```
 
 **Anti-pattern — Stringly typed errors:**
+
 ```rust
 // BAD
 Err(anyhow!("parse error")) // no structure, no context
@@ -259,11 +267,12 @@ pub fn process(data: &[u8]) -> Result<(), FfiError> {
 - Use `CString::new(s)?` for owned strings passed to C (checks for interior nulls)
 - Use `CStr::from_ptr(ptr)` for borrowing C strings (unsafe, must be null-terminated)
 - Never let a `CString` drop while C still holds the pointer
-```
 
+```text
 - [ ] Validate: `upskill lint skills/rust-expert/SKILL.md --strict`
 - [ ] Format: `upskill fmt`
 - [ ] Commit: `git add skills/rust-expert && git commit -m "feat(skills): add rust-expert domain skill"`
+```
 
 ---
 
@@ -272,7 +281,7 @@ pub fn process(data: &[u8]) -> Result<(), FfiError> {
 - [ ] Run `upskill new skill kotlin-expert`
 - [ ] Write full skill content to `skills/kotlin-expert/SKILL.md`:
 
-```markdown
+````markdown
 ---
 description: >
   Use when working with Kotlin language features, coroutines, Flow, Jetpack
@@ -302,13 +311,14 @@ class MyViewModel : ViewModel() {
     }
 }
 ```
+````
 
 ### coroutineScope vs supervisorScope
 
-| Scope | Child failure behavior | Use when |
-|-------|----------------------|----------|
-| `coroutineScope` | Any child failure cancels all siblings + parent | All-or-nothing parallel work |
-| `supervisorScope` | Child failure does NOT cancel siblings | Independent parallel tasks, partial failure OK |
+| Scope             | Child failure behavior                          | Use when                                       |
+| ----------------- | ----------------------------------------------- | ---------------------------------------------- |
+| `coroutineScope`  | Any child failure cancels all siblings + parent | All-or-nothing parallel work                   |
+| `supervisorScope` | Child failure does NOT cancel siblings          | Independent parallel tasks, partial failure OK |
 
 ```kotlin
 // All-or-nothing: if one fails, cancel all
@@ -344,22 +354,22 @@ suspend fun parse(data: ByteArray): Result = withContext(Dispatchers.Default) {
 
 ### Dispatcher Selection
 
-| Dispatcher | Use for |
-|-----------|---------|
-| `Dispatchers.Main` | UI updates only |
-| `Dispatchers.IO` | Blocking I/O (file, network, DB) |
-| `Dispatchers.Default` | CPU-intensive computation |
+| Dispatcher                   | Use for                              |
+| ---------------------------- | ------------------------------------ |
+| `Dispatchers.Main`           | UI updates only                      |
+| `Dispatchers.IO`             | Blocking I/O (file, network, DB)     |
+| `Dispatchers.Default`        | CPU-intensive computation            |
 | `Dispatchers.Main.immediate` | Avoid re-dispatch if already on Main |
 
 ## Flow
 
 ### Cold vs Hot
 
-| Type | Cold/Hot | Replay | Use case |
-|------|----------|--------|----------|
-| `Flow` | Cold | None | One-shot streams, transformations |
-| `StateFlow` | Hot | 1 (latest) | UI state, always has a current value |
-| `SharedFlow` | Hot | Configurable | Events, 0 replay = no replay on new sub |
+| Type         | Cold/Hot | Replay       | Use case                                |
+| ------------ | -------- | ------------ | --------------------------------------- |
+| `Flow`       | Cold     | None         | One-shot streams, transformations       |
+| `StateFlow`  | Hot      | 1 (latest)   | UI state, always has a current value    |
+| `SharedFlow` | Hot      | Configurable | Events, 0 replay = no replay on new sub |
 
 ### StateFlow vs SharedFlow Decision
 
@@ -394,6 +404,7 @@ combine(userFlow, settingsFlow) { user, settings ->
 ```
 
 **Anti-pattern — collecting in init without lifecycle awareness:**
+
 ```kotlin
 // BAD: collects forever, even when UI is gone
 init { scope.launch { flow.collect { ... } } }
@@ -419,12 +430,12 @@ val channel = Channel<Event>(
 
 ## Channel Patterns
 
-| Type | Capacity | Behavior |
-|------|----------|----------|
-| Rendezvous | 0 | Sender suspends until receiver ready |
-| Buffered | N | Sender suspends when buffer full |
-| Conflated | 1 | Only latest value kept, never suspends sender |
-| Unlimited | MAX | Never suspends sender (OOM risk) |
+| Type       | Capacity | Behavior                                      |
+| ---------- | -------- | --------------------------------------------- |
+| Rendezvous | 0        | Sender suspends until receiver ready          |
+| Buffered   | N        | Sender suspends when buffer full              |
+| Conflated  | 1        | Only latest value kept, never suspends sender |
+| Unlimited  | MAX      | Never suspends sender (OOM risk)              |
 
 ```kotlin
 // Fan-out: multiple consumers share work
@@ -456,12 +467,12 @@ fun UserScreen(viewModel: UserViewModel) {
 
 ### Side Effects
 
-| Effect | Use when |
-|--------|----------|
-| `LaunchedEffect(key)` | Run suspend fun when key changes |
-| `rememberCoroutineScope()` | Launch from callbacks (onClick) |
-| `DisposableEffect(key)` | Setup/teardown (listeners) |
-| `SideEffect` | Non-suspend side effect every recomposition |
+| Effect                     | Use when                                    |
+| -------------------------- | ------------------------------------------- |
+| `LaunchedEffect(key)`      | Run suspend fun when key changes            |
+| `rememberCoroutineScope()` | Launch from callbacks (onClick)             |
+| `DisposableEffect(key)`    | Setup/teardown (listeners)                  |
+| `SideEffect`               | Non-suspend side effect every recomposition |
 
 ```kotlin
 // One-shot load
@@ -475,6 +486,7 @@ Button(onClick = { scope.launch { viewModel.submit() } })
 ```
 
 **Anti-pattern — launching in composition:**
+
 ```kotlin
 // BAD: launches on every recomposition
 @Composable fun Bad() {
@@ -511,15 +523,16 @@ fun `debounce waits 300ms`() = runTest {
 
 ### TestDispatcher Selection
 
-| Dispatcher | Behavior |
-|-----------|----------|
-| `StandardTestDispatcher` | Requires manual `advanceUntilIdle()` — precise control |
-| `UnconfinedTestDispatcher` | Eager execution — simpler but less control |
-```
+| Dispatcher                 | Behavior                                               |
+| -------------------------- | ------------------------------------------------------ |
+| `StandardTestDispatcher`   | Requires manual `advanceUntilIdle()` — precise control |
+| `UnconfinedTestDispatcher` | Eager execution — simpler but less control             |
 
+```text
 - [ ] Validate: `upskill lint skills/kotlin-expert/SKILL.md --strict`
 - [ ] Format: `upskill fmt`
 - [ ] Commit: `git add skills/kotlin-expert && git commit -m "feat(skills): add kotlin-expert domain skill"`
+```
 
 ---
 
@@ -528,7 +541,7 @@ fun `debounce waits 300ms`() = runTest {
 - [ ] Run `upskill new skill typescript-expert`
 - [ ] Write full skill content to `skills/typescript-expert/SKILL.md`:
 
-```markdown
+````markdown
 ---
 description: >
   Use when working with TypeScript strict mode, advanced type system features,
@@ -553,14 +566,15 @@ Enable ALL strict flags. Non-negotiable for new projects:
   }
 }
 ```
+````
 
-| Flag | What it catches |
-|------|----------------|
-| `strictNullChecks` | Prevents `null`/`undefined` from being assignable to other types |
-| `strictFunctionTypes` | Enforces contravariant parameter types |
-| `strictBindCallApply` | Types `bind`, `call`, `apply` correctly |
-| `noImplicitAny` | Forces explicit types where inference fails |
-| `noUncheckedIndexedAccess` | Array/object index returns `T \| undefined` |
+| Flag                       | What it catches                                                  |
+| -------------------------- | ---------------------------------------------------------------- |
+| `strictNullChecks`         | Prevents `null`/`undefined` from being assignable to other types |
+| `strictFunctionTypes`      | Enforces contravariant parameter types                           |
+| `strictBindCallApply`      | Types `bind`, `call`, `apply` correctly                          |
+| `noImplicitAny`            | Forces explicit types where inference fails                      |
+| `noUncheckedIndexedAccess` | Array/object index returns `T \| undefined`                      |
 
 ## Type System
 
@@ -712,6 +726,7 @@ Should I use a barrel (index.ts)?
 ```
 
 **Anti-pattern — Re-exporting everything:**
+
 ```typescript
 // BAD: barrel that re-exports internal details
 export * from "./internals";
@@ -786,6 +801,7 @@ type HomeRoute = typeof routes.home; // "/"
 ```
 
 **Anti-pattern — `as` for validation:**
+
 ```typescript
 // BAD: as doesn't validate, it lies
 const config = { port: "oops" } as Config; // no error!
@@ -793,11 +809,12 @@ const config = { port: "oops" } as Config; // no error!
 // GOOD: satisfies validates at compile time
 const config = { port: "oops" } satisfies Config; // ERROR
 ```
-```
 
+```text
 - [ ] Validate: `upskill lint skills/typescript-expert/SKILL.md --strict`
 - [ ] Format: `upskill fmt`
 - [ ] Commit: `git add skills/typescript-expert && git commit -m "feat(skills): add typescript-expert domain skill"`
+```
 
 ---
 
@@ -806,7 +823,7 @@ const config = { port: "oops" } satisfies Config; // ERROR
 - [ ] Run `upskill new skill testing-taxonomy`
 - [ ] Write full skill content to `skills/testing-taxonomy/SKILL.md`:
 
-```markdown
+````markdown
 ---
 description: >
   Use when deciding test strategy — which test types to use, how to structure
@@ -835,17 +852,18 @@ What are you testing?
 └── "Are my tests actually catching bugs?"
     → Mutation testing
 ```
+````
 
 ### Test Type Reference
 
-| Type | Speed | Confidence | Maintenance | Use for |
-|------|-------|-----------|-------------|---------|
-| Unit | ~1ms | Low (isolated) | Low | Pure functions, algorithms, parsing |
-| Integration | ~100ms | Medium | Medium | DB queries, HTTP clients, module wiring |
-| E2E | ~10s | High | High | Critical user flows (login, checkout) |
-| Property | ~50ms | High for invariants | Low | Serialization roundtrips, parsers, math |
-| Contract | ~100ms | High for APIs | Medium | Service boundaries, schema evolution |
-| Mutation | ~minutes | Meta (test quality) | None | CI gate for test suite quality |
+| Type        | Speed    | Confidence          | Maintenance | Use for                                 |
+| ----------- | -------- | ------------------- | ----------- | --------------------------------------- |
+| Unit        | ~1ms     | Low (isolated)      | Low         | Pure functions, algorithms, parsing     |
+| Integration | ~100ms   | Medium              | Medium      | DB queries, HTTP clients, module wiring |
+| E2E         | ~10s     | High                | High        | Critical user flows (login, checkout)   |
+| Property    | ~50ms    | High for invariants | Low         | Serialization roundtrips, parsers, math |
+| Contract    | ~100ms   | High for APIs       | Medium      | Service boundaries, schema evolution    |
+| Mutation    | ~minutes | Meta (test quality) | None        | CI gate for test suite quality          |
 
 ## Test Shape Models
 
@@ -863,6 +881,7 @@ PYRAMID (backend services)        TROPHY (frontend/fullstack)     HONEYCOMB (mic
 ```
 
 **Choose your model:**
+
 - **Pyramid**: Pure backend, many algorithms, stable APIs → lots of unit tests
 - **Trophy**: Frontend or fullstack apps → integration tests give best ROI
 - **Honeycomb**: Microservices → integration tests at boundaries, few units
@@ -896,14 +915,15 @@ What are you replacing?
 └── Need to observe but not change? → Spy (wraps real impl)
 ```
 
-| Double | Coupling | Use when |
-|--------|----------|----------|
-| Stub | Low | Simple return values, no behavior verification |
-| Mock | High | Verifying interactions (use sparingly) |
-| Fake | Medium | Need realistic behavior without real infra |
-| Spy | Low | Observing calls on a real implementation |
+| Double | Coupling | Use when                                       |
+| ------ | -------- | ---------------------------------------------- |
+| Stub   | Low      | Simple return values, no behavior verification |
+| Mock   | High     | Verifying interactions (use sparingly)         |
+| Fake   | Medium   | Need realistic behavior without real infra     |
+| Spy    | Low      | Observing calls on a real implementation       |
 
 **Anti-pattern — Mocking everything:**
+
 ```typescript
 // BAD: tests implementation details, breaks on refactor
 jest.mock("./userService");
@@ -923,6 +943,7 @@ expect(await db.findById(user.id)).toEqual(user);
 ### Identification
 
 Symptoms of flaky tests:
+
 - Passes locally, fails in CI (timing, resource contention)
 - Fails intermittently on same commit
 - Depends on test execution order
@@ -956,7 +977,7 @@ Symptoms of flaky tests:
 
 ### Convention: `should_[expected]_when_[condition]`
 
-```
+```text
 // Unit tests: behavior-focused
 should_return_empty_list_when_no_items_match
 should_throw_validation_error_when_email_invalid
@@ -969,7 +990,8 @@ should_retry_on_transient_failure
 ```
 
 **Anti-pattern — Test names that describe implementation:**
-```
+
+```text
 // BAD: coupled to implementation
 test_calls_repository_findById
 test_invokes_email_service
@@ -986,11 +1008,12 @@ test_sends_welcome_email_on_registration
 - **Track mutation score** for critical modules (aim for >70%)
 - **Coverage floors, not ceilings** — prevent regression, don't mandate arbitrary targets
 - **Exclude generated code** — don't inflate/deflate metrics with codegen
-```
 
+```text
 - [ ] Validate: `upskill lint skills/testing-taxonomy/SKILL.md --strict`
 - [ ] Format: `upskill fmt`
 - [ ] Commit: `git add skills/testing-taxonomy && git commit -m "feat(skills): add testing-taxonomy domain skill"`
+```
 
 ---
 
@@ -1009,6 +1032,7 @@ test_sends_welcome_email_on_registration
 - [ ] Run `upskill fmt` — no changes (already formatted)
 - [ ] Run `dprint check` — passes
 - [ ] Push branch and create PR:
+
   ```bash
   git push -u origin feat/phase-2-domain-expertise
   gh pr create \
