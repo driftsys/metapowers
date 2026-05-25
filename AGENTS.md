@@ -133,15 +133,36 @@ review flow.
 - **Commits.** Use Conventional Commits — `feat`, `fix`, `refactor`, `docs`,
   `chore`. Imperative mood. One commit per PR.
 
-## When authoring skills and rules
+## When authoring rules, skills, and agents
 
-- **Skills** teach a procedure. Write them as imperative step-by-step content
-  the agent should follow when activated.
-- **Rules** constrain behaviour. Write them as standing instructions — what to
-  always do or never do — that apply across an entire session.
-- Use the philosophy section above as the litmus test. If a skill or rule
-  treats markdown specs as authoritative, or bypasses TDD discipline, it does
-  not belong in metapowers.
+- **Rules** (`RULE.md`) constrain behaviour. Always-loaded standing
+  instructions — what to always do or never do across an entire session.
+- **Skills** (`SKILL.md`) teach a procedure. On-demand step-by-step content
+  the main agent runs inline when its triggering condition fires.
+- **Agents** (`AGENT.md`) are specialists. Standalone subagents the main
+  agent dispatches to — define their tool surface, scope, and return contract.
+
+For each topic, ask whether it warrants the **rule / skill / agent triple**.
+Not every topic needs all three.
+
+Use the meta-skills — don't freestyle:
+
+- `superpowers:brainstorming` BEFORE authoring — resolve intent, scope, the
+  triggering condition, and the failure mode the item prevents.
+- `superpowers:writing-rules` for `RULE.md`.
+- `superpowers:writing-skills` for `SKILL.md` — descriptions start with
+  `Use when…` (triggering conditions only, never a workflow summary); bodies
+  follow the SKILL.md template; RED-GREEN-REFACTOR is mandatory.
+- `superpowers:writing-subagents` for `AGENT.md`.
+
+PR descriptions explain the **concern** the item addresses — the problem,
+the trigger, the failure mode — not just what the item contains.
+
+Validate with `upskill lint --strict` and `upskill fmt` before commit.
+
+Use the philosophy section above as the litmus test. If any item treats
+markdown specs as authoritative, or bypasses TDD discipline, it does not
+belong in metapowers.
 
 <!-- git-std:bootstrap -->
 
