@@ -39,7 +39,7 @@ escalate to draw.io.
 
 ## Diagram kinds — construct + minimal example
 
-Both examples below render with `d2` at exit 0 (verified, D2 0.7.1).
+Both examples below render with `d2` at exit 0 (verified, D2 0.7.x).
 
 ### Architecture / system — containers and nesting
 
@@ -116,7 +116,7 @@ D2's default output is `foo.svg` if you pass a `.svg` path — do not rename it.
 which otherwise churns the SVG spuriously across D2 versions (the analogue of
 PlantUML's `-nometadata`). Use it so the render diffs cleanly.
 
-### What D2's SVG looks like (verified, D2 0.7.1)
+### What D2's SVG looks like (verified, D2 0.7.x)
 
 These are measured facts on the rendered output, not assumptions:
 
@@ -148,6 +148,10 @@ d2 --layout elk --omit-version \
   foo.d2 foo.svg
 ```
 
+Only the **regular / bold / italic** faces are swapped this way; the **mono and
+semibold** faces stay D2 defaults unless you also pass `--font-semibold` and
+`--font-mono*`.
+
 Without those `.ttf` files, D2 ships Source Sans Pro embedded — so unless you pass
 the fonts, treat the IBM Plex Sans requirement as **not met** and say so in
 review rather than claiming conformance. (Phase 2 `diagctl check` — story #14 —
@@ -178,10 +182,8 @@ Run this checklist by hand before committing. (Phase 2's `diagctl check` — sto
 - [ ] **Renders cleanly** — `d2 --layout elk --omit-version foo.d2 foo.svg`
       exits 0 with no errors.
 - [ ] **Pair committed** — both `foo.d2` and `foo.svg` are staged.
-- [ ] **Scaling root is clean** — D2's default output already gives a root `<svg>`
-      with `viewBox` and no `width=`/`height=`, so the diagram scales. (Note the
-      nested inner `<svg>` does carry fixed `width`/`height`; that is expected and
-      does not block scaling.)
+- [ ] **Scaling root is clean** — root `<svg>` has `viewBox` and no
+      `width=`/`height=` (the nested inner `<svg>`'s fixed dims are expected).
 - [ ] **Font honestly scoped** — either IBM Plex Sans `.ttf` files were passed via
       `--font-*`, OR the SVG ships D2's default font and you have flagged the font
       gap in review. Do not claim IBM Plex Sans conformance you did not produce.
