@@ -19,8 +19,10 @@ brainstorming discussion (it carries the considered-options rationale).
 ## What you produce — the triad
 
 - `docs/spec/<feature>.md` — requirements + the feature's own architecture.
-- `docs/decisions/<topic>.md` — decisions, each a `## [AD-NNNN] …` section with a
-  globally-unique, greppable id (scan existing ids, increment).
+- `docs/decisions/<topic-slug>.md` — one file per **topic**, not one per
+  decision. Related decisions share that file as separate `## [AD-NNNN] …`
+  sections, each with a globally-unique, greppable id (scan existing ids,
+  increment). Name the file for the topic (`retry-policy.md`), not the id.
 - `docs/design/<feature>.md` — detailed design, from the plan minus task ceremony.
 
 ## Procedure
@@ -37,7 +39,10 @@ brainstorming discussion (it carries the considered-options rationale).
 6. **Rewrite in place**: when work changes an existing record, edit it; create a
    new record only for a genuinely new topic.
 7. **Archive**: in collaborative mode (`wip/superpowers/` tracked), `git mv` the
-   raw spec/plan to `archive/superpowers/`; leave `wip/superpowers/` empty.
+   raw spec/plan to `archive/superpowers/specs/` and `archive/superpowers/plans/`
+   (mirror the split; do **not** keep the `wip/` path component). Leave
+   `wip/superpowers/` empty — a `.gitkeep` placeholder to preserve the directory
+   is fine; the WIP-gate ignores it.
 
 ## Format precedence (format-tool-agnostic)
 
