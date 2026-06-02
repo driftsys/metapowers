@@ -111,12 +111,14 @@ available; only GREEN produced durable records.
 
 ## Follow-ups (not in this PR)
 
-- **upskill does not deliver rule/skill supporting resources** — filed
-  [driftsys/upskill#199](https://github.com/driftsys/upskill/issues/199).
-  Consequence here: `wip-gate.sh` (a `working-memory-lifecycle` resource) never
-  reaches a consumer via `upskill add`. The harness sidesteps this by running the
-  gate as observer tooling. Independent of #199, decide the gate's delivery home
-  (the `RULE.md` body does not even reference the script today).
+- **upskill supporting-resource delivery** — was broken at run time (0.7.1 shipped
+  only entrypoints), filed as
+  [driftsys/upskill#199](https://github.com/driftsys/upskill/issues/199) and
+  **fixed in upskill 0.7.2**: `wip-gate.sh` now installs to
+  `.claude/rules/working-memory-lifecycle/wip-gate.sh` (+ opencode/Copilot). A
+  follow-up wires the gate reference into `RULE.md` and adds an e2e delivery
+  assertion. (Runs in this report used 0.7.1, so the harness ran the gate as
+  observer tooling.)
 - **Pressure / REFACTOR scenarios** (time pressure, "just merge it", authority)
   remain the separately-tracked hardening story under epic #16.
 - **Honest-gap variant**: a fixture whose spec omits "Alternatives considered",

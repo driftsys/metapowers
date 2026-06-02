@@ -20,6 +20,10 @@ Content is authored once in canonical form, then distributed to consuming reposi
 
 ## Quick start
 
+Requires [upskill](https://github.com/driftsys/upskill) **≥ 0.7.2** — earlier
+versions do not install items' supporting resources (e.g. the
+`working-memory-lifecycle` rule's `wip-gate.sh` CI script).
+
 ```bash
 # Install a skill into your project
 upskill add driftsys/metapowers

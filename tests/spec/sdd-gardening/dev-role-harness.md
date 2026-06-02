@@ -31,13 +31,16 @@ project registry actually contains the items**:
    `finishing-a-development-branch` is also present — the harness tests whether the
    rule makes finishing → gardening actually fire alongside it.
 
-`setup-sandbox.sh green|red <dir>` builds the sandbox. The WIP-gate is **observer
-tooling, never staged in the sandbox**: its comments and error message name the
-`sdd-gardening` skill and the garden→archive procedure, so putting it where the
-agent can read it leaks the procedure and contaminates the RED baseline (this was
-observed and fixed during the 2026-06-02 run). The observer runs the canonical
-script from the metapowers repo with cwd set to the sandbox — it only needs
-`git ls-files wip/superpowers/`, which resolves against cwd.
+`setup-sandbox.sh green|red <dir>` builds the sandbox. **The harness never copies
+the gate into the RED sandbox**: its comments and error message name the
+`sdd-gardening` skill and the garden→archive procedure, so a RED agent that could
+read it would learn the procedure and the baseline would no longer be clean (this
+was observed and fixed during the 2026-06-02 run). RED installs no bundle, so it
+has no gate. GREEN installs the bundle, so since upskill 0.7.2 the gate ships into
+`.claude/rules/working-memory-lifecycle/wip-gate.sh` — harmless there, since GREEN
+already has the rule and skill loaded. Either way the **observer** runs the
+canonical script from the metapowers repo with cwd set to the sandbox — it only
+needs `git ls-files wip/superpowers/`, which resolves against cwd.
 
 ## Fixture (what the sandbox contains, on branch `feat/retry-backoff`)
 

@@ -25,6 +25,11 @@ records describe the system, they do not drive it.
   a `main`-targeting PR, so `wip/superpowers/` is empty.
 - Treat a non-empty `wip/superpowers/` on a `main`-targeting branch as unfinished
   work, not a mergeable state.
+- This rule ships `wip-gate.sh` as a supporting resource (installed alongside it,
+  e.g. `.claude/rules/working-memory-lifecycle/wip-gate.sh`). Wire it into CI as a
+  required check on `main`-targeting branches to enforce the invariant: it fails
+  when tracked `wip/superpowers/` still holds ungardened work (`.gitkeep`
+  placeholders are ignored).
 
 ## Durable records — the triad
 
