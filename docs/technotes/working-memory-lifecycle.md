@@ -182,12 +182,12 @@ rebuild.
 7. Archive     git mv raw spec/plan to archive/; empty wip/ → gate green.
 ```
 
-### 6.0 Execution — delegated to the `sdd-gardener` subagent
+### 6.0 Execution — delegated to the `sdd-gardening` subagent
 
 Gardening is context-heavy (it reads the spec/plan, the merged code + tests, and
-the existing `docs/` triad), so the `sdd-gardening` skill **dispatches a dedicated
-`sdd-gardener` subagent** rather than running inline — keeping the main session's
-context lean.
+the existing `docs/` triad), so the `sdd-gardening` skill (SKILL.md) **dispatches
+its co-located `sdd-gardening` subagent (AGENT.md)** rather than running inline —
+keeping the main session's context lean.
 
 - **Inputs handed to the subagent:** the `wip/` spec + plan; pointers to the
   merged code + tests; the existing `docs/` triad (for the consistency engine);
@@ -201,7 +201,7 @@ context lean.
   reconciliation, and open offers needing a human (create a requirement? update
   system architecture?). The main session keeps the summary and `Read`s the actual
   files only when needed.
-- **Scope:** one `sdd-gardener` per feature — the route → reconcile → rewrite chain
+- **Scope:** one `sdd-gardening` subagent per feature — the route → reconcile → rewrite chain
   shares state on the records, so splitting risks incoherent edits. Parallel
   gardening across many features is a future scale option, not now.
 
@@ -400,9 +400,10 @@ Three installable items plus a CI script, all targeting Superpowers specifically
   gardening), and a one-line clause requiring specs to record considered
   alternatives + trace links. Ships the WIP-gate CI script as a resource.
 - **`sdd-gardening` (SKILL.md)** — the on-demand procedure (§6): it **dispatches
-  the `sdd-gardener` subagent** (§6.0) and surfaces its summary to the user. The
-  operation is referred to as "gardening" throughout this note.
-- **`sdd-gardener` (AGENT.md)** — the subagent that does the work: triage → route →
+  the co-located `sdd-gardening` subagent (AGENT.md)** (§6.0) and surfaces its
+  summary to the user. The operation is referred to as "gardening" throughout
+  this note.
+- **`sdd-gardening` (AGENT.md)** — the subagent that does the work: triage → route →
   filter → decorate → reconcile → rewrite → archive, with the consistency engine
   (§8), format precedence (§6.1), and system-architecture boundary (§9) inside it.
   Fixed return contract (§6.0): a summary with references, never raw content.

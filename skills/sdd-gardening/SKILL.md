@@ -13,7 +13,7 @@ plan in `wip/superpowers/`) into the durable record triad — `docs/spec/`,
 `docs/decisions/`, `docs/design/` — and moves the raw spec/plan to `archive/`.
 Because the work is context-heavy (it reads the spec/plan, the merged code +
 tests, and the existing `docs/` records), this skill **dispatches the
-`sdd-gardener` subagent** to do it and surfaces the subagent's summary. See the
+`sdd-gardening` subagent** to do it and surfaces the subagent's summary. See the
 `working-memory-lifecycle` rule for the standing guardrails.
 
 ## When to use
@@ -33,8 +33,8 @@ tests, and the existing `docs/` records), this skill **dispatches the
    merged code + tests; the existing `docs/spec`, `docs/decisions`, `docs/design`.
    If this same session ran the brainstorming, include that discussion — it
    carries the considered-options rationale directly.
-3. **Dispatch the `sdd-gardener` subagent** with those inputs. (Claude Code:
-   Agent/Task tool, `subagent_type: sdd-gardener`. Other clients: the equivalent
+3. **Dispatch the `sdd-gardening` subagent** with those inputs. (Claude Code:
+   Agent/Task tool, `subagent_type: sdd-gardening`. Other clients: the equivalent
    subagent dispatch.) Do not garden inline — the point is to keep this session's
    context lean.
 4. **Relay its summary** to the user: records created/edited (paths + `AD-NNNN`
