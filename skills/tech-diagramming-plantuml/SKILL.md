@@ -159,9 +159,11 @@ The rule in one line: **decompose first.** Behavioural diagrams
 plantuml -tsvg -nometadata foo.puml    # → foo.svg (native name, no rename)
 ```
 
-`-nometadata` strips the `<!--SRC=...-->` comment, so the SVG is pure render: it
-diffs cleanly and gets GitHub's visual diff. The output file is `foo.svg` — do
-not rename it.
+`-nometadata` strips the `<!--SRC=...-->` comment so the SVG diffs cleanly and
+gets GitHub's visual diff. It does **not** touch dimensions — the root `<svg>`
+still carries fixed `width`/`height` until the preset's `skinparam
+svgDimensionStyle false` removes them (see _Apply a preset_). Both are required
+for the cleanest render. The output file is `foo.svg` — do not rename it.
 
 ### Apply a preset
 

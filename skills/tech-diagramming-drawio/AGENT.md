@@ -74,11 +74,16 @@ brew install --cask drawio
 
 Only when you have real root (`id -u` is `0`) or passwordless sudo
 (`sudo -n true` exits 0). Otherwise do NOT run it — return `unavailable` so the
-caller falls back. Install the `.deb` from the `jgraph/drawio-desktop` GitHub
-releases:
+caller falls back. Resolve the latest `.deb` from the `jgraph/drawio-desktop`
+GitHub releases, download it, then install. If any step fails (offline, API
+rate-limited, no asset), install nothing and report `unavailable`:
 
 ```bash
-sudo apt install ./drawio-amd64-<ver>.deb
+url=$(curl -fsSL https://api.github.com/repos/jgraph/drawio-desktop/releases/latest \
+  | grep -o 'https://[^"]*drawio-amd64-[^"]*\.deb' | head -1)
+[ -n "$url" ] || { echo unavailable; exit 0; }
+curl -fsSL -o /tmp/drawio.deb "$url"
+sudo apt install -y /tmp/drawio.deb
 ```
 
 **Headless export needs xvfb** — there is no display on a server. Install it and
@@ -129,10 +134,11 @@ npx --no-install @drawio/mcp --version 2>/dev/null && echo present || echo absen
 ```
 
 Install (only on explicit request; needs Node.js / `npx` on `PATH`). Claude
-Code:
+Code — pass `-s user` so the server registers in the user-global config, not the
+current repo's `.mcp.json` (the default `local` scope):
 
 ```bash
-claude mcp add drawio -- npx -y @drawio/mcp
+claude mcp add -s user drawio -- npx -y @drawio/mcp
 ```
 
 Other MCP clients (Claude Desktop, etc.) — add to the client's `mcpServers`

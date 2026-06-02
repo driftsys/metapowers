@@ -153,11 +153,18 @@ xvfb-run -a drawio -x -f svg -b 10 -o foo.svg foo.drawio
 
 ### Embedded single-file — opt-in only
 
-Adding `-e` / `--embed-diagram` produces `foo.drawio.svg`: a single file that is
-both a clean SVG and reopenable in draw.io / the VS Code extension. It is the
-**opt-in**, not the default, because it is large and carries version/agent
-metadata that churns the diff across edits. Use it only to ship a standalone
-editable file *outside* git.
+Adding `-e` / `--embed-diagram` embeds the source back into the SVG. The CLI
+writes whatever `-o` names — it does **not** auto-derive the `.drawio.svg` double
+extension — so name the output yourself:
+
+```bash
+drawio -x -f svg -e -b 10 -o foo.drawio.svg foo.drawio
+```
+
+The result is both a clean SVG and reopenable in draw.io / the VS Code extension.
+It is the **opt-in**, not the default, because it is large and carries
+version/agent metadata that churns the diff across edits. Use it only to ship a
+standalone editable file *outside* git.
 
 ### Commit the pair
 
