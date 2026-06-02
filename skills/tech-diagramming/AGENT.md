@@ -1,6 +1,6 @@
 ---
 schema: 1
-name: tech-diagrammer
+name: tech-diagramming
 description: Use for diagram-HEAVY work — drafting a coherent multi-view diagram set from a system description, or auditing an existing diagram pack against the house rules. Renders, self-checks, render-then-reviews, and returns artifacts plus a findings report.
 license: MIT
 mode: subagent
