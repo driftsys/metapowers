@@ -1,0 +1,18 @@
+schema: 1
+name: diagrampowers
+description: Technical diagramming skills — tool selection by journey and complexity, per-format authoring (ASCII, PlantUML, D2, draw.io) that produces durable version-controlled source+SVG diagrams, and co-located per-tool installer subagents
+license: MIT
+items:
+  skills:
+  - tech-diagramming
+  - tech-diagramming-ascii
+  - tech-diagramming-d2
+  - tech-diagramming-drawio
+  - tech-diagramming-plantuml
+  agents:
+  - tech-diagramming
+  - tech-diagramming-d2
+  - tech-diagramming-drawio
+  - tech-diagramming-plantuml
+metadata:
+  version: 0.2.0
