@@ -10,7 +10,9 @@
 
 set -euo pipefail
 
-tracked=$(git ls-files wip/superpowers/)
+# Placeholder files (.gitkeep) only preserve the empty wip/ directory structure
+# after gardening — they are not ungardened work, so they must not trip the gate.
+tracked=$(git ls-files wip/superpowers/ | grep -v '/\.gitkeep$' || true)
 
 if [ -n "$tracked" ]; then
   echo "WIP-gate: ungardened working memory present in wip/superpowers/:" >&2

@@ -2,12 +2,10 @@
   "markdown": {},
   "includes": [
     "*.md",
-    "docs/**/*.md",
-    "skills/**/eval/**/*.md"
+    "docs/**/*.md"
   ],
   "excludes": [
-    "skills/*/*.md",
-    "skills/*/!(eval)/**",
+    "skills/**",
     ".scratch/**",
     "node_modules/**"
   ],

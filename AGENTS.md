@@ -59,6 +59,9 @@ metapowers/
 │   │   ├── SKILL.md          # or RULE.md or AGENT.md
 │   │   └── ...               # optional supporting resources
 │   └── <name>.bundle.yaml    # bundle manifests live alongside items
+├── tests/                    # evals & tests (NOT distributed)
+│   ├── spec/<name>/          # behavioural evals/specs, fixtures, results
+│   └── e2e/                  # install round-trip tests
 ├── docs/                     # reference documentation
 └── .scratch/superpowers/     # gitignored working memory (specs, plans)
 ```
@@ -68,6 +71,15 @@ directories (kind determined by entrypoint filename: `SKILL.md`, `RULE.md`, or
 `AGENT.md`). Bundle manifests are flat `*.bundle.yaml` files alongside item
 directories. Tracked upstream: a future upskill release may allow separating
 bundles into a sibling `bundles/` directory ([upskill#161](https://github.com/driftsys/upskill/issues/161)).
+
+**Evals and tests live under `tests/`, never inside `skills/`.** `skills/` is the
+distributable prod SSOT that upskill scans and renders to consumers — eval
+scaffolding (scenario batteries, fixtures, results) does not belong in the
+distribution registry. Put behavioural evals in `tests/spec/<name>/` and
+install round-trip tests in `tests/e2e/`. This overrides the upstream
+`evaluating-prompts` default of co-locating an `eval/` directory next to the
+skill. Note: markdown under `tests/` is formatted by `dprint` (its glob is
+recursive), unlike `skills/**`, which is excluded — run `just fmt` after editing.
 
 ## Conventions metapowers establishes in consuming repos
 
