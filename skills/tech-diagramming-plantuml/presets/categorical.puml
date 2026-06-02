@@ -1,0 +1,23 @@
+@startuml
+skinparam svgDimensionStyle false
+skinparam shadowing false
+scale 2
+skinparam ranksep 30
+skinparam nodesep 35
+skinparam defaultFontName "IBM Plex Sans"
+skinparam defaultFontSize 12
+skinparam backgroundColor #ffffff
+skinparam ArrowColor #1a1a1a
+' Tol vibrant palette (screen default)
+skinparam component {
+  BackgroundColor<<req>> #0077BB
+  BackgroundColor<<arch>> #33BBEE
+  BackgroundColor<<test>> #009988
+  BackgroundColor<<ext>> #EE7733
+  FontColor<<req>> #ffffff
+  FontColor<<arch>> #1a1a1a
+  FontColor<<test>> #ffffff
+  FontColor<<ext>> #ffffff
+  BorderColor #1a1a1a
+}
+@enduml
