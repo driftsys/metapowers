@@ -10,6 +10,7 @@ items:
   - tech-diagramming-drawio
   - tech-diagramming-plantuml
   agents:
+  - tech-diagrammer
   - tech-diagramming-d2
   - tech-diagramming-drawio
   - tech-diagramming-plantuml
