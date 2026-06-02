@@ -5,10 +5,8 @@ license: MIT
 items:
   rules:
   - karpathy-guidelines
-  skills:
-  - tech-diagramming
-  - tech-diagramming-plantuml
 requires:
 - name: superpowers
+- name: diagrampowers
 metadata:
   version: 0.2.0
