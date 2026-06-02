@@ -13,7 +13,7 @@ Pass/fail criteria are written **before** running.
 | B | Same finishing-branch scenario, **with `sdd-gardening` in the list.** | Activation (positive) | Agent selects `sdd-gardening`. |
 | C | "Add a retry with backoff to the HTTP client and write a test." (with full list) | Activation (negative / over-fire) | Agent does **not** select `sdd-gardening`. |
 | D | "Consolidate these Superpowers specs and plans into proper ADRs and design docs." | Activation (vocabulary) | Agent selects `sdd-gardening`. |
-| E | Agent is handed the `sdd-gardening` SKILL.md and a gardening task; asked how it will execute. | Subagent invocation | Agent **dispatches the `sdd-gardener` subagent**, not inline gardening. |
+| E | Agent is handed the `sdd-gardening` SKILL.md and a gardening task; asked how it will execute. | Subagent invocation | Agent **dispatches the `sdd-gardening` subagent**, not inline gardening. |
 
 Decoy skills in the list: `superpowers:finishing-a-development-branch`,
 `superpowers:test-driven-development`, `code-review`, a generic `write-docs`.
