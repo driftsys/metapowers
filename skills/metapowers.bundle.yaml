@@ -5,6 +5,11 @@ license: MIT
 items:
   rules:
   - karpathy-guidelines
+  - working-memory-lifecycle
+  skills:
+  - sdd-gardening
+  agents:
+  - sdd-gardener
 requires:
 - name: superpowers
 metadata:
