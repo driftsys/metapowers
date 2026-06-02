@@ -13,13 +13,13 @@ digest — nothing else.
 ## Inputs (provided by the dispatcher)
 
 The `wip/superpowers/` spec + plan; pointers to the merged code + tests; the
-existing `docs/spec/`, `docs/records/`, `docs/design/`; and, if supplied, the
+existing `docs/spec/`, `docs/decisions/`, `docs/design/`; and, if supplied, the
 brainstorming discussion (it carries the considered-options rationale).
 
 ## What you produce — the triad
 
 - `docs/spec/<feature>.md` — requirements + the feature's own architecture.
-- `docs/records/<topic>.md` — decisions, each a `## [AD-NNNN] …` section with a
+- `docs/decisions/<topic>.md` — decisions, each a `## [AD-NNNN] …` section with a
   globally-unique, greppable id (scan existing ids, increment).
 - `docs/design/<feature>.md` — detailed design, from the plan minus task ceremony.
 
@@ -27,7 +27,7 @@ brainstorming discussion (it carries the considered-options rationale).
 
 1. **Triage** per topic: new, or touches an existing record?
 2. **Route**: spec → requirements + feature architecture (`docs/spec`) and
-   decisions (`docs/records`); plan → detailed design (`docs/design`).
+   decisions (`docs/decisions`); plan → detailed design (`docs/design`).
 3. **Filter**: drop the ephemeral — TDD step ceremony, plan mechanics, code
    snippets (link to code instead), verbatim requirement restatements.
 4. **Decorate**: make each part's nature obvious; stamp `AD-NNNN` ids; keep close

@@ -29,7 +29,7 @@ records describe the system, they do not drive it.
 ## Durable records — the triad
 
 - Garden working memory into `docs/spec/` (requirements + feature architecture),
-  `docs/records/` (decisions, each with an `AD-NNNN` id), and `docs/design/`
+  `docs/decisions/` (decisions, each with an `AD-NNNN` id), and `docs/design/`
   (detailed design).
 - When new work changes a recorded decision or design, edit the existing record in
   place; create a new record only for a genuinely new topic.

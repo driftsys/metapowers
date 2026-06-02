@@ -82,19 +82,19 @@ archive/superpowers/      # raw spec/plan, as-is, moved here on gardening
 └── plans/
 
 docs/
-├── spec/<feature>.md     # requirements + feature architecture   → what & where
-├── records/<topic>.md     # decisions (ADRs), AD-NNNN ids          → why
-└── design/<feature>.md   # detailed design (SDD)                  → how
+├── spec/<feature>.md      # requirements + feature architecture  → what & where
+├── decisions/<topic>.md   # ADRs, AD-NNNN ids                    → why
+└── design/<feature>.md    # detailed design (SDD)                → how
 ```
 
 **The durable triad.** Gardening routes a feature's working memory into three
 record types:
 
-| Record                  | Source               | Answers      | Standard        |
-| ----------------------- | -------------------- | ------------ | --------------- |
-| `docs/spec/<feature>`   | the spec             | what & where | EARS / markspec |
-| `docs/records/<topic>`  | the spec's decisions | why          | MADR-inspired   |
-| `docs/design/<feature>` | the plan (de-tasked) | how          | arc42-inspired  |
+| Record                   | Source               | Answers      | Standard        |
+| ------------------------ | -------------------- | ------------ | --------------- |
+| `docs/spec/<feature>`    | the spec             | what & where | EARS / markspec |
+| `docs/decisions/<topic>` | the spec's decisions | why          | MADR-inspired   |
+| `docs/design/<feature>`  | the plan (de-tasked) | how          | arc42-inspired  |
 
 **Core invariant:** a non-empty `wip/superpowers/` on a branch targeting `main`
 means "this branch has ungardened work in progress."
@@ -112,7 +112,7 @@ feat/x:      C1 ── … ── Cg ──────────────�
              │          │
    spec+plan ┘          └─ gardening commit:
    in wip/                 + docs/spec/x.md         (requirements + feature arch)
-   (visible in MR)         + docs/records/<topic>.md (decisions, AD-NNNN)
+   (visible in MR)         + docs/decisions/<topic>.md (decisions, AD-NNNN)
                            + docs/design/x.md       (detailed design, de-tasked)
                            git mv wip/specs|plans → archive/  (raw, as-is)
                            wip/ now empty → WIP-gate green
@@ -171,7 +171,7 @@ rebuild.
 
 ```text
 1. Triage      Per topic: is this new, or does it touch existing records?
-2. Route       spec → requirements+arch (docs/spec) and decisions (docs/records);
+2. Route       spec → requirements+arch (docs/spec) and decisions (docs/decisions);
                plan → detailed design (docs/design).
 3. Filter      Drop the ephemeral: TDD task ceremony, step-by-step plan
                mechanics, code snippets (point to code), verbatim requirements.
@@ -214,7 +214,7 @@ Format is chosen per record type:
   a project tool enforces a format (e.g. a markspec entry type for requirements),
   conform; otherwise **mirror the Superpowers source** — stay close to its prose
   voice and chapter order, minimal transformation.
-- **`records/`** — decisions have **no Superpowers source shape** (Superpowers
+- **`decisions/`** — decisions have **no Superpowers source shape** (Superpowers
   emits no ADR). If a tool enforces one (adr-tools / markspec), conform; otherwise
   use the **§7 record template** (MADR-minimal) as the default shape.
 
@@ -240,7 +240,7 @@ and never hand-writes or forges an id.
 
 ### 6.3 Decisions (records, AD-NNNN, edit-in-place)
 
-Decisions are split into `docs/records/<topic>.md` — standalone records, because
+Decisions are split into `docs/decisions/<topic>.md` — standalone records, because
 decisions are the most cross-referenced, longest-lived, cross-feature artifact a
 feature produces; a feature's spec is the wrong container for something that
 spans features. Each decision is a decorated section with a globally-unique,
@@ -257,7 +257,7 @@ discovery), and EARS for requirement phrasing. The record template is the
 **default shape for decisions** (which have no Superpowers source); for `spec`/
 `design` these serve as a **content checklist**, not a reformatting target (§6.1).
 
-**Decision record** — `docs/records/<topic-slug>.md` (one or more per file):
+**Decision record** — `docs/decisions/<topic-slug>.md` (one or more per file):
 
 ```markdown
 # <topic — e.g. IPC transport>
@@ -300,7 +300,7 @@ components. System-wide architecture is out of scope — see §9.>
 
 ## Decisions
 
-<Links to the relevant docs/records/ AD-NNNN, not restated here.>
+<Links to the relevant docs/decisions/ AD-NNNN, not restated here.>
 
 ---
 
@@ -335,7 +335,7 @@ patterns, error handling. Link decisions (records) — do not restate.>
 
 ---
 
-Satisfies: REQ-0042 · Decisions: [AD-0007](../records/ipc-transport.md#ad-0007) · Code: `src/...`
+Satisfies: REQ-0042 · Decisions: [AD-0007](../decisions/ipc-transport.md#ad-0007) · Code: `src/...`
 ```
 
 **Audit note.** ASPICE auditors sometimes want a visible change record. Default
@@ -359,7 +359,7 @@ must first **locate** it, then decide **edit vs. new**:
 1. **Trace links (the spine, deterministic).** An existing `REQ-NNNN`/`AD-NNNN`
    the spec references, or the feature/topic slug, points directly at the file.
 2. **Topic / feature-slug match.** Same feature → same `spec`/`design`; a
-   decision's topic → candidate `records/` file.
+   decision's topic → candidate `decisions/` file.
 3. **Search safety-net.** Where a link nails it, edit in place; where it is
    ambiguous or looks new, **propose candidates and let the human confirm**
    edit-vs-new. Never silently create a duplicate or silently overwrite.
@@ -371,7 +371,7 @@ own architecture** (its components, boundaries, interfaces). **System
 architecture** (ASPICE SWE.2) — the holistic, cross-feature view — stays
 **human-curated** and is never auto-edited. Gardening **links** to the relevant
 system-architecture doc, and when none exists for the area, **offers to create**
-one (human-reviewed). The spec/records/design trail is the raw material from which
+one (human-reviewed). The spec/decisions/design trail is the raw material from which
 system architecture is composed.
 
 ## 10. Recovery & continuity
@@ -444,7 +444,7 @@ templates; tool-agnostic defaults.
   no-squash merge policy and made recovery depend on fragile git archaeology.
   Rejected in favour of keeping the raw in `archive/`.
 - **Fan-out into separate per-decision ADR files _and_ separate SDD files.**
-  Considered, then simplified: decisions are split into `records/` (because they
+  Considered, then simplified: decisions are split into `decisions/` (because they
   are cross-cutting), but requirements + feature architecture stay together in one
   `spec/` document and design stays in one `design/` document — rather than
   shattering each feature across many files.

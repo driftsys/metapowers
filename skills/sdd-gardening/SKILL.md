@@ -1,7 +1,7 @@
 ---
 schema: 1
 name: sdd-gardening
-description: Use when finishing a development branch or before opening/merging a PR while Superpowers working memory (wip/superpowers/ specs and plans) is still present, or when asked to garden, consolidate, or write up specs/plans into durable docs/records. Also when CI reports a non-empty wip/superpowers/.
+description: Use when finishing a development branch or before opening/merging a PR while Superpowers working memory (wip/superpowers/ specs and plans) is still present, or when asked to garden, consolidate, or write up specs/plans into durable docs/decisions. Also when CI reports a non-empty wip/superpowers/.
 metadata:
   version: 0.1.0
 ---
@@ -10,7 +10,7 @@ metadata:
 
 Gardening turns a finished Superpowers session's working memory (the spec and
 plan in `wip/superpowers/`) into the durable record triad — `docs/spec/`,
-`docs/records/`, `docs/design/` — and moves the raw spec/plan to `archive/`.
+`docs/decisions/`, `docs/design/` — and moves the raw spec/plan to `archive/`.
 Because the work is context-heavy (it reads the spec/plan, the merged code +
 tests, and the existing `docs/` records), this skill **dispatches the
 `sdd-gardener` subagent** to do it and surfaces the subagent's summary. See the
@@ -30,7 +30,7 @@ tests, and the existing `docs/` records), this skill **dispatches the
 1. **Detect mode.** `git check-ignore -q wip/superpowers/` → if ignored, this is
    private mode (no archive step, no CI gate); otherwise collaborative.
 2. **Gather inputs** for the subagent: the `wip/superpowers/` spec + plan; the
-   merged code + tests; the existing `docs/spec`, `docs/records`, `docs/design`.
+   merged code + tests; the existing `docs/spec`, `docs/decisions`, `docs/design`.
    If this same session ran the brainstorming, include that discussion — it
    carries the considered-options rationale directly.
 3. **Dispatch the `sdd-gardener` subagent** with those inputs. (Claude Code:
