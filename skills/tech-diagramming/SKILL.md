@@ -237,30 +237,53 @@ reference** over absolute scoring, and have a human confirm.
 Once the tool is chosen, **follow the per-format skill** for syntax and render
 mechanics:
 
-| Tool     | Skill                       | Status          |
-| -------- | --------------------------- | --------------- |
-| PlantUML | `tech-diagramming-plantuml` | exists — use it |
-| ASCII    | `tech-diagramming-ascii`    | forthcoming     |
-| D2       | `tech-diagramming-d2`       | forthcoming     |
-| draw.io  | `tech-diagramming-drawio`   | forthcoming     |
+| Tool     | Skill                       | Installer agent (co-located)   |
+| -------- | --------------------------- | ------------------------------ |
+| PlantUML | `tech-diagramming-plantuml` | `tech-diagramming-plantuml`    |
+| ASCII    | `tech-diagramming-ascii`    | — (no tool needed)             |
+| D2       | `tech-diagramming-d2`       | `tech-diagramming-d2`          |
+| draw.io  | `tech-diagramming-drawio`   | `tech-diagramming-drawio`      |
 
 If a per-format skill is **absent**, do not block: apply the storage convention
 (§2) and house style (§3) from this skill, and use general knowledge for the
 syntax.
 
-## 6. Install (Phase 1)
+## 6. Install & fallback (Phase 1)
 
-A portable skill runs in arbitrary consumer repos — it must **detect → install
-via the platform package manager → fall back gracefully**, never hard-fail.
-Driven by the install helper shipped with this skill (`ensure-tools.sh`).
+A portable skill runs in arbitrary consumer repos. Getting the renderer present
+is a **prerequisite, not a phase** — it degrades gracefully and **never blocks**.
+Walk this ladder for the selected tool:
 
-- **Phase 1 installs only the renderers** (ASCII needs nothing): macOS
-  `brew install plantuml d2`; Debian `apt install plantuml default-jre graphviz`,
-  D2 via its official `install.sh`. **No svgo/svglint/xmllint/Deno** — there is no
-  gate tooling in Phase 1.
-- **`apt` only with real root / passwordless sudo** (`id -u` = 0 or
-  `sudo -n true`); never `sudo` blindly; never mutate global shell config.
-- **Recommend WSL2 on Windows** for the Java/headless renderers.
-- **Fallback philosophy:** a missing **renderer degrades to source-emit** (commit
-  the `.puml`/`.d2`/`.drawio`, render later or in CI); a missing validator skips
-  that check with a warning. Neither aborts the skill.
+1. **Detect.** Check whether the selected tool's renderer is present (ASCII needs
+   none — it is always available). If present, proceed to the per-format skill
+   (§5). Only continue this ladder when the renderer is missing.
+2. **Offer — never auto-install.** Tell the user what would be installed (e.g.
+   PlantUML pulls a JRE + Graphviz; D2 is a single static binary; draw.io desktop
+   pulls Electron), and ask. Installing tooling into someone's repo is their call,
+   not yours.
+3. **On accept — dispatch the tool's installer subagent** (kind=agent, same name
+   as the format skill): `tech-diagramming-plantuml`, `tech-diagramming-d2`, or
+   `tech-diagramming-drawio`. Each one mechanically **detects → installs
+   cross-platform → verifies a real render → returns** `STATUS: available |
+   unavailable | refused` (it asks nothing — consent already happened in step 2).
+   On `available`, proceed to dispatch (§5).
+4. **On decline, or the installer returns `unavailable` / `refused`, or the
+   tooling is too flaky — fall back, in order:**
+   - **ASCII** — the no-tool floor; **always available, never needs install**.
+     Use it when the diagram is simple enough to carry in text (dispatch to
+     `tech-diagramming-ascii`).
+   - **raw SVG** — when ASCII will not carry it, **hand-author a minimal SVG**
+     directly: compute the coordinates, set a `viewBox`, emit no fixed
+     `width`/`height`. A no-renderer path to a committed _visual_ — lower fidelity,
+     but it renders everywhere.
+   - **emit the source + defer the render** — commit the `.puml`/`.d2`/`.drawio`
+     source and defer rendering to CI or another machine where a renderer will
+     exist later. The **source is the deliverable; the render is derived.**
+5. **Never block on a renderer.** ASCII, raw SVG, and defer-render always leave a
+   path forward.
+
+Constraints the installer subagents enforce on your behalf: **`apt` only with
+real root or passwordless sudo** (`id -u` = 0 or `sudo -n true`), never `sudo`
+blindly, never mutate global shell config; **WSL2 recommended on Windows** for the
+Java/headless renderers. Phase 1 installs **only the renderers** — no
+svgo/svglint/xmllint/Deno, because Phase 1 has no gate tooling.
