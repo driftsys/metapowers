@@ -41,11 +41,23 @@ Measure **edge crossings, not box count.**
 | **J5** | Document a **workflow / structural UML** (activity, class, object, component) | durable                  | agent/eng · text                                | **PlantUML** (while autolayout holds)                |
 | **J6** | **Map the system** (architecture / service / infra, with containers)          | durable, often-revisited | agent/eng · text                                | **D2**                                               |
 | **J7** | **Model the data** (ER / schema)                                              | durable                  | agent/eng · text                                | **D2** (`sql_table`)                                 |
-| **J8** | **Fancy / complex / presentation** (hand-tuned, or beyond any autolayout)     | durable, polished        | agent **drafts** (MCP+ELK) → **human polishes** | **draw.io**                                          |
+| **J8** | **Fancy / complex / presentation** (hand-tuned, or beyond any autolayout)     | durable, polished        | agent **drafts** (MCP+ELK) → **human polishes** | **draw.io** (MCP or human) · **no MCP → D2**         |
 
-**MCP+ELK** = an agent drafts the draw.io diagram through the `@drawio/mcp`
-server using ELK auto-layout, then a human polishes it — see the forthcoming
-`tech-diagramming-drawio` skill (§5) for the mechanics.
+**draw.io is gated on layout help.** It produces no auto-layout on its own — the
+agent's CLI export just renders whatever coordinates the source carries. So
+draw.io is only a sound choice when **one** of these supplies the layout:
+
+- **`@drawio/mcp`** — the agent drafts through the server, driving ELK
+  auto-layout (`postLayout`), then a human polishes. See the
+  `tech-diagramming-drawio` skill (§5) for the mechanics.
+- **a human** — the agent emits a rough-coordinate skeleton and a person lays it
+  out in `app.diagrams.net` (zero install; draw.io's GUI uses mxGraph layouts —
+  **not** ELK).
+
+**No MCP and no human in the loop → do not pick draw.io. Fall back to D2**
+(decompose, accept D2's always-on ELK), and if the result is still irreducible,
+**flag for a human** rather than emitting an unlaid-out `.drawio`. (Freeform /
+non-graph illustration is a separate niche — see issue #24, `tech-diagramming-svg`.)
 
 Cross-cutting: **Maintain** (re-edit → re-render, keep synced) favours
 agent-authorable text (PlantUML/D2); draw.io needs a human. **Review** → the pair
@@ -65,7 +77,7 @@ agent-authorable text (PlantUML/D2); draw.io needs a human. **Review** → the p
 | ER / schema                                | –     | ★★                | ★★★ | ★★                                 |
 | Fancy / freeform / presentation            | –     | –                 | ★   | ★★★                                |
 | Very high complexity / hand-tuned          | –     | ✗ (layout breaks) | ★★  | ★★★                                |
-| Agent-authorable unattended                | ★★★   | ★★★               | ★★★ | ★★ draft (MCP+ELK; human polishes) |
+| Agent-authorable unattended                | ★★★   | ★★★               | ★★★ | ★★ _only_ with MCP+ELK; **✗ no MCP → use D2** |
 | Human visual editing                       | –     | –                 | –   | ★★★                                |
 | Human text editing                         | ★★    | ★★★               | ★★★ | –                                  |
 
@@ -81,7 +93,12 @@ agent-authorable text (PlantUML/D2); draw.io needs a human. **Review** → the p
    (also: Java unavailable → prefer D2)
 6. Fancy/presentation, OR so complex/dense no
    autolayout works (after decomposing)?              → draw.io → .drawio + .svg
-                                                         ⚠ agent DRAFTS (MCP+ELK); human polishes.
+                                                         ⚠ needs @drawio/mcp (agent DRAFTS via MCP+ELK)
+                                                            OR a human to lay out; then human polishes.
+                                                         ✗ no MCP & no human? → fall back to D2
+                                                            (decompose, accept autolayout); flag for
+                                                            a human if still irreducible. Never emit
+                                                            an unlaid-out .drawio.
 ```
 
 ### The complexity escalator
@@ -96,6 +113,11 @@ rung — manual, powerful, **costly to edit → reserve for fancy/complex/presen
 work or what no autolayout can render.** Behavioural diagrams
 (sequence/state/activity) **decompose and stay in PlantUML** (D2 is weak there);
 **structural** diagrams (class/component) escalate to **D2** before draw.io.
+
+The top rung is only reachable with layout help: **`@drawio/mcp` (ELK) or a
+human.** With neither — an unattended agent and no MCP — draw.io has no
+auto-layout, so the escalator stops at **D2** (its ELK is always-on and
+bundled); escalate to draw.io only once a human or the MCP is in the loop.
 
 ### When to escalate — measure crossings, not boxes
 

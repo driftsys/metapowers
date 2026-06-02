@@ -65,18 +65,32 @@ So the rule is: **agent drafts, human polishes.** Always flag the draft as
 needing review. **Never claim a draft is finished.** The Phase-1 self-check below
 requires an explicit "NEEDS HUMAN POLISH" handoff note on every draft.
 
-## MCP — an optional accelerator, never required
+## MCP — a recommended accelerator, not required
 
-An MCP server speeds drafting but is **never required** — without one, scaffold
-the mxfile XML directly (next section).
+An MCP server materially improves agent drafts; draw.io still works without one.
+**Recommend it** when draw.io diagrams come up more than occasionally — weighed
+against its setup cost (a Node-based MCP server registered in the client, not a
+static dependency). To add it, see the installer (`tech-diagramming-drawio`
+AGENT — opt-in).
 
-- **`@drawio/mcp`** (official, jgraph) or **lgazo's** community server.
-- What it buys: `search_shapes` over the 10k+ shape libraries (find the right
-  vendor icon by name) and valid `mxGraphModel` generation; it drives ELK
-  `postLayout` so you get auto-layout rather than manual coordinates.
+- **`@drawio/mcp`** (official, jgraph; vendor-backed) or **lgazo's** community
+  server.
+- **What it buys (real, not cosmetic):** `search_shapes` over the 10k+ shape
+  libraries (correct vendor icons — AWS/Azure/GCP/K8s — by name), valid
+  `mxGraphModel` generation (avoids malformed-XML pitfalls), and ELK `postLayout`
+  so the draft is laid out, not hand-placed.
+- **What it does NOT buy:** layout *judgment* — even with ELK a human still
+  resolves label overlap and final polish. So it is never required.
 
-If no MCP is present, you lose shape search and model generation but lose nothing
-essential — hand-scaffold the XML and let a human do the polish pass.
+**Without an MCP** you lose shape search, model generation, and ELK — so you
+**cannot** produce a good *unattended* draft. Two honest paths remain:
+
+1. **A human is in the loop** (the real draw.io case): hand-scaffold the mxfile
+   XML below as a rough skeleton, then a person lays it out and polishes in
+   `app.diagrams.net` (its GUI uses mxGraph layouts — not ELK). This is the
+   deliberate no-MCP path.
+2. **No human and no MCP:** do not force draw.io. The umbrella selector falls
+   back to **D2** (always-on ELK) — see `tech-diagramming` §1.
 
 ## mxGraphModel XML — hand-scaffolding rules
 
