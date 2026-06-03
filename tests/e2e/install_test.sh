@@ -6,7 +6,8 @@
 # Run with: bash tools/bash_unit tests/e2e/install_test.sh
 #
 # Assumptions:
-# - `upskill` is on PATH (version >= 0.6.0)
+# - `upskill` is on PATH (version >= 0.7.2 — supporting-resource delivery, e.g.
+#   the working-memory-lifecycle rule's wip-gate.sh, requires 0.7.2)
 # - The script is invoked from the metapowers repo root (justfile recipe takes
 #   care of this) — we resolve the repo root via `git rev-parse` to be safe.
 
@@ -49,6 +50,19 @@ test_install_writes_opencode_rule() {
     upskill add "$BUNDLE_PATH" --project --quiet
     assert "[ -f .agents/rules/karpathy-guidelines/RULE.md ]" \
         "expected opencode canonical-store output at .agents/rules/karpathy-guidelines/RULE.md"
+}
+
+test_install_delivers_rule_supporting_resource() {
+    # The working-memory-lifecycle rule ships wip-gate.sh as a supporting resource.
+    # upskill >= 0.7.2 must deliver sibling resource files alongside the rule body,
+    # not just the entrypoint (regression guard for upskill#199).
+    upskill add "$BUNDLE_PATH" --project --quiet
+    assert "[ -f .claude/rules/working-memory-lifecycle/wip-gate.sh ]" \
+        "expected wip-gate.sh delivered next to the Claude rule"
+    assert "[ -f .agents/rules/working-memory-lifecycle/wip-gate.sh ]" \
+        "expected wip-gate.sh delivered next to the opencode rule"
+    assert "grep -q 'WIP-gate' .claude/rules/working-memory-lifecycle/wip-gate.sh" \
+        "expected the delivered wip-gate.sh to carry its content, not be empty"
 }
 
 test_rule_body_preserves_content() {
