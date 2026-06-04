@@ -5,7 +5,7 @@ license: MIT
 items:
   rules:
   - karpathy-guidelines
-  - working-memory-lifecycle
+  - sdd-working-memory-lifecycle
   skills:
   - sdd-gardening
   agents:

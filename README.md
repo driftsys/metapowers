@@ -22,7 +22,7 @@ Content is authored once in canonical form, then distributed to consuming reposi
 
 Requires [upskill](https://github.com/driftsys/upskill) **≥ 0.7.4** — earlier
 versions do not install items' supporting resources (e.g. the
-`working-memory-lifecycle` rule's `wip-gate.sh` CI script, added in 0.7.2) and do
+`sdd-working-memory-lifecycle` rule's `wip-gate.sh` CI script, added in 0.7.2) and do
 not support a co-located agent keeping a divergent name (the `sdd-gardener` agent
 lives in the `sdd-gardening/` directory; relaxed co-location naming landed in
 0.7.4).

@@ -1,6 +1,6 @@
 ---
 schema: 1
-name: working-memory-lifecycle
+name: sdd-working-memory-lifecycle
 description: Standing guardrails for Superpowers working memory — where specs/plans live, gardening them into durable docs before a PR lands, and editing those records in place. Applies when authoring a spec/plan or finishing a branch.
 metadata:
   version: 0.1.0
@@ -26,7 +26,7 @@ records describe the system, they do not drive it.
 - Treat a non-empty `wip/superpowers/` on a `main`-targeting branch as unfinished
   work, not a mergeable state.
 - This rule ships `wip-gate.sh` as a supporting resource (installed alongside it,
-  e.g. `.claude/rules/working-memory-lifecycle/wip-gate.sh`). Wire it into CI as a
+  e.g. `.claude/rules/sdd-working-memory-lifecycle/wip-gate.sh`). Wire it into CI as a
   required check on `main`-targeting branches to enforce the invariant: it fails
   when tracked `wip/superpowers/` still holds ungardened work (`.gitkeep`
   placeholders are ignored).

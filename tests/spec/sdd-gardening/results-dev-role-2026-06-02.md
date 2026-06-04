@@ -28,20 +28,20 @@ handed-in:
 - `sdd-gardening` skill discovered as a project skill.
 - the co-located `sdd-gardener` agent available as a subagent type
   (`subagent_type: sdd-gardener`).
-- `working-memory-lifecycle` rule auto-loaded — Claude Code reads
+- `sdd-working-memory-lifecycle` rule auto-loaded — Claude Code reads
   `.claude/rules/*.md` natively (no `CLAUDE.md` import needed).
 
 ## Verdicts — GREEN (5/5 acceptance criteria met; 7/7 harness criteria pass)
 
-| # | Criterion             | Observed                                                                                                                                        | Verdict                              |
-| - | --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------ |
-| 1 | Activation at wrap-up | `Skill -> sdd-gardening` invoked without the prompt mentioning gardening; agent cited `.claude/rules/working-memory-lifecycle.md` as the reason | PASS                                 |
-| 2 | Delegation            | `Agent -> subagent_type: sdd-gardener` (dispatched, not inline; GREEN #4 observed the interim `sdd-gardening` — see the agent-name arc above)   | PASS                                 |
-| 3 | Return contract       | Digest with status/records/divergences/offers/wip/notes, ~25 lines, no raw file dumps (quoted below)                                            | PASS                                 |
-| 4 | Triad produced        | `docs/spec/retry-backoff.md`, `docs/decisions/<topic>.md` (AD-0001…), `docs/design/retry-backoff.md`                                            | PASS                                 |
-| 5 | Archive + empty wip   | raw `git mv`-d to `archive/superpowers/{specs,plans}/`; `git ls-files wip/superpowers/` empty                                                   | PASS                                 |
-| 6 | WIP-gate red → green  | gate exit 1 before gardening, 0 after                                                                                                           | PASS (after gate fix — see findings) |
-| 7 | Reconciliation        | planted spec-R4 (5) vs as-built code (3) divergence **flagged**, plus 2 bonus divergences (jitter param, delay exponent)                        | PASS                                 |
+| # | Criterion             | Observed                                                                                                                                            | Verdict                              |
+| - | --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------ |
+| 1 | Activation at wrap-up | `Skill -> sdd-gardening` invoked without the prompt mentioning gardening; agent cited `.claude/rules/sdd-working-memory-lifecycle.md` as the reason | PASS                                 |
+| 2 | Delegation            | `Agent -> subagent_type: sdd-gardener` (dispatched, not inline; GREEN #4 observed the interim `sdd-gardening` — see the agent-name arc above)       | PASS                                 |
+| 3 | Return contract       | Digest with status/records/divergences/offers/wip/notes, ~25 lines, no raw file dumps (quoted below)                                                | PASS                                 |
+| 4 | Triad produced        | `docs/spec/retry-backoff.md`, `docs/decisions/<topic>.md` (AD-0001…), `docs/design/retry-backoff.md`                                                | PASS                                 |
+| 5 | Archive + empty wip   | raw `git mv`-d to `archive/superpowers/{specs,plans}/`; `git ls-files wip/superpowers/` empty                                                       | PASS                                 |
+| 6 | WIP-gate red → green  | gate exit 1 before gardening, 0 after                                                                                                               | PASS (after gate fix — see findings) |
+| 7 | Reconciliation        | planted spec-R4 (5) vs as-built code (3) divergence **flagged**, plus 2 bonus divergences (jitter param, delay exponent)                            | PASS                                 |
 
 ### Captured `sdd-gardener` agent digest (GREEN #4; captured under the interim `sdd-gardening` name)
 
@@ -116,7 +116,7 @@ available; only GREEN produced durable records.
   only entrypoints), filed as
   [driftsys/upskill#199](https://github.com/driftsys/upskill/issues/199) and
   **fixed in upskill 0.7.2**: `wip-gate.sh` now installs to
-  `.claude/rules/working-memory-lifecycle/wip-gate.sh` (+ opencode/Copilot). A
+  `.claude/rules/sdd-working-memory-lifecycle/wip-gate.sh` (+ opencode/Copilot). A
   follow-up wires the gate reference into `RULE.md` and adds an e2e delivery
   assertion. (Runs in this report used 0.7.1, so the harness ran the gate as
   observer tooling.)

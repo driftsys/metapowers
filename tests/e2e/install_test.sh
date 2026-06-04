@@ -54,15 +54,15 @@ test_install_writes_opencode_rule() {
 }
 
 test_install_delivers_rule_supporting_resource() {
-    # The working-memory-lifecycle rule ships wip-gate.sh as a supporting resource.
+    # The sdd-working-memory-lifecycle rule ships wip-gate.sh as a supporting resource.
     # upskill >= 0.7.2 must deliver sibling resource files alongside the rule body,
     # not just the entrypoint (regression guard for upskill#199).
     upskill add "$BUNDLE_PATH" --project --quiet
-    assert "[ -f .claude/rules/working-memory-lifecycle/wip-gate.sh ]" \
+    assert "[ -f .claude/rules/sdd-working-memory-lifecycle/wip-gate.sh ]" \
         "expected wip-gate.sh delivered next to the Claude rule"
-    assert "[ -f .agents/rules/working-memory-lifecycle/wip-gate.sh ]" \
+    assert "[ -f .agents/rules/sdd-working-memory-lifecycle/wip-gate.sh ]" \
         "expected wip-gate.sh delivered next to the opencode rule"
-    assert "grep -q 'WIP-gate' .claude/rules/working-memory-lifecycle/wip-gate.sh" \
+    assert "grep -q 'WIP-gate' .claude/rules/sdd-working-memory-lifecycle/wip-gate.sh" \
         "expected the delivered wip-gate.sh to carry its content, not be empty"
 }
 

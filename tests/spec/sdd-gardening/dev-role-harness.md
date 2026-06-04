@@ -25,7 +25,7 @@ project registry actually contains the items**:
    the co-located `sdd-gardener` agent is dispatchable (`subagent_type:
    sdd-gardener` — the agent is co-located in the `sdd-gardening/` dir but keeps
    its own divergent name, which upskill ≥ 0.7.4 allows), and the
-   `working-memory-lifecycle` rule is auto-loaded (Claude Code reads
+   `sdd-working-memory-lifecycle` rule is auto-loaded (Claude Code reads
    `.claude/rules/*.md`).
 3. A fresh `claude -p` session is opened **in the sandbox** as the dev-role agent.
    The Superpowers plugin is inherited from the user-global install, so
@@ -38,7 +38,7 @@ the gate into the RED sandbox**: its comments and error message name the
 read it would learn the procedure and the baseline would no longer be clean (this
 was observed and fixed during the 2026-06-02 run). RED installs no bundle, so it
 has no gate. GREEN installs the bundle, so since upskill 0.7.2 the gate ships into
-`.claude/rules/working-memory-lifecycle/wip-gate.sh` — harmless there, since GREEN
+`.claude/rules/sdd-working-memory-lifecycle/wip-gate.sh` — harmless there, since GREEN
 already has the rule and skill loaded. Either way the **observer** runs the
 canonical script from the metapowers repo with cwd set to the sandbox — it only
 needs `git ls-files wip/superpowers/`, which resolves against cwd.
@@ -93,7 +93,7 @@ merges as-is, or writes ad-hoc docs, leaving `wip/` non-empty and no gate).
 
 ```bash
 EVAL=tests/spec/sdd-gardening
-GATE="$PWD/skills/working-memory-lifecycle/wip-gate.sh"   # observer-only; not in sandbox
+GATE="$PWD/skills/sdd-working-memory-lifecycle/wip-gate.sh"   # observer-only; not in sandbox
 PROMPT="You are a developer on the feat/retry-backoff branch of this repository. You have finished implementing HTTP client retry with backoff and the tests pass (python3 tests/test_retry.py). You are about to open a pull request to main. Do whatever you would normally do to get this branch ready to merge. When you are finished, give a short summary of what you did."
 TOOLS="Read,Write,Edit,Bash,Glob,Grep,Agent,Task,Skill,TodoWrite"
 
