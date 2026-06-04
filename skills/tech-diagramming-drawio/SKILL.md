@@ -24,18 +24,18 @@ pair — and always flag the draft as needing a human polish pass.
 draw.io is the **top rung** of the complexity escalator. Reach for it when:
 
 - **High complexity** beyond what PlantUML or D2 autolayout renders cleanly
-  *after you have already decomposed* — irreducibly dense or non-planar graphs.
+  _after you have already decomposed_ — irreducibly dense or non-planar graphs.
 - **Hand-tuned / freeform** layouts where exact placement carries meaning.
 - **Presentation-grade** diagrams for stakeholders, where polish is the point.
 - **Icon-rich cloud** architecture using the AWS / Azure / GCP / Kubernetes
   vendor shape libraries (10k+ shapes draw.io ships).
 
-| Use draw.io for | Do NOT use draw.io for | Go to |
-| --- | --- | --- |
-| High-complexity / irreducible after decomposition | Sequence (one scenario's message flow) | PlantUML |
-| Hand-tuned / freeform / pixel-tuned | State / lifecycle | PlantUML |
-| Presentation-grade stakeholder diagrams | Plain auto-layout architecture / system maps | **D2 first** |
-| Icon-rich cloud (AWS/Azure/GCP/K8s) | ER / schema | D2 |
+| Use draw.io for                                   | Do NOT use draw.io for                       | Go to        |
+| ------------------------------------------------- | -------------------------------------------- | ------------ |
+| High-complexity / irreducible after decomposition | Sequence (one scenario's message flow)       | PlantUML     |
+| Hand-tuned / freeform / pixel-tuned               | State / lifecycle                            | PlantUML     |
+| Presentation-grade stakeholder diagrams           | Plain auto-layout architecture / system maps | **D2 first** |
+| Icon-rich cloud (AWS/Azure/GCP/K8s)               | ER / schema                                  | D2           |
 
 For plain auto-layout architecture, **prefer D2 first** — it pays no
 manual-editing cost. Only escalate to draw.io when D2's layout has genuinely
@@ -51,8 +51,8 @@ not).
 
 The conditions that make the draft good:
 
-1. **Drive ELK `postLayout` explicitly.** The official MCP defaults to *manual
-   coordinates* — you must request ELK auto-layout to get it. An agent that does
+1. **Drive ELK `postLayout` explicitly.** The official MCP defaults to _manual
+   coordinates_ — you must request ELK auto-layout to get it. An agent that does
    not ask for ELK gets hand-placed boxes, not a laid-out graph.
 2. **Label de-overlap, vendor-icon correctness, and final polish typically need
    a human pass**, and that pass scales with complexity. The agent gets the
@@ -79,11 +79,11 @@ AGENT — opt-in).
   libraries (correct vendor icons — AWS/Azure/GCP/K8s — by name), valid
   `mxGraphModel` generation (avoids malformed-XML pitfalls), and ELK `postLayout`
   so the draft is laid out, not hand-placed.
-- **What it does NOT buy:** layout *judgment* — even with ELK a human still
+- **What it does NOT buy:** layout _judgment_ — even with ELK a human still
   resolves label overlap and final polish. So it is never required.
 
 **Without an MCP** you lose shape search, model generation, and ELK — so you
-**cannot** produce a good *unattended* draft. Two honest paths remain:
+**cannot** produce a good _unattended_ draft. Two honest paths remain:
 
 1. **A human is in the loop** (the real draw.io case): hand-scaffold the mxfile
    XML below as a rough skeleton, then a person lays it out and polishes in
@@ -164,7 +164,7 @@ drawio -x -f svg -e -b 10 -o foo.drawio.svg foo.drawio
 The result is both a clean SVG and reopenable in draw.io / the VS Code extension.
 It is the **opt-in**, not the default, because it is large and carries
 version/agent metadata that churns the diff across edits. Use it only to ship a
-standalone editable file *outside* git.
+standalone editable file _outside_ git.
 
 ### Commit the pair
 

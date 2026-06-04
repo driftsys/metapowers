@@ -7,7 +7,7 @@ metadata:
 ---
 
 A Superpowers session produces a **spec** and a **plan** — working memory.
-Durable engineering records are *gardened* from that working memory; the working
+Durable engineering records are _gardened_ from that working memory; the working
 memory itself is transient. Code and tests remain the source of truth — these
 records describe the system, they do not drive it.
 

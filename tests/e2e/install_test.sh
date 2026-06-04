@@ -6,8 +6,9 @@
 # Run with: bash tools/bash_unit tests/e2e/install_test.sh
 #
 # Assumptions:
-# - `upskill` is on PATH (version >= 0.7.2 — supporting-resource delivery, e.g.
-#   the working-memory-lifecycle rule's wip-gate.sh, requires 0.7.2)
+# - `upskill` is on PATH (version >= 0.7.4 — supporting-resource delivery added in
+#   0.7.2; relaxed co-location naming, which lets the sdd-gardener agent keep its
+#   divergent name inside the sdd-gardening/ dir, added in 0.7.4)
 # - The script is invoked from the metapowers repo root (justfile recipe takes
 #   care of this) — we resolve the repo root via `git rev-parse` to be safe.
 
@@ -63,6 +64,19 @@ test_install_delivers_rule_supporting_resource() {
         "expected wip-gate.sh delivered next to the opencode rule"
     assert "grep -q 'WIP-gate' .claude/rules/working-memory-lifecycle/wip-gate.sh" \
         "expected the delivered wip-gate.sh to carry its content, not be empty"
+}
+
+test_colocated_agent_keeps_divergent_name() {
+    # The sdd-gardener agent is co-located in the sdd-gardening/ directory but keeps
+    # its own divergent name (upskill >= 0.7.4 relaxed co-location naming). It must
+    # install under its effective name, not the directory name.
+    upskill add "$BUNDLE_PATH" --project --quiet
+    assert "[ -f .claude/agents/sdd-gardener.md ]" \
+        "expected the agent installed under its divergent name (.claude/agents/sdd-gardener.md)"
+    assert "[ ! -f .claude/agents/sdd-gardening.md ]" \
+        "agent must NOT install under the directory name (.claude/agents/sdd-gardening.md)"
+    assert "[ -f .claude/skills/sdd-gardening/SKILL.md ]" \
+        "expected the co-located skill still installed under the directory name"
 }
 
 test_rule_body_preserves_content() {

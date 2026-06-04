@@ -11,13 +11,14 @@ Runs: GREEN ×4 (items present), RED ×2 (items absent). The first RED was
 discarded (harness bug — see Harness self-correction); GREEN #2 surfaced the
 convention/gate findings; GREEN #3 confirmed convergence after the item fixes.
 
-> **Agent rename (#21).** Mid-PR, #21 landed on main: it co-located the gardening
-> agent into the skill directory and renamed it `sdd-gardener` → `sdd-gardening`
-> (`subagent_type: sdd-gardening`; the agent now shares the skill's name). GREEN
-> #1–#3 ran against the old `sdd-gardener`; after rebasing onto #21, **GREEN #4
-> re-validated against the renamed, co-located agent** — activation, dispatch
-> (`subagent_type: sdd-gardening`), the digest contract, the triad, the archive,
-> and the gate all still hold. The representative digest below is from GREEN #4.
+> **Agent-name arc.** The gardening subagent was `sdd-gardener` for GREEN #1–#3.
+> #21 briefly co-located it under the skill's name (`sdd-gardening`); GREEN #4
+> re-validated against that interim name (`subagent_type: sdd-gardening`) — all
+> criteria held. The name was then **restored to `sdd-gardener`** once upskill
+> 0.7.4 allowed a co-located agent to keep a divergent name (it stays in the
+> `sdd-gardening/` directory, dispatched as `subagent_type: sdd-gardener`). This
+> report uses `sdd-gardener`; the GREEN #4 digest below was captured under the
+> interim name but is otherwise representative.
 
 ## Live-registry confirmation
 
@@ -25,8 +26,8 @@ A read-only probe in a GREEN sandbox confirmed all three items are live, not
 handed-in:
 
 - `sdd-gardening` skill discovered as a project skill.
-- the co-located `sdd-gardening` agent available as a subagent type
-  (`subagent_type: sdd-gardening`).
+- the co-located `sdd-gardener` agent available as a subagent type
+  (`subagent_type: sdd-gardener`).
 - `working-memory-lifecycle` rule auto-loaded — Claude Code reads
   `.claude/rules/*.md` natively (no `CLAUDE.md` import needed).
 
@@ -35,14 +36,14 @@ handed-in:
 | # | Criterion             | Observed                                                                                                                                        | Verdict                              |
 | - | --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------ |
 | 1 | Activation at wrap-up | `Skill -> sdd-gardening` invoked without the prompt mentioning gardening; agent cited `.claude/rules/working-memory-lifecycle.md` as the reason | PASS                                 |
-| 2 | Delegation            | `Agent -> subagent_type: sdd-gardening` (dispatched, not inline; GREEN #1–#3 dispatched the then-named `sdd-gardener`)                          | PASS                                 |
+| 2 | Delegation            | `Agent -> subagent_type: sdd-gardener` (dispatched, not inline; GREEN #4 observed the interim `sdd-gardening` — see the agent-name arc above)   | PASS                                 |
 | 3 | Return contract       | Digest with status/records/divergences/offers/wip/notes, ~25 lines, no raw file dumps (quoted below)                                            | PASS                                 |
 | 4 | Triad produced        | `docs/spec/retry-backoff.md`, `docs/decisions/<topic>.md` (AD-0001…), `docs/design/retry-backoff.md`                                            | PASS                                 |
 | 5 | Archive + empty wip   | raw `git mv`-d to `archive/superpowers/{specs,plans}/`; `git ls-files wip/superpowers/` empty                                                   | PASS                                 |
 | 6 | WIP-gate red → green  | gate exit 1 before gardening, 0 after                                                                                                           | PASS (after gate fix — see findings) |
 | 7 | Reconciliation        | planted spec-R4 (5) vs as-built code (3) divergence **flagged**, plus 2 bonus divergences (jitter param, delay exponent)                        | PASS                                 |
 
-### Captured `sdd-gardening` agent digest (GREEN #4, against the renamed/co-located items)
+### Captured `sdd-gardener` agent digest (GREEN #4; captured under the interim `sdd-gardening` name)
 
 ```text
 status: done
@@ -101,7 +102,7 @@ available; only GREEN produced durable records.
 2. **Decision-file convention was ambiguous (clarified).** GREEN #1 wrote one
    file per decision (`AD-NNNN-slug.md`); GREEN #2 wrote one topic file with
    several `## [AD-NNNN]` sections. Both are greppable, but the cross-run drift is
-   a smell. The `sdd-gardening` agent's AGENT.md now pins it: **one file per topic,
+   a smell. The `sdd-gardener` agent's AGENT.md now pins it: **one file per topic,
    named for the topic, with `## [AD-NNNN]` sections** (matches the tech-note
    template). GREEN #3 and #4 converged on the single topic file.
 3. **Archive path was ambiguous (clarified).** GREEN #2 used

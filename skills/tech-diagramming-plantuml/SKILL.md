@@ -24,12 +24,12 @@ object, and component** UML — while its autolayout holds. It delegates layout 
 Graphviz, so it degrades on dense or non-planar graphs (overlapping edges, hidden
 relations).
 
-| Use PlantUML for | Do NOT use PlantUML for | Go to |
-| --- | --- | --- |
-| Sequence (one scenario's message flow) | Architecture / system / infra maps with containers | D2 |
-| State / lifecycle | ER / schema | D2 |
-| Activity / workflow | Freeform, hand-tuned, presentation polish | draw.io |
-| Low-complexity class / object / component | Anything no autolayout can render cleanly | draw.io |
+| Use PlantUML for                          | Do NOT use PlantUML for                            | Go to   |
+| ----------------------------------------- | -------------------------------------------------- | ------- |
+| Sequence (one scenario's message flow)    | Architecture / system / infra maps with containers | D2      |
+| State / lifecycle                         | ER / schema                                        | D2      |
+| Activity / workflow                       | Freeform, hand-tuned, presentation polish          | draw.io |
+| Low-complexity class / object / component | Anything no autolayout can render cleanly          | draw.io |
 
 If the diagram is structural and outgrows PlantUML's layout, escalate to D2
 before draw.io. If it is behavioural, **decompose and stay in PlantUML** (D2 is
@@ -139,13 +139,13 @@ diagram has left PlantUML's comfort zone. The per-type numbers below are
 practitioner early-warnings, not measured cut-points — treat them as defaults
 that prompt a render check, not laws.
 
-| Type | Objective trigger | Early-warning heuristic | First action → escalate to |
-| --- | --- | --- | --- |
-| Sequence | messages crossing many lifelines | ~8 participants or ~25+ messages | decompose by scenario (`ref`) → stay PlantUML |
-| State | non-local transition crossings | ~12 states or dense transitions | decompose into sub-machines → draw.io if irreducible |
-| Activity | cross-swimlane handoffs | 5 or more swimlanes | decompose into sub-activities → draw.io if irreducible |
-| Class | relationship density, NOT class count | a dense association web | decompose by package → D2 → draw.io |
-| Component / object | connector crossings + nesting depth | ~10–12 elements or more than 1 nesting level | decompose ("split it") → D2 → draw.io |
+| Type               | Objective trigger                     | Early-warning heuristic                      | First action → escalate to                             |
+| ------------------ | ------------------------------------- | -------------------------------------------- | ------------------------------------------------------ |
+| Sequence           | messages crossing many lifelines      | ~8 participants or ~25+ messages             | decompose by scenario (`ref`) → stay PlantUML          |
+| State              | non-local transition crossings        | ~12 states or dense transitions              | decompose into sub-machines → draw.io if irreducible   |
+| Activity           | cross-swimlane handoffs               | 5 or more swimlanes                          | decompose into sub-activities → draw.io if irreducible |
+| Class              | relationship density, NOT class count | a dense association web                      | decompose by package → D2 → draw.io                    |
+| Component / object | connector crossings + nesting depth   | ~10–12 elements or more than 1 nesting level | decompose ("split it") → D2 → draw.io                  |
 
 The rule in one line: **decompose first.** Behavioural diagrams
 (sequence/state/activity) decompose and stay in PlantUML. Structural diagrams
@@ -205,7 +205,7 @@ too — the render depends on them.
 
 For the embedded opt-in, render **without** `-nometadata`: PlantUML embeds the
 source as a one-line `<!--SRC=[...]-->` comment. This still outputs `foo.svg`
-(the basename of the input) — the metadata flag changes the SVG's *contents*,
+(the basename of the input) — the metadata flag changes the SVG's _contents_,
 not its filename. **Rename it to `foo.puml.svg`** to mark it as the standalone
 editable variant, distinct from the clean pair's `foo.svg`. Recover the source
 with `plantuml -decodeurl '<token>'`, where `<token>` is the encoded string from

@@ -7,10 +7,12 @@ plugins:
   superpowers:
     claude:
       source: obra/superpowers-marketplace
+      marketplace: superpowers-marketplace
       plugin: superpowers
       install_url: https://github.com/obra/superpowers#install
     copilot:
       source: obra/superpowers-marketplace
+      marketplace: superpowers-marketplace
       plugin: superpowers
       install_url: https://github.com/obra/superpowers#install
     opencode:

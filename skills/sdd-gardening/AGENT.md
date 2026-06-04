@@ -1,6 +1,6 @@
 ---
 schema: 1
-name: sdd-gardening
+name: sdd-gardener
 description: Use when the sdd-gardening skill delegates gardening of a finished Superpowers session's working memory (wip/superpowers/ specs and plans) into the durable docs/ triad and archive. Dispatched by sdd-gardening — do NOT invoke for ad-hoc doc writing, or to garden before the implementation's tests are green.
 mode: subagent
 model: sonnet

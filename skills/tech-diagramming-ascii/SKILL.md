@@ -21,9 +21,9 @@ widths, then emit exactly those characters.**
 
 ## Two modes — know which one you are in
 
-| Mode | Where | Bar | Tooling |
-| --- | --- | --- | --- |
-| **Scratch** | `.scratch/`, thinking out loud | freehand is fine, disposable | none — no validation |
+| Mode        | Where                                                       | Bar                                                             | Tooling                              |
+| ----------- | ----------------------------------------------------------- | --------------------------------------------------------------- | ------------------------------------ |
+| **Scratch** | `.scratch/`, thinking out loud                              | freehand is fine, disposable                                    | none — no validation                 |
 | **Durable** | README, in-code comments, console/CLI help, maintainer docs | **must be perfectly aligned** — it renders in monospace forever | this skill's discipline + self-check |
 
 Scratch is throwaway: misaligned is acceptable because nobody keeps it. Everything
@@ -37,12 +37,12 @@ nothing that needs auto-layout. A graph complex enough to need layout
 **escalates to a PlantUML or D2 SVG, it does not get crammed into ASCII** (there is
 no external ASCII renderer). Route by shape:
 
-| Shape | Fits ASCII? | Example |
-| --- | --- | --- |
-| Small node-edge graph (≤ ~6 boxes) | yes | a 3-stage pipeline |
-| Tree / hierarchy | yes | a module or call tree |
-| Table / grid | yes | a state-transition table |
-| Byte / packet layout | yes | a wire-format header |
+| Shape                                      | Fits ASCII?       | Example                                    |
+| ------------------------------------------ | ----------------- | ------------------------------------------ |
+| Small node-edge graph (≤ ~6 boxes)         | yes               | a 3-stage pipeline                         |
+| Tree / hierarchy                           | yes               | a module or call tree                      |
+| Table / grid                               | yes               | a state-transition table                   |
+| Byte / packet layout                       | yes               | a wire-format header                       |
 | Complex / dense graph (auto-layout needed) | **no → escalate** | back to `tech-diagramming` → PlantUML / D2 |
 
 ## The two levers against miscounting
@@ -71,8 +71,8 @@ widths per terminal and destroy alignment.
 ## Worked example — box-and-arrow pipeline
 
 Longest label is `Filter` (6). Cell width = 6 + 2 = **8**. Each box top/bottom
-border is `+--------+` (1 `+` + 8 `-` + 1 `+`). Labels padded to 8: ` Source `,
-` Filter `, `  Sink  `.
+border is `+--------+` (1 `+` + 8 `-` + 1 `+`). Labels padded to 8: `Source`,
+`Filter`, `Sink`.
 
 ```text
 +--------+      +--------+      +--------+

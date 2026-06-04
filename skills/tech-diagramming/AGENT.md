@@ -48,7 +48,7 @@ re-dispatch, or I fell back to Y."
 Detect which mode the request is in, **state the mode explicitly**, then proceed:
 
 - **design** — create new diagrams from a description or intent.
-- **document** — diagram existing code or a running system *as-is*.
+- **document** — diagram existing code or a running system _as-is_.
 - **update** — revise an existing set so it matches changed code.
 - **review / audit** — assess an existing diagram pack against the house rules.
 
@@ -72,10 +72,10 @@ For each diagram in the job:
 ## Step 3 — Render-then-review (mandatory)
 
 **You cannot judge a diagram from source alone.** For every diagram you author,
-render to an image and *look at it*. Apply two tests:
+render to an image and _look at it_. Apply two tests:
 
 - **Isomorphism test** — strip all text. Does the structure still communicate?
-- **Education test** — does the diagram *argue* a point, not merely *display*
+- **Education test** — does the diagram _argue_ a point, not merely _display_
   boxes?
 
 If it fails either test, fix the source and re-render. Loop until it passes.
