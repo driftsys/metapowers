@@ -9,7 +9,7 @@ items:
   skills:
   - sdd-gardening
   agents:
-  - sdd-gardening
+  - sdd-gardener
 requires:
 - name: superpowers
 - name: diagrampowers

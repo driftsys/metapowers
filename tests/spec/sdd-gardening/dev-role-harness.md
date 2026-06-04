@@ -8,7 +8,7 @@ behavior — those are this harness.
 Here a **fresh agent plays the developer** finishing a Superpowers cycle, in a
 sandbox where the metapowers items are in a **live skill registry** it can
 actually discover and invoke. We observe whether gardening fires **on its own** at
-wrap-up, whether the `sdd-gardening` agent returns a valid digest, whether the durable triad
+wrap-up, whether the `sdd-gardener` agent returns a valid digest, whether the durable triad
 and archive are produced, and whether the WIP-gate flips red → green.
 
 ## The live-registry decision (why a sandbox + a real session)
@@ -22,10 +22,11 @@ project registry actually contains the items**:
 1. A throwaway git repo (`/tmp/...`), seeded to look like the end of a cycle.
 2. `upskill add <metapowers.bundle.yaml> --project` installs the items into the
    sandbox's `.claude/`. Verified live: the `sdd-gardening` skill is discovered,
-   the co-located `sdd-gardening` agent is dispatchable (`subagent_type:
-   sdd-gardening` — the agent shares the skill's name since #21 co-located it),
-   and the `working-memory-lifecycle`
-   rule is auto-loaded (Claude Code reads `.claude/rules/*.md`).
+   the co-located `sdd-gardener` agent is dispatchable (`subagent_type:
+   sdd-gardener` — the agent is co-located in the `sdd-gardening/` dir but keeps
+   its own divergent name, which upskill ≥ 0.7.4 allows), and the
+   `working-memory-lifecycle` rule is auto-loaded (Claude Code reads
+   `.claude/rules/*.md`).
 3. A fresh `claude -p` session is opened **in the sandbox** as the dev-role agent.
    The Superpowers plugin is inherited from the user-global install, so
    `finishing-a-development-branch` is also present — the harness tests whether the
@@ -72,15 +73,15 @@ live registry (rule + skill description), not the prompt.
 
 ## Pass / fail criteria (written before running)
 
-| # | Criterion                | PASS                                                                                                                                         |
-| - | ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1 | **Activation**           | The agent invokes the `sdd-gardening` skill at wrap-up without being told to garden.                                                         |
-| 2 | **Delegation**           | The `sdd-gardening` skill dispatches its co-located agent (`subagent_type: sdd-gardening`), not inline gardening.                            |
-| 3 | **Return contract**      | The `sdd-gardening` agent returns a digest matching its contract (status / records / divergences / offers / wip / notes), no raw file dumps. |
-| 4 | **Triad produced**       | `docs/spec/retry-backoff.md`, a `docs/decisions/<topic>.md` with an `AD-NNNN` id, and `docs/design/retry-backoff.md` all exist.              |
-| 5 | **Archive + empty wip**  | Raw spec+plan are moved to `archive/superpowers/`; `git ls-files wip/superpowers/` is empty.                                                 |
-| 6 | **WIP-gate red → green** | The WIP-gate (run by the observer) exits 1 before gardening and 0 after.                                                                     |
-| 7 | **Reconciliation**       | The planted 5-vs-3 retry-budget divergence is flagged (not silently copied through).                                                         |
+| # | Criterion                | PASS                                                                                                                                        |
+| - | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1 | **Activation**           | The agent invokes the `sdd-gardening` skill at wrap-up without being told to garden.                                                        |
+| 2 | **Delegation**           | The `sdd-gardening` skill dispatches its co-located `sdd-gardener` agent (`subagent_type: sdd-gardener`), not inline gardening.             |
+| 3 | **Return contract**      | The `sdd-gardener` agent returns a digest matching its contract (status / records / divergences / offers / wip / notes), no raw file dumps. |
+| 4 | **Triad produced**       | `docs/spec/retry-backoff.md`, a `docs/decisions/<topic>.md` with an `AD-NNNN` id, and `docs/design/retry-backoff.md` all exist.             |
+| 5 | **Archive + empty wip**  | Raw spec+plan are moved to `archive/superpowers/`; `git ls-files wip/superpowers/` is empty.                                                |
+| 6 | **WIP-gate red → green** | The WIP-gate (run by the observer) exits 1 before gardening and 0 after.                                                                    |
+| 7 | **Reconciliation**       | The planted 5-vs-3 retry-budget divergence is flagged (not silently copied through).                                                        |
 
 RED control (sandbox built with `red`, items absent) confirms the items are
 load-bearing: the dev-role agent does **not** produce the triad + archive (it
@@ -126,5 +127,5 @@ apply the pass/fail table yourself (a paste-into-a-fresh-session handoff style).
 ## Recording results
 
 Append a dated run to `results-dev-role-YYYY-MM-DD.md`: the verdict per criterion,
-the captured `sdd-gardening` agent digest, the observer's filesystem checks, and any gaps
+the captured `sdd-gardener` agent digest, the observer's filesystem checks, and any gaps
 fed back into the items.

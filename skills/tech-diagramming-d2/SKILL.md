@@ -26,12 +26,12 @@ owns **ER / schema** diagrams via `sql_table`. Its syntax is the cleanest of the
 text tools, and it is a single static Go binary — no Java, so it is also the pick
 when Java is unavailable.
 
-| Use D2 for | Do NOT use D2 for | Go to |
-| --- | --- | --- |
-| Architecture / system / infra maps with containers | Sequence (one scenario's message flow) | PlantUML |
-| ER / schema (`sql_table`) | State / lifecycle | PlantUML |
-| Service / component graphs that outgrew PlantUML's layout | Freeform, hand-tuned, presentation polish | draw.io |
-| | Anything no autolayout can render cleanly | draw.io |
+| Use D2 for                                                | Do NOT use D2 for                         | Go to    |
+| --------------------------------------------------------- | ----------------------------------------- | -------- |
+| Architecture / system / infra maps with containers        | Sequence (one scenario's message flow)    | PlantUML |
+| ER / schema (`sql_table`)                                 | State / lifecycle                         | PlantUML |
+| Service / component graphs that outgrew PlantUML's layout | Freeform, hand-tuned, presentation polish | draw.io  |
+|                                                           | Anything no autolayout can render cleanly | draw.io  |
 
 D2 is weak at behavioural diagrams (sequence, state) — PlantUML wins those
 decisively. If an architecture diagram grows too dense for any layout engine,
@@ -43,7 +43,7 @@ Both examples below render with `d2` at exit 0 (verified, D2 0.7.x).
 
 ### Architecture / system — containers and nesting
 
-Containers are what system diagrams *are*: a service holds components, a boundary
+Containers are what system diagrams _are_: a service holds components, a boundary
 holds services. Nest with `parent: Label { child: ... }`, reference nested nodes
 by dotted path, and label every edge.
 
@@ -91,11 +91,11 @@ users.org_id -> orgs.id: belongs to
 D2 ships two engines and supports a third proprietary one. Pick with `--layout`
 (or `D2_LAYOUT`):
 
-| Engine | Availability | Use for |
-| --- | --- | --- |
-| **dagre** | bundled (default) | the default; fine for small/simple graphs |
-| **elk** | bundled | **recommended for architecture** — better container/hierarchical layout, fewer crossings on nested system diagrams |
-| **tala** | proprietary, **separate install** | tuned for architecture/whiteboard layouts; not bundled — install separately if you want it. Do not depend on it being present |
+| Engine    | Availability                      | Use for                                                                                                                       |
+| --------- | --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| **dagre** | bundled (default)                 | the default; fine for small/simple graphs                                                                                     |
+| **elk**   | bundled                           | **recommended for architecture** — better container/hierarchical layout, fewer crossings on nested system diagrams            |
+| **tala**  | proprietary, **separate install** | tuned for architecture/whiteboard layouts; not bundled — install separately if you want it. Do not depend on it being present |
 
 ```bash
 d2 --layout elk foo.d2 foo.svg     # recommended for container-heavy architecture

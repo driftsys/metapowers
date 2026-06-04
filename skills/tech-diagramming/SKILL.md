@@ -32,15 +32,15 @@ Measure **edge crossings, not box count.**
 
 ### Critical user journeys → tool
 
-| #      | Journey                                                                       | Durability               | Who edits next                                  | → Tool                                               |
-| ------ | ----------------------------------------------------------------------------- | ------------------------ | ----------------------------------------------- | ---------------------------------------------------- |
-| **J1** | **Scratch sketch** (thinking out loud, `.scratch/`)                           | throwaway                | nobody                                          | **ASCII** freehand — _no tooling_                    |
-| **J2** | **Durable inline** (README, in-code, console/CLI help, maintainer docs)       | durable                  | reader · text                                   | **ASCII** — _must be perfect_ (grid-code + validate) |
-| **J3** | Document an **interaction** (one scenario's message flow)                     | durable                  | agent/eng · text                                | **PlantUML** sequence                                |
-| **J4** | Document a **lifecycle** (states + transitions)                               | durable                  | agent/eng · text                                | **PlantUML** state                                   |
-| **J5** | Document a **workflow / structural UML** (activity, class, object, component) | durable                  | agent/eng · text                                | **PlantUML** (while autolayout holds)                |
-| **J6** | **Map the system** (architecture / service / infra, with containers)          | durable, often-revisited | agent/eng · text                                | **D2**                                               |
-| **J7** | **Model the data** (ER / schema)                                              | durable                  | agent/eng · text                                | **D2** (`sql_table`)                                 |
+| #      | Journey                                                                       | Durability               | Who edits next                                  | → Tool                                                                  |
+| ------ | ----------------------------------------------------------------------------- | ------------------------ | ----------------------------------------------- | ----------------------------------------------------------------------- |
+| **J1** | **Scratch sketch** (thinking out loud, `.scratch/`)                           | throwaway                | nobody                                          | **ASCII** freehand — _no tooling_                                       |
+| **J2** | **Durable inline** (README, in-code, console/CLI help, maintainer docs)       | durable                  | reader · text                                   | **ASCII** — _must be perfect_ (grid-code + validate)                    |
+| **J3** | Document an **interaction** (one scenario's message flow)                     | durable                  | agent/eng · text                                | **PlantUML** sequence                                                   |
+| **J4** | Document a **lifecycle** (states + transitions)                               | durable                  | agent/eng · text                                | **PlantUML** state                                                      |
+| **J5** | Document a **workflow / structural UML** (activity, class, object, component) | durable                  | agent/eng · text                                | **PlantUML** (while autolayout holds)                                   |
+| **J6** | **Map the system** (architecture / service / infra, with containers)          | durable, often-revisited | agent/eng · text                                | **D2**                                                                  |
+| **J7** | **Model the data** (ER / schema)                                              | durable                  | agent/eng · text                                | **D2** (`sql_table`)                                                    |
 | **J8** | **Fancy / complex / presentation** (hand-tuned, or beyond any autolayout)     | durable, polished        | agent **drafts** (MCP+ELK) → **human polishes** | **draw.io** (MCP or human); no MCP → D2 _if graph-shaped_, else a human |
 
 **draw.io is gated on layout help.** It produces no auto-layout on its own — the
@@ -72,21 +72,21 @@ agent-authorable text (PlantUML/D2); draw.io needs a human. **Review** → the p
 
 ### Tool-strength matrix (★★★ best · ★★ good · ★ weak · – n/a)
 
-| Diagram kind                               | ASCII | PlantUML          | D2  | draw.io                            |
-| ------------------------------------------ | ----- | ----------------- | --- | ---------------------------------- |
-| Inline scratch (throwaway)                 | ★★★   | –                 | –   | –                                  |
-| Inline durable (aligned)                   | ★★★   | –                 | –   | –                                  |
-| Sequence                                   | –     | ★★★               | ★★  | ★                                  |
-| State / lifecycle                          | –     | ★★★               | ★   | ★                                  |
-| Activity / flow                            | ★     | ★★★               | ★★  | ★★                                 |
-| Class / object / component                 | –     | ★★★               | ★★  | ★★                                 |
-| Architecture / system / infra (containers) | –     | ★★                | ★★★ | ★★                                 |
-| ER / schema                                | –     | ★★                | ★★★ | ★★                                 |
-| Fancy / freeform / presentation            | –     | –                 | ★   | ★★★                                |
-| Very high complexity / hand-tuned          | –     | ✗ (layout breaks) | ★★  | ★★★                                |
+| Diagram kind                               | ASCII | PlantUML          | D2  | draw.io                                                                 |
+| ------------------------------------------ | ----- | ----------------- | --- | ----------------------------------------------------------------------- |
+| Inline scratch (throwaway)                 | ★★★   | –                 | –   | –                                                                       |
+| Inline durable (aligned)                   | ★★★   | –                 | –   | –                                                                       |
+| Sequence                                   | –     | ★★★               | ★★  | ★                                                                       |
+| State / lifecycle                          | –     | ★★★               | ★   | ★                                                                       |
+| Activity / flow                            | ★     | ★★★               | ★★  | ★★                                                                      |
+| Class / object / component                 | –     | ★★★               | ★★  | ★★                                                                      |
+| Architecture / system / infra (containers) | –     | ★★                | ★★★ | ★★                                                                      |
+| ER / schema                                | –     | ★★                | ★★★ | ★★                                                                      |
+| Fancy / freeform / presentation            | –     | –                 | ★   | ★★★                                                                     |
+| Very high complexity / hand-tuned          | –     | ✗ (layout breaks) | ★★  | ★★★                                                                     |
 | Agent-authorable unattended                | ★★★   | ★★★               | ★★★ | ★★ _only_ with MCP+ELK; **✗ no MCP → D2 if graph-shaped, else a human** |
-| Human visual editing                       | –     | –                 | –   | ★★★                                |
-| Human text editing                         | ★★    | ★★★               | ★★★ | –                                  |
+| Human visual editing                       | –     | –                 | –   | ★★★                                                                     |
+| Human text editing                         | ★★    | ★★★               | ★★★ | –                                                                       |
 
 ### Decision tree (follow verbatim)
 
@@ -152,13 +152,13 @@ predictor — a 30-node tree with zero crossings reads fine; a 12-node graph wit
    practitioner defaults, **not measured cut-points** — treat as early warnings,
    not laws.
 
-| UML type               | Real trigger (measure)                     | Heuristic early-warning             | First action → escalate to                                      |
-| ---------------------- | ------------------------------------------ | ----------------------------------- | --------------------------------------------------------------- |
-| **Sequence**           | messages crossing many lifelines           | ≥ ~8 participants / ~25+ messages   | **decompose by scenario** (`ref`) → _stay PlantUML_ (D2 weaker) |
-| **State**              | non-local transition crossings             | ~12 states / dense transitions      | decompose into sub-machines → **draw.io** if irreducible (needs MCP/human; else hand to a human — **not** D2) |
+| UML type               | Real trigger (measure)                     | Heuristic early-warning             | First action → escalate to                                                                                      |
+| ---------------------- | ------------------------------------------ | ----------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| **Sequence**           | messages crossing many lifelines           | ≥ ~8 participants / ~25+ messages   | **decompose by scenario** (`ref`) → _stay PlantUML_ (D2 weaker)                                                 |
+| **State**              | non-local transition crossings             | ~12 states / dense transitions      | decompose into sub-machines → **draw.io** if irreducible (needs MCP/human; else hand to a human — **not** D2)   |
 | **Activity**           | cross-swimlane handoffs                    | ≥ 5 swimlanes                       | decompose into sub-activities → **draw.io** if irreducible (needs MCP/human; else hand to a human — **not** D2) |
-| **Class**              | **relationship density — NOT class count** | dense association web               | decompose by package → **D2** (containers) → draw.io            |
-| **Component / object** | connector crossings + nesting depth        | ~10–12 elements / > 1 nesting level | decompose ("split it") → **D2** → draw.io                       |
+| **Class**              | **relationship density — NOT class count** | dense association web               | decompose by package → **D2** (containers) → draw.io                                                            |
+| **Component / object** | connector crossings + nesting depth        | ~10–12 elements / > 1 nesting level | decompose ("split it") → **D2** → draw.io                                                                       |
 
 ### Fallback when the renderer won't install
 
@@ -276,12 +276,12 @@ reference** over absolute scoring, and have a human confirm.
 Once the tool is chosen, **follow the per-format skill** for syntax and render
 mechanics:
 
-| Tool     | Skill                       | Installer agent (co-located)   |
-| -------- | --------------------------- | ------------------------------ |
-| PlantUML | `tech-diagramming-plantuml` | `tech-diagramming-plantuml`    |
-| ASCII    | `tech-diagramming-ascii`    | — (no tool needed)             |
-| D2       | `tech-diagramming-d2`       | `tech-diagramming-d2`          |
-| draw.io  | `tech-diagramming-drawio`   | `tech-diagramming-drawio`      |
+| Tool     | Skill                       | Installer agent (co-located) |
+| -------- | --------------------------- | ---------------------------- |
+| PlantUML | `tech-diagramming-plantuml` | `tech-diagramming-plantuml`  |
+| ASCII    | `tech-diagramming-ascii`    | — (no tool needed)           |
+| D2       | `tech-diagramming-d2`       | `tech-diagramming-d2`        |
+| draw.io  | `tech-diagramming-drawio`   | `tech-diagramming-drawio`    |
 
 If a per-format skill is **absent**, do not block: apply the storage convention
 (§2) and house style (§3) from this skill, and use general knowledge for the
