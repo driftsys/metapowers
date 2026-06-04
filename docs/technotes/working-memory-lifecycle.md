@@ -394,7 +394,7 @@ the durable artifact carries them. If they are still absent, gardening records
 
 Three installable items plus a CI script, all targeting Superpowers specifically:
 
-- **`working-memory-lifecycle` (RULE.md)** — the always-on guardrails: where
+- **`sdd-working-memory-lifecycle` (RULE.md)** — the always-on guardrails: where
   working memory lives, the mode switch, the WIP-invariant, edit-in-place living
   records, the durable triad, the trigger wiring (finishing a branch runs
   gardening), and a one-line clause requiring specs to record considered

@@ -8,7 +8,7 @@
 #   setup-sandbox.sh green <dir>   # install the metapowers bundle (live registry)
 #   setup-sandbox.sh red   <dir>   # control: NO metapowers items installed
 #
-# In GREEN mode the metapowers items (working-memory-lifecycle RULE, the
+# In GREEN mode the metapowers items (sdd-working-memory-lifecycle RULE, the
 # sdd-gardening SKILL + its co-located sdd-gardening AGENT) are installed into the
 # sandbox's .claude/ via `upskill add`, so a `claude` session opened there discovers and
 # can activate them — a genuine live registry, not a handed-in description.
@@ -19,7 +19,7 @@
 # procedure, so staging it would leak the procedure to the agent and contaminate
 # the RED baseline (observed in the 2026-06-02 run). The gate is OBSERVER tooling
 # — run it from the metapowers repo with cwd set to the sandbox:
-#   ( cd <sandbox> && bash <metapowers>/skills/working-memory-lifecycle/wip-gate.sh )
+#   ( cd <sandbox> && bash <metapowers>/skills/sdd-working-memory-lifecycle/wip-gate.sh )
 # It only needs `git ls-files wip/superpowers/`, which resolves against cwd.
 
 set -euo pipefail

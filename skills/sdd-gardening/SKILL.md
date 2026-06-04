@@ -14,7 +14,7 @@ plan in `wip/superpowers/`) into the durable record triad — `docs/spec/`,
 Because the work is context-heavy (it reads the spec/plan, the merged code +
 tests, and the existing `docs/` records), this skill **dispatches the
 `sdd-gardener` subagent** to do it and surfaces the subagent's summary. See the
-`working-memory-lifecycle` rule for the standing guardrails.
+`sdd-working-memory-lifecycle` rule for the standing guardrails.
 
 ## When to use
 
