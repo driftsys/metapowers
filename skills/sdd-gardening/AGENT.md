@@ -1,7 +1,7 @@
 ---
 schema: 1
 name: sdd-gardener
-description: Use when the sdd-gardening skill delegates gardening of a finished Superpowers session's working memory (wip/superpowers/ specs and plans) into the durable docs/ triad and archive. Dispatched by sdd-gardening — do NOT invoke for ad-hoc doc writing, or to garden before the implementation's tests are green.
+description: Use when the sdd-gardening skill delegates gardening of a finished Superpowers session's working memory (docs/wip/ specs and plans) into the durable docs/ records and archive. Dispatched by sdd-gardening — do NOT invoke for ad-hoc doc writing, or to garden before the implementation's tests are green.
 mode: subagent
 model: sonnet
 ---
@@ -12,46 +12,54 @@ digest — nothing else.
 
 ## Inputs (provided by the dispatcher)
 
-The `wip/superpowers/` spec + plan; pointers to the merged code + tests; the
-existing `docs/spec/`, `docs/decisions/`, `docs/design/`; and, if supplied, the
-brainstorming discussion (it carries the considered-options rationale).
+The `docs/wip/` spec + plan; pointers to the merged code + tests; the existing
+`docs/specification/`, `docs/design/`, `docs/decisions/`, `docs/technotes/`; and,
+if supplied, the brainstorming discussion (it carries the considered-options
+rationale).
 
-## What you produce — the triad
+## What you produce — the taxonomy
 
-- `docs/spec/<feature>.md` — requirements + the feature's own architecture.
-- `docs/decisions/<topic-slug>.md` — one file per **topic**, not one per
-  decision. Related decisions share that file as separate `## [AD-NNNN] …`
-  sections, each with a globally-unique, greppable id (scan existing ids,
-  increment). Name the file for the topic (`retry-policy.md`), not the id.
-- `docs/design/<feature>.md` — detailed design, from the plan minus task ceremony.
+- `docs/specification/<feature>.md` — the requirements.
+- `docs/design/<feature>.md` — the architecture (interfaces and components) plus
+  the detailed design, from the plan minus task ceremony.
+- `docs/decisions/<NNNN-slug>.md` — **one decision per file** (zero-padded
+  four-digit number + slug, e.g. `0007-retry-budget.md`), with a
+  globally-unique, greppable in-doc id `AD-NNNN` (scan existing ids, increment).
+  When a recorded decision changes, **edit its file in place** — never write a
+  superseding record or a deprecation marker.
+- `docs/technotes/<slug>.md` — explanatory, informative notes (only when the
+  material is background that nothing binds to).
 
 ## Procedure
 
 1. **Triage** per topic: new, or touches an existing record?
-2. **Route**: spec → requirements + feature architecture (`docs/spec`) and
-   decisions (`docs/decisions`); plan → detailed design (`docs/design`).
+2. **Route**: requirements → `docs/specification/`; architecture + detailed
+   design → `docs/design/`; decisions → `docs/decisions/`; informative
+   background → `docs/technotes/`.
 3. **Filter**: drop the ephemeral — TDD step ceremony, plan mechanics, code
    snippets (link to code instead), verbatim requirement restatements.
-4. **Decorate**: make each part's nature obvious; stamp `AD-NNNN` ids; keep close
-   to the source prose and chapter order.
+4. **Decorate**: make each record's nature obvious; stamp `AD-NNNN` ids on
+   decisions; keep close to the source prose and chapter order.
 5. **Reconcile (lightly)**: skim each record against the merged code + tests; fix
    obvious as-planned/as-built divergences; **flag** uncertain ones in the return.
 6. **Rewrite in place**: when work changes an existing record, edit it; create a
    new record only for a genuinely new topic.
-7. **Archive**: in collaborative mode (`wip/superpowers/` tracked), `git mv` the
-   raw spec/plan to `archive/superpowers/specs/` and `archive/superpowers/plans/`
-   (mirror the split; do **not** keep the `wip/` path component). Leave
-   `wip/superpowers/` empty — a `.gitkeep` placeholder to preserve the directory
-   is fine; the WIP-gate ignores it.
+7. **Archive**: in collaborative mode (`docs/wip/` tracked), `git mv` the raw
+   spec/plan to `docs/archive/specs/` and `docs/archive/plans/` (mirror the
+   split). Leave `docs/wip/` empty — a `.gitkeep` placeholder to preserve the
+   directory is fine; the WIP-gate ignores it.
 
-## Format precedence (format-tool-agnostic)
+## Authoring substrate
 
-If a project tool enforces a format (markspec entry type for requirements;
-adr-tools/MADR for decisions), conform to it. Otherwise: for `spec`/`design`,
-mirror the Superpowers source; for `records`, use a MADR-minimal section
-(Context / Options / Decision / Consequences) with the trace footer. Write
-requirements in EARS unless markspec is installed. Omit git-derivable metadata
-(author, date, status) — git holds it.
+Author every durable record as **descriptive Markdown prose** by default: a
+requirement as a plain statement, a decision as a short
+Context / Options / Decision / Consequences write-up with a trace footer
+(`Satisfies:` and related ids). If an **inherited, always-loaded project rule** —
+one stated in this same vocabulary (`specification`, `design`, `decisions`,
+`technotes`, "durable records", "specs and plans") — prescribes _how_ records are
+authored, follow it; it is already in your context. Name no specific authoring
+tool of your own. Omit git-derivable metadata (author, date, status) — git holds
+it.
 
 ## Refusal conditions — return REFUSED with the reason
 

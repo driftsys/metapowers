@@ -8,7 +8,7 @@ behavior — those are this harness.
 Here a **fresh agent plays the developer** finishing a Superpowers cycle, in a
 sandbox where the metapowers items are in a **live skill registry** it can
 actually discover and invoke. We observe whether gardening fires **on its own** at
-wrap-up, whether the `sdd-gardener` agent returns a valid digest, whether the durable triad
+wrap-up, whether the `sdd-gardener` agent returns a valid digest, whether the durable records
 and archive are produced, and whether the WIP-gate flips red → green.
 
 ## The live-registry decision (why a sandbox + a real session)
@@ -41,13 +41,13 @@ has no gate. GREEN installs the bundle, so since upskill 0.7.2 the gate ships in
 `.claude/rules/sdd-working-memory-lifecycle/wip-gate.sh` — harmless there, since GREEN
 already has the rule and skill loaded. Either way the **observer** runs the
 canonical script from the metapowers repo with cwd set to the sandbox — it only
-needs `git ls-files wip/superpowers/`, which resolves against cwd.
+needs `git ls-files docs/wip/`, which resolves against cwd.
 
 ## Fixture (what the sandbox contains, on branch `feat/retry-backoff`)
 
 A finished, **tests-green** feature — HTTP client retry with backoff:
 
-- `wip/superpowers/specs/retry-backoff.md`, `wip/superpowers/plans/retry-backoff.md`
+- `docs/wip/specs/retry-backoff.md`, `docs/wip/plans/retry-backoff.md`
   — tracked working memory (collaborative mode), with an "Alternatives considered"
   section so the gardener has real decision rationale to route.
 - `src/retry.py`, `tests/test_retry.py` — implementation + passing tests
@@ -73,19 +73,19 @@ live registry (rule + skill description), not the prompt.
 
 ## Pass / fail criteria (written before running)
 
-| # | Criterion                | PASS                                                                                                                                        |
-| - | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1 | **Activation**           | The agent invokes the `sdd-gardening` skill at wrap-up without being told to garden.                                                        |
-| 2 | **Delegation**           | The `sdd-gardening` skill dispatches its co-located `sdd-gardener` agent (`subagent_type: sdd-gardener`), not inline gardening.             |
-| 3 | **Return contract**      | The `sdd-gardener` agent returns a digest matching its contract (status / records / divergences / offers / wip / notes), no raw file dumps. |
-| 4 | **Triad produced**       | `docs/spec/retry-backoff.md`, a `docs/decisions/<topic>.md` with an `AD-NNNN` id, and `docs/design/retry-backoff.md` all exist.             |
-| 5 | **Archive + empty wip**  | Raw spec+plan are moved to `archive/superpowers/`; `git ls-files wip/superpowers/` is empty.                                                |
-| 6 | **WIP-gate red → green** | The WIP-gate (run by the observer) exits 1 before gardening and 0 after.                                                                    |
-| 7 | **Reconciliation**       | The planted 5-vs-3 retry-budget divergence is flagged (not silently copied through).                                                        |
+| # | Criterion                | PASS                                                                                                                                                                 |
+| - | ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1 | **Activation**           | The agent invokes the `sdd-gardening` skill at wrap-up without being told to garden.                                                                                 |
+| 2 | **Delegation**           | The `sdd-gardening` skill dispatches its co-located `sdd-gardener` agent (`subagent_type: sdd-gardener`), not inline gardening.                                      |
+| 3 | **Return contract**      | The `sdd-gardener` agent returns a digest matching its contract (status / records / divergences / offers / wip / notes), no raw file dumps.                          |
+| 4 | **Records produced**     | `docs/specification/retry-backoff.md`, `docs/design/retry-backoff.md`, and a `docs/decisions/<NNNN-slug>.md` (one decision per file) with an `AD-NNNN` id all exist. |
+| 5 | **Archive + empty wip**  | Raw spec+plan are moved to `docs/archive/{specs,plans}/`; `git ls-files docs/wip/` is empty.                                                                         |
+| 6 | **WIP-gate red → green** | The WIP-gate (run by the observer) exits 1 before gardening and 0 after.                                                                                             |
+| 7 | **Reconciliation**       | The planted 5-vs-3 retry-budget divergence is flagged (not silently copied through).                                                                                 |
 
 RED control (sandbox built with `red`, items absent) confirms the items are
-load-bearing: the dev-role agent does **not** produce the triad + archive (it
-merges as-is, or writes ad-hoc docs, leaving `wip/` non-empty and no gate).
+load-bearing: the dev-role agent does **not** produce the durable records + archive (it
+merges as-is, or writes ad-hoc docs, leaving `docs/wip/` non-empty and no gate).
 
 ## How to run
 
@@ -103,9 +103,9 @@ bash $EVAL/setup-sandbox.sh green /tmp/sdd-green
 ( cd /tmp/sdd-green && claude -p "$PROMPT" --allowedTools "$TOOLS" )
 # then verify, as the observer:
 ( cd /tmp/sdd-green && \
-  ls docs/spec docs/decisions docs/design && \
-  echo "wip:"; git ls-files wip/superpowers/ && \
-  echo "archive:"; git -c core.quotepath=off status --porcelain archive/ && \
+  ls docs/specification docs/design docs/decisions docs/technotes && \
+  echo "wip:"; git ls-files docs/wip/ && \
+  echo "archive:"; git -c core.quotepath=off status --porcelain docs/archive/ && \
   bash "$GATE"; echo "gate(after)=$?" )                                # expect 0
 
 # RED — control, items absent (no gate script in the sandbox to leak the procedure)
@@ -129,3 +129,28 @@ apply the pass/fail table yourself (a paste-into-a-fresh-session handoff style).
 Append a dated run to `results-dev-role-YYYY-MM-DD.md`: the verdict per criterion,
 the captured `sdd-gardener` agent digest, the observer's filesystem checks, and any gaps
 fed back into the items.
+
+## Substrate-seam cases (S1 / S2)
+
+The base run above proves activation, the four-home taxonomy, and archive. These
+two cases prove the gardener's authoring substrate is **neutral by default and
+override-by-rule** (issue #39). Same dev-role prompt; the only variable is the
+sandbox mode. The override is delivered the real way — an always-loaded project
+rule in the sandbox's `.claude/rules/` — and is **inherited into the
+`sdd-gardener` subagent**, with no `skills:` preload on the agent.
+
+- **S1 — override → substrate.** `setup-sandbox.sh override <dir>` installs the
+  bundle **and** the synthetic rule `fixtures/substrate-rule/acme-sdd-substrate.md`
+  into `.claude/rules/`. The rule speaks the gardener's own vocabulary and mandates
+  a fingerprint header `<!-- substrate: ACME-SDD v1 -->` as the first line of every
+  durable record (and `REQ-<n>:` requirement lines).
+  **PASS:** every gardened record under `docs/specification|design|decisions`
+  carries the fingerprint — the inherited rule steered the subagent.
+- **S2 — bare → prose.** `setup-sandbox.sh green <dir>` — no override rule.
+  **PASS:** records are descriptive Markdown prose with **no** fingerprint.
+
+S2 is S1's negative control: the fingerprint appears only when the override is
+installed, proving the seam — not chance — produced it, and that descriptive prose
+is the default. `acme-sdd-substrate` is a synthetic stand-in for a real downstream
+substrate (e.g. markspec); a markspec-backed case is deferred to #18. Record runs
+in `results-dev-role-YYYY-MM-DD.md` (see `results-dev-role-2026-06-06.md`).
