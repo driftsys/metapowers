@@ -46,15 +46,21 @@ Both examples below render with `d2` at exit 0 (verified, D2 0.7.x).
 Containers are what system diagrams _are_: a service holds components, a boundary
 holds services. Nest with `parent: Label { child: ... }`, reference nested nodes
 by dotted path, and label every edge.
+Set `direction` by topology, and pack parallel siblings with `grid-columns`/`grid-rows` — see **Layout quality** below.
 
 ```d2
+direction: right
+
 gateway: API Gateway {
   router: Router
   authz: Authorizer
 }
 services: Services {
+  grid-columns: 2        # parallel services → a 2-wide block, not a column
   auth: Auth Service
   orders: Order Service
+  catalog: Catalog Service
+  payments: Payment Service
 }
 db: Postgres {
   shape: cylinder
@@ -64,6 +70,8 @@ gateway.router -> services.auth: verify token
 gateway.router -> services.orders: place order
 services.auth -> db: query users
 services.orders -> db: write orders
+services.catalog -> db: read catalog
+services.payments -> db: write payments
 ```
 
 ### ER / schema — `sql_table`
@@ -102,6 +110,57 @@ d2 --layout elk foo.d2 foo.svg     # recommended for container-heavy architectur
 ```
 
 `d2 layout` lists the engines actually installed in your environment.
+
+## Layout quality — make it compact, don't ship a strip
+
+`elk` (above) is the engine; these are the levers that decide **proportions**.
+elk is decent by default, but two things produce sprawl: deep nesting under an
+implicit `direction`, and parallel siblings strung along one axis. Apply these
+proactively, then run the render-check below.
+
+1. **Flow direction by topology.** Set `direction` explicitly from the graph's
+   shape — a linear pipeline reads `right`; a broad, shallow hierarchy reads
+   `down`. Leaving it implicit on a deep graph is what produces a tall strip.
+
+2. **Pack parallel siblings with a grid.** When a container holds several nodes
+   with no edges _between_ them (replicas, a subnet of services, a fan-out), give
+   the container `grid-columns: N` (or `grid-rows: N`) so elk packs them into a
+   block instead of a single file. This is the highest-leverage fix. Renders at exit 0
+   (verified, D2 0.7.x):
+
+   ```d2
+   services: Services {
+     grid-columns: 4        # 12 siblings → a 3×4 block, not a 12-tall column
+     s1: Catalog; s2: Cart; s3: Checkout; s4: Payments
+     s5: Inventory; s6: Shipping; s7: Search; s8: Reviews
+     s9: Accounts; s10: Pricing; s11: Recs; s12: Notifications
+   }
+   ```
+
+3. **≤ 7 ± 2 elements per zoom level** (umbrella rule). Beyond that, decompose
+   into sub-views rather than gridding ever-harder.
+
+### Measured render-check (no vision needed)
+
+Read the **root `<svg>` viewBox** of the render (`W H`; `ratio = long ÷ short`):
+
+```bash
+grep -o 'viewBox="[^"]*"' foo.svg | head -1   # root viewBox → "0 0 W H"; ratio = max(W,H)/min(W,H)
+```
+
+The eval's `check-aspect.sh` automates this read + the ≤2.5 check.
+
+- **Did the grid help?** A gridded parallel set should render roughly square. If a
+  parallel-heavy container's render is still strip-like (`ratio` high) after gridding,
+  you gridded the wrong container — grid the one with the most ungrouped siblings.
+- **Egregious-strip backstop:** if `ratio > ~2.5`, the diagram is a strip — pack
+  parallel sets, switch `direction`, or split into sub-views, then re-render.
+  (Heuristic, not a law — `elk` keeps many graphs in-band already; this catches
+  the bad ones, typically icon-rich / deep-nested.)
+- **Honest scope:** aspect ratio is all you can read cheaply from the SVG. Edge
+  **crossings and overlap** are not measurable here — judge those by rendering
+  and _looking_ (umbrella §4 Layer 2). Phase-2 `diagctl` (#14) will measure them
+  deterministically.
 
 ## Render + storage
 
@@ -193,3 +252,7 @@ Run this checklist by hand before committing. (Phase 2's `diagctl check` — sto
       if it answers two, split it.
 - [ ] **Containers used for grouping** — services/components/boundaries are nested,
       not a flat soup of boxes.
+- [ ] **Layout is compact, not a strip** — parallel-heavy containers packed with
+      `grid-columns`/`grid-rows` (not a single file); `direction` chosen by
+      topology; root-viewBox long/short ratio not egregious (≤ ~2.5). Crossings /
+      overlap judged by looking (umbrella §4 Layer 2).
