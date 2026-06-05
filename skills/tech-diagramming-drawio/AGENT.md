@@ -1,7 +1,7 @@
 ---
 schema: 1
 name: tech-diagramming-drawio
-description: Use to install draw.io desktop (for headless SVG export) when a diagram needs it and it's missing — detects, installs cross-platform, verifies, reports; also installs the optional @drawio/mcp accelerator on explicit request.
+description: Use to install draw.io desktop (for headless SVG export) when a diagram needs it and it's missing — detects, installs cross-platform, verifies, reports.
 license: MIT
 mode: subagent
 model: haiku
@@ -19,8 +19,7 @@ yours.
 ## Scope
 
 Install draw.io desktop on the current platform, confirm a real diagram exports
-to SVG, report whether the optional `@drawio/mcp` is present, and return a
-one-block status. Nothing else.
+to SVG, and return a one-block status. Nothing else.
 
 ## Refusal conditions
 
@@ -28,10 +27,7 @@ Return `REFUSED` with a one-line reason, and do nothing else, if asked to:
 
 - author, edit, draft, or render a real project diagram (that is the SKILL's
   remit);
-- install a tool other than draw.io desktop **or** the `@drawio/mcp` server —
-  and install the MCP **only when the caller asked for it by name** (it is
-  OPTIONAL; on a plain draw.io install, report its presence but do not install
-  it);
+- install a tool other than draw.io desktop;
 - run `sudo` when you are not root and passwordless sudo is unavailable (see
   below) — never prompt for a password, never sudo blindly;
 - modify global shell config (`.bashrc`, `.zshrc`, `PATH` exports, profile
@@ -119,39 +115,6 @@ reason `WSL2 needs Windows drawio.exe` so the caller falls back.
 If no package manager or install path is available for the platform, install
 nothing and report `unavailable`.
 
-### Optional MCP — `@drawio/mcp` (install only on explicit request)
-
-The `@drawio/mcp` server (jgraph) gives richer scaffolding (`search_shapes`,
-valid `mxGraphModel`, ELK `postLayout`). It is a **separate opt-in** from
-draw.io desktop: on every run **detect and report** its presence, but **install
-it only when the caller asked for the MCP by name** — never as part of a plain
-draw.io install.
-
-Detect:
-
-```bash
-npx --no-install @drawio/mcp --version 2>/dev/null && echo present || echo absent
-```
-
-Install (only on explicit request; needs Node.js / `npx` on `PATH`). Claude
-Code — pass `-s user` so the server registers in the user-global config, not the
-current repo's `.mcp.json` (the default `local` scope):
-
-```bash
-claude mcp add -s user drawio -- npx -y @drawio/mcp
-```
-
-Other MCP clients (Claude Desktop, etc.) — add to the client's `mcpServers`
-config (same command + args):
-
-```json
-{ "mcpServers": { "drawio": { "command": "npx", "args": ["-y", "@drawio/mcp"] } } }
-```
-
-If `npx` is unavailable, install nothing and report the MCP `absent` with the
-reason. Self-hosted draw.io: set `DRAWIO_BASE_URL` in the server's env. After an
-install-on-request, report `MCP: installed`.
-
 ## Step 3 — Verify
 
 Prove draw.io actually exports — a successful `install` command is not proof.
@@ -176,7 +139,6 @@ output stays out of the return.
 ```text
 STATUS: <available | unavailable | refused>
 DRAWIO: <version, or "missing">
-MCP: <present | absent | installed>
 ACTION: <"no-op (already present)" | what you installed | "none">
 DETAIL: <one line: verify result, or why unavailable/refused>
 ```

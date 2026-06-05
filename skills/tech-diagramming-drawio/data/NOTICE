@@ -1,0 +1,15 @@
+shape-index.jsonl.gz is derived from the shape-search index of jgraph/drawio-mcp
+(shape-search/search-index.json), generated from the official draw.io / diagrams.net
+client shape libraries.
+
+  Copyright 2025 JGraph Ltd
+  Source:  https://github.com/jgraph/drawio-mcp
+  License: Apache License 2.0
+
+Each line is one JSON object {style, w, h, title, tags, type} describing one palette
+shape (AWS / Azure / GCP / Kubernetes / Cisco / UML / BPMN / general / ...). Used
+read-only to resolve official mxgraph.* style strings by name.
+
+To refresh against a newer draw.io release:
+  curl -fsSL https://raw.githubusercontent.com/jgraph/drawio-mcp/main/shape-search/search-index.json -o search-index.json
+  jq -c '.[]' search-index.json | gzip -9 --no-name > shape-index.jsonl.gz
