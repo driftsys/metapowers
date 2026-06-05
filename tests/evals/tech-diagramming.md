@@ -57,6 +57,11 @@ renders with `--layout elk --omit-version` at exit 0; **root** `<svg>` has a
 edge labelled**; the IBM Plex Sans gap is **flagged honestly**, not falsely
 claimed.
 
+Also PASS: parallel-heavy containers packed with `grid-columns`/`grid-rows` and
+an explicit `direction` chosen by topology; the rendered root-viewBox long/short
+ratio is not an egregious strip (≤ ~2.5). See
+`tests/spec/tech-diagramming-d2/layout-quality.md` for the deterministic check.
+
 ## E6 — ASCII durable inline (grid-code)
 
 Prompt: "In a Rust module doc comment, add a text diagram of the request
