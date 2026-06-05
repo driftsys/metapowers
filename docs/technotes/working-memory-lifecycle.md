@@ -1,16 +1,16 @@
 # Tech note: working-memory lifecycle & gardening
 
-**Status:** Draft — for tech-lead review
-**Date:** 2026-06-02
-**Authors:** (circulate for review)
+**Status:** Ratified — 2026-06-05
+**Date:** 2026-06-02 (ratified 2026-06-05)
 **Scope:** A general lifecycle for turning AI-assisted-development working
 artifacts into durable software design documentation (SDD). Superpowers is the
 running example; the implementing rule and skill target Superpowers specifically.
 
-> This is a proposal under review. It is **not** an accepted decision. Once the
-> reviewers ratify (or amend) it, the durable parts should be promoted into an
-> Architecture Decision Record (ADR) and the convention sections into the
-> project's agent-instructions / contributing docs.
+> Ratified. The normative decisions live in the ADRs
+> [AD-0001](../decisions/0001-working-memory-location-and-mode.md),
+> [AD-0002](../decisions/0002-gardening-gate.md), and
+> [AD-0003](../decisions/0003-durable-records-taxonomy.md); this note is the
+> informative explanation behind them.
 
 ## 1. Problem & context
 
@@ -40,7 +40,7 @@ _"Tests are the spec. Code is the implementation. Documentation describes
 both."_ Code + tests are authoritative; documentation describes, it does not
 drive.
 
-## 2. Decision (proposed)
+## 2. Decision
 
 Track working memory on the feature branch so collaborators and agents can see
 it; **garden** it at feature completion — reformatting the spec/plan into durable,
@@ -56,13 +56,13 @@ merged code.
 ### 2.1 Mode-adaptive (per-project override)
 
 Each project chooses how working memory is treated **simply by whether it
-gitignores `wip/superpowers/`** — the gitignore entry _is_ the switch; no config
+gitignores `docs/wip/`** — the gitignore entry _is_ the switch; no config
 flag is required.
 
-- **Collaborative mode — `wip/` tracked (default).** Specs/plans are committed on
+- **Collaborative mode — `docs/wip/` tracked (default).** Specs/plans are committed on
   the feature branch and visible to teammates and review agents. Gardening
   archives the raw and the WIP-gate (§5) is enforced.
-- **Private mode — `wip/` gitignored (override).** Specs/plans are local-only
+- **Private mode — `docs/wip/` gitignored (override).** Specs/plans are local-only
   working memory (the stock Superpowers behaviour). Gardening still produces the
   durable `docs/` records, but there is nothing tracked to archive and the
   WIP-gate is a no-op. The tradeoff: no shared visibility, and no git-based
@@ -73,37 +73,37 @@ Gardening detects the active mode with `git check-ignore`.
 ## 3. Layout
 
 ```text
-wip/superpowers/          # active, not-yet-gardened working memory
-├── specs/                #   (tracked on the branch, or gitignored = private)
-└── plans/
-
-archive/superpowers/      # raw spec/plan, as-is, moved here on gardening
-├── specs/
-└── plans/
-
 docs/
-├── spec/<feature>.md      # requirements + feature architecture  → what & where
-├── decisions/<topic>.md   # ADRs, AD-NNNN ids                    → why
-└── design/<feature>.md    # detailed design (SDD)                → how
+├── wip/                     # active, not-yet-gardened working memory
+│   ├── specs/               #   (tracked on the branch, or gitignored = private)
+│   └── plans/
+├── archive/                 # raw spec/plan, as-is, moved here on gardening
+│   ├── specs/
+│   └── plans/
+├── specification/<feature>.md  # requirements                       → what
+├── design/<feature>.md         # architecture (interfaces+components) → how
+├── decisions/<NNNN-slug>.md    # decision records, AD-NNNN ids       → why
+└── technotes/<slug>.md         # explanatory notes (informative)
 ```
 
-**The durable triad.** Gardening routes a feature's working memory into three
-record types:
+**The durable taxonomy.** Gardening routes a feature's working memory into four
+artifact homes:
 
-| Record                   | Source               | Answers      | Standard        |
-| ------------------------ | -------------------- | ------------ | --------------- |
-| `docs/spec/<feature>`    | the spec             | what & where | EARS / markspec |
-| `docs/decisions/<topic>` | the spec's decisions | why          | MADR-inspired   |
-| `docs/design/<feature>`  | the plan (de-tasked) | how          | arc42-inspired  |
+| Record                         | Source               | Answers | Obligation  |
+| ------------------------------ | -------------------- | ------- | ----------- |
+| `docs/specification/<feature>` | the spec             | what    | normative   |
+| `docs/design/<feature>`        | the plan (de-tasked) | how     | normative   |
+| `docs/decisions/<NNNN-slug>`   | the spec's decisions | why     | normative   |
+| `docs/technotes/<slug>`        | explanatory material | context | informative |
 
-**Core invariant:** a non-empty `wip/superpowers/` on a branch targeting `main`
+**Core invariant:** a non-empty `docs/wip/` on a branch targeting `main`
 means "this branch has ungardened work in progress."
 
 ## 4. Lifecycle mechanism
 
-Working memory is committed to `wip/` on the feature branch (visible in the MR).
-At feature completion, gardening produces the durable records in `docs/`, moves
-the raw spec/plan to `archive/`, and empties `wip/`.
+Working memory is committed to `docs/wip/` on the feature branch (visible in the
+MR). At feature completion, gardening produces the durable records in `docs/`,
+moves the raw spec/plan to `docs/archive/`, and empties `docs/wip/`.
 
 ```text
 main:  A ───────────────────────────────────────────── M   ← merge
@@ -111,35 +111,33 @@ main:  A ───────────────────────�
 feat/x:      C1 ── … ── Cg ───────────────────────────╯
              │          │
    spec+plan ┘          └─ gardening commit:
-   in wip/                 + docs/spec/x.md         (requirements + feature arch)
-   (visible in MR)         + docs/decisions/<topic>.md (decisions, AD-NNNN)
-                           + docs/design/x.md       (detailed design, de-tasked)
-                           git mv wip/specs|plans → archive/  (raw, as-is)
-                           wip/ now empty → WIP-gate green
+   in docs/wip/            + docs/specification/x.md (requirements)
+   (visible in MR)         + docs/decisions/<NNNN-slug>.md (decisions, AD-NNNN)
+                           + docs/design/x.md       (architecture + design, de-tasked)
+                           git mv docs/wip/{specs,plans} → docs/archive/  (raw)
+                           docs/wip/ now empty → WIP-gate green
 ```
 
 The durable records **persist in `docs/`** regardless of merge strategy
 (merge-commit, rebase, or squash) — they are never deleted, so nothing valuable
-is lost under any policy. The raw, as-is artifacts live in `archive/`; their
+is lost under any policy. The raw, as-is artifacts live in `docs/archive/`; their
 pre-gardening edit history lives in git.
 
 ## 5. WIP-gate (CI review gate)
 
-**Collaborative mode only.** In private mode `wip/` is gitignored, so
-`git ls-files wip/` is always empty and the gate is a no-op.
+**Collaborative mode only.** In private mode `docs/wip/` is gitignored, so
+`git ls-files docs/wip/` is always empty and the gate is a no-op.
 
-CI fails a `main`-targeting branch when `wip/superpowers/` is non-empty:
+The gate has two layers (AD-0002): a host-agnostic **detector** (`wip-gate.sh`)
+that exits non-zero and lists the ungardened files when tracked `docs/wip/` is
+non-empty, and a host-specific **wrapper** that surfaces the result as a
+**blocking review thread**.
 
-```bash
-# illustrative — fails if any active working memory remains ungardened
-test -z "$(git ls-files wip/superpowers/)" \
-  || { echo "Ungardened WIP present in wip/superpowers/ — run gardening."; exit 1; }
-```
-
-- **Green = gardened.** Gardening is the act that empties `wip/`.
-- **Escape hatch.** Merging with WIP is permitted only by an explicit, logged
-  override (mechanism is an open question — see §11), so the gate is a gate, not
-  a wall.
+- **Green = gardened.** Gardening is the act that empties `docs/wip/`.
+- **Resolve by gardening or accepting the debt.** The thread auto-resolves when a
+  later push empties `docs/wip/`. The override — "accept the debt" — is self-serve
+  but must be made visible to approvers (explicit reason + a durable marker), so
+  the standing approval requirement, not a silent dismiss, holds the line.
 
 The gate does **not** run gardening — it only enforces that gardening happened.
 Gardening is triggered as a wrap-up step (§6).
@@ -171,26 +169,25 @@ rebuild.
 
 ```text
 1. Triage      Per topic: is this new, or does it touch existing records?
-2. Route       spec → requirements+arch (docs/spec) and decisions (docs/decisions);
-               plan → detailed design (docs/design).
+2. Route       spec → requirements (docs/specification); plan → architecture + detailed design (docs/design); decisions → docs/decisions; informative notes → docs/technotes.
 3. Filter      Drop the ephemeral: TDD task ceremony, step-by-step plan
                mechanics, code snippets (point to code), verbatim requirements.
 4. Decorate    Format so each part's nature is obvious; stamp stable AD-NNNN ids
                on decisions; keep close to the Superpowers prose and order.
 5. Reconcile   Light review vs. merged code + tests; flag divergences.
 6. Rewrite     Edit superseded pieces in place (§8); never deprecate-and-replace.
-7. Archive     git mv raw spec/plan to archive/; empty wip/ → gate green.
+7. Archive     git mv raw spec/plan to docs/archive/; empty docs/wip/ → gate green.
 ```
 
 ### 6.0 Execution — delegated to the `sdd-gardener` subagent
 
 Gardening is context-heavy (it reads the spec/plan, the merged code + tests, and
-the existing `docs/` triad), so the `sdd-gardening` skill (SKILL.md) **dispatches
+the existing `docs/` records), so the `sdd-gardening` skill (SKILL.md) **dispatches
 its co-located `sdd-gardener` subagent (AGENT.md)** rather than running inline —
 keeping the main session's context lean.
 
-- **Inputs handed to the subagent:** the `wip/` spec + plan; pointers to the
-  merged code + tests; the existing `docs/` triad (for the consistency engine);
+- **Inputs handed to the subagent:** the `docs/wip/` spec + plan; pointers to the
+  merged code + tests; the existing `docs/` records (for the consistency engine);
   and — **only when the current session still holds it** — the brainstorming
   discussion (which carries the considered-options/rationale directly). When
   gardening runs in a later/separate session, the subagent works from the durable
@@ -210,7 +207,7 @@ keeping the main session's context lean.
 The skillset never hard-depends on an **output tool** (markspec, adr-tools, …).
 Format is chosen per record type:
 
-- **`spec/` and `design/`** — these derive from a Superpowers source document. If
+- **`specification/` and `design/`** — these derive from a Superpowers source document. If
   a project tool enforces a format (e.g. a markspec entry type for requirements),
   conform; otherwise **mirror the Superpowers source** — stay close to its prose
   voice and chapter order, minimal transformation.
@@ -229,7 +226,7 @@ present regardless of which format carries them. Only the layout defers.
 
 ### 6.2 Requirements (EARS default, markspec-agnostic)
 
-Requirements in `docs/spec/<feature>.md` are written in **standard EARS** by
+Requirements in `docs/specification/<feature>.md` are written in **standard EARS** by
 default (ubiquitous / event-driven / state-driven / optional / unwanted). If
 markspec is installed and instructs, gardening defers to it (markspec entries,
 stamped ids, `fmt`/`check`). The skill must work with **or without** markspec.
@@ -240,12 +237,13 @@ and never hand-writes or forges an id.
 
 ### 6.3 Decisions (records, AD-NNNN, edit-in-place)
 
-Decisions are split into `docs/decisions/<topic>.md` — standalone records, because
+Decisions are split into `docs/decisions/<NNNN-slug>.md` — standalone records, because
 decisions are the most cross-referenced, longest-lived, cross-feature artifact a
 feature produces; a feature's spec is the wrong container for something that
 spans features. Each decision is a decorated section with a globally-unique,
 greppable `AD-NNNN` id, so requirements and tests can reference a specific
-decision. A topic file may hold one or more decisions. See §7 for the template.
+decision. Each decision is its own file, `docs/decisions/<NNNN-slug>.md`, with an
+in-doc heading `# AD-NNNN: Title`. See §7 for the template.
 
 ## 7. Output contract — minimal, git-backed templates
 
@@ -257,12 +255,10 @@ discovery), and EARS for requirement phrasing. The record template is the
 **default shape for decisions** (which have no Superpowers source); for `spec`/
 `design` these serve as a **content checklist**, not a reformatting target (§6.1).
 
-**Decision record** — `docs/decisions/<topic-slug>.md` (one or more per file):
+**Decision record** — `docs/decisions/<NNNN-slug>.md` (one decision per file):
 
 ```markdown
-# <topic — e.g. IPC transport>
-
-## [AD-0007] Use gRPC for inter-process communication
+# AD-0007: Use gRPC for inter-process communication
 
 **Context.** <2–3 sentences: the forces and problem.>
 
@@ -272,15 +268,15 @@ discovery), and EARS for requirement phrasing. The record template is the
 
 **Consequences.** Good — <easier>. Bad — <cost / harder>.
 
-Satisfies: REQ-0042 · Related: [AD-0003](#ad-0003)
+Satisfies: REQ-0042 · Related: [AD-0003](0003-some-slug.md)
 ```
 
 `AD-NNNN` is globally unique (gardening scans existing ids and increments).
-Compact bold labels keep multiple decisions scannable; the `## [AD-NNNN] Title`
-heading is the navigable anchor. "Options" is optional — omit when none were
-recorded rather than fabricating alternatives.
+Compact bold labels keep the record scannable; the `# AD-NNNN: Title` heading is
+the navigable anchor. "Options" is optional — omit when none were recorded rather
+than fabricating alternatives.
 
-**Spec** — `docs/spec/<feature>.md`:
+**Spec** — `docs/specification/<feature>.md`:
 
 ```markdown
 # <feature>
@@ -292,11 +288,6 @@ recorded rather than fabricating alternatives.
 ## Requirements
 
 <EARS requirements (or markspec entries when installed).>
-
-## Architecture (feature)
-
-<The feature's own components, boundaries, and where it sits relative to other
-components. System-wide architecture is out of scope — see §9.>
 
 ## Decisions
 
@@ -311,6 +302,11 @@ Satisfies / trace footer as applicable.
 
 ```markdown
 # <feature / component name>
+
+## Architecture (feature)
+
+<The feature's own components, boundaries, and where it sits relative to other
+components. System-wide architecture is out of scope — see §9.>
 
 ## Building blocks
 
@@ -335,7 +331,7 @@ patterns, error handling. Link decisions (records) — do not restate.>
 
 ---
 
-Satisfies: REQ-0042 · Decisions: [AD-0007](../decisions/ipc-transport.md#ad-0007) · Code: `src/...`
+Satisfies: REQ-0042 · Decisions: [AD-0007](../decisions/0007-ipc-transport.md) · Code: `src/...`
 ```
 
 **Audit note.** ASPICE auditors sometimes want a visible change record. Default
@@ -351,7 +347,7 @@ deprecated and create a superseding one. A new file/record is created only for a
 genuinely new topic. This is a deliberate departure from immutable-MADR
 supersession, consistent with the guiding principle (§1): documentation describes
 the current system. Decision history is preserved by the record's git history and
-the raw in `archive/`; editing in place also keeps cross-references stable.
+the raw in `docs/archive/`; editing in place also keeps cross-references stable.
 
 **The consistency engine (the hard part).** To edit the right record, gardening
 must first **locate** it, then decide **edit vs. new**:
@@ -366,7 +362,7 @@ must first **locate** it, then decide **edit vs. new**:
 
 ## 9. System architecture boundary
 
-Gardening is feature-scoped, so `docs/spec/<feature>.md` carries the **feature's
+Gardening is feature-scoped, so `docs/design/<feature>.md` carries the **feature's
 own architecture** (its components, boundaries, interfaces). **System
 architecture** (ASPICE SWE.2) — the holistic, cross-feature view — stays
 **human-curated** and is never auto-edited. Gardening **links** to the relevant
@@ -377,7 +373,7 @@ system architecture is composed.
 ## 10. Recovery & continuity
 
 In collaborative mode, a new session has full prior context trivially: the
-durable records in `docs/` (distilled, current) plus the raw in `archive/`
+durable records in `docs/` (distilled, current) plus the raw in `docs/archive/`
 (as-is). The records' git history holds the edit-by-edit evolution as a bonus —
 not load-bearing. In private mode only the `docs/` records persist; the raw is
 local and not recoverable cross-session.
@@ -396,7 +392,7 @@ Three installable items plus a CI script, all targeting Superpowers specifically
 
 - **`sdd-working-memory-lifecycle` (RULE.md)** — the always-on guardrails: where
   working memory lives, the mode switch, the WIP-invariant, edit-in-place living
-  records, the durable triad, the trigger wiring (finishing a branch runs
+  records, the durable taxonomy, the trigger wiring (finishing a branch runs
   gardening), and a one-line clause requiring specs to record considered
   alternatives + trace links. Ships the WIP-gate CI script as a resource.
 - **`sdd-gardening` (SKILL.md)** — the on-demand procedure (§6): it **dispatches
@@ -417,17 +413,15 @@ neutral name `sdd-gardening` leaves room to support another source framework lat
 by swapping the source-reading step — not by rewriting the skill. We are **not**
 building that abstraction now (YAGNI).
 
-### Open questions for review
+### Resolved (ratified 2026-06-05)
 
-1. **WIP-gate override mechanism.** CI label vs. a committed marker file vs. a
-   documented exception process.
-2. **Reconciliation with Superpowers' hardcoded paths.** Superpowers writes to
-   `.scratch/superpowers/…`; its `brainstorming` skill writes design docs to
-   `docs/superpowers/specs/`. We do not edit the upstream plugin. How does the
-   rule redirect authoring into `wip/superpowers/`? (rule instruction vs.
-   gitignore/convention adjustment.)
-3. **Default mode.** Collaborative (tracked) with private as opt-out, or the
-   reverse? Current lean: collaborative, since it is the motivating need.
+1. **WIP-gate override mechanism** → a blocking-but-resolvable review thread;
+   override is "accept the debt", visible to approvers ([AD-0002](../decisions/0002-gardening-gate.md)).
+2. **Working-memory path** → `docs/wip/` (raw retired to `docs/archive/`); the
+   rule redirects any upstream `docs/superpowers/*` authoring into `docs/wip/`
+   ([AD-0001](../decisions/0001-working-memory-location-and-mode.md)).
+3. **Default mode** → collaborative (tracked), private via gitignore opt-out
+   ([AD-0001](../decisions/0001-working-memory-location-and-mode.md)).
 
 ## 12. What survives from earlier drafts
 
@@ -443,12 +437,12 @@ templates; tool-agnostic defaults.
   explicit per-project choice).
 - **Add-then-delete (prune the raw, recover only from history).** Required a
   no-squash merge policy and made recovery depend on fragile git archaeology.
-  Rejected in favour of keeping the raw in `archive/`.
+  Rejected in favour of keeping the raw in `docs/archive/`.
 - **Fan-out into separate per-decision ADR files _and_ separate SDD files.**
   Considered, then simplified: decisions are split into `decisions/` (because they
-  are cross-cutting), but requirements + feature architecture stay together in one
-  `spec/` document and design stays in one `design/` document — rather than
-  shattering each feature across many files.
+  are cross-cutting), but a feature's requirements stay together in one
+  `specification/` document and its architecture + design in one `design/`
+  document — rather than shattering each feature across many files.
 - **Transcript recovery of considered options.** Mining the brainstorming
   transcript to recover alternatives — rejected as too complex (session
   identification, client-specific formats, fragile). Replaced by capturing

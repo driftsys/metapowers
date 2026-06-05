@@ -38,9 +38,9 @@ align with them.
    important property metapowers preserves from Superpowers.
 
 4. **Specs are working memory, not durable artifacts.** Superpowers' specs and
-   plans live in `.scratch/superpowers/` (gitignored). Durable engineering
-   records are extracted from them into `docs/` only when they carry value
-   beyond the implementation session.
+   plans live in `docs/wip/`. Durable engineering records are extracted from
+   them into `docs/` only when they carry value beyond the implementation
+   session.
 
 5. **metapowers is not spec-driven.** It is explicitly NOT spec-kit or BMAD.
    The spec is not the source of truth. The framing line is: _"Tests are the
@@ -62,8 +62,7 @@ metapowers/
 ├── tests/                    # evals & tests (NOT distributed)
 │   ├── spec/<name>/          # behavioural evals/specs, fixtures, results
 │   └── e2e/                  # install round-trip tests
-├── docs/                     # reference documentation
-└── .scratch/superpowers/     # gitignored working memory (specs, plans)
+└── docs/                     # reference docs + gardened records; gitignored working memory (docs/wip/ convention)
 ```
 
 `<item-root>` and `<bundle-root>` are both `skills/`. Items live in their own
@@ -87,26 +86,26 @@ When metapowers content is installed in a downstream project, it establishes:
 
 ```text
 docs/
-├── requirements/      # human-curated requirements with stable IDs
-├── decisions/         # ADRs, promoted from Superpowers specs when warranted
-├── architecture/      # component-grouped architecture docs
-└── design/            # per-feature design docs, drafted from spec+plan
-
-.scratch/
-└── superpowers/       # Superpowers working memory (gitignored)
-    ├── specs/
-    └── plans/
+├── specification/     # requirements
+├── design/            # architecture — interfaces and components
+├── decisions/         # decision records — normative, binding, traced
+├── technotes/         # explanatory notes — informative, non-binding
+├── wip/               # Superpowers working memory (specs, plans); tracked by default
+└── archive/           # raw working memory retired here once gardened (never deleted)
 ```
 
 Naming rules:
 
-- **ADRs**: zero-padded four-digit numbering, hyphen-separated slugs
-  (`0001-use-grpc-for-ipc.md`). Aligned with MADR / adr-tools.
-- **Design docs**: slug only, no date prefix (`auth-token-rotation.md`).
-- **Architecture component files**: named after the logical subsystem as the
-  team talks about it (`auth-service.md`, not `crate-foo-bar.md`).
-- **Requirements**: stable flat numeric IDs (`REQ-0142`). Subsystem grouping
-  happens via the file the requirement lives in, not the ID.
+- **Decision records** (`docs/decisions/`): one decision per file, zero-padded
+  four-digit numbering with a hyphenated slug (`0001-working-memory-location.md`),
+  MADR-minimal; in-doc id `AD-NNNN` for greppable cross-reference.
+- **Technotes** (`docs/technotes/`): slug only (`working-memory-lifecycle.md`);
+  informative, non-binding.
+- **Specifications** (`docs/specification/`): requirements with stable flat
+  numeric IDs (`REQ-0142`); subsystem grouping happens via the file, not the ID.
+- **Design** (`docs/design/`): architecture per unit; one description split by
+  write-ownership (a hand-authored system file, a generated software file) —
+  never separate `system/`/`software/` trees.
 
 ## Commands
 
