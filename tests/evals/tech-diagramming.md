@@ -12,8 +12,8 @@ per scenario **before** the run.
 - **E1–E4** — umbrella selection + PlantUML authoring (E1 flagship).
 - **E5** — D2 architecture authoring.
 - **E6** — ASCII durable-inline authoring (grid-code).
-- **E7 / E7b** — draw.io: the no-MCP selection **gate** (E7) and the
-  human-in-the-loop **authoring** path (E7b).
+- **E7 / E7b** — draw.io: the unattended selection **gate** (E7) and the
+  human-in-the-loop **authoring** path with shape-index lookup (E7b).
 
 ## E1 — sequence (selection + authoring)
 
@@ -72,27 +72,27 @@ PASS: inline ASCII (not a file, not Mermaid); **states the grid-code width
 computation before drawing**; charset is **only `+ - |` and `->`** (no Unicode
 box-drawing, no `→`, no emoji); all boxes character-aligned; self-check run.
 
-## E7 — draw.io selection gate (no MCP, unattended)
+## E7 — draw.io selection gate (unattended, no human)
 
 Prompt: the AWS exec-deck architecture (VPC; public subnet with an ALB; private
-subnet with two EC2 and an RDS; vendor icons), run **unattended with no
-`@drawio/mcp`**.
+subnet with two EC2 and an RDS; vendor icons), run **unattended (no human in the
+loop)**.
 
 PASS: recognises this is nominally draw.io territory (J8) but applies the gate —
-**no MCP and no human ⇒ fall back to D2**, render a clean pair, and **never emit
-an unlaid-out `.drawio`**; does **not** claim a finished presentation-grade
-diagram.
+**graph-shaped & unattended ⇒ prefer D2** (auto-layout), render a clean pair; does
+**not** claim a finished presentation-grade diagram. (No MCP is involved either way.)
 
 ## E7b — draw.io authoring (human in the loop)
 
 Prompt: the same AWS architecture, but a **human will polish in `app.diagrams.net`**
-and has asked for the draft draw.io source (still no MCP).
+and has asked for the draft draw.io source.
 
-PASS: draw.io **is** chosen (human supplies layout); source is **uncompressed
-mxfile XML** wrapped in `<mxfile><diagram><mxGraphModel><root>` with cells
-parented to layer `1` and **no XML comments**; a **clean `.svg` pair** is rendered
-(`drawio -x -f svg`, exit 0); **no raster**; an explicit **"NEEDS HUMAN POLISH"**
-handoff note lists what remains; the draft is **not** claimed finished.
+PASS: draw.io **is** chosen; the agent resolves vendor icons via the skill's bundled
+**shape-index** (e.g. EC2 → `mxgraph.aws4.ec2`) rather than guessing; source is
+**uncompressed mxfile XML** wrapped in `<mxfile><diagram><mxGraphModel><root>` with
+cells parented to layer `1` and **no XML comments**; a **clean `.svg` pair** is
+rendered (`drawio -x -f svg`, exit 0); **no raster**; an explicit **"NEEDS HUMAN
+POLISH"** handoff note lists what remains; the draft is **not** claimed finished.
 
 ## Results log
 
@@ -181,7 +181,7 @@ XML but:
 - ❌ No clean source + SVG **pair**; added a Mermaid **emoji** fallback.
 - ❌ Misread layout — claimed "draw.io's auto-layout"; no NEEDS-HUMAN-POLISH handoff.
 
-**GREEN E7 — gate (unattended, no MCP).** Confirmed no `@drawio/mcp` present;
+**GREEN E7 — gate (unattended, no MCP).** (superseded by #35 — gate rationale is now shape/human-based; the draw.io §MCP section no longer exists.) Confirmed no `@drawio/mcp` present;
 cited the umbrella step-6 gate and the draw.io skill §MCP → **fell back to D2**,
 rendered `aws-vpc-architecture.d2` + `.svg` (**exit 0**, `viewBox` present),
 emitted **no `.drawio`** and **no raster**, and explicitly **did not** claim a
@@ -199,3 +199,5 @@ need). **E7 PASS.**
   de-overlap, ELK/layout reflow, legend, font — draft **not** claimed finished.
 
 **GREEN: 2026-06-02 — E7 + E7b PASS.**
+
+**2026-06-04 — reframed for the pure no-MCP skill (#35): E7 gate is now shape/human-based, E7b adds shape-index lookup. Needs re-run.**

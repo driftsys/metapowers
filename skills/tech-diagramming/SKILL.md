@@ -32,30 +32,29 @@ Measure **edge crossings, not box count.**
 
 ### Critical user journeys → tool
 
-| #      | Journey                                                                       | Durability               | Who edits next                                  | → Tool                                                                  |
-| ------ | ----------------------------------------------------------------------------- | ------------------------ | ----------------------------------------------- | ----------------------------------------------------------------------- |
-| **J1** | **Scratch sketch** (thinking out loud, `.scratch/`)                           | throwaway                | nobody                                          | **ASCII** freehand — _no tooling_                                       |
-| **J2** | **Durable inline** (README, in-code, console/CLI help, maintainer docs)       | durable                  | reader · text                                   | **ASCII** — _must be perfect_ (grid-code + validate)                    |
-| **J3** | Document an **interaction** (one scenario's message flow)                     | durable                  | agent/eng · text                                | **PlantUML** sequence                                                   |
-| **J4** | Document a **lifecycle** (states + transitions)                               | durable                  | agent/eng · text                                | **PlantUML** state                                                      |
-| **J5** | Document a **workflow / structural UML** (activity, class, object, component) | durable                  | agent/eng · text                                | **PlantUML** (while autolayout holds)                                   |
-| **J6** | **Map the system** (architecture / service / infra, with containers)          | durable, often-revisited | agent/eng · text                                | **D2**                                                                  |
-| **J7** | **Model the data** (ER / schema)                                              | durable                  | agent/eng · text                                | **D2** (`sql_table`)                                                    |
-| **J8** | **Fancy / complex / presentation** (hand-tuned, or beyond any autolayout)     | durable, polished        | agent **drafts** (MCP+ELK) → **human polishes** | **draw.io** (MCP or human); no MCP → D2 _if graph-shaped_, else a human |
+| #      | Journey                                                                       | Durability               | Who edits next                              | → Tool                                                                |
+| ------ | ----------------------------------------------------------------------------- | ------------------------ | ------------------------------------------- | --------------------------------------------------------------------- |
+| **J1** | **Scratch sketch** (thinking out loud, `.scratch/`)                           | throwaway                | nobody                                      | **ASCII** freehand — _no tooling_                                     |
+| **J2** | **Durable inline** (README, in-code, console/CLI help, maintainer docs)       | durable                  | reader · text                               | **ASCII** — _must be perfect_ (grid-code + validate)                  |
+| **J3** | Document an **interaction** (one scenario's message flow)                     | durable                  | agent/eng · text                            | **PlantUML** sequence                                                 |
+| **J4** | Document a **lifecycle** (states + transitions)                               | durable                  | agent/eng · text                            | **PlantUML** state                                                    |
+| **J5** | Document a **workflow / structural UML** (activity, class, object, component) | durable                  | agent/eng · text                            | **PlantUML** (while autolayout holds)                                 |
+| **J6** | **Map the system** (architecture / service / infra, with containers)          | durable, often-revisited | agent/eng · text                            | **D2**                                                                |
+| **J7** | **Model the data** (ER / schema)                                              | durable                  | agent/eng · text                            | **D2** (`sql_table`)                                                  |
+| **J8** | **Fancy / complex / presentation** (hand-tuned, or beyond any autolayout)     | durable, polished        | agent **hand-authors** → **human polishes** | **draw.io** (icon-rich / pixel-tuned); graph-shaped & unattended → D2 |
 
-**draw.io is gated on layout help.** It produces no auto-layout on its own — the
-agent's CLI export just renders whatever coordinates the source carries. So
-draw.io is only a sound choice when **one** of these supplies the layout:
+**draw.io produces no auto-layout.** Its CLI export just renders whatever
+coordinates the source carries — so draw.io is the right pick when the layout is
+supplied by hand, for the niche it owns (icon-rich, hand-tuned, presentation):
 
-- **`@drawio/mcp`** — the agent drafts through the server, driving ELK
-  auto-layout (`postLayout`), then a human polishes. See the
-  `tech-diagramming-drawio` skill for the mechanics.
-- **a human** — the agent emits a rough-coordinate skeleton and a person lays it
-  out in `app.diagrams.net` (zero install; draw.io's GUI uses mxGraph layouts —
-  **not** ELK).
+- **agent hand-authors** the coordinates (tiers / grids), resolving vendor icons via
+  the `tech-diagramming-drawio` skill's bundled shape-index, then flags
+  "NEEDS HUMAN POLISH"; and/or
+- **a human** lays out / polishes in `app.diagrams.net` (zero install).
 
-**No MCP and no human in the loop → do not pick draw.io.** The fallback depends
-on the diagram's **shape** — D2 is only a substitute for graph-shaped work:
+**Graph-shaped and unattended (no human) → prefer D2**, not draw.io: D2's always-on
+ELK auto-lays-out graph work, and that is the larger, cheaper-to-maintain default.
+Reach for draw.io when the diagram is icon-rich / pixel-tuned / presentation-grade:
 
 - **Architecture / structural (graph-shaped)** → **D2** (always-on bundled ELK).
 - **Behavioural (sequence / state / activity)** → **stay in PlantUML and
@@ -72,21 +71,21 @@ agent-authorable text (PlantUML/D2); draw.io needs a human. **Review** → the p
 
 ### Tool-strength matrix (★★★ best · ★★ good · ★ weak · – n/a)
 
-| Diagram kind                               | ASCII | PlantUML          | D2  | draw.io                                                                 |
-| ------------------------------------------ | ----- | ----------------- | --- | ----------------------------------------------------------------------- |
-| Inline scratch (throwaway)                 | ★★★   | –                 | –   | –                                                                       |
-| Inline durable (aligned)                   | ★★★   | –                 | –   | –                                                                       |
-| Sequence                                   | –     | ★★★               | ★★  | ★                                                                       |
-| State / lifecycle                          | –     | ★★★               | ★   | ★                                                                       |
-| Activity / flow                            | ★     | ★★★               | ★★  | ★★                                                                      |
-| Class / object / component                 | –     | ★★★               | ★★  | ★★                                                                      |
-| Architecture / system / infra (containers) | –     | ★★                | ★★★ | ★★                                                                      |
-| ER / schema                                | –     | ★★                | ★★★ | ★★                                                                      |
-| Fancy / freeform / presentation            | –     | –                 | ★   | ★★★                                                                     |
-| Very high complexity / hand-tuned          | –     | ✗ (layout breaks) | ★★  | ★★★                                                                     |
-| Agent-authorable unattended                | ★★★   | ★★★               | ★★★ | ★★ _only_ with MCP+ELK; **✗ no MCP → D2 if graph-shaped, else a human** |
-| Human visual editing                       | –     | –                 | –   | ★★★                                                                     |
-| Human text editing                         | ★★    | ★★★               | ★★★ | –                                                                       |
+| Diagram kind                               | ASCII | PlantUML          | D2  | draw.io                                                                          |
+| ------------------------------------------ | ----- | ----------------- | --- | -------------------------------------------------------------------------------- |
+| Inline scratch (throwaway)                 | ★★★   | –                 | –   | –                                                                                |
+| Inline durable (aligned)                   | ★★★   | –                 | –   | –                                                                                |
+| Sequence                                   | –     | ★★★               | ★★  | ★                                                                                |
+| State / lifecycle                          | –     | ★★★               | ★   | ★                                                                                |
+| Activity / flow                            | ★     | ★★★               | ★★  | ★★                                                                               |
+| Class / object / component                 | –     | ★★★               | ★★  | ★★                                                                               |
+| Architecture / system / infra (containers) | –     | ★★                | ★★★ | ★★                                                                               |
+| ER / schema                                | –     | ★★                | ★★★ | ★★                                                                               |
+| Fancy / freeform / presentation            | –     | –                 | ★   | ★★★                                                                              |
+| Very high complexity / hand-tuned          | –     | ✗ (layout breaks) | ★★  | ★★★                                                                              |
+| Agent-authorable unattended                | ★★★   | ★★★               | ★★★ | ★★ hand-authored (icon-rich / hand-tuned); **graph-shaped → D2 for auto-layout** |
+| Human visual editing                       | –     | –                 | –   | ★★★                                                                              |
+| Human text editing                         | ★★    | ★★★               | ★★★ | –                                                                                |
 
 ### Decision tree (follow verbatim)
 
@@ -103,14 +102,14 @@ agent-authorable text (PlantUML/D2); draw.io needs a human. **Review** → the p
    (also: Java unavailable → prefer D2 for these types)
 6. Freeform/presentation, OR a graph so complex/dense
    no autolayout works (after decomposing)?           → draw.io → .drawio + .svg
-                                                         ⚠ needs @drawio/mcp (DRAFTS via MCP+ELK)
-                                                            OR a human to lay out; then human polishes.
-                                                         ✗ no MCP & no human? fall back BY SHAPE:
+                                                         layout: agent hand-authors (tiers/grids,
+                                                            vendor icons via the skill's shape-index)
+                                                            and/or a human polishes in app.diagrams.net.
+                                                         graph-shaped & unattended (no human)? fall back BY SHAPE:
                                                             • architecture/structural → D2
                                                             • behavioural → stay PlantUML, decompose, or human
                                                             • freeform/non-graph → source stub + flag human (#24)
-                                                            Never emit an unlaid-out .drawio; never route
-                                                            behavioural or freeform to D2.
+                                                            Never route behavioural or freeform to D2.
 ```
 
 ### The complexity escalator
@@ -124,17 +123,19 @@ PlantUML and D2 are auto-layout (agent-authorable, text). draw.io is the top
 rung — manual, powerful, **costly to edit → reserve for fancy/complex/presentation
 work or what no autolayout can render.** Behavioural diagrams
 (sequence/state/activity) **decompose and stay in PlantUML**; if a decomposed
-piece is still irreducible it escalates to **draw.io** (which needs a human or
-MCP) — **never to D2**, which is weak at behavioural layout. **Structural**
+piece is still irreducible it escalates to **draw.io** (hand-authored or
+human-polished) — **never to D2**, which is weak at behavioural layout. **Structural**
 diagrams (class/component) escalate to **D2** before draw.io.
 
-The top rung is only reachable with layout help: **`@drawio/mcp` (ELK) or a
-human.** With neither — unattended, no MCP — draw.io has no auto-layout, so the
-fallback is **by shape**: graph-shaped work (architecture/structural) stops at
-**D2** (always-on bundled ELK); behavioural work stays in PlantUML and decomposes
-(or a human takes over); freeform/non-graph work goes to a human or the
-forthcoming `tech-diagramming-svg` skill (#24). Escalate to draw.io only once a
-human or the MCP is in the loop. **Never emit an unlaid-out `.drawio`.**
+draw.io has no auto-layout — its layout is supplied by hand (the agent computes
+coordinates, and/or a human polishes in `app.diagrams.net`). So when the work is
+**graph-shaped and unattended**, prefer **D2** (always-on bundled ELK) rather than
+forcing draw.io; behavioural work stays in PlantUML and decomposes (or a human takes
+over); freeform/non-graph work goes to a human or the forthcoming
+`tech-diagramming-svg` skill (#24). Reach for draw.io when the deliverable must be an editable `.drawio` for a human,
+or needs pixel-tuned / presentation polish — an unattended icon-rich _architecture_
+is still graph-shaped, so it routes to **D2** (which auto-lays-out and can carry
+vendor icons).
 
 ### When to escalate — measure crossings, not boxes
 
@@ -152,13 +153,13 @@ predictor — a 30-node tree with zero crossings reads fine; a 12-node graph wit
    practitioner defaults, **not measured cut-points** — treat as early warnings,
    not laws.
 
-| UML type               | Real trigger (measure)                     | Heuristic early-warning             | First action → escalate to                                                                                      |
-| ---------------------- | ------------------------------------------ | ----------------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| **Sequence**           | messages crossing many lifelines           | ≥ ~8 participants / ~25+ messages   | **decompose by scenario** (`ref`) → _stay PlantUML_ (D2 weaker)                                                 |
-| **State**              | non-local transition crossings             | ~12 states / dense transitions      | decompose into sub-machines → **draw.io** if irreducible (needs MCP/human; else hand to a human — **not** D2)   |
-| **Activity**           | cross-swimlane handoffs                    | ≥ 5 swimlanes                       | decompose into sub-activities → **draw.io** if irreducible (needs MCP/human; else hand to a human — **not** D2) |
-| **Class**              | **relationship density — NOT class count** | dense association web               | decompose by package → **D2** (containers) → draw.io                                                            |
-| **Component / object** | connector crossings + nesting depth        | ~10–12 elements / > 1 nesting level | decompose ("split it") → **D2** → draw.io                                                                       |
+| UML type               | Real trigger (measure)                     | Heuristic early-warning             | First action → escalate to                                                                      |
+| ---------------------- | ------------------------------------------ | ----------------------------------- | ----------------------------------------------------------------------------------------------- |
+| **Sequence**           | messages crossing many lifelines           | ≥ ~8 participants / ~25+ messages   | **decompose by scenario** (`ref`) → _stay PlantUML_ (D2 weaker)                                 |
+| **State**              | non-local transition crossings             | ~12 states / dense transitions      | decompose into sub-machines → **draw.io** if irreducible (hand-authored or human; **not** D2)   |
+| **Activity**           | cross-swimlane handoffs                    | ≥ 5 swimlanes                       | decompose into sub-activities → **draw.io** if irreducible (hand-authored or human; **not** D2) |
+| **Class**              | **relationship density — NOT class count** | dense association web               | decompose by package → **D2** (containers) → draw.io                                            |
+| **Component / object** | connector crossings + nesting depth        | ~10–12 elements / > 1 nesting level | decompose ("split it") → **D2** → draw.io                                                       |
 
 ### Fallback when the renderer won't install
 
@@ -166,12 +167,12 @@ predictor — a 30-node tree with zero crossings reads fine; a 12-node graph wit
 deferrable. Never block on a renderer — emit the source, defer the render.** A
 cross-tool swap is allowed _only_ when the diagram type also fits the substitute.
 
-| Chosen tool            | Fallback chain                                                                                                                                     |
-| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **ASCII**              | grid-code (AI computes positions) → renders/validates — no external renderer, zero install                                                         |
-| **PlantUML** (no Java) | ① server render _if online & non-sensitive_ (privacy caveat) → ② Docker → ③ **commit `.puml`, render in CI.** Never silently swap to D2.           |
-| **D2**                 | ① `install.sh` user-space (no sudo) → ② PlantUML _only if the type also fits_ (arch, not sequence) → ③ **commit `.d2`, render in CI**              |
-| **draw.io**            | ① **commit `.drawio`; human edits/renders in the free web app `app.diagrams.net` — zero install** → ② Docker headless → ③ `@drawio/mcp` if present |
+| Chosen tool            | Fallback chain                                                                                                                                        |
+| ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **ASCII**              | grid-code (AI computes positions) → renders/validates — no external renderer, zero install                                                            |
+| **PlantUML** (no Java) | ① server render _if online & non-sensitive_ (privacy caveat) → ② Docker → ③ **commit `.puml`, render in CI.** Never silently swap to D2.              |
+| **D2**                 | ① `install.sh` user-space (no sudo) → ② PlantUML _only if the type also fits_ (arch, not sequence) → ③ **commit `.d2`, render in CI**                 |
+| **draw.io**            | ① **commit `.drawio`; human edits/renders in the free web app `app.diagrams.net` — zero install** → ② Docker headless → ③ commit source, render in CI |
 
 ## 2. Storage convention — source + clean SVG (pair)
 

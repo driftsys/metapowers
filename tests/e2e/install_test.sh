@@ -66,6 +66,18 @@ test_install_delivers_rule_supporting_resource() {
         "expected the delivered wip-gate.sh to carry its content, not be empty"
 }
 
+test_install_delivers_drawio_shape_index() {
+    # The tech-diagramming-drawio skill ships data/shape-index.jsonl.gz as a supporting
+    # resource. upskill >= 0.7.4 must deliver it alongside the SKILL body.
+    upskill add "$BUNDLE_PATH" --project --quiet
+    assert "[ -f .claude/skills/tech-diagramming-drawio/data/shape-index.jsonl.gz ]" \
+        "expected shape-index.jsonl.gz delivered next to the Claude skill"
+    assert "[ -f .agents/skills/tech-diagramming-drawio/data/shape-index.jsonl.gz ]" \
+        "expected shape-index.jsonl.gz delivered next to the opencode skill"
+    assert "gunzip -c .claude/skills/tech-diagramming-drawio/data/shape-index.jsonl.gz | grep -qi '\"title\":\"ec2\"'" \
+        "expected the delivered shape-index to carry shape entries, not be empty"
+}
+
 test_colocated_agent_keeps_divergent_name() {
     # The sdd-gardener agent is co-located in the sdd-gardening/ directory but keeps
     # its own divergent name (upskill >= 0.7.4 relaxed co-location naming). It must

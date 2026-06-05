@@ -1,7 +1,7 @@
 ---
 schema: 1
 name: tech-diagramming-drawio
-description: Use when tech-diagramming has selected draw.io — high-complexity diagrams beyond what PlantUML/D2 autolayout handles after decomposition, hand-tuned or freeform layouts, presentation-grade stakeholder diagrams, and icon-rich cloud architecture (AWS/Azure/GCP/K8s shape libraries). Covers the agent-draft-plus-human-polish model, optional MCP, mxGraphModel XML rules, the source+SVG pair, and the Phase-1 self-check.
+description: Use when tech-diagramming has selected draw.io — high-complexity diagrams beyond what PlantUML/D2 autolayout handles after decomposition, hand-tuned or freeform layouts, presentation-grade stakeholder diagrams, and icon-rich cloud architecture (AWS/Azure/GCP/K8s shape libraries). Covers the agent-draft-plus-human-polish model, the bundled shape-index for vendor icons, mxGraphModel XML rules, the source+SVG pair, and the Phase-1 self-check.
 license: MIT
 metadata:
   version: 0.1.0
@@ -11,9 +11,10 @@ metadata:
 
 You are here because `tech-diagramming` already selected draw.io. This skill is
 the doing layer: when draw.io is the right top rung, how much an agent can
-actually draft, the optional MCP accelerator, how to hand-scaffold valid
-mxGraphModel XML, the source+SVG pair, the honest house-style gaps, and a
-pre-commit self-check. It does NOT redo tool selection — the umbrella owns that.
+actually draft (no MCP needed), the bundled shape-index for vendor icons, how to
+hand-scaffold valid mxGraphModel XML, the source+SVG pair, the honest house-style
+gaps, and a pre-commit self-check. It does NOT redo tool selection — the umbrella
+owns that.
 
 Core principle: **author diffable mxfile XML, render to a clean SVG, never claim
 the draft is finished.** Edit the uncompressed `.drawio`, re-render, commit the
@@ -43,58 +44,67 @@ collapsed or the diagram needs hand-tuning, vendor icons, or presentation gloss.
 
 ## Agent capability — agent drafts, human polishes (load-bearing)
 
-draw.io is **not human-only.** An agent CAN produce a good **80–90% draft** using
-an MCP server, ELK auto-layout, and this skill. Real-world evidence corrects two
-common misconceptions: that draw.io needs a human from the first stroke (it does
-not, for most diagrams), and that an agent draft is a finished diagram (it is
-not).
+draw.io is **not human-only, and not MCP-gated.** An agent CAN author a good draft
+**with no MCP at all** — hand-author the mxGraphModel XML below, resolve vendor icons
+via the bundled shape-index, and render the pair. (Demonstrated: a clean multi-tier
+AWS diagram with real `mxgraph.aws4.*` icons, hand-placed.) Two honest limits remain:
 
-The conditions that make the draft good:
+1. **Layout at high crossing-density.** Hand-placing coordinates works well for
+   tiered / grouped diagrams; it degrades as edge crossings grow. A real layout engine
+   beats hand-placement there — which is why **D2 owns auto-layout graph-shaped work**
+   and draw.io is reserved for the hand-tuned / icon-rich / presentation niche (see the
+   umbrella's escalator).
+2. **Final polish needs a human.** Label de-overlap, vendor-icon confirmation, and
+   pixel-tuning typically need a human pass that scales with complexity.
 
-1. **Drive ELK `postLayout` explicitly.** The official MCP defaults to _manual
-   coordinates_ — you must request ELK auto-layout to get it. An agent that does
-   not ask for ELK gets hand-placed boxes, not a laid-out graph.
-2. **Label de-overlap, vendor-icon correctness, and final polish typically need
-   a human pass**, and that pass scales with complexity. The agent gets the
-   structure right; a human resolves overlapping labels, confirms the right
-   vendor icon, and tunes the final layout.
-3. **Only freeform / pixel-tuned / artistic diagrams need a human throughout.**
-   Everything else is agent-draft-then-human-polish.
+So the rule is: **agent drafts, human polishes.** Always flag the draft as needing
+review. **Never claim a draft is finished.** The Phase-1 self-check below requires an
+explicit "NEEDS HUMAN POLISH" handoff note on every draft.
 
-So the rule is: **agent drafts, human polishes.** Always flag the draft as
-needing review. **Never claim a draft is finished.** The Phase-1 self-check below
-requires an explicit "NEEDS HUMAN POLISH" handoff note on every draft.
+## Vendor icons — the bundled shape-index
 
-## MCP — a recommended accelerator, not required
+draw.io ships 10k+ shapes; finding the right `mxgraph.*` style string by name is the
+one real friction in an icon-rich draft. This skill bundles a **shape-index** so you
+look the name up instead of guessing (or grepping the app bundle):
 
-An MCP server materially improves agent drafts; draw.io still works without one.
-**Recommend it** when draw.io diagrams come up more than occasionally — weighed
-against its setup cost (a Node-based MCP server registered in the client, not a
-static dependency). To add it, see the installer (`tech-diagramming-drawio`
-AGENT — opt-in).
+- **File:** `data/shape-index.jsonl.gz` — one JSON object per line
+  (`{style,w,h,title,tags,type}`), ~10k palette shapes (AWS / Azure / GCP / K8s / Cisco
+  / UML / …), derived from the official draw.io libraries (Apache-2.0; see `data/NOTICE`).
+- **Look up a shape** — `grep` (always available) or `jq` over the gunzipped index:
 
-- **`@drawio/mcp`** (official, jgraph; vendor-backed) or **lgazo's** community
-  server.
-- **What it buys (real, not cosmetic):** `search_shapes` over the 10k+ shape
-  libraries (correct vendor icons — AWS/Azure/GCP/K8s — by name), valid
-  `mxGraphModel` generation (avoids malformed-XML pitfalls), and ELK `postLayout`
-  so the draft is laid out, not hand-placed.
-- **What it does NOT buy:** layout _judgment_ — even with ELK a human still
-  resolves label overlap and final polish. So it is never required.
+  ```bash
+  # by title (grep) — read the style string off the matching line:
+  gunzip -c data/shape-index.jsonl.gz | grep -i '"title":"[^"]*ec2'
+  # or with jq:
+  gunzip -c data/shape-index.jsonl.gz | jq -rc 'select(.title|test("EC2";"i")) | {title,style}'
+  ```
 
-**Without an MCP** you lose shape search, model generation, and ELK — so you
-**cannot** produce a good _unattended_ draft. Two honest paths remain:
+  Prefer `jq` for reliable matching; the `grep` form is a no-dependency fallback — if it misses, use the `jq` query (it parses the field, not the line text).
 
-1. **A human is in the loop** (the real draw.io case): hand-scaffold the mxfile
-   XML below as a rough skeleton, then a person lays it out and polishes in
-   `app.diagrams.net` (its GUI uses mxGraph layouts — not ELK). This is the
-   deliberate no-MCP path.
-2. **No human and no MCP:** do not force draw.io. The umbrella selector falls
-   back to **D2** (always-on ELK) — see `tech-diagramming` §1.
+  Use the **full** `style` value the index returns, verbatim, on your `mxCell` — the
+  real AWS-4 resource-icon style is longer than the recognisable tail shown here
+  (`…shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.ec2;`) — and use the `w`/`h`
+  as the cell geometry.
+
+## Layout — no MCP, two honest paths
+
+There is **no MCP** in this skill: every draw.io MCP server was verified unable to
+deliver headless vendor-icon layout-to-file, and an agent does not need one. Lay out one
+of two ways:
+
+1. **Agent hand-authors** the mxGraphModel XML below with computed coordinates (tiers /
+   grids / columns), using the shape-index for icons — then flag "NEEDS HUMAN POLISH".
+   Good for icon-rich and moderately-structured diagrams.
+2. **Human in the loop:** emit a rough-coordinate skeleton and a person lays it out and
+   polishes in `app.diagrams.net` (zero install). The deliberate path for freeform /
+   pixel-tuned / presentation-grade work.
+
+If the diagram is graph-shaped and wants automatic layout with no human, that is **D2's**
+job, not draw.io's — the umbrella routes there first (`tech-diagramming` §1).
 
 ## mxGraphModel XML — hand-scaffolding rules
 
-When you scaffold without an MCP, follow the official jgraph skill's rules:
+When hand-scaffolding the mxfile XML, follow these rules:
 
 - Root is `<mxGraphModel adaptiveColors="auto">` wrapping a `<root>`.
 - `<root>` must contain `mxCell id="0"` (the model root) and
