@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.1.1] (2026-06-06)
+
+### Refactoring
+
+- reframe tech-diagramming-drawio as a pure no-MCP skill ([b63fc56])
+
+### Features
+
+- **sdd-gardening:** substrate-neutral gardener on the ratified docs/wip
+  taxonomy ([50a7ae1]), closes 39.
+- **sdd:** ratify working-memory lifecycle — docs/wip taxonomy & review-thread
+  gate ([fd2a7a4]), closes 19.
+- teach tech-diagramming-d2 compact layout defaults ([238e84c])
+
+[0.1.1]: https://github.com/driftsys/metapowers/compare/v0.1.0...v0.1.1
+[b63fc56]: https://github.com/driftsys/metapowers/commit/b63fc56
+[50a7ae1]: https://github.com/driftsys/metapowers/commit/50a7ae1
+[fd2a7a4]: https://github.com/driftsys/metapowers/commit/fd2a7a4
+[238e84c]: https://github.com/driftsys/metapowers/commit/238e84c
+
 ## 0.1.0 (2026-06-04)
 
 ### Documentation
