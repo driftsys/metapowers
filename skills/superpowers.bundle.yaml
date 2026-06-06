@@ -6,10 +6,10 @@ items: {}
 plugins:
   superpowers:
     claude:
-      source: obra/superpowers-marketplace
-      marketplace: superpowers-marketplace
+      source: anthropics/claude-plugins-official
+      marketplace: claude-plugins-official
       plugin: superpowers
-      install_url: https://github.com/obra/superpowers#install
+      install_url: https://github.com/anthropics/claude-plugins-official
     copilot:
       source: obra/superpowers-marketplace
       marketplace: superpowers-marketplace
