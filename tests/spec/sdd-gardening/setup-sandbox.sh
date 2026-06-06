@@ -27,12 +27,12 @@
 
 set -euo pipefail
 
-MODE="${1:?usage: setup-sandbox.sh <green|override|red> <dir>}"
-DIR="${2:?usage: setup-sandbox.sh <green|override|red> <dir>}"
+MODE="${1:?usage: setup-sandbox.sh <green|green-empty|override|red> <dir>}"
+DIR="${2:?usage: setup-sandbox.sh <green|green-empty|override|red> <dir>}"
 
 case "$MODE" in
-  green | override | red) ;;
-  *) echo "mode must be 'green', 'override', or 'red', got '$MODE'" >&2; exit 2 ;;
+  green | green-empty | override | red) ;;
+  *) echo "mode must be 'green', 'green-empty', 'override', or 'red', got '$MODE'" >&2; exit 2 ;;
 esac
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -59,6 +59,12 @@ git switch -q -c feat/retry-backoff
 # Lay down the finished feature: working memory + implementation + tests.
 cp -R "$FIXTURES"/. .
 
+# green-empty: a finished feature with NO Superpowers working memory — the rule
+# must NOT fabricate gardening here (over-fire probe).
+if [ "$MODE" = "green-empty" ]; then
+  rm -rf docs/wip
+fi
+
 # Tests must be green BEFORE the agent runs (gardening reconciles against as-built).
 # Suppress bytecode so no __pycache__ is staged into the seed commit below.
 PYTHONDONTWRITEBYTECODE=1 python3 tests/test_retry.py > /dev/null
@@ -66,7 +72,7 @@ PYTHONDONTWRITEBYTECODE=1 python3 tests/test_retry.py > /dev/null
 git add -A
 git commit -q -m "feat: HTTP client retry with backoff (wip not yet gardened)"
 
-if [ "$MODE" = "green" ] || [ "$MODE" = "override" ]; then
+if [ "$MODE" = "green" ] || [ "$MODE" = "green-empty" ] || [ "$MODE" = "override" ]; then
   upskill add "$BUNDLE" --project --quiet
 fi
 

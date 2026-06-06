@@ -152,5 +152,5 @@ rule in the sandbox's `.claude/rules/` — and is **inherited into the
 S2 is S1's negative control: the fingerprint appears only when the override is
 installed, proving the seam — not chance — produced it, and that descriptive prose
 is the default. `acme-sdd-substrate` is a synthetic stand-in for a real downstream
-substrate (e.g. markspec); a markspec-backed case is deferred to #18. Record runs
+substrate (e.g. markspec); a markspec-backed case is deferred to #46. Record runs
 in `results-dev-role-YYYY-MM-DD.md` (see `results-dev-role-2026-06-06.md`).
