@@ -4,7 +4,7 @@ name: tech-diagramming-drawio
 description: Use when tech-diagramming has selected draw.io — high-complexity diagrams beyond what PlantUML/D2 autolayout handles after decomposition, hand-tuned or freeform layouts, presentation-grade stakeholder diagrams, and icon-rich cloud architecture (AWS/Azure/GCP/K8s shape libraries). Covers the agent-draft-plus-human-polish model, the bundled shape-index for vendor icons, mxGraphModel XML rules, the source+SVG pair, and the Phase-1 self-check.
 license: MIT
 metadata:
-  version: 0.1.1
+  version: 0.2.0
 ---
 
 ## Overview

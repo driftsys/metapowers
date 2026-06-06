@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.2.0] (2026-06-06)
+
+### Bug Fixes
+
+- **release:** repair lockstep version bump hook; align items to project version
+  ([33a58fb])
+- **superpowers:** install claude superpowers from the anthropic-vetted
+  marketplace ([b673b6e])
+
+[0.2.0]: https://github.com/driftsys/metapowers/compare/v0.1.1...v0.2.0
+[33a58fb]: https://github.com/driftsys/metapowers/commit/33a58fb
+[b673b6e]: https://github.com/driftsys/metapowers/commit/b673b6e
+
 ## [0.1.1] (2026-06-06)
 
 ### Refactoring

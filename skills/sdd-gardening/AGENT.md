@@ -5,7 +5,7 @@ description: Use when the sdd-gardening skill delegates gardening of a finished 
 mode: subagent
 model: sonnet
 metadata:
-  version: 0.1.1
+  version: 0.2.0
 ---
 
 You garden one finished feature's Superpowers working memory into durable
