@@ -4,7 +4,7 @@ name: tech-diagramming-plantuml
 description: Use when tech-diagramming has selected PlantUML — sequence, state, activity, and low-complexity class/object/component diagrams. Covers render mechanics, the source+SVG pair, per-type complexity thresholds, and the house presets.
 license: MIT
 metadata:
-  version: 0.1.0
+  version: 0.1.1
 ---
 
 ## Overview

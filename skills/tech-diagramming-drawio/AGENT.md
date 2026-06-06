@@ -6,7 +6,7 @@ license: MIT
 mode: subagent
 model: haiku
 metadata:
-  version: 0.1.0
+  version: 0.1.1
 ---
 
 You are a mechanical install specialist for draw.io desktop (the `drawio` CLI,

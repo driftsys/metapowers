@@ -4,7 +4,7 @@ name: tech-diagramming
 description: Use when creating or reviewing any technical diagram — selects the right tool (ASCII/PlantUML/D2/draw.io) by journey and complexity, sets the source+SVG storage convention and house style, and dispatches to the per-format skill.
 license: MIT
 metadata:
-  version: 0.1.0
+  version: 0.1.1
 ---
 
 ## Overview

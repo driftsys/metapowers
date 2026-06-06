@@ -3,7 +3,7 @@ schema: 1
 name: sdd-working-memory-lifecycle
 description: Standing guardrails for Superpowers working memory — where specs/plans live, gardening them into durable docs before a PR lands, and editing those records in place. Applies when authoring a spec/plan or finishing a branch.
 metadata:
-  version: 0.2.0
+  version: 0.1.1
 ---
 
 A Superpowers session produces a **spec** and a **plan** — working memory.

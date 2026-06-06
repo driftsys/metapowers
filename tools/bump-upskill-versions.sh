@@ -6,8 +6,11 @@
 # so that new items get bumped without editing config — a workaround until
 # git-std supports globs in `[[version_files]]` (driftsys/git-std#506).
 #
-# Match strategy: the line `  version: "..."` (2-space indent — the canonical
-# nesting under `metadata:`). Top-level YAML keys are flush-left and untouched.
+# Match strategy: the line `  version: <value>` (2-space indent — the canonical
+# nesting under `metadata:`). `upskill fmt` writes the value unquoted, so the
+# whole line is matched regardless of quoting and rewritten unquoted to stay
+# fmt-stable. Top-level YAML keys are flush-left and untouched. A discovered
+# file with no such line is reported on stderr rather than silently skipped.
 # The hook stages every file it modifies so git-std's subsequent commit picks
 # them up (git-std does not auto-stage hook-modified files).
 
@@ -27,14 +30,22 @@ done < <(
 )
 
 count=0
+missing=0
 for file in "${files[@]}"; do
-    if grep -qE '^  version: "[^"]*"$' "$file"; then
-        sed -i.bak -E 's/^  version: "[^"]*"$/  version: "'"$new_version"'"/' "$file"
+    if grep -qE '^  version:' "$file"; then
+        sed -i.bak -E 's|^  version:.*$|  version: '"$new_version"'|' "$file"
         rm -f "$file.bak"
         git add "$file"
         printf '  %s: bumped to %s\n' "$file" "$new_version"
         count=$((count + 1))
+    else
+        printf '  WARNING: %s has no metadata version line — skipped\n' "$file" >&2
+        missing=$((missing + 1))
     fi
 done
 
-printf 'Bumped %d upskill SSOT files to %s\n' "$count" "$new_version"
+printf 'Bumped %d upskill SSOT files to %s' "$count" "$new_version"
+if [ "$missing" -gt 0 ]; then
+    printf ' (%d skipped — missing version line)' "$missing"
+fi
+printf '\n'
