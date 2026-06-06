@@ -14,4 +14,4 @@ requires:
 - name: superpowers
 - name: diagrampowers
 metadata:
-  version: 0.2.0
+  version: 0.1.1
