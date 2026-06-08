@@ -5,7 +5,7 @@ description: Use when the sdd-gardening skill delegates gardening of a finished 
 mode: subagent
 model: sonnet
 metadata:
-  version: 0.3.0
+  version: 0.4.0
 ---
 
 You garden one finished feature's Superpowers working memory into durable
@@ -58,8 +58,11 @@ rationale).
    fact may be intended behaviour the code got wrong, so the human decides. Report
    a fact the code refutes (command, path, count, capability, flag, dependency)
    under `divergences:`, and a policy, preference, or legal line (`CONTRIBUTING`/
-   `AGENTS` normative rules, a `NOTICE(S)` entry) under `offers:`. The dispatcher
-   relays both; the human applies the fix.
+   `AGENTS` normative rules, a `NOTICE(S)` entry) under `offers:`. Treat an
+   **omission** as drift too: a feature that adds a vendored or third-party
+   dependency absent from `NOTICE(S)`, or a user-facing capability absent from a
+   README feature list — flag it even though no doc yet references it. The
+   dispatcher relays both; the human applies the fix.
 7. **Rewrite in place**: when work changes an existing record, edit it; create a
    new record only for a genuinely new topic.
 8. **Archive**: in collaborative mode (`docs/wip/` tracked), `git mv` the raw

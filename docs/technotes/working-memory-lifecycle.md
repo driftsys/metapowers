@@ -245,6 +245,37 @@ greppable `AD-NNNN` id, so requirements and tests can reference a specific
 decision. Each decision is its own file, `docs/decisions/<NNNN-slug>.md`, with an
 in-doc heading `# AD-NNNN: Title`. See §7 for the template.
 
+### 6.4 Project-doc consistency pass (flag-first)
+
+After reconciling the durable `docs/` records (§6, steps 5–6), gardening makes one
+more pass over the project's **human-facing docs** — the READMEs, `AGENTS.md`/
+`CLAUDE.md`, `CONTRIBUTING`, and `NOTICE(S)` — to keep them honest with the
+as-built code. It is **bounded and flag-first**:
+
+- **Bounded by a diff-gate.** From the feature's code+test diff, gardening derives
+  the _changed surface_ (commands, paths, counts, capabilities, flags, new
+  dependencies) and only examines the canonical docs that reference it. It never
+  audits the whole repo and never re-flags pre-existing drift unrelated to the
+  feature — cost scales with the feature's doc-observable surface, not the repo.
+- **Flag, never edit.** Gardening **surfaces** drift in its digest (stale facts
+  under `divergences:`, policy/legal under `offers:`) and leaves the human to apply
+  the fix. It does not autonomously rewrite a human-facing doc. The reason is
+  load-bearing: a stale-looking fact may be _intended behaviour the code got wrong_
+  (the spec/code conflict, not the doc), and policy/legal text (`CONTRIBUTING`
+  rules, `NOTICE(S)` attribution) is human-authored — code is not its source of
+  truth. This is the same boundary §6 draws for system-architecture docs, extended
+  to all human-curated docs.
+- **Two drift shapes.** A **stale reference** (a doc names something the code
+  refutes — a renamed command, a wrong count) and an **omission** (the feature adds
+  a vendored/third-party dependency absent from `NOTICE(S)`, or a user-facing
+  capability absent from a README feature list). Both are flagged.
+
+This pass is why shipped docs can be trusted to describe the system as-built: every
+drift a feature introduces is surfaced before the PR lands, without the gardener
+ever overwriting human intent. Forward-looking concepts stay in `docs/wip/` until
+implemented and gardened in — they never leak into shipped docs (the standing rule
+in `sdd-working-memory-lifecycle`).
+
 ## 7. Output contract — minimal, git-backed templates
 
 Minimal, git-backed, standards-aligned. Metadata git already holds (author, date,
