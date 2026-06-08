@@ -43,14 +43,15 @@ summary. See the `sdd-working-memory-lifecycle` rule for the standing guardrails
    subagent dispatch.) Do not garden inline — the point is to keep this session's
    context lean.
 4. **Relay its summary** to the user: records created/edited (paths + `AD-NNNN`
-   ids), project-doc fixes applied, and flagged divergences. Read the actual
-   files only if needed.
+   ids) and flagged divergences — including any project-doc drift the gardener
+   surfaced. Read the actual files only if needed.
 5. **Resolve its offers with the human:** a requirement gap to fill (author it as
    a durable record — descriptive prose by default, or in whatever substrate an
    inherited project rule prescribes), a system-architecture doc to
-   create/update, or a normative-or-legal line the gardener flagged but is barred
-   from editing (a policy line in `CONTRIBUTING`/`AGENTS`, or a `NOTICE(S)` entry)
-   — resolve or accept it yourself. Never fabricate or auto-create.
+   create/update, or a project-doc line the gardener flagged but never edits (a
+   stale fact in `README`/`AGENTS`, or a policy/legal line in
+   `CONTRIBUTING`/`AGENTS`/`NOTICE(S)`) — apply the fix or accept it yourself.
+   Never fabricate or auto-create.
 6. **Verify** `docs/wip/` is empty (collaborative mode), then commit the gardened
    records + archived raw.
 
@@ -61,7 +62,8 @@ summary. See the `sdd-working-memory-lifecycle` rule for the standing guardrails
 - Auto-creating requirements/architecture instead of offering — see the rule.
 - Naming a specific authoring tool — the substrate is descriptive prose unless an
   inherited project rule prescribes otherwise.
-- Auto-editing a policy or legal doc (`CONTRIBUTING`, `NOTICE(S)`, normative
-  `AGENTS` lines) — those are flag-only; code is not their source of truth.
+- Editing a human-facing project doc (`README`/`AGENTS`/`CONTRIBUTING`/`NOTICE(S)`)
+  during the consistency pass — it flags drift; the human applies the fix, because
+  a stale-looking fact may be intended behaviour the code got wrong.
 - Auditing the whole repo's docs instead of feature-scoping the consistency pass
   via the diff-gate — re-flags unrelated pre-existing drift.

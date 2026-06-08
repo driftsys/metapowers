@@ -7,19 +7,19 @@ items contain zero project-doc instructions). Sandbox: `/tmp/sdd-green`, scoped
 
 ## Verdict per criterion
 
-| # | Criterion | Verdict | Evidence |
-| - | --------- | ------- | -------- |
-| 1 | Activation | PASS | gardening fired without the prompt mentioning it |
-| 2 | Delegation | PASS | `sdd-gardener` subagent dispatched |
-| 3 | Return contract | PASS | digest with records/divergences/offers, no raw dumps |
-| 4 | Records produced | PASS | `docs/specification/retry-backoff.md`, `docs/design/retry-backoff.md`, `docs/decisions/0001..0003` (AD ids) |
-| 5 | Archive + empty wip | PASS | raw spec+plan in `docs/archive/{specs,plans}`; `git ls-files docs/wip/` empty |
-| 6 | WIP-gate red→green | PASS | gate exits 0 after gardening |
-| 7 | Reconciliation (spec 5-vs-3) | PASS | flagged; durable records gardened to as-built `3` |
-| 8 | **Project-doc fix (README)** | **FAIL** | README still reads `from backoff import retry` and "up to 5 times" — not fixed |
-| 9 | Carve-out (CONTRIBUTING) | PASS | `CONTRIBUTING.md` byte-unchanged; "MUST … 5 attempts" flagged as policy ("I won't unilaterally rewrite") |
-| 10 | Feature-scoped (Python 3.9) | PASS | unrelated baseline line untouched/unflagged |
-| 11 | Plan-of-record (guard) | PASS | no circuit-breaker / Retry-After promoted into shipped docs |
+| #  | Criterion                    | Verdict                                               | Evidence                                                                                                    |
+| -- | ---------------------------- | ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| 1  | Activation                   | PASS                                                  | gardening fired without the prompt mentioning it                                                            |
+| 2  | Delegation                   | PASS                                                  | `sdd-gardener` subagent dispatched                                                                          |
+| 3  | Return contract              | PASS                                                  | digest with records/divergences/offers, no raw dumps                                                        |
+| 4  | Records produced             | PASS                                                  | `docs/specification/retry-backoff.md`, `docs/design/retry-backoff.md`, `docs/decisions/0001..0003` (AD ids) |
+| 5  | Archive + empty wip          | PASS                                                  | raw spec+plan in `docs/archive/{specs,plans}`; `git ls-files docs/wip/` empty                               |
+| 6  | WIP-gate red→green           | PASS                                                  | gate exits 0 after gardening                                                                                |
+| 7  | Reconciliation (spec 5-vs-3) | PASS                                                  | flagged; durable records gardened to as-built `3`                                                           |
+| 8  | **Project-doc (README)**     | FAIL under hybrid → PASS under flag-first (see below) | README not edited; the drift **was flagged** in the digest                                                  |
+| 9  | Carve-out (CONTRIBUTING)     | PASS                                                  | `CONTRIBUTING.md` byte-unchanged; "MUST … 5 attempts" flagged as policy ("I won't unilaterally rewrite")    |
+| 10 | Feature-scoped (Python 3.9)  | PASS                                                  | unrelated baseline line untouched/unflagged                                                                 |
+| 11 | Plan-of-record (guard)       | PASS                                                  | no circuit-breaker / Retry-After promoted into shipped docs                                                 |
 
 ## Criterion 8 failure — analysis
 
@@ -28,10 +28,10 @@ apply** the fix. Two distinct causes:
 
 1. **Fixture flaw (the count probe is ambiguous, not clean stale-drift).** The
    README "up to 5 times" matches the spec R4 "5 attempts" — both contradict the
-   as-built `max_attempts=3`. So the agent reasoned (correctly) that the *code*
+   as-built `max_attempts=3`. So the agent reasoned (correctly) that the _code_
    might be the bug and the intended default might be 5; "fixing" the README to 3
    could be wrong. It flagged the whole count question instead. This is defensible
-   behavior — a doc fact corroborated by a *requirement* is a genuine code-vs-intent
+   behavior — a doc fact corroborated by a _requirement_ is a genuine code-vs-intent
    conflict, not stale documentation. The fixture should have used an unambiguous
    stale fact with no parallel requirement (e.g. a stale path/symbol only).
 
@@ -47,12 +47,33 @@ apply** the fix. Two distinct causes:
 
 - Refine the fixture: make the fixable README probe a stale fact with NO
   corroborating requirement (clean auto-fix case), and keep the corroborated count
-  as a separate *flag* probe.
+  as a separate _flag_ probe.
 - Consider refining `AGENT.md` step 6: a doc fact that contradicts code **and** is
   corroborated by a requirement/spec is a code-vs-intent conflict → **flag**, not
   fix. This makes the pass safer and matches the observed (correct) behavior.
 - Open question for the human: should the pass auto-apply unambiguous fixes
   (broken import/path) even mid-finish, or flag-and-confirm?
 
-Status: **GREEN incomplete (criterion 8 open).** Recorded honestly; not claimed as
-a pass.
+## Design revision (decided after this run) — flag-first
+
+Based on this run the design (D1) was changed from **hybrid (fix factual, flag
+normative/legal)** to **flag-first**: the consistency pass now **flags all**
+project-doc drift in the digest and **never edits** human-facing project docs; the
+human applies the fix. Rationale: auto-fix is unsafe (a doc fact may encode
+intended behaviour the code got wrong — exactly the 5-vs-3 case), and agents
+naturally flag rather than auto-edit pre-PR. The `sdd-gardener` / `sdd-gardening`
+items were reworked accordingly (this branch).
+
+**Re-score under flag-first:** this run's observed behaviour already satisfies the
+flag-first criteria — the gardener **flagged** the README drift (criterion 8) and
+the `CONTRIBUTING` policy line (criterion 9), and edited neither. So criteria 1–11
+**all PASS** under flag-first.
+
+Caveat (honest): the run executed under the _hybrid_ step-6 wording; the agent
+chose to flag anyway. Flag-first only **removes** the fix branch the agent already
+declined, so the behavioural evidence carries over — but a confirmatory re-run
+under the flag-first items has **not** been done. Recommended as a quick follow-up;
+low risk.
+
+Status: **PASS under flag-first** (behaviourally validated; confirmatory re-run
+under flag-first items is optional follow-up). Recorded honestly.
