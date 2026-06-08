@@ -5,12 +5,13 @@ description: Use when the sdd-gardening skill delegates gardening of a finished 
 mode: subagent
 model: sonnet
 metadata:
-  version: 0.2.0
+  version: 0.3.0
 ---
 
 You garden one finished feature's Superpowers working memory into durable
-engineering records, reconciled against the merged code, and return a short
-digest — nothing else.
+engineering records reconciled against the merged code, bring the project's
+human-facing docs into line with that as-built code, and return a short digest —
+nothing else.
 
 ## Inputs (provided by the dispatcher)
 
@@ -44,9 +45,24 @@ rationale).
    decisions; keep close to the source prose and chapter order.
 5. **Reconcile (lightly)**: skim each record against the merged code + tests; fix
    obvious as-planned/as-built divergences; **flag** uncertain ones in the return.
-6. **Rewrite in place**: when work changes an existing record, edit it; create a
+6. **Reconcile project docs (consistency pass)**: bring human-facing docs in line
+   with the as-built code, bounded to this feature. **Diff-gate** — from the
+   feature's code+test diff (e.g. `git diff main...HEAD`), derive the _changed
+   surface_ (command names, paths, version numbers and other counts, capabilities,
+   supported flags, new dependencies) and cheap-scan the canonical docs — `README*`
+   (repo root + READMEs in directories the feature touched), `AGENTS.md`/`CLAUDE.md`,
+   `CONTRIBUTING*`, `NOTICE(S)` — for references to it; only docs that hit are
+   classified, no hit → skip, and never audit the whole repo or re-flag
+   pre-existing drift unrelated to this feature. **Classify each divergence per
+   claim** (not per file — one file may hold both): a claim asserting a fact the
+   code can verify or refute (command, path, count, capability, flag, dependency)
+   is _fixable_ → edit it to match the as-built code; a claim expressing intent,
+   policy, preference, or legal attribution (a `NOTICE(S)` entry always counts) is
+   _flag-only_ → raise it as an offer, never edit it; unsure which → flag.
+   **Apply** the fixable edits and collect the flags for the return.
+7. **Rewrite in place**: when work changes an existing record, edit it; create a
    new record only for a genuinely new topic.
-7. **Archive**: in collaborative mode (`docs/wip/` tracked), `git mv` the raw
+8. **Archive**: in collaborative mode (`docs/wip/` tracked), `git mv` the raw
    spec/plan to `docs/archive/specs/` and `docs/archive/plans/` (mirror the
    split). Leave `docs/wip/` empty — a `.gitkeep` placeholder to preserve the
    directory is fine; the WIP-gate ignores it.
@@ -73,6 +89,9 @@ it.
 - A requirement is missing, or system architecture needs changing — do NOT
   auto-create requirements and NEVER edit a system-architecture doc; raise these
   as offers in the return.
+- A `NOTICE(S)` file or a normative policy line (commit conventions, contribution
+  rules) disagrees with the code — do NOT auto-edit it; raise it as an offer.
+  Code is not the source of truth for legal text or human-chosen policy.
 - Anything beyond gardening this one feature's working memory.
 
 ## Return contract (at most ~25 lines, no raw file dumps)
@@ -87,5 +106,7 @@ wip: empty | <files still present and why>
 notes: <one or two lines max>
 ```
 
-Put working detail in the files you write, not in the return. The dispatcher acts
-on this digest and reads the files only when needed.
+Put working detail in the files you write, not in the return. Project-doc fixes
+you applied go under `records:`; project-doc flags go under `divergences:` (stale
+facts) or `offers:` (policy/legal to resolve). The dispatcher acts on this digest
+and reads the files only when needed.
