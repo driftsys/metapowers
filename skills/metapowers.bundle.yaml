@@ -1,17 +1,13 @@
 schema: 1
 name: metapowers
-description: The metapowers baseline — Superpowers (via plugin) plus durable engineering-documentation rules and skills
+description: The metapowers baseline — composes Superpowers (TDD/brainstorm/plan, via plugin), gardenpowers (the engineering-documentation layer), and diagrampowers (technical diagramming), plus the Karpathy coding-guidelines rule
 license: MIT
 items:
   rules:
   - karpathy-guidelines
-  - sdd-working-memory-lifecycle
-  skills:
-  - sdd-gardening
-  agents:
-  - sdd-gardener
 requires:
 - name: superpowers
+- name: gardenpowers
 - name: diagrampowers
 metadata:
-  version: 0.2.0
+  version: 0.3.0

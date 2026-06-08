@@ -1,0 +1,13 @@
+schema: 1
+name: gardenpowers
+description: The engineering-documentation layer — gardens Superpowers working memory (specs, plans) into durable, traceable records (requirements, design, decisions, technotes) reconciled against the code, and flags drift between shipped docs and the as-built code
+license: MIT
+items:
+  rules:
+  - sdd-working-memory-lifecycle
+  skills:
+  - sdd-gardening
+  agents:
+  - sdd-gardener
+metadata:
+  version: 0.1.0
