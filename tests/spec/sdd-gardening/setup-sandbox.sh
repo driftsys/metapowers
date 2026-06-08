@@ -51,7 +51,10 @@ git config user.name "sdd-gardening harness"
 
 # main has only a baseline so the feature branch carries (and tracks) docs/wip/.
 printf '# sandbox\n\nA throwaway consumer project for the sdd-gardening dev-role harness.\n\nRequires Python 3.9 or newer.\n' > README.md
-git add README.md
+# A pre-existing NOTICE that does NOT mention the vendored jitter the feature adds
+# (src/vendor/jitter.py) — the consistency pass should flag the missing attribution.
+printf 'NOTICE\n\nThis product bundles third-party software:\n\n- requests (Apache-2.0)\n' > NOTICE
+git add README.md NOTICE
 git commit -q -m "chore: baseline"
 
 git switch -q -c feat/retry-backoff

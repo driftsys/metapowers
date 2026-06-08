@@ -75,11 +75,53 @@ flag-first criteria — the gardener **flagged** the README drift (criterion 8) 
 the `CONTRIBUTING` policy line (criterion 9), and edited neither. So criteria 1–11
 **all PASS** under flag-first.
 
-Caveat (honest): the run executed under the _hybrid_ step-6 wording; the agent
+Caveat (honest): this run executed under the _hybrid_ step-6 wording; the agent
 chose to flag anyway. Flag-first only **removes** the fix branch the agent already
 declined, so the behavioural evidence carries over — but a confirmatory re-run
-under the flag-first items has **not** been done. Recommended as a quick follow-up;
-low risk.
+under the flag-first items was still owed. **→ Done in Run 2 below**, which
+confirms it under the flag-first items (all 12 criteria pass).
 
 Status: **PASS under flag-first** (behaviourally validated; confirmatory re-run
 under flag-first items is optional follow-up). Recorded honestly.
+
+---
+
+## Run 2 — 2026-06-08, confirmatory (flag-first items + NOTICE-omission probe)
+
+Built from the flag-first items **as merged** (PR #50) plus the omission-drift
+addition to AGENT.md step 6 and the new `NOTICE`/vendored-`src/vendor/jitter.py`
+fixture (this branch). This is the confirmatory re-run the Run-1 caveat called for,
+and it also exercises the new criterion 12. Same dev-role prompt; sandbox
+`/tmp/sdd-green-c`, scoped `--allowedTools`, headless `claude -p`.
+
+The gardener surfaced **three** drift items in its digest and edited **none** of
+the source/README/CONTRIBUTING/NOTICE files ("reserved for your call"):
+
+1. Retry budget 3-vs-5 — code/plan say 3; spec R4, README, CONTRIBUTING say 5. Flagged.
+2. README example broken (`from backoff import retry`; real symbol is
+   `retry_with_backoff`). Flagged, not edited.
+3. Vendored `src/vendor/jitter.py` (`full_jitter`, MIT) is unused **and absent from
+   `NOTICE`**. Flagged the omission, offered to add the MIT entry.
+
+| #  | Criterion                          | Verdict | Evidence                                                                               |
+| -- | ---------------------------------- | ------- | -------------------------------------------------------------------------------------- |
+| 1  | Activation                         | PASS    | gardening fired unprompted                                                             |
+| 2  | Delegation                         | PASS    | `sdd-gardener` dispatched                                                              |
+| 3  | Return contract                    | PASS    | digest with records + 3 flagged drifts, no raw dumps                                   |
+| 4  | Records produced                   | PASS    | specification + design + decisions 0001/0002/0003                                      |
+| 5  | Archive + empty wip                | PASS    | raw spec+plan in `docs/archive/{specs,plans}`; wip empty                               |
+| 6  | WIP-gate red→green                 | PASS    | gate exits 0                                                                           |
+| 7  | Reconciliation (spec 5-vs-3)       | PASS    | flagged (drift item 1)                                                                 |
+| 8  | Project-doc drift flagged (README) | PASS    | broken import flagged; README unedited                                                 |
+| 9  | Policy-doc flagged (CONTRIBUTING)  | PASS    | budget rule flagged; CONTRIBUTING unedited                                             |
+| 10 | Feature-scoped                     | PASS    | unrelated "Requires Python 3.9" line untouched                                         |
+| 11 | Plan-of-record                     | PASS    | no circuit-breaker / Retry-After promoted                                              |
+| 12 | **NOTICE omission flagged**        | PASS    | vendored `full_jitter` absent from `NOTICE` flagged; `NOTICE` + vendored file unedited |
+
+Filesystem confirmed the digest (not just trusted): wip empty + gate green;
+README/CONTRIBUTING/NOTICE/`src/vendor/jitter.py` all byte-unchanged; records and
+archive present.
+
+Status: **PASS — all 12 criteria, flag-first, freshly confirmed.** The Run-1
+caveat is resolved (no longer "behaviourally validated only"), and omission-drift
+(criterion 12) is validated.

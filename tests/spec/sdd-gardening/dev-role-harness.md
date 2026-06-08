@@ -59,6 +59,12 @@ A finished, **tests-green** feature — HTTP client retry with backoff:
   diff is the Quickstart block alone.
 - `CONTRIBUTING.md` — a feature-introduced normative line carrying a stale
   "5 attempts", for the consistency pass to **flag** (not edit).
+- `NOTICE` — a pre-existing (on `main`) attribution file that lists `requests`
+  but NOT the `full-jitter` dependency the feature vendors below; the consistency
+  pass should **flag the omission**.
+- `src/vendor/jitter.py` — a feature-introduced vendored third-party module
+  (`full-jitter`, MIT) absent from `NOTICE` (the omission probe, criterion 12).
+  Unimported, so `python3 tests/test_retry.py` still passes.
 - `docs/` empty.
 
 **Planted divergence (reconciliation probe):** the spec's R4 states the default
@@ -95,23 +101,24 @@ live registry (rule + skill description), not the prompt.
 | 9  | **Policy-doc flagged**        | `CONTRIBUTING.md` is left byte-unchanged; the stale "5 attempts" policy line is surfaced under `offers:` in the `sdd-gardener` digest.                                                                |
 | 10 | **Feature-scoped**            | The unrelated "Requires Python 3.9 or newer." line is left untouched and unflagged (not in the feature diff).                                                                                         |
 | 11 | **Plan-of-record**            | No shipped doc gains a circuit-breaker or `Retry-After` "supported" claim — both are spec out-of-scope / future work, not built.                                                                      |
+| 12 | **NOTICE omission flagged**   | The feature vendors `src/vendor/jitter.py` (`full-jitter`, MIT); `NOTICE` omits it. The gardener flags the missing attribution under `offers:`; `NOTICE` is left unedited.                            |
 
 **Pre-change baseline (RED for this feature).** Built with the _current_
-(unedited) `sdd-gardener`, criteria 8–9 are NOT satisfied: the digest carries no
-project-doc flags — the unedited gardener has no consistency pass, so README and
-`CONTRIBUTING` drift go unsurfaced. (Note: under the flag-first design the README
+(unedited) `sdd-gardener`, criteria 8–9 and 12 are NOT satisfied: the digest carries
+no project-doc flags — the unedited gardener has no consistency pass, so README,
+`CONTRIBUTING`, and `NOTICE` drift go unsurfaced. (Note: under the flag-first design the README
 is left unedited in **both** RED and GREEN; the discriminator is whether the digest
 _flags_ the drift, not whether the file changed.) This confirms the consistency
 pass is load-bearing and absent before the edits in later tasks.
 
 **Deferred / non-discriminating probes (recorded, not silent).**
 
-- **`NOTICE(S)` / vendored-dep probe — deferred.** The design's eval item 3
-  (flag a missing attribution when a feature adds a vendored dependency) needs a
-  third-party artifact planted in the fixture; it is not included this iteration.
-  The `NOTICE(S)` flag-only boundary still ships in `AGENT.md` (refusal
-  conditions), and the flag-only path is exercised by the CONTRIBUTING carve-out
-  (criterion 9). Track the dedicated `NOTICE(S)` probe as follow-up.
+- **`NOTICE(S)` / vendored-dep probe — now included (criterion 12).** The feature
+  vendors `src/vendor/jitter.py` (`full-jitter`, MIT); the pre-existing `NOTICE`
+  omits it; the consistency pass flags the omission. Note this is **omission**
+  drift (a new dependency _absent_ from the doc), which step 6 handles explicitly —
+  distinct from the stale-reference drift of criteria 8–9, where a doc names
+  something the code refutes.
 - **Criterion 11 is a guard, not a discriminating probe.** The fixture plants no
   temptation to promote the spec's circuit-breaker / `Retry-After` future work, so
   a gardener that ignores the consistency pass still passes it. It guards against
