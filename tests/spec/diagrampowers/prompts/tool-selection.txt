@@ -1,0 +1,8 @@
+You need to create several technical diagrams for a software project. For EACH of the six items below, answer in one line: (a) the diagram format or tool you would use, and (b) where/how you would store it in the repository. Do not draw the diagrams — just state the tool and the storage choice, briefly.
+
+1. Document the sequence of messages exchanged when a user logs in: the client calls the auth service, which checks the user database and then requests a token from a token service.
+2. Document the lifecycle of an order as it moves through states: created, paid, shipped, delivered, and cancelled.
+3. Map the system architecture: an API gateway in front of six backend services, two databases, and a message queue, grouped across three deployment zones.
+4. Document the database schema for users, orders, products, and line-items, including their foreign-key relationships.
+5. Add a small three-stage data pipeline diagram (ingest, transform, load) to the project README.
+6. Produce a polished, icon-rich AWS architecture diagram (Lambda, S3, DynamoDB, API Gateway) for a stakeholder slide deck.

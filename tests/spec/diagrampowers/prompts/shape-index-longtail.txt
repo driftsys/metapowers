@@ -1,0 +1,12 @@
+I am drawing a cloud architecture in draw.io (diagrams.net) and need each component to show its official vendor icon. For EACH of the eight services below, give the exact draw.io mxgraph shape style needed so the correct official icon renders — i.e. the `shape=mxgraph...` (and, for AWS, the `resIcon=mxgraph.aws4...`) token that goes in the cell's `style` attribute.
+
+Answer one line per service: the service name, then the exact token(s).
+
+1. AWS Athena
+2. AWS Step Functions
+3. AWS Kinesis Data Firehose
+4. AWS Cognito
+5. Google Cloud Compute Engine
+6. Google Cloud Monitoring
+7. Microsoft Azure Active Directory
+8. Alibaba Cloud ActionTrail

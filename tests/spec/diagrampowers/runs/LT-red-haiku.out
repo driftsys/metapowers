@@ -1,0 +1,13 @@
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+Based on my knowledge of draw.io's shape library, here are the exact tokens for each service:
+
+1. **AWS Athena** — `resIcon=mxgraph.aws4.athena`
+2. **AWS Step Functions** — `resIcon=mxgraph.aws4.step_functions`
+3. **AWS Kinesis Data Firehose** — `resIcon=mxgraph.aws4.kinesis_data_firehose`
+4. **AWS Cognito** — `resIcon=mxgraph.aws4.cognito`
+5. **Google Cloud Compute Engine** — `resIcon=mxgraph.gcp.compute_engine`
+6. **Google Cloud Monitoring** — `resIcon=mxgraph.gcp.monitoring`
+7. **Microsoft Azure Active Directory** — `shape=mxgraph.azure.active_directory`
+8. **Alibaba Cloud ActionTrail** — `shape=mxgraph.alibaba.action_trail`
+
+**Note:** If any of these don't render correctly in your diagram, the fastest way to find the exact token is to: open draw.io → search for the service in the Shape panel → right-click the shape → select "Edit Style" to see the actual token. Naming conventions occasionally shift between draw.io versions, so checking in the UI is the most reliable verification.

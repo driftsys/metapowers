@@ -1,0 +1,6 @@
+1. **Mermaid `sequenceDiagram`** — store as ` ```mermaid ` block in `docs/auth/login-sequence.md`.
+2. **Mermaid `stateDiagram-v2`** — store as ` ```mermaid ` block in `docs/orders/order-lifecycle.md`.
+3. **Structurizr DSL (C4 Container view)** — store `workspace.dsl` in `docs/architecture/`, render via Structurizr Lite in CI.
+4. **Mermaid `erDiagram`** (or DBML via dbdiagram.io) — store as ` ```mermaid ` block in `docs/db/schema.md` alongside migrations.
+5. **Mermaid `flowchart LR`** — embed the ` ```mermaid ` block directly in the root `README.md` (GitHub renders it natively).
+6. **diagrams.net (draw.io) with AWS icon set**, or the Python `diagrams` library — store the editable `.drawio` (or `.py`) source plus an exported `.png`/`.svg` in `docs/architecture/aws/`.

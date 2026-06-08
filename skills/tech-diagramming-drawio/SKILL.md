@@ -1,20 +1,19 @@
 ---
 schema: 1
 name: tech-diagramming-drawio
-description: Use when tech-diagramming has selected draw.io — high-complexity diagrams beyond what PlantUML/D2 autolayout handles after decomposition, hand-tuned or freeform layouts, presentation-grade stakeholder diagrams, and icon-rich cloud architecture (AWS/Azure/GCP/K8s shape libraries). Covers the agent-draft-plus-human-polish model, the bundled shape-index for vendor icons, mxGraphModel XML rules, the source+SVG pair, and the Phase-1 self-check.
+description: Use when tech-diagramming has selected draw.io — high-complexity diagrams beyond what PlantUML/D2 autolayout handles after decomposition, hand-tuned or freeform layouts, presentation-grade stakeholder diagrams, and icon-rich cloud architecture (AWS/Azure/GCP/K8s shape libraries). Covers the agent-draft-plus-human-polish model, vendor-icon `mxgraph.*` styles, mxGraphModel XML rules, the source+SVG pair, and the Phase-1 self-check.
 license: MIT
 metadata:
-  version: 0.2.0
+  version: 0.3.0
 ---
 
 ## Overview
 
 You are here because `tech-diagramming` already selected draw.io. This skill is
 the doing layer: when draw.io is the right top rung, how much an agent can
-actually draft (no MCP needed), the bundled shape-index for vendor icons, how to
-hand-scaffold valid mxGraphModel XML, the source+SVG pair, the honest house-style
-gaps, and a pre-commit self-check. It does NOT redo tool selection — the umbrella
-owns that.
+actually draft (no MCP needed), how to hand-scaffold valid mxGraphModel XML, the
+source+SVG pair, the honest house-style gaps, and a pre-commit self-check. It does
+NOT redo tool selection — the umbrella owns that.
 
 Core principle: **author diffable mxfile XML, render to a clean SVG, never claim
 the draft is finished.** Edit the uncompressed `.drawio`, re-render, commit the
@@ -46,8 +45,9 @@ collapsed or the diagram needs hand-tuning, vendor icons, or presentation gloss.
 
 draw.io is **not human-only, and not MCP-gated.** An agent CAN author a good draft
 **with no MCP at all** — hand-author the mxGraphModel XML below, resolve vendor icons
-via the bundled shape-index, and render the pair. (Demonstrated: a clean multi-tier
-AWS diagram with real `mxgraph.aws4.*` icons, hand-placed.) Two honest limits remain:
+(emit the `mxgraph.*` style strings; verify uncertain ones in `app.diagrams.net`), and
+render the pair. (Demonstrated: a clean multi-tier AWS diagram with real
+`mxgraph.aws4.*` icons, hand-placed.) Two honest limits remain:
 
 1. **Layout at high crossing-density.** Hand-placing coordinates works well for
    tiered / grouped diagrams; it degrades as edge crossings grow. A real layout engine
@@ -61,30 +61,22 @@ So the rule is: **agent drafts, human polishes.** Always flag the draft as needi
 review. **Never claim a draft is finished.** The Phase-1 self-check below requires an
 explicit "NEEDS HUMAN POLISH" handoff note on every draft.
 
-## Vendor icons — the bundled shape-index
+## Vendor icons
 
-draw.io ships 10k+ shapes; finding the right `mxgraph.*` style string by name is the
-one real friction in an icon-rich draft. This skill bundles a **shape-index** so you
-look the name up instead of guessing (or grepping the app bundle):
+draw.io ships 10k+ vendor shapes (AWS / Azure / GCP / Kubernetes / Cisco / …).
+Capable models already know the `mxgraph.*` style strings — emit them directly. The
+common case is the AWS-4 resource icon:
 
-- **File:** `data/shape-index.jsonl.gz` — one JSON object per line
-  (`{style,w,h,title,tags,type}`), ~10k palette shapes (AWS / Azure / GCP / K8s / Cisco
-  / UML / …), derived from the official draw.io libraries (Apache-2.0; see `data/NOTICE`).
-- **Look up a shape** — `grep` (always available) or `jq` over the gunzipped index:
+```text
+shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.<service>;
+```
 
-  ```bash
-  # by title (grep) — read the style string off the matching line:
-  gunzip -c data/shape-index.jsonl.gz | grep -i '"title":"[^"]*ec2'
-  # or with jq:
-  gunzip -c data/shape-index.jsonl.gz | jq -rc 'select(.title|test("EC2";"i")) | {title,style}'
-  ```
-
-  Prefer `jq` for reliable matching; the `grep` form is a no-dependency fallback — if it misses, use the `jq` query (it parses the field, not the line text).
-
-  Use the **full** `style` value the index returns, verbatim, on your `mxCell` — the
-  real AWS-4 resource-icon style is longer than the recognisable tail shown here
-  (`…shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.ec2;`) — and use the `w`/`h`
-  as the cell geometry.
+Other vendors use `shape=mxgraph.<lib>.<name>` — e.g. `mxgraph.gcp2.compute_engine_2`,
+`mxgraph.azure.azure_active_directory`, `mxgraph.alibaba_cloud.actiontrail`. These
+tokens are library-specific; if you are unsure of an exact one, do **not** guess
+silently — emit your best string and call it out in the NEEDS HUMAN POLISH note for
+verification in `app.diagrams.net` (search the shape panel; the style inspector shows
+the exact token).
 
 ## Layout — no MCP, two honest paths
 
@@ -93,7 +85,7 @@ deliver headless vendor-icon layout-to-file, and an agent does not need one. Lay
 of two ways:
 
 1. **Agent hand-authors** the mxGraphModel XML below with computed coordinates (tiers /
-   grids / columns), using the shape-index for icons — then flag "NEEDS HUMAN POLISH".
+   grids / columns), using vendor `mxgraph.*` styles for icons — then flag "NEEDS HUMAN POLISH".
    Good for icon-rich and moderately-structured diagrams.
 2. **Human in the loop:** emit a rough-coordinate skeleton and a person lays it out and
    polishes in `app.diagrams.net` (zero install). The deliberate path for freeform /

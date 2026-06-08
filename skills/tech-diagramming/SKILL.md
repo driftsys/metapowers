@@ -4,7 +4,7 @@ name: tech-diagramming
 description: Use when creating or reviewing any technical diagram — selects the right tool (ASCII/PlantUML/D2/draw.io) by journey and complexity, sets the source+SVG storage convention and house style, and dispatches to the per-format skill.
 license: MIT
 metadata:
-  version: 0.2.0
+  version: 0.3.0
 ---
 
 ## Overview
@@ -47,9 +47,8 @@ Measure **edge crossings, not box count.**
 coordinates the source carries — so draw.io is the right pick when the layout is
 supplied by hand, for the niche it owns (icon-rich, hand-tuned, presentation):
 
-- **agent hand-authors** the coordinates (tiers / grids), resolving vendor icons via
-  the `tech-diagramming-drawio` skill's bundled shape-index, then flags
-  "NEEDS HUMAN POLISH"; and/or
+- **agent hand-authors** the coordinates (tiers / grids), resolving vendor icons (the
+  `mxgraph.*` style strings), then flags "NEEDS HUMAN POLISH"; and/or
 - **a human** lays out / polishes in `app.diagrams.net` (zero install).
 
 **Graph-shaped and unattended (no human) → prefer D2**, not draw.io: D2's always-on
@@ -68,49 +67,6 @@ Never emit an unlaid-out `.drawio`.
 Cross-cutting: **Maintain** (re-edit → re-render, keep synced) favours
 agent-authorable text (PlantUML/D2); draw.io needs a human. **Review** → the pair
 (clean SVG visual + source intent diff).
-
-### Tool-strength matrix (★★★ best · ★★ good · ★ weak · – n/a)
-
-| Diagram kind                               | ASCII | PlantUML          | D2  | draw.io                                                                          |
-| ------------------------------------------ | ----- | ----------------- | --- | -------------------------------------------------------------------------------- |
-| Inline scratch (throwaway)                 | ★★★   | –                 | –   | –                                                                                |
-| Inline durable (aligned)                   | ★★★   | –                 | –   | –                                                                                |
-| Sequence                                   | –     | ★★★               | ★★  | ★                                                                                |
-| State / lifecycle                          | –     | ★★★               | ★   | ★                                                                                |
-| Activity / flow                            | ★     | ★★★               | ★★  | ★★                                                                               |
-| Class / object / component                 | –     | ★★★               | ★★  | ★★                                                                               |
-| Architecture / system / infra (containers) | –     | ★★                | ★★★ | ★★                                                                               |
-| ER / schema                                | –     | ★★                | ★★★ | ★★                                                                               |
-| Fancy / freeform / presentation            | –     | –                 | ★   | ★★★                                                                              |
-| Very high complexity / hand-tuned          | –     | ✗ (layout breaks) | ★★  | ★★★                                                                              |
-| Agent-authorable unattended                | ★★★   | ★★★               | ★★★ | ★★ hand-authored (icon-rich / hand-tuned); **graph-shaped → D2 for auto-layout** |
-| Human visual editing                       | –     | –                 | –   | ★★★                                                                              |
-| Human text editing                         | ★★    | ★★★               | ★★★ | –                                                                                |
-
-### Decision tree (follow verbatim)
-
-```text
-1. Inline & throwaway (scratch, thinking out loud)?   → ASCII freehand. done. (no tooling)
-2. Inline & durable (README/code/console/maint docs)? → ASCII, perfect: grid-code + validate.
-3. Sequence, or state/lifecycle?                      → PlantUML → .puml + .svg
-4. Activity (UML)?                                    → PlantUML → .puml + .svg
-                                                         (autolayout breaks? decompose; still hard → step 6)
-   Class / object / component (UML)?                  → PlantUML → .puml + .svg
-                                                         (autolayout breaks? decompose → D2 (step 5);
-                                                          still hard → step 6)
-5. Architecture/system/infra (containers) or ER?      → D2 → .d2 + .svg
-   (also: Java unavailable → prefer D2 for these types)
-6. Freeform/presentation, OR a graph so complex/dense
-   no autolayout works (after decomposing)?           → draw.io → .drawio + .svg
-                                                         layout: agent hand-authors (tiers/grids,
-                                                            vendor icons via the skill's shape-index)
-                                                            and/or a human polishes in app.diagrams.net.
-                                                         graph-shaped & unattended (no human)? fall back BY SHAPE:
-                                                            • architecture/structural → D2
-                                                            • behavioural → stay PlantUML, decompose, or human
-                                                            • freeform/non-graph → source stub + flag human (#24)
-                                                            Never route behavioural or freeform to D2.
-```
 
 ### The complexity escalator
 
