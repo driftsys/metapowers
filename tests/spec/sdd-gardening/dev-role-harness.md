@@ -101,6 +101,20 @@ stays `from backoff import retry`, "5 times" is untouched, and the digest carrie
 no project-doc reconciliation. This confirms the consistency pass is load-bearing
 and absent before the edits in later tasks.
 
+**Deferred / non-discriminating probes (recorded, not silent).**
+
+- **`NOTICE(S)` / vendored-dep probe — deferred.** The design's eval item 3
+  (flag a missing attribution when a feature adds a vendored dependency) needs a
+  third-party artifact planted in the fixture; it is not included this iteration.
+  The `NOTICE(S)` flag-only boundary still ships in `AGENT.md` (refusal
+  conditions), and the flag-only path is exercised by the CONTRIBUTING carve-out
+  (criterion 9). Track the dedicated `NOTICE(S)` probe as follow-up.
+- **Criterion 11 is a guard, not a discriminating probe.** The fixture plants no
+  temptation to promote the spec's circuit-breaker / `Retry-After` future work, so
+  a gardener that ignores the consistency pass still passes it. It guards against
+  the gardener *adding* unbuilt claims to shipped docs; it does not by itself
+  prove the pass fired (criteria 8–9 do that).
+
 RED control (sandbox built with `red`, items absent) confirms the items are
 load-bearing: the dev-role agent does **not** produce the durable records + archive (it
 merges as-is, or writes ad-hoc docs, leaving `docs/wip/` non-empty and no gate).
