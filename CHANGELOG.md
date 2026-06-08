@@ -1,5 +1,54 @@
 # Changelog
 
+## [0.2.1] (2026-06-08)
+
+### Bug Fixes
+
+- **opencode:** correct plugin URI in project-level config ([d844b47])
+
+### Refactoring
+
+- **diagrampowers:** drop redundant shape-index, trim routing apparatus ([#58])
+  ([1b3ece2])
+- **bundles:** extract gardenpowers from the metapowers baseline ([#52])
+  ([7c45747])
+
+### Documentation
+
+- align CONTRIBUTING working-memory path to docs/wip ([#55]) ([44de2d0])
+- correct metapowers self-documentation ([#51]) ([b0b723a])
+
+### Features
+
+- add writingpowers review agent (Phase 3) ([#56]) ([1ad7121])
+- **sdd-gardener:** flag omission drift + NOTICE probe, technote, confirmatory
+  eval ([#54]) ([f3f871f])
+- add writingpowers Diátaxis mode skills (Phase 2) ([#53]) ([9e7915e])
+- add writingpowers tech-writing rule and umbrella skill (Phase 1) ([#49])
+  ([ed3ef23])
+- **sdd-gardening:** flag-first project-doc consistency pass ([#50]) ([7d15269])
+
+[0.2.1]: https://github.com/driftsys/metapowers/compare/v0.2.0...v0.2.1
+[d844b47]: https://github.com/driftsys/metapowers/commit/d844b47
+[1b3ece2]: https://github.com/driftsys/metapowers/commit/1b3ece2
+[#58]: https://github.com/driftsys/metapowers/issues/58
+[7c45747]: https://github.com/driftsys/metapowers/commit/7c45747
+[#52]: https://github.com/driftsys/metapowers/issues/52
+[44de2d0]: https://github.com/driftsys/metapowers/commit/44de2d0
+[#55]: https://github.com/driftsys/metapowers/issues/55
+[b0b723a]: https://github.com/driftsys/metapowers/commit/b0b723a
+[#51]: https://github.com/driftsys/metapowers/issues/51
+[1ad7121]: https://github.com/driftsys/metapowers/commit/1ad7121
+[#56]: https://github.com/driftsys/metapowers/issues/56
+[f3f871f]: https://github.com/driftsys/metapowers/commit/f3f871f
+[#54]: https://github.com/driftsys/metapowers/issues/54
+[9e7915e]: https://github.com/driftsys/metapowers/commit/9e7915e
+[#53]: https://github.com/driftsys/metapowers/issues/53
+[ed3ef23]: https://github.com/driftsys/metapowers/commit/ed3ef23
+[#49]: https://github.com/driftsys/metapowers/issues/49
+[7d15269]: https://github.com/driftsys/metapowers/commit/7d15269
+[#50]: https://github.com/driftsys/metapowers/issues/50
+
 ## [0.2.0] (2026-06-06)
 
 ### Bug Fixes
