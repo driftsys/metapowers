@@ -45,6 +45,12 @@ apply** the fix. Two distinct causes:
 
 ## Lesson (RED-GREEN-REFACTOR — GREEN exposed a design/fixture gap)
 
+> **Superseded by the Design revision below.** These were the options weighed from
+> the run, written before the decision. The flag-first revision **resolved** the
+> open question (no auto-fix) and makes the first two bullets moot — under
+> flag-first there is no "fixable/auto-fix case", every README probe is a flag
+> probe. Retained as the historical RED→GREEN reasoning, not as open action items.
+
 - Refine the fixture: make the fixable README probe a stale fact with NO
   corroborating requirement (clean auto-fix case), and keep the corroborated count
   as a separate _flag_ probe.

@@ -92,7 +92,7 @@ live registry (rule + skill description), not the prompt.
 | 6  | **WIP-gate red → green**      | The WIP-gate (run by the observer) exits 1 before gardening and 0 after.                                                                                                                              |
 | 7  | **Reconciliation**            | The planted 5-vs-3 retry-budget divergence is flagged (not silently copied through).                                                                                                                  |
 | 8  | **Project-doc drift flagged** | README drift (broken `from backoff import retry`; stale "up to 5 times" vs as-built 3) is surfaced in the `sdd-gardener` digest; README is left **unedited** — the gardener flags, the human applies. |
-| 9  | **Carve-out**                 | `CONTRIBUTING.md` is left byte-unchanged; the stale "5 attempts" policy line is surfaced under `offers:` in the `sdd-gardener` digest.                                                                |
+| 9  | **Policy-doc flagged**        | `CONTRIBUTING.md` is left byte-unchanged; the stale "5 attempts" policy line is surfaced under `offers:` in the `sdd-gardener` digest.                                                                |
 | 10 | **Feature-scoped**            | The unrelated "Requires Python 3.9 or newer." line is left untouched and unflagged (not in the feature diff).                                                                                         |
 | 11 | **Plan-of-record**            | No shipped doc gains a circuit-breaker or `Retry-After` "supported" claim — both are spec out-of-scope / future work, not built.                                                                      |
 
