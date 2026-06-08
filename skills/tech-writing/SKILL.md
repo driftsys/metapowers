@@ -180,8 +180,8 @@ and prose depth:
 | Reference   | `tech-writing-reference`   |
 | Explanation | `tech-writing-explanation` |
 
-These mode skills do not exist yet (Phase 2). If a mode skill is **absent**, do
-not block: apply §§2–5 inline — keep the document to one mode, choose the
-medium, obey `tech-writing-style`, run the verify checklist — and use general
-knowledge for the genre's structure. The umbrella's decisions stand on their
-own; the mode skills only add depth.
+**Invoke the mode skill for the classified mode** — it owns the genre's shape and
+do/don'ts. If a mode skill is **absent**, do not block: apply §§2–5 inline — keep
+the document to one mode, choose the medium, obey `tech-writing-style`, run the
+verify checklist — and use general knowledge for the genre's structure. The
+umbrella's decisions stand on their own; the mode skills add the depth.
