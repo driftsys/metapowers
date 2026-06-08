@@ -3,7 +3,7 @@ schema: 1
 name: sdd-gardening
 description: Use when finishing a development branch or before opening/merging a PR while Superpowers working memory (docs/wip/ specs and plans) is still present, or when asked to garden, consolidate, or write up specs/plans into durable docs/ records. Also when CI reports a non-empty docs/wip/.
 metadata:
-  version: 0.2.0
+  version: 0.3.0
 ---
 
 ## Overview
@@ -33,17 +33,24 @@ summary. See the `sdd-working-memory-lifecycle` rule for the standing guardrails
    code + tests; the existing `docs/specification/`, `docs/design/`,
    `docs/decisions/`, `docs/technotes/`. If this same session ran the
    brainstorming, include that discussion — it carries the considered-options
-   rationale directly.
+   rationale directly. Also gather, for the consistency pass, the canonical
+   project docs — `README*` (root + dirs the feature touched),
+   `AGENTS.md`/`CLAUDE.md`, `CONTRIBUTING*`, `NOTICE(S)` — and the feature's
+   code+test diff (`git diff main...HEAD`) so the gardener can diff-gate and
+   feature-scope.
 3. **Dispatch the `sdd-gardener` subagent** with those inputs. (Claude Code:
    Agent/Task tool, `subagent_type: sdd-gardener`. Other clients: the equivalent
    subagent dispatch.) Do not garden inline — the point is to keep this session's
    context lean.
 4. **Relay its summary** to the user: records created/edited (paths + `AD-NNNN`
-   ids) and flagged divergences. Read the actual files only if needed.
+   ids), project-doc fixes applied, and flagged divergences. Read the actual
+   files only if needed.
 5. **Resolve its offers with the human:** a requirement gap to fill (author it as
    a durable record — descriptive prose by default, or in whatever substrate an
-   inherited project rule prescribes), or a system-architecture doc to
-   create/update. Never fabricate or auto-create.
+   inherited project rule prescribes), a system-architecture doc to
+   create/update, or a normative-or-legal line the gardener flagged but is barred
+   from editing (a policy line in `CONTRIBUTING`/`AGENTS`, or a `NOTICE(S)` entry)
+   — resolve or accept it yourself. Never fabricate or auto-create.
 6. **Verify** `docs/wip/` is empty (collaborative mode), then commit the gardened
    records + archived raw.
 
@@ -54,3 +61,7 @@ summary. See the `sdd-working-memory-lifecycle` rule for the standing guardrails
 - Auto-creating requirements/architecture instead of offering — see the rule.
 - Naming a specific authoring tool — the substrate is descriptive prose unless an
   inherited project rule prescribes otherwise.
+- Auto-editing a policy or legal doc (`CONTRIBUTING`, `NOTICE(S)`, normative
+  `AGENTS` lines) — those are flag-only; code is not their source of truth.
+- Auditing the whole repo's docs instead of feature-scoping the consistency pass
+  via the diff-gate — re-flags unrelated pre-existing drift.
