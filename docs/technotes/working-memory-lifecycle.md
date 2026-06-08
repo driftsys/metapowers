@@ -405,8 +405,8 @@ Three installable items plus a CI script, all targeting Superpowers specifically
   Fixed return contract (§6.0): a summary with references, never raw content.
 
 **Scope & seam.** Both items target **Superpowers** specifically — consistent with
-metapowers' charter and philosophy #5 (metapowers is explicitly _not_ spec-kit /
-BMAD). Only **step 1 — reading the source working memory** — is framework-specific;
+metapowers' charter: it extends **Superpowers**, not spec-kit / BMAD. Only
+**step 1 — reading the source working memory** — is framework-specific;
 everything downstream (route → filter → decorate → reconcile → record format, the
 consistency engine, the format-tool-agnostic output) is framework-neutral. The
 neutral name `sdd-gardening` leaves room to support another source framework later
@@ -451,7 +451,8 @@ templates; tool-agnostic defaults.
   drift. Rejected; gardening transforms working memory into curated records and
   archives the raw.
 - **Source-framework-agnostic skillset (ingest spec-kit / BMAD / etc.).**
-  Considered, deferred. Off-charter (philosophy #5 rejects spec-kit/BMAD) and
-  speculative (YAGNI). Mitigated by isolating the source-reading step as a clean
-  seam (§11) so generalization later is a swap, not a rewrite. Note: format-tool
+  Considered, deferred. Off-charter (metapowers gardens **Superpowers** working
+  memory, not other frameworks' source artifacts) and speculative (YAGNI).
+  Mitigated by isolating the source-reading step as a clean seam (§11) so
+  generalization later is a swap, not a rewrite. Note: format-tool
   agnosticism (markspec/adr-tools/EARS) is _kept_ — that is a different axis.

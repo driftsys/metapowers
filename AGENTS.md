@@ -42,9 +42,15 @@ align with them.
    them into `docs/` only when they carry value beyond the implementation
    session.
 
-5. **metapowers is not spec-driven.** It is explicitly NOT spec-kit or BMAD.
-   The spec is not the source of truth. The framing line is: _"Tests are the
-   spec. Code is the implementation. Documentation describes both."_
+5. **metapowers is spec-first, not spec-as-source.** It _is_ spec-driven: the
+   Spec → Plan → Code flow inherited from Superpowers is the _spec-first_ level
+   of SDD — the markdown spec is a transient step toward the code, retired to
+   working memory once code+tests exist. What metapowers rejects is the
+   _spec-as-source_ level (Tessl; spec-kit's regenerate-from-spec rhetoric) and
+   BMAD's spec-anchored docs-as-authority — any point where the spec or its
+   documentation outranks the code. The durable, executable spec is the test.
+   The framing line is: _"Tests are the spec. Code is the implementation.
+   Documentation describes both."_
 
 If you find yourself writing content that suggests specs are authoritative,
 that documentation drives implementation, or that markdown design docs are
