@@ -106,9 +106,8 @@ metapowers commits to a specific stance:
    implementations from claiming success on tests that never ran.
 
 4. **Specs are working memory, not durable artifacts.** Superpowers specs
-   and plans live in `.scratch/superpowers/` (gitignored). Durable
-   engineering records are extracted into `docs/` only when they carry value
-   beyond the implementation session.
+   and plans live in `docs/wip/`. Durable engineering records are extracted
+   into `docs/` only when they carry value beyond the implementation session.
 
 5. **metapowers is spec-first, not spec-as-source.** It _is_ spec-driven — the
    Spec → Plan → Code flow from Superpowers is the _spec-first_ level of SDD:
