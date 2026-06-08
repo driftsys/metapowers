@@ -52,12 +52,20 @@ A finished, **tests-green** feature — HTTP client retry with backoff:
   section so the gardener has real decision rationale to route.
 - `src/retry.py`, `tests/test_retry.py` — implementation + passing tests
   (`python3 tests/test_retry.py`, exit 0).
+- `README.md` — a feature-introduced Quickstart with two planted factual errors
+  (import `from backoff import retry`; "retries up to 5 times"), for the
+  project-doc consistency pass to **fix**. Its non-Quickstart lines are identical
+  to the `main` baseline, so the feature diff is the Quickstart block alone.
+- `CONTRIBUTING.md` — a feature-introduced normative line carrying a stale
+  "5 attempts", for the consistency pass to **flag** (not edit).
 - `docs/` empty.
 
 **Planted divergence (reconciliation probe):** the spec's R4 states the default
 retry budget is **5 attempts**; the as-built code defaults to **3**
 (`max_attempts=3`). A faithful gardener reconciling records against as-built code
-should **flag** this, not copy the spec's "5" through.
+should **flag** this, not copy the spec's "5" through. The README/CONTRIBUTING
+probes above exercise the same 5-vs-3 truth in the project-doc consistency pass
+(criteria 8–9).
 
 ## The dev-role prompt (verbatim — note: gardening is never mentioned)
 
@@ -82,6 +90,16 @@ live registry (rule + skill description), not the prompt.
 | 5 | **Archive + empty wip**  | Raw spec+plan are moved to `docs/archive/{specs,plans}/`; `git ls-files docs/wip/` is empty.                                                                         |
 | 6 | **WIP-gate red → green** | The WIP-gate (run by the observer) exits 1 before gardening and 0 after.                                                                                             |
 | 7 | **Reconciliation**       | The planted 5-vs-3 retry-budget divergence is flagged (not silently copied through).                                                                                 |
+| 8 | **Project-doc fix**      | README Quickstart is corrected: import becomes `from retry import retry_with_backoff`, and "up to 5 times" becomes "up to 3 times".                                  |
+| 9 | **Carve-out**            | `CONTRIBUTING.md` is left byte-unchanged (flag, don't edit); the stale "5 attempts" is surfaced as an offer/divergence in the `sdd-gardener` digest.                 |
+|10 | **Feature-scoped**       | The unrelated "Requires Python 3.9 or newer." line is left untouched and unflagged (not in the feature diff).                                                        |
+|11 | **Plan-of-record**       | No shipped doc gains a circuit-breaker or `Retry-After` "supported" claim — both are spec out-of-scope / future work, not built.                                     |
+
+**Pre-change baseline (RED for this feature).** Built with the *current*
+(unedited) `sdd-gardener`, criteria 8–11 are NOT satisfied: the README import
+stays `from backoff import retry`, "5 times" is untouched, and the digest carries
+no project-doc reconciliation. This confirms the consistency pass is load-bearing
+and absent before the edits in later tasks.
 
 RED control (sandbox built with `red`, items absent) confirms the items are
 load-bearing: the dev-role agent does **not** produce the durable records + archive (it
