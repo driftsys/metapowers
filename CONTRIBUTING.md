@@ -20,11 +20,12 @@ metapowers is a **source registry** for AI-assistance content, distributed via
 [upskill](https://github.com/driftsys/upskill). It contains three kinds of
 items plus bundle manifests:
 
-| Kind   | Entrypoint    | Purpose                                   |
-| ------ | ------------- | ----------------------------------------- |
-| Skill  | `SKILL.md`    | On-demand procedural content              |
-| Rule   | `RULE.md`     | Always-on behavioural guidance            |
-| Bundle | `*.bundle.md` | Curated set of items distributed together |
+| Kind   | Entrypoint      | Purpose                                   |
+| ------ | --------------- | ----------------------------------------- |
+| Skill  | `SKILL.md`      | On-demand procedural content              |
+| Rule   | `RULE.md`       | Always-on behavioural guidance            |
+| Agent  | `AGENT.md`      | Standalone subagent specialist            |
+| Bundle | `*.bundle.yaml` | Curated set of items distributed together |
 
 See the [upskill format spec][format-spec] for the on-disk contract.
 
@@ -109,9 +110,13 @@ metapowers commits to a specific stance:
    engineering records are extracted into `docs/` only when they carry value
    beyond the implementation session.
 
-5. **metapowers is not spec-driven.** It is explicitly NOT spec-kit or BMAD.
-   The spec is not the source of truth. _"Tests are the spec. Code is the
-   implementation. Documentation describes both."_
+5. **metapowers is spec-first, not spec-as-source.** It _is_ spec-driven — the
+   Spec → Plan → Code flow from Superpowers is the _spec-first_ level of SDD:
+   the spec is a transient step toward the code, not its master. What it rejects
+   is the _spec-as-source_ level (Tessl; spec-kit's regenerate-from-spec
+   rhetoric) and BMAD's docs-as-authority — anywhere the spec outranks the code.
+   _"Tests are the spec. Code is the implementation. Documentation describes
+   both."_
 
 When proposing skills or rules that contradict this stance — for example,
 content that treats markdown design docs as contractual or specs as

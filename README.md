@@ -28,11 +28,11 @@ lives in the `sdd-gardening/` directory; relaxed co-location naming landed in
 0.7.4).
 
 ```bash
-# Install a skill into your project
+# Install the full metapowers registry into your project
 upskill add driftsys/metapowers
 
-# Or install a curated bundle
-upskill add driftsys/metapowers baseline
+# Or install a single curated bundle (e.g. the metapowers baseline)
+upskill add driftsys/metapowers metapowers
 ```
 
 See the [upskill documentation](https://driftsys.github.io/upskill/) for more commands.

@@ -8,8 +8,9 @@ This directory holds reference documentation for metapowers itself — how the
 registry is organised, how items relate, and how content extends Superpowers.
 It is **not** where skills or rules live (those go under [`../skills/`](../skills/))
 and it is **not** where consuming projects keep their engineering records
-(those go under `docs/requirements/`, `docs/decisions/`, `docs/architecture/`,
-and `docs/design/` in the consumer's own repository).
+(those go under `docs/specification/`, `docs/design/`, `docs/decisions/`, and
+`docs/technotes/` — with `docs/wip/` for working memory and `docs/archive/` for
+gardened-away originals — in the consumer's own repository).
 
 ## See also
 
