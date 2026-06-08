@@ -1,0 +1,7 @@
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+1. **PlantUML** sequence diagram — `docs/diagrams/login-sequence.puml` + rendered `login-sequence.svg` alongside it.
+2. **PlantUML** state diagram — `docs/diagrams/order-lifecycle.puml` + `order-lifecycle.svg` alongside.
+3. **D2** (containers/nesting for the three zones) — `docs/diagrams/system-architecture.d2` + `system-architecture.svg` alongside.
+4. **D2** ER diagram — `docs/diagrams/db-schema.d2` + `db-schema.svg` alongside.
+5. **ASCII** diagram inline in `README.md` (inside a fenced code block) — no separate file.
+6. **draw.io** with AWS shape library — `docs/diagrams/aws-architecture.drawio` + exported `aws-architecture.svg` alongside, embedded in the deck.

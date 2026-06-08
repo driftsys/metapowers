@@ -1,0 +1,7 @@
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+1. Mermaid `sequenceDiagram` — store as `docs/diagrams/auth-login.mmd` (or fenced ```mermaid block in `docs/auth.md`), versioned alongside the auth service.
+2. Mermaid `stateDiagram-v2` — store as `docs/diagrams/order-lifecycle.mmd` next to the order domain code/docs.
+3. Structurizr DSL (or PlantUML C4) — store as `docs/architecture/system.dsl` under version control, rendered in CI to `docs/architecture/system.svg`.
+4. Mermaid `erDiagram` (or DBML via dbdiagram.io) — store as `docs/db/schema.mmd` (or `db/schema.dbml`) beside the migrations folder.
+5. Mermaid `flowchart LR` — embed directly as a ```mermaid fenced block in `README.md` so GitHub renders it inline.
+6. draw.io (diagrams.net) with the AWS icon set — store the editable `docs/diagrams/aws-arch.drawio` plus an exported `aws-arch.png`/`.svg` in the repo for the deck.

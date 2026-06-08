@@ -1,0 +1,6 @@
+1. **Mermaid `sequenceDiagram`** — `docs/diagrams/auth-login.md` (or inline in the auth service README).
+2. **Mermaid `stateDiagram-v2`** — `docs/diagrams/order-lifecycle.md` alongside the order-service docs.
+3. **Structurizr DSL (C4 model)** or **PlantUML C4** — `docs/architecture/workspace.dsl` (or `.puml`) rendered in CI.
+4. **Mermaid `erDiagram`** (or DBML via dbdiagram.io) — `docs/diagrams/schema.md` (or `db/schema.dbml`) next to migrations.
+5. **Mermaid `flowchart LR`** — inline fenced code block directly in the root `README.md` (GitHub renders it natively).
+6. **draw.io / diagrams.net with AWS icon set** — committed as `docs/diagrams/aws-architecture.drawio` plus an exported `.png`/`.svg` in `docs/diagrams/`.

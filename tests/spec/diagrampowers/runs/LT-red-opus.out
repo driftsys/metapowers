@@ -1,0 +1,16 @@
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+All verified against draw.io's authoritative sidebar source files (`jgraph/drawio`). Here are the exact style tokens:
+
+1. **AWS Athena** — `shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.athena;`
+2. **AWS Step Functions** — `shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.step_functions;`
+3. **AWS Kinesis Data Firehose** — `shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.kinesis_data_firehose;`
+4. **AWS Cognito** — `shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.cognito;`
+5. **Google Cloud Compute Engine** — `shape=mxgraph.gcp2.compute_engine_2`
+6. **Google Cloud Monitoring** — `shape=mxgraph.gcp2.cloud_monitoring`
+7. **Microsoft Azure Active Directory** — `shape=mxgraph.azure.azure_active_directory`
+8. **Alibaba Cloud ActionTrail** — `shape=mxgraph.alibaba_cloud.actiontrail`
+
+Two things worth flagging:
+
+- **AWS (1–4):** all four AWS icons are the same two-part pattern — the cell's `shape` is always the generic `mxgraph.aws4.resourceIcon` container, and `resIcon=...` selects the specific service. Don't put the service name in `shape`.
+- **Azure AD (7):** the token above is from the **older** `mxgraph.azure` stencil library, which is the only one that's a true `shape=mxgraph...` token. The **newer** Azure set (and Entra ID rebrand) in current draw.io is *not* a mxgraph shape at all — it's an embedded SVG image (`image=img/lib/azure2/identity/Azure_Active_Directory.svg;` with `shape=image`). So if you specifically need a `shape=mxgraph` token, use the one above; if you want the latest official styling, you'd insert the Azure2 icon from the shape panel rather than typing a shape token.

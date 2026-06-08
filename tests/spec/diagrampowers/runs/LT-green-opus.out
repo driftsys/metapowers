@@ -1,0 +1,18 @@
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+All eight verified against draw.io's official shape index (the `shape-index.jsonl.gz` bundled with the drawio diagramming skill, generated from the diagrams.net client libraries). Exact style tokens:
+
+1. **AWS Athena** — `shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.athena;`
+2. **AWS Step Functions** — `shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.step_functions;`
+3. **AWS Kinesis Data Firehose** — `shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.kinesis_data_firehose;`
+4. **AWS Cognito** — `shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.cognito;`
+5. **Google Cloud Compute Engine** — `shape=mxgraph.gcp2.compute_engine_2`
+6. **Google Cloud Monitoring** — `shape=mxgraph.gcp2.cloud_monitoring`
+7. **Microsoft Azure Active Directory** — `shape=mxgraph.azure.azure_active_directory;`
+8. **Alibaba Cloud ActionTrail** — `shape=mxgraph.alibaba_cloud.actiontrail`
+
+Three gotchas worth flagging, since these are the ones easy to get wrong by guessing:
+- **AWS** icons need *both* tokens together — the `resourceIcon` shape plus the `resIcon=...` that selects which icon. The shape alone renders an empty colored square.
+- **Compute Engine** is `compute_engine_2`, not `compute_engine` — the plain name doesn't exist as an `mxgraph` shape in `gcp2`.
+- **Monitoring** is registered as `cloud_monitoring` (the icon's official name), not `monitoring`.
+
+For the AWS ones you can optionally append the brand fill color the palette uses (`fillColor=#8C4FFF` Athena/Firehose analytics-purple, `#E7157B` Step Functions, `#DD344C` Cognito), but the icon renders correctly from the two shape tokens alone.

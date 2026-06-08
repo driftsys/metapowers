@@ -1,0 +1,3 @@
+Produce the draw.io (mxGraphModel) XML for an AWS architecture diagram containing these four resources, each shown with its official AWS service icon: AWS Lambda, Amazon S3, Amazon DynamoDB, and Amazon API Gateway. Each cell's `style` attribute must use the correct draw.io mxgraph AWS shape so the official icon renders.
+
+Output the XML. Then, as a final summary, list for each of the four resources the exact `style` string you used.

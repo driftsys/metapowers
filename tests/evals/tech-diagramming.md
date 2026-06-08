@@ -13,7 +13,7 @@ per scenario **before** the run.
 - **E5** — D2 architecture authoring.
 - **E6** — ASCII durable-inline authoring (grid-code).
 - **E7 / E7b** — draw.io: the unattended selection **gate** (E7) and the
-  human-in-the-loop **authoring** path with shape-index lookup (E7b).
+  human-in-the-loop **authoring** path with direct `mxgraph.*` vendor-icon styles (E7b).
 
 ## E1 — sequence (selection + authoring)
 
@@ -87,8 +87,9 @@ PASS: recognises this is nominally draw.io territory (J8) but applies the gate �
 Prompt: the same AWS architecture, but a **human will polish in `app.diagrams.net`**
 and has asked for the draft draw.io source.
 
-PASS: draw.io **is** chosen; the agent resolves vendor icons via the skill's bundled
-**shape-index** (e.g. EC2 → `mxgraph.aws4.ec2`) rather than guessing; source is
+PASS: draw.io **is** chosen; the agent resolves vendor icons by emitting the
+`mxgraph.*` style strings directly (e.g. EC2 → `mxgraph.aws4.ec2`), flagging any
+uncertain token for human verification; source is
 **uncompressed mxfile XML** wrapped in `<mxfile><diagram><mxGraphModel><root>` with
 cells parented to layer `1` and **no XML comments**; a **clean `.svg` pair** is
 rendered (`drawio -x -f svg`, exit 0); **no raster**; an explicit **"NEEDS HUMAN
@@ -201,3 +202,5 @@ need). **E7 PASS.**
 **GREEN: 2026-06-02 — E7 + E7b PASS.**
 
 **2026-06-04 — reframed for the pure no-MCP skill (#35): E7 gate is now shape/human-based, E7b adds shape-index lookup. Needs re-run.**
+
+**2026-06-09 — shape-index removed (over-engineering eval: redundant for Opus/Sonnet; see `tests/spec/diagrampowers/`). E7b now expects direct `mxgraph.*` vendor styles, not an index lookup.**
