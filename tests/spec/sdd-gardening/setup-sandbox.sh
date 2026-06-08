@@ -50,7 +50,7 @@ git config user.email "harness@sdd-gardening.test"
 git config user.name "sdd-gardening harness"
 
 # main has only a baseline so the feature branch carries (and tracks) docs/wip/.
-printf '# sandbox\n\nA throwaway consumer project for the sdd-gardening dev-role harness.\n' > README.md
+printf '# sandbox\n\nA throwaway consumer project for the sdd-gardening dev-role harness.\n\nRequires Python 3.9 or newer.\n' > README.md
 git add README.md
 git commit -q -m "chore: baseline"
 

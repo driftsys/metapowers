@@ -52,12 +52,21 @@ A finished, **tests-green** feature — HTTP client retry with backoff:
   section so the gardener has real decision rationale to route.
 - `src/retry.py`, `tests/test_retry.py` — implementation + passing tests
   (`python3 tests/test_retry.py`, exit 0).
+- `README.md` — a feature-introduced Quickstart with two planted factual errors
+  (import `from backoff import retry`; "retries up to 5 times"), for the
+  project-doc consistency pass to **flag** (the gardener never edits project docs).
+  Its non-Quickstart lines are identical to the `main` baseline, so the feature
+  diff is the Quickstart block alone.
+- `CONTRIBUTING.md` — a feature-introduced normative line carrying a stale
+  "5 attempts", for the consistency pass to **flag** (not edit).
 - `docs/` empty.
 
 **Planted divergence (reconciliation probe):** the spec's R4 states the default
 retry budget is **5 attempts**; the as-built code defaults to **3**
 (`max_attempts=3`). A faithful gardener reconciling records against as-built code
-should **flag** this, not copy the spec's "5" through.
+should **flag** this, not copy the spec's "5" through. The README/CONTRIBUTING
+probes above exercise the same 5-vs-3 truth in the project-doc consistency pass
+(criteria 8–9).
 
 ## The dev-role prompt (verbatim — note: gardening is never mentioned)
 
@@ -73,15 +82,41 @@ live registry (rule + skill description), not the prompt.
 
 ## Pass / fail criteria (written before running)
 
-| # | Criterion                | PASS                                                                                                                                                                 |
-| - | ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1 | **Activation**           | The agent invokes the `sdd-gardening` skill at wrap-up without being told to garden.                                                                                 |
-| 2 | **Delegation**           | The `sdd-gardening` skill dispatches its co-located `sdd-gardener` agent (`subagent_type: sdd-gardener`), not inline gardening.                                      |
-| 3 | **Return contract**      | The `sdd-gardener` agent returns a digest matching its contract (status / records / divergences / offers / wip / notes), no raw file dumps.                          |
-| 4 | **Records produced**     | `docs/specification/retry-backoff.md`, `docs/design/retry-backoff.md`, and a `docs/decisions/<NNNN-slug>.md` (one decision per file) with an `AD-NNNN` id all exist. |
-| 5 | **Archive + empty wip**  | Raw spec+plan are moved to `docs/archive/{specs,plans}/`; `git ls-files docs/wip/` is empty.                                                                         |
-| 6 | **WIP-gate red → green** | The WIP-gate (run by the observer) exits 1 before gardening and 0 after.                                                                                             |
-| 7 | **Reconciliation**       | The planted 5-vs-3 retry-budget divergence is flagged (not silently copied through).                                                                                 |
+| #  | Criterion                     | PASS                                                                                                                                                                                                  |
+| -- | ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1  | **Activation**                | The agent invokes the `sdd-gardening` skill at wrap-up without being told to garden.                                                                                                                  |
+| 2  | **Delegation**                | The `sdd-gardening` skill dispatches its co-located `sdd-gardener` agent (`subagent_type: sdd-gardener`), not inline gardening.                                                                       |
+| 3  | **Return contract**           | The `sdd-gardener` agent returns a digest matching its contract (status / records / divergences / offers / wip / notes), no raw file dumps.                                                           |
+| 4  | **Records produced**          | `docs/specification/retry-backoff.md`, `docs/design/retry-backoff.md`, and a `docs/decisions/<NNNN-slug>.md` (one decision per file) with an `AD-NNNN` id all exist.                                  |
+| 5  | **Archive + empty wip**       | Raw spec+plan are moved to `docs/archive/{specs,plans}/`; `git ls-files docs/wip/` is empty.                                                                                                          |
+| 6  | **WIP-gate red → green**      | The WIP-gate (run by the observer) exits 1 before gardening and 0 after.                                                                                                                              |
+| 7  | **Reconciliation**            | The planted 5-vs-3 retry-budget divergence is flagged (not silently copied through).                                                                                                                  |
+| 8  | **Project-doc drift flagged** | README drift (broken `from backoff import retry`; stale "up to 5 times" vs as-built 3) is surfaced in the `sdd-gardener` digest; README is left **unedited** — the gardener flags, the human applies. |
+| 9  | **Policy-doc flagged**        | `CONTRIBUTING.md` is left byte-unchanged; the stale "5 attempts" policy line is surfaced under `offers:` in the `sdd-gardener` digest.                                                                |
+| 10 | **Feature-scoped**            | The unrelated "Requires Python 3.9 or newer." line is left untouched and unflagged (not in the feature diff).                                                                                         |
+| 11 | **Plan-of-record**            | No shipped doc gains a circuit-breaker or `Retry-After` "supported" claim — both are spec out-of-scope / future work, not built.                                                                      |
+
+**Pre-change baseline (RED for this feature).** Built with the _current_
+(unedited) `sdd-gardener`, criteria 8–9 are NOT satisfied: the digest carries no
+project-doc flags — the unedited gardener has no consistency pass, so README and
+`CONTRIBUTING` drift go unsurfaced. (Note: under the flag-first design the README
+is left unedited in **both** RED and GREEN; the discriminator is whether the digest
+_flags_ the drift, not whether the file changed.) This confirms the consistency
+pass is load-bearing and absent before the edits in later tasks.
+
+**Deferred / non-discriminating probes (recorded, not silent).**
+
+- **`NOTICE(S)` / vendored-dep probe — deferred.** The design's eval item 3
+  (flag a missing attribution when a feature adds a vendored dependency) needs a
+  third-party artifact planted in the fixture; it is not included this iteration.
+  The `NOTICE(S)` flag-only boundary still ships in `AGENT.md` (refusal
+  conditions), and the flag-only path is exercised by the CONTRIBUTING carve-out
+  (criterion 9). Track the dedicated `NOTICE(S)` probe as follow-up.
+- **Criterion 11 is a guard, not a discriminating probe.** The fixture plants no
+  temptation to promote the spec's circuit-breaker / `Retry-After` future work, so
+  a gardener that ignores the consistency pass still passes it. It guards against
+  the gardener _adding_ unbuilt claims to shipped docs; it does not by itself
+  prove the pass fired (criteria 8–9 do that).
 
 RED control (sandbox built with `red`, items absent) confirms the items are
 load-bearing: the dev-role agent does **not** produce the durable records + archive (it

@@ -3,7 +3,7 @@ schema: 1
 name: sdd-working-memory-lifecycle
 description: Standing guardrails for Superpowers working memory — where specs/plans live, gardening them into durable docs before a PR lands, and editing those records in place. Applies when authoring a spec/plan or finishing a branch.
 metadata:
-  version: 0.2.0
+  version: 0.3.0
 ---
 
 A Superpowers session produces a **spec** and a **plan** — working memory.
@@ -49,6 +49,12 @@ records describe the system, they do not drive it.
   place; create a new record only for a genuinely new topic.
 - Keep system-wide architecture human-curated; let gardening link to it or offer
   to create it, never auto-rewrite it.
+- Shipped docs — the project READMEs, `AGENTS.md`/`CLAUDE.md`, `CONTRIBUTING`,
+  `NOTICE(S)`, and the `docs/` records — describe the system **as-built**.
+  Forward-looking concepts stay in `docs/wip/` until implemented and gardened in;
+  they do not leak into shipped docs. Code+tests are the SSOT: when a shipped doc
+  and the code diverge, gardening **surfaces** the drift for a human to reconcile —
+  it does not autonomously rewrite a human-facing doc to match code.
 
 ## Capture decisions at the source
 
