@@ -1,0 +1,13 @@
+schema: 1
+name: writingpowers
+description: Technical-writing skills — classify a doc by Diátaxis mode, structure it by genre, apply the house style, and keep it derived from code+tests (no drift)
+license: MIT
+items:
+  rules:
+  - tech-writing-style
+  skills:
+  - tech-writing
+requires:
+- name: diagrampowers
+metadata:
+  version: 0.1.0
