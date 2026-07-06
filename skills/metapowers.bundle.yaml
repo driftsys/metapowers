@@ -1,10 +1,11 @@
 schema: 1
 name: metapowers
-description: The metapowers baseline — composes Superpowers (TDD/brainstorm/plan, via plugin), gardenpowers (the engineering-documentation layer), and diagrampowers (technical diagramming), plus the Karpathy coding-guidelines rule
+description: The metapowers baseline — composes Superpowers (TDD/brainstorm/plan, via plugin), gardenpowers (the engineering-documentation layer), and diagrampowers (technical diagramming), plus the Karpathy coding-guidelines and international-english rules
 license: MIT
 items:
   rules:
   - karpathy-guidelines
+  - international-english
 requires:
 - name: superpowers
 - name: gardenpowers
