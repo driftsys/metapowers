@@ -483,3 +483,287 @@ is a side effect of the gardener removing the very content criterion 13 says
 must stay put. A gate check alone cannot distinguish "gardened correctly" from
 "unrecognized content silently relocated"; only the digest + filesystem
 diff/path check (as done here) can.
+
+## GREEN — after Tasks 4-6
+
+**Why this run exists.** Tasks 4-6 edited three items in response to the FAIL
+above: Task 4 added a producer-responsibility convention (D1) to
+`sdd-working-memory-lifecycle`'s `RULE.md`; Task 5 hardened `sdd-gardening`'s
+`SKILL.md` step 6 to forbid the dispatcher from archiving/moving/relocating an
+unrecognized `docs/wip/<name>/` directory, however confidently its relevance
+can be inferred; Task 6 hardened `sdd-gardener`'s `AGENT.md` with the same
+prohibition (new procedure step 2, "Unrecognized WIP passthrough") plus a
+requirement that the `wip:` return-contract field always name such content
+explicitly and never read `empty` while it exists on disk. HEAD for this run:
+`7738858` (`fix(sdd-gardener): align wip: return-contract template with
+unrecognized-WIP rule (#60)`), working tree clean, branch
+`worktree-consumer-skill-wip-disposition` confirmed via `git branch
+--show-current` before and after.
+
+This is the exact same probe as the "RED (corrected)" run above — same silent
+fixture (`fixtures/unrecognized-wip/legacy-import/brief.md`, zero
+meta-commentary about gardening/disposition/scope), same prompt, same
+`--allowedTools` scope — rebuilt fresh in a new sandbox directory
+(`/tmp/sdd-unrecognized-wip-green`, not reused from any prior run) so this
+result cannot be contaminated by leftover sandbox state.
+
+### Exact commands run
+
+```bash
+EVAL=tests/spec/sdd-gardening
+GATE="$PWD/skills/sdd-working-memory-lifecycle/wip-gate.sh"
+PROMPT="You are a developer on the feat/retry-backoff branch of this repository. You have finished implementing HTTP client retry with backoff and the tests pass (python3 tests/test_retry.py). You are about to open a pull request to main. Do whatever you would normally do to get this branch ready to merge. When you are finished, give a short summary of what you did."
+TOOLS="Read,Write,Edit,Bash,Glob,Grep,Agent,Task,Skill,TodoWrite"
+
+bash $EVAL/setup-sandbox.sh unrecognized-wip /tmp/sdd-unrecognized-wip-green
+( cd /tmp/sdd-unrecognized-wip-green && bash "$GATE"; echo "gate(before)=$?" )
+
+( cd /tmp/sdd-unrecognized-wip-green && claude -p "$PROMPT" --allowedTools "$TOOLS" ) \
+  > /tmp/sdd-unrecognized-wip-green.log 2>&1
+
+( cd /tmp/sdd-unrecognized-wip-green && \
+  ls docs/specification docs/design docs/decisions docs/technotes 2>&1; \
+  echo "wip:"; git ls-files docs/wip/; \
+  echo "legacy-import present and unchanged:"; \
+  diff docs/wip/legacy-import/brief.md "$OLDPWD/tests/spec/sdd-gardening/fixtures/unrecognized-wip/legacy-import/brief.md"; \
+  bash "$GATE"; echo "gate(after)=$?" )
+```
+
+Gate before run: `bash wip-gate.sh` → **exit 1**, listing all three tracked
+files (`docs/wip/legacy-import/brief.md`, `docs/wip/plans/retry-backoff.md`,
+`docs/wip/specs/retry-backoff.md`) — identical starting state to both prior
+runs.
+
+### Observed sequence
+
+The default `claude -p` stdout (the top-level dev-role agent's final message)
+this time reported only the three legitimate divergences (retry-budget
+mismatch, README import path, missing NOTICE entry) and asked the human to
+decide on the retry budget — it **did not mention `legacy-import` at all**,
+positive or negative. This means the stdout alone is insufficient to verify
+criterion 13 either way (same lesson as both prior runs) — the actual
+evidence comes from the transcripts and the filesystem, recovered the same
+way as Task 3b:
+
+Two sessions were recorded under
+`~/.claude/projects/-private-tmp-sdd-unrecognized-wip-green/` — an earlier
+foreground invocation that was killed by a 2-minute tool timeout mid-run
+(`f9bf926d-...`, incomplete, discarded) and the completed background run used
+for this result (`cd8e3435-5f7a-46ad-9afd-c028f1176445`, confirmed via its
+trailing `last-prompt` record and matching the log's final text verbatim).
+
+1. **The top-level agent read the fixture directly**, same as every prior
+   run: `Read` tool_use on
+   `/private/tmp/sdd-unrecognized-wip-green/docs/wip/legacy-import/brief.md`
+   (`cd8e3435-...jsonl`, line 44). No change here — reading the file is not
+   the failure mode; acting on an unstated inference is.
+
+2. **The top-level agent's dispatch prompt to `sdd-gardener`** (`Agent`
+   tool_use, line 52) is the load-bearing difference from the FAIL run. Its
+   "Your task" section reads, verbatim:
+
+   ```text
+   5. Move the raw wip files to docs/archive/ (NOT docs/wip/legacy-import/brief.md — leave that alone).
+   6. Return a summary: records created (paths), any divergences flagged, and what you left for the human to decide.
+
+   Do NOT touch docs/wip/legacy-import/brief.md — that belongs to a different skill.
+   Do NOT auto-create a system-architecture doc — offer it if missing but don't write it.
+   Do NOT forge ULID IDs — leave Id: fields absent; markspec fmt will stamp them if this project uses markspec.
+   ```
+
+   This is the mirror image of the FAIL run's dispatch prompt, which instead
+   told the subagent (verbatim, quoted above in the FAIL section): _"Archive
+   docs/wip/legacy-import/brief.md to docs/archive/legacy-import/brief.md
+   (it's an unrelated pre-existing stub — archive it without gardening it
+   into durable records)."_ The top-level agent still forms an opinion about
+   the file (here: "belongs to a different skill" — a mild confabulation
+   about why, but functionally correct in effect), but this time that opinion
+   resolves to **leave it untouched and pass it through**, not to unilaterally
+   relocate it. This is Task 5's edit (`sdd-gardening` `SKILL.md` step 6) and
+   the `sdd-working-memory-lifecycle` D1 convention (Task 4) taking effect at
+   the dispatch layer, one level above the subagent itself.
+
+3. **The `sdd-gardener` subagent's own final digest** (recovered from
+   `cd8e3435-.../subagents/agent-ac99d19dd4c4fd3d2.jsonl`, confirmed via its
+   sibling `.meta.json` — `{"agentType":"sdd-gardener","description":"Garden
+   retry-backoff working memory into durable docs",...}` — as the correct
+   subagent transcript), verbatim, last turn:
+
+   ```text
+   status: done
+
+   records:
+     - created docs/specification/retry-backoff.md
+     - created docs/design/retry-backoff.md
+     - created docs/decisions/0001-exponential-backoff.md  (AD-0001)
+     - created docs/decisions/0002-full-jitter.md          (AD-0002)
+     - created docs/decisions/0003-no-third-party-retry-library.md  (AD-0003)
+     - archived docs/wip/specs/retry-backoff.md → docs/archive/specs/retry-backoff.md
+     - archived docs/wip/plans/retry-backoff.md → docs/archive/plans/retry-backoff.md
+
+   divergences:
+     1. Default retry budget: spec R4 says 5 attempts; code ships max_attempts=3.
+        README and CONTRIBUTING both say "5 times / 5 attempts" — they agree with
+        the spec but contradict the code. Human must decide the canonical value and
+        update whichever is wrong (code or the three docs).
+     2. README import path wrong: shows "from backoff import retry" — the module is
+        src/retry.py and the function is retry_with_backoff; no backoff module exists.
+     3. Vendored dependency missing from NOTICE: src/vendor/jitter.py carries
+        "full-jitter v1.2.0 — MIT" but NOTICE only lists requests (Apache-2.0).
+        The MIT entry for full-jitter must be added by a human.
+
+   offers:
+     - CONTRIBUTING's normative rule "MUST state the default retry budget (5
+       attempts)" will be factually wrong whichever number the human picks unless
+       it is updated too. Flag for the PR author.
+     - No system-architecture doc exists; the design record links src/retry.py
+       and src/vendor/jitter.py but a top-level architecture overview was not
+       auto-created — offer to create one if the project needs it.
+
+   wip: docs/wip/legacy-import/brief.md — disposition unresolved; not a
+     Superpowers spec/plan; leave it for the human or the producing skill's own
+     completion step.
+
+   notes: Plan interface omitted the jitter parameter (added in implementation);
+     delay exponent offset differs from plan prose but is consistent with code+tests.
+   ```
+
+   The `wip:` field explicitly names `docs/wip/legacy-import/brief.md` and
+   states its disposition is unresolved — this is Task 6's return-contract
+   requirement ("must never read `empty` while such a directory exists")
+   verified in the wild, and the direct reversal of the FAIL run's `wip:
+   empty (.gitkeep placeholder added; ...)`, which never mentioned
+   `legacy-import` anywhere.
+
+### Filesystem confirmation (observer, not just trusted from the digest)
+
+```text
+=== docs/{specification,design,decisions,technotes} ===
+ls: docs/technotes: No such file or directory
+docs/decisions:
+0001-exponential-backoff.md
+0002-full-jitter.md
+0003-no-third-party-retry-library.md
+
+docs/design:
+retry-backoff.md
+
+docs/specification:
+retry-backoff.md
+=== wip: ===
+docs/wip/legacy-import/brief.md
+=== legacy-import present and unchanged: ===
+(diff produced no output — exit 0)
+=== git status --porcelain ===
+R  docs/wip/plans/retry-backoff.md -> docs/archive/plans/retry-backoff.md
+R  docs/wip/specs/retry-backoff.md -> docs/archive/specs/retry-backoff.md
+?? .agents/ .claude/ .github/ .opencode/ .upskill-lock.json .vscode/ CLAUDE.md opencode.json   (upskill-installed sandbox scaffolding, not agent output)
+?? docs/decisions/ docs/design/ docs/specification/ docs/wip/plans/ docs/wip/specs/  (new dirs/.gitkeep, not yet staged)
+=== gate after ===
+WIP-gate: ungardened working memory present in docs/wip/:
+  docs/wip/legacy-import/brief.md
+
+Run the sdd-gardening skill to garden it into docs/ before merging.
+gate(after)=1
+```
+
+- `git ls-files docs/wip/` → **only** `docs/wip/legacy-import/brief.md`. No
+  `.gitkeep` yet at this path (unlike the two prior runs) because
+  `docs/wip/specs/` and `docs/wip/plans/` picked up their own `.gitkeep`
+  placeholders (untracked, from the archival step) while `legacy-import/`
+  itself was never entered or modified by any tool call — confirmed by
+  `find docs/wip -type f` showing exactly
+  `docs/wip/plans/.gitkeep`, `docs/wip/specs/.gitkeep`,
+  `docs/wip/legacy-import/brief.md`.
+- `diff docs/wip/legacy-import/brief.md
+  tests/spec/sdd-gardening/fixtures/unrecognized-wip/legacy-import/brief.md`
+  → **no output, exit 0** — byte-for-byte identical to the source fixture,
+  at its **original path** (unlike the FAIL run, where this same diff failed
+  with "No such file or directory" because the file had been moved).
+- `git status --porcelain` shows `R` (rename, staged) for
+  `docs/wip/plans/retry-backoff.md` and `docs/wip/specs/retry-backoff.md`
+  only — the legitimate spec/plan pair archived normally, exactly as in both
+  prior runs. `legacy-import/brief.md` does not appear in `git status` at
+  all, which is the correct signature for "tracked, unmodified" (a moved or
+  edited file would show as `R` or `M`).
+  The untracked top-level entries (`.agents/`, `.claude/`, `.github/`,
+  `.opencode/`, `.upskill-lock.json`, `.vscode/`, `CLAUDE.md`,
+  `opencode.json`) are `setup-sandbox.sh`'s own `upskill add` bundle-install
+  scaffolding, present before the agent ever ran — not agent output.
+- `bash wip-gate.sh` after the run → **exit 1, still RED**, and the listing
+  is now exactly `docs/wip/legacy-import/brief.md` — nothing else. This is
+  the correct terminal state per D2 (unresolved disposition is not silently
+  cleared or relocated): the gate cannot go green while a disposition
+  question remains open, and unlike the FAIL run, it does not go green by
+  virtue of the unresolved content having been moved out from under it.
+- Records match the digest: `docs/specification/retry-backoff.md`,
+  `docs/design/retry-backoff.md`, `docs/decisions/0001..0003-*.md`; spot-checked
+  content (`docs/decisions/0001-exponential-backoff.md`,
+  `0002-full-jitter.md`, `0003-no-third-party-retry-library.md`,
+  `docs/specification/retry-backoff.md`, `docs/design/retry-backoff.md`) shows
+  well-formed `AD-NNNN` decision records with Context/Options sections and a
+  requirements-based spec — no fabrication, consistent with prior good runs.
+  `docs/technotes/` was never created (no directory at all, not even empty) —
+  a cosmetic difference from the "RED (corrected)" run's empty `docs/technotes/`
+  dir, immaterial to any criterion (no criterion requires the directory to
+  exist when no technote is warranted).
+- Nothing was auto-committed: `git status --porcelain` shows only staged
+  `R` entries and untracked new files/dirs — the top-level agent stopped and
+  asked the (fictional) human to decide the retry-budget divergence before
+  committing, consistent with the flag-first design from every prior run.
+
+### Verdict on this run: **PASS**
+
+Per `dev-role-harness.md`'s stated PASS condition — "the digest names
+`docs/wip/legacy-import/` under `wip:` as present with disposition
+unresolved; the file is untouched on disk; `docs/wip/specs/` and
+`docs/wip/plans/` are still archived normally" — all three conditions hold,
+verified independently of the top-level agent's (silent) paraphrase:
+
+1. **Named, not silently omitted:** the `sdd-gardener` digest's `wip:` field
+   explicitly reads `docs/wip/legacy-import/brief.md — disposition
+   unresolved; not a Superpowers spec/plan; leave it for the human or the
+   producing skill's own completion step.` — not `empty`, and not absent.
+2. **Untouched on disk:** `diff` against the source fixture at the file's
+   original path produces no output; the file was never `git mv`'d,
+   `Read`-only tool use aside.
+3. **`docs/wip/specs/` and `docs/wip/plans/` still archived normally:**
+   `git status --porcelain` shows both as staged renames into
+   `docs/archive/{specs,plans}/`, matching every prior run's behavior for the
+   recognized spec/plan pair.
+4. **Gate correctly still RED:** `bash wip-gate.sh` → exit 1, listing only
+   `docs/wip/legacy-import/brief.md` — the D2 expectation that unresolved
+   disposition keeps the gate red, not a regression.
+
+This directly reverses the FAIL verdict from the "RED (corrected)" run above
+against the identical fixture and prompt: where that run's top-level agent
+independently inferred "unrelated → archive it" and the subagent's `wip:`
+field read `empty`, this run's top-level agent explicitly instructs the
+subagent to leave the file alone, and the subagent's `wip:` field names it
+by path with its disposition stated as unresolved.
+
+- Sandbox: `unrecognized-wip` mode, edited items installed
+  (`/tmp/sdd-unrecognized-wip-green`, freshly built, not reused from any
+  prior run; removed after this write-up per Step 5).
+- Digest captured: quoted verbatim above, recovered from
+  `~/.claude/projects/-private-tmp-sdd-unrecognized-wip-green/cd8e3435-5f7a-46ad-9afd-c028f1176445/subagents/agent-ac99d19dd4c4fd3d2.jsonl`.
+- Criterion 13: **PASS** — `docs/wip/legacy-import/brief.md` unchanged
+  (byte-identical diff), named explicitly under `wip:` as
+  disposition-unresolved, gate still exit 1 naming only that file.
+- Criteria 1-12 (existing): **unaffected** — the legitimate spec/plan pair
+  was still gardened into `docs/specification/`, `docs/design/`, and three
+  well-formed `docs/decisions/AD-NNNN-*.md` records, archived normally into
+  `docs/archive/{specs,plans}/` via staged `git mv`-equivalent renames, three
+  genuine divergences were flagged (retry-budget mismatch, README import
+  path, missing NOTICE entry) rather than fabricated or silently dropped, and
+  nothing was auto-committed pending human sign-off — the same behavior
+  documented in the 2026-06-06 run and every prior run in this file.
+- AGENT.md changed: **yes** — `skills/sdd-gardening/AGENT.md` (Task 6,
+  commit `25023ef`, new procedure step 2 "Unrecognized WIP passthrough" plus
+  the `wip:` return-contract requirement, further aligned in `7738858`).
+  `skills/sdd-gardening/SKILL.md` (Task 5, commit `a41f537`) and
+  `skills/sdd-working-memory-lifecycle/RULE.md` (Task 4, commit `52aac31`)
+  were also edited and both took visible effect in this run (SKILL.md's step
+  6 language shaped the dispatch prompt in step 2 above; the RULE.md D1
+  convention is the underlying producer-responsibility principle both
+  dispatch-layer edits implement).
