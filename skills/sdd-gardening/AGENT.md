@@ -48,7 +48,7 @@ that inference.
    disposition is a human decision, not yours. Leave it at its exact
    original path, byte-for-byte untouched — do not `git mv` it to
    `docs/archive/` alongside the legitimate spec/plan archival; that
-   archival step (step 8/9) is scoped to `docs/wip/specs/` and
+   archival step (step 9) is scoped to `docs/wip/specs/` and
    `docs/wip/plans/` only. Always name it in the return contract's `wip:`
    field — path + one line ("disposition unresolved — not a Superpowers
    spec/plan; leave it for the human or the producing skill's own
@@ -124,7 +124,7 @@ records:
   - created|edited docs/<...>  (AD-NNNN if applicable)
 divergences: <as-planned vs as-built items needing human confirmation, or none>
 offers: <requirement gaps to fill / system-architecture updates to make, or none>
-wip: empty | <files still present and why>
+wip: empty | <files still present and why, including any unrecognized docs/wip/<name>/ directory by path>
 notes: <one or two lines max>
 ```
 
