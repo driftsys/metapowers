@@ -27,12 +27,12 @@
 
 set -euo pipefail
 
-MODE="${1:?usage: setup-sandbox.sh <green|green-empty|override|red> <dir>}"
-DIR="${2:?usage: setup-sandbox.sh <green|green-empty|override|red> <dir>}"
+MODE="${1:?usage: setup-sandbox.sh <green|green-empty|override|red|unrecognized-wip> <dir>}"
+DIR="${2:?usage: setup-sandbox.sh <green|green-empty|override|red|unrecognized-wip> <dir>}"
 
 case "$MODE" in
-  green | green-empty | override | red) ;;
-  *) echo "mode must be 'green', 'green-empty', 'override', or 'red', got '$MODE'" >&2; exit 2 ;;
+  green | green-empty | override | red | unrecognized-wip) ;;
+  *) echo "mode must be 'green', 'green-empty', 'override', 'red', or 'unrecognized-wip', got '$MODE'" >&2; exit 2 ;;
 esac
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -68,6 +68,14 @@ if [ "$MODE" = "green-empty" ]; then
   rm -rf docs/wip
 fi
 
+# unrecognized-wip: green fixture + an extra docs/wip/<name>/ directory that
+# is NOT the Superpowers spec/plan pair — probes the D2 fallback (surface,
+# don't garden, don't delete). See #60.
+if [ "$MODE" = "unrecognized-wip" ]; then
+  mkdir -p docs/wip/legacy-import
+  cp "$HERE/fixtures/unrecognized-wip/legacy-import/brief.md" docs/wip/legacy-import/brief.md
+fi
+
 # Tests must be green BEFORE the agent runs (gardening reconciles against as-built).
 # Suppress bytecode so no __pycache__ is staged into the seed commit below.
 PYTHONDONTWRITEBYTECODE=1 python3 tests/test_retry.py > /dev/null
@@ -75,7 +83,7 @@ PYTHONDONTWRITEBYTECODE=1 python3 tests/test_retry.py > /dev/null
 git add -A
 git commit -q -m "feat: HTTP client retry with backoff (wip not yet gardened)"
 
-if [ "$MODE" = "green" ] || [ "$MODE" = "green-empty" ] || [ "$MODE" = "override" ]; then
+if [ "$MODE" = "green" ] || [ "$MODE" = "green-empty" ] || [ "$MODE" = "override" ] || [ "$MODE" = "unrecognized-wip" ]; then
   upskill add "$BUNDLE" --project --quiet
 fi
 
