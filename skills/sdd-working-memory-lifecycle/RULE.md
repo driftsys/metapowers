@@ -19,6 +19,12 @@ records describe the system, they do not drive it.
 - Keep working memory collaborative by tracking `docs/wip/` in git, or private by
   gitignoring it — the gitignore entry is the only switch; do not add a config
   flag. Tracked is the default.
+- A skill other than the Superpowers spec/plan flow that stages its own
+  transient content in `docs/wip/<name>/` (e.g., an import/migration skill
+  writing a staging brief) owns that content's disposition: it must document,
+  in its own `SKILL.md`, whether that content is discarded or archived
+  verbatim to `docs/archive/<name>/`, and must run that step as part of its
+  own completion — not deferred to branch-finish time.
 
 ## Garden before a PR lands
 
