@@ -57,6 +57,27 @@ run_case "ignores .gitkeep placeholders" '
   [ "$status" -eq 0 ]
 '
 
+# Case 4: ignores a lone docs/wip/README.md folder placeholder
+run_case "ignores docs/wip/README.md placeholder" '
+  mkdir -p docs/wip
+  echo "# Working memory" > docs/wip/README.md
+  git add docs/wip/README.md
+  output=$(bash "$GATE" 2>&1)
+  status=$?
+  [ "$status" -eq 0 ]
+'
+
+# Case 5: still catches real work alongside a README placeholder
+run_case "catches real work alongside a README placeholder" '
+  mkdir -p docs/wip/specs
+  echo "# Working memory" > docs/wip/README.md
+  echo "draft" > docs/wip/specs/feature.md
+  git add docs/wip/README.md docs/wip/specs/feature.md
+  output=$(bash "$GATE" 2>&1)
+  status=$?
+  [ "$status" -eq 1 ] && [[ "$output" == *"docs/wip/specs/feature.md"* ]] && [[ "$output" != *"docs/wip/README.md"* ]]
+'
+
 echo ""
 echo "Results: $PASS passed, $FAIL failed"
 if [ "$FAIL" -gt 0 ]; then
