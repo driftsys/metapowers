@@ -141,7 +141,9 @@ gate(after)=1
   non-`.gitkeep` file under `docs/wip/` as blocking, unconditionally, with no
   exception for content the gardener has explicitly and correctly declined to
   reconcile. This is an emergent side effect, not a criterion-13 failure — but
-  it means this branch's merge gate can never turn green while
+  it means the sandbox's `feat/retry-backoff` branch — standing in for a
+  hypothetical downstream consumer repo in collaborative mode, not
+  metapowers' own branch — can never turn its merge gate green while
   `legacy-import/` sits in `docs/wip/`, no matter how correctly the gardener
   behaves. Worth flagging to whoever owns `wip-gate.sh`'s design; out of scope
   for this task.

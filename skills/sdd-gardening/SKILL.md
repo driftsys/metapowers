@@ -30,14 +30,15 @@ summary. See the `sdd-working-memory-lifecycle` rule for the standing guardrails
 1. **Detect mode.** `git check-ignore -q docs/wip/` → if ignored, this is
    private mode (no archive step, no CI gate); otherwise collaborative.
 2. **Gather inputs** for the subagent: the `docs/wip/specs/` + `docs/wip/plans/`
-   spec + plan (the only directories this flow reconciles); note any other
-   `docs/wip/<name>/` directory present, but do not hand it to the subagent as
-   spec/plan material, and do not pre-decide its disposition yourself — do not
-   instruct the subagent to archive, discard, move, or otherwise resolve it,
-   however confidently its (ir)relevance to the current feature can be
-   inferred; the merged
-   code + tests; the existing `docs/specification/`, `docs/design/`,
-   `docs/decisions/`, `docs/technotes/`. If this same session ran the
+   spec + plan (the only directories this flow reconciles); the merged code +
+   tests; and the existing `docs/specification/`, `docs/design/`,
+   `docs/decisions/`, `docs/technotes/` records. If any other
+   `docs/wip/<name>/` directory is present, mention its existence to the
+   subagent when dispatching (so the subagent can name it in its report), but
+   do not hand it over as spec/plan material, and do not pre-decide its
+   disposition yourself — do not instruct the subagent to archive, discard,
+   move, or otherwise resolve it, however confidently its (ir)relevance to the
+   current feature can be inferred. If this same session ran the
    brainstorming, include that discussion — it carries the considered-options
    rationale directly. Also gather, for the consistency pass, the canonical
    project docs — `README*` (root + dirs the feature touched),

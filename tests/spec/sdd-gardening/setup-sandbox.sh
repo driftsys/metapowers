@@ -5,9 +5,11 @@
 # (dev-role-harness.md) runs a fresh agent against.
 #
 # Usage:
-#   setup-sandbox.sh green    <dir>   # metapowers bundle installed (live registry)
-#   setup-sandbox.sh override <dir>   # green + a synthetic substrate override rule
-#   setup-sandbox.sh red      <dir>   # control: NO metapowers items installed
+#   setup-sandbox.sh green              <dir>   # metapowers bundle installed (live registry)
+#   setup-sandbox.sh green-empty        <dir>   # green + no Superpowers working memory (over-fire probe)
+#   setup-sandbox.sh override           <dir>   # green + a synthetic substrate override rule
+#   setup-sandbox.sh red                <dir>   # control: NO metapowers items installed
+#   setup-sandbox.sh unrecognized-wip   <dir>   # green + an extra docs/wip/<name>/ dir outside the spec/plan pair
 #
 # In GREEN/OVERRIDE the metapowers items (sdd-working-memory-lifecycle RULE, the
 # sdd-gardening SKILL + its co-located sdd-gardener AGENT) are installed into the
