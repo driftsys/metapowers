@@ -7,8 +7,6 @@ metadata:
   version: 0.1.0
 ---
 
-# International English
-
 Write prose — code comments, commit messages, docs, PR descriptions — in
 plain, literal English.
 
