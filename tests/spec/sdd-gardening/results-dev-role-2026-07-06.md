@@ -526,6 +526,7 @@ bash $EVAL/setup-sandbox.sh unrecognized-wip /tmp/sdd-unrecognized-wip-green
   echo "wip:"; git ls-files docs/wip/; \
   echo "legacy-import present and unchanged:"; \
   diff docs/wip/legacy-import/brief.md "$OLDPWD/tests/spec/sdd-gardening/fixtures/unrecognized-wip/legacy-import/brief.md"; \
+  echo "git status --porcelain:"; git status --porcelain; \
   bash "$GATE"; echo "gate(after)=$?" )
 ```
 
