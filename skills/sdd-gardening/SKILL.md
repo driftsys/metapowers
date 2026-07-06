@@ -29,7 +29,13 @@ summary. See the `sdd-working-memory-lifecycle` rule for the standing guardrails
 
 1. **Detect mode.** `git check-ignore -q docs/wip/` → if ignored, this is
    private mode (no archive step, no CI gate); otherwise collaborative.
-2. **Gather inputs** for the subagent: the `docs/wip/` spec + plan; the merged
+2. **Gather inputs** for the subagent: the `docs/wip/specs/` + `docs/wip/plans/`
+   spec + plan (the only directories this flow reconciles); note any other
+   `docs/wip/<name>/` directory present, but do not hand it to the subagent as
+   spec/plan material, and do not pre-decide its disposition yourself — do not
+   instruct the subagent to archive, discard, move, or otherwise resolve it,
+   however confidently its (ir)relevance to the current feature can be
+   inferred; the merged
    code + tests; the existing `docs/specification/`, `docs/design/`,
    `docs/decisions/`, `docs/technotes/`. If this same session ran the
    brainstorming, include that discussion — it carries the considered-options
@@ -52,8 +58,14 @@ summary. See the `sdd-working-memory-lifecycle` rule for the standing guardrails
    stale fact in `README`/`AGENTS`, or a policy/legal line in
    `CONTRIBUTING`/`AGENTS`/`NOTICE(S)`) — apply the fix or accept it yourself.
    Never fabricate or auto-create.
-6. **Verify** `docs/wip/` is empty (collaborative mode), then commit the gardened
-   records + archived raw.
+6. **Verify** `docs/wip/specs/` and `docs/wip/plans/` are empty (collaborative
+   mode), then commit the gardened records + archived raw. A `docs/wip/<name>/`
+   directory outside that pair is not this skill's to resolve — see the
+   `sdd-working-memory-lifecycle` rule; relay it to the human as-is (step 4).
+   Do not garden it, do not delete it, and do not archive, move, or relocate
+   it in any way (including via `git mv` to `docs/archive/`) — its
+   disposition is not this skill's decision, however confidently its
+   (ir)relevance to the current feature can be inferred.
 
 ## Common mistakes
 
