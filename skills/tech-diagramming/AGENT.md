@@ -6,7 +6,7 @@ license: MIT
 mode: subagent
 model: sonnet
 metadata:
-  version: 0.2.1
+  version: 0.2.2
 ---
 
 You are the diagram-heavy orchestrator. You take a batch diagramming job —

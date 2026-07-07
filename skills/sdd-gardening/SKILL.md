@@ -3,7 +3,7 @@ schema: 1
 name: sdd-gardening
 description: Use when finishing a development branch or before opening/merging a PR while Superpowers working memory (docs/wip/ specs and plans) is still present, or when asked to garden, consolidate, or write up specs/plans into durable docs/ records. Also when CI reports a non-empty docs/wip/.
 metadata:
-  version: 0.2.1
+  version: 0.2.2
 ---
 
 ## Overview

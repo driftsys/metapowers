@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.2.2] (2026-07-07)
+
+### Features
+
+- add international-english rule for plain, non-idiomatic prose ([#61])
+  ([4509fb7]), closes [#8]
+
+### Bug Fixes
+
+- **sdd-gardening:** consumer-skill WIP disposition seam ([#62]) ([55fad42])
+- **sdd-working-memory-lifecycle:** don't flag docs/wip/README.md as ungardened
+  work ([#63]) ([2e0017e]), fixes [#59]
+
+[0.2.2]: https://github.com/driftsys/metapowers/compare/v0.2.1...v0.2.2
+[4509fb7]: https://github.com/driftsys/metapowers/commit/4509fb7
+[#61]: https://github.com/driftsys/metapowers/issues/61
+[#8]: https://github.com/driftsys/metapowers/issues/8
+[55fad42]: https://github.com/driftsys/metapowers/commit/55fad42
+[#62]: https://github.com/driftsys/metapowers/issues/62
+[2e0017e]: https://github.com/driftsys/metapowers/commit/2e0017e
+[#63]: https://github.com/driftsys/metapowers/issues/63
+[#59]: https://github.com/driftsys/metapowers/issues/59
+
 ## [0.2.1] (2026-06-08)
 
 ### Bug Fixes
