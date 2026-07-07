@@ -29,7 +29,8 @@ records describe the system, they do not drive it.
 - This rule ships `wip-gate.sh` as a supporting resource (installed alongside it,
   e.g. `.claude/rules/sdd-working-memory-lifecycle/wip-gate.sh`). It is a
   host-agnostic detector: it exits non-zero and lists the ungardened files when
-  tracked `docs/wip/` still holds work (`.gitkeep` placeholders ignored). On a
+  tracked `docs/wip/` still holds work (`.gitkeep` and the folder's own
+  `README.md` are ignored placeholders). On a
   host that supports it, surface the result as a **blocking review thread** that
   stays unresolved until the work is gardened away or the debt is explicitly
   accepted — accepted debt must be made visible to approvers (a reason plus a

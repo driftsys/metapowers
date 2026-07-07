@@ -10,10 +10,10 @@
 
 set -euo pipefail
 
-# Placeholder files (.gitkeep) only preserve the empty docs/wip/ directory
-# structure after gardening — they are not ungardened work, so they must not
-# trip the gate.
-tracked=$(git ls-files docs/wip/ | grep -v '/\.gitkeep$' || true)
+# Placeholder files (.gitkeep, and the folder's own README.md) only preserve
+# the docs/wip/ directory structure and its documentation after gardening —
+# they are not ungardened work, so they must not trip the gate.
+tracked=$(git ls-files docs/wip/ | grep -vE '/(\.gitkeep|README\.md)$' || true)
 
 if [ -n "$tracked" ]; then
   echo "WIP-gate: ungardened working memory present in docs/wip/:" >&2
