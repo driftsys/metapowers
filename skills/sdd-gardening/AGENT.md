@@ -15,10 +15,14 @@ nothing else.
 
 ## Inputs (provided by the dispatcher)
 
-The `docs/wip/` spec + plan; pointers to the merged code + tests; the existing
-`docs/specification/`, `docs/design/`, `docs/decisions/`, `docs/technotes/`; and,
-if supplied, the brainstorming discussion (it carries the considered-options
-rationale).
+The `docs/wip/specs/` + `docs/wip/plans/` spec + plan; pointers to the merged
+code + tests; the existing `docs/specification/`, `docs/design/`,
+`docs/decisions/`, `docs/technotes/`; and, if supplied, the brainstorming
+discussion (it carries the considered-options rationale). The dispatcher may
+also note a `docs/wip/<name>/` directory outside the spec/plan pair — that is
+not spec/plan material and not yours to route, archive, or delete (see
+Procedure); do not infer its relevance to the current feature and act on
+that inference.
 
 ## What you produce — the taxonomy
 
@@ -36,16 +40,30 @@ rationale).
 ## Procedure
 
 1. **Triage** per topic: new, or touches an existing record?
-2. **Route**: requirements → `docs/specification/`; architecture + detailed
+2. **Unrecognized WIP passthrough.** If the dispatcher noted a
+   `docs/wip/<name>/` directory outside the spec/plan pair — or you notice
+   one yourself — do not triage, route, garden, delete, or archive it,
+   however confidently its (ir)relevance to the current feature can be
+   inferred: it is not a spec, plan, or record candidate, and its
+   disposition is a human decision, not yours. Leave it at its exact
+   original path, byte-for-byte untouched — do not `git mv` it to
+   `docs/archive/` alongside the legitimate spec/plan archival; that
+   archival step (step 9) is scoped to `docs/wip/specs/` and
+   `docs/wip/plans/` only. Always name it in the return contract's `wip:`
+   field — path + one line ("disposition unresolved — not a Superpowers
+   spec/plan; leave it for the human or the producing skill's own
+   completion step") — even when nothing else about it seems noteworthy.
+   `wip:` must never read `empty` while such a directory exists on disk.
+3. **Route**: requirements → `docs/specification/`; architecture + detailed
    design → `docs/design/`; decisions → `docs/decisions/`; informative
    background → `docs/technotes/`.
-3. **Filter**: drop the ephemeral — TDD step ceremony, plan mechanics, code
+4. **Filter**: drop the ephemeral — TDD step ceremony, plan mechanics, code
    snippets (link to code instead), verbatim requirement restatements.
-4. **Decorate**: make each record's nature obvious; stamp `AD-NNNN` ids on
+5. **Decorate**: make each record's nature obvious; stamp `AD-NNNN` ids on
    decisions; keep close to the source prose and chapter order.
-5. **Reconcile (lightly)**: skim each record against the merged code + tests; fix
+6. **Reconcile (lightly)**: skim each record against the merged code + tests; fix
    obvious as-planned/as-built divergences; **flag** uncertain ones in the return.
-6. **Reconcile project docs (consistency pass)**: surface where human-facing docs
+7. **Reconcile project docs (consistency pass)**: surface where human-facing docs
    drift from the as-built code, bounded to this feature — **flag, never edit**.
    **Diff-gate** — from the feature's code+test diff (e.g. `git diff main...HEAD`),
    derive the _changed surface_ (command names, paths, version numbers and other
@@ -63,9 +81,9 @@ rationale).
    dependency absent from `NOTICE(S)`, or a user-facing capability absent from a
    README feature list — flag it even though no doc yet references it. The
    dispatcher relays both; the human applies the fix.
-7. **Rewrite in place**: when work changes an existing record, edit it; create a
+8. **Rewrite in place**: when work changes an existing record, edit it; create a
    new record only for a genuinely new topic.
-8. **Archive**: in collaborative mode (`docs/wip/` tracked), `git mv` the raw
+9. **Archive**: in collaborative mode (`docs/wip/` tracked), `git mv` the raw
    spec/plan to `docs/archive/specs/` and `docs/archive/plans/` (mirror the
    split). Leave `docs/wip/` empty — a `.gitkeep` placeholder to preserve the
    directory is fine; the WIP-gate ignores it.
@@ -106,7 +124,7 @@ records:
   - created|edited docs/<...>  (AD-NNNN if applicable)
 divergences: <as-planned vs as-built items needing human confirmation, or none>
 offers: <requirement gaps to fill / system-architecture updates to make, or none>
-wip: empty | <files still present and why>
+wip: empty | <files still present and why, including any unrecognized docs/wip/<name>/ directory by path>
 notes: <one or two lines max>
 ```
 

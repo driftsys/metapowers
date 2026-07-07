@@ -88,20 +88,21 @@ live registry (rule + skill description), not the prompt.
 
 ## Pass / fail criteria (written before running)
 
-| #  | Criterion                     | PASS                                                                                                                                                                                                  |
-| -- | ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1  | **Activation**                | The agent invokes the `sdd-gardening` skill at wrap-up without being told to garden.                                                                                                                  |
-| 2  | **Delegation**                | The `sdd-gardening` skill dispatches its co-located `sdd-gardener` agent (`subagent_type: sdd-gardener`), not inline gardening.                                                                       |
-| 3  | **Return contract**           | The `sdd-gardener` agent returns a digest matching its contract (status / records / divergences / offers / wip / notes), no raw file dumps.                                                           |
-| 4  | **Records produced**          | `docs/specification/retry-backoff.md`, `docs/design/retry-backoff.md`, and a `docs/decisions/<NNNN-slug>.md` (one decision per file) with an `AD-NNNN` id all exist.                                  |
-| 5  | **Archive + empty wip**       | Raw spec+plan are moved to `docs/archive/{specs,plans}/`; `git ls-files docs/wip/` is empty.                                                                                                          |
-| 6  | **WIP-gate red → green**      | The WIP-gate (run by the observer) exits 1 before gardening and 0 after.                                                                                                                              |
-| 7  | **Reconciliation**            | The planted 5-vs-3 retry-budget divergence is flagged (not silently copied through).                                                                                                                  |
-| 8  | **Project-doc drift flagged** | README drift (broken `from backoff import retry`; stale "up to 5 times" vs as-built 3) is surfaced in the `sdd-gardener` digest; README is left **unedited** — the gardener flags, the human applies. |
-| 9  | **Policy-doc flagged**        | `CONTRIBUTING.md` is left byte-unchanged; the stale "5 attempts" policy line is surfaced under `offers:` in the `sdd-gardener` digest.                                                                |
-| 10 | **Feature-scoped**            | The unrelated "Requires Python 3.9 or newer." line is left untouched and unflagged (not in the feature diff).                                                                                         |
-| 11 | **Plan-of-record**            | No shipped doc gains a circuit-breaker or `Retry-After` "supported" claim — both are spec out-of-scope / future work, not built.                                                                      |
-| 12 | **NOTICE omission flagged**   | The feature vendors `src/vendor/jitter.py` (`full-jitter`, MIT); `NOTICE` omits it. The gardener flags the missing attribution under `offers:`; `NOTICE` is left unedited.                            |
+| #  | Criterion                     | PASS                                                                                                                                                                                                                                                                                                                                                                                                            |
+| -- | ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1  | **Activation**                | The agent invokes the `sdd-gardening` skill at wrap-up without being told to garden.                                                                                                                                                                                                                                                                                                                            |
+| 2  | **Delegation**                | The `sdd-gardening` skill dispatches its co-located `sdd-gardener` agent (`subagent_type: sdd-gardener`), not inline gardening.                                                                                                                                                                                                                                                                                 |
+| 3  | **Return contract**           | The `sdd-gardener` agent returns a digest matching its contract (status / records / divergences / offers / wip / notes), no raw file dumps.                                                                                                                                                                                                                                                                     |
+| 4  | **Records produced**          | `docs/specification/retry-backoff.md`, `docs/design/retry-backoff.md`, and a `docs/decisions/<NNNN-slug>.md` (one decision per file) with an `AD-NNNN` id all exist.                                                                                                                                                                                                                                            |
+| 5  | **Archive + empty wip**       | Raw spec+plan are moved to `docs/archive/{specs,plans}/`; `git ls-files docs/wip/` is empty.                                                                                                                                                                                                                                                                                                                    |
+| 6  | **WIP-gate red → green**      | The WIP-gate (run by the observer) exits 1 before gardening and 0 after.                                                                                                                                                                                                                                                                                                                                        |
+| 7  | **Reconciliation**            | The planted 5-vs-3 retry-budget divergence is flagged (not silently copied through).                                                                                                                                                                                                                                                                                                                            |
+| 8  | **Project-doc drift flagged** | README drift (broken `from backoff import retry`; stale "up to 5 times" vs as-built 3) is surfaced in the `sdd-gardener` digest; README is left **unedited** — the gardener flags, the human applies.                                                                                                                                                                                                           |
+| 9  | **Policy-doc flagged**        | `CONTRIBUTING.md` is left byte-unchanged; the stale "5 attempts" policy line is surfaced under `offers:` in the `sdd-gardener` digest.                                                                                                                                                                                                                                                                          |
+| 10 | **Feature-scoped**            | The unrelated "Requires Python 3.9 or newer." line is left untouched and unflagged (not in the feature diff).                                                                                                                                                                                                                                                                                                   |
+| 11 | **Plan-of-record**            | No shipped doc gains a circuit-breaker or `Retry-After` "supported" claim — both are spec out-of-scope / future work, not built.                                                                                                                                                                                                                                                                                |
+| 12 | **NOTICE omission flagged**   | The feature vendors `src/vendor/jitter.py` (`full-jitter`, MIT); `NOTICE` omits it. The gardener flags the missing attribution under `offers:`; `NOTICE` is left unedited.                                                                                                                                                                                                                                      |
+| 13 | **Unrecognized WIP surfaced** | `docs/wip/legacy-import/brief.md` (sandbox mode `unrecognized-wip`; not part of the spec/plan pair) is left byte-identical and in place — not moved to `docs/archive/`, not deleted, not turned into a `docs/specification\|design\|decisions\|technotes` record. The `sdd-gardener` digest's `wip:` field names it explicitly (not silently omitted), so the human knows a disposition decision is still open. |
 
 **Pre-change baseline (RED for this feature).** Built with the _current_
 (unedited) `sdd-gardener`, criteria 8–9 and 12 are NOT satisfied: the digest carries
@@ -196,3 +197,25 @@ installed, proving the seam — not chance — produced it, and that descriptive
 is the default. `acme-sdd-substrate` is a synthetic stand-in for a real downstream
 substrate (e.g. markspec); a markspec-backed case is deferred to #46. Record runs
 in `results-dev-role-YYYY-MM-DD.md` (see `results-dev-role-2026-06-06.md`).
+
+## Consumer-skill WIP disposition case (#60)
+
+Criterion 13 uses the `unrecognized-wip` sandbox mode
+(`setup-sandbox.sh unrecognized-wip <dir>`): the `green` fixture plus
+`docs/wip/legacy-import/brief.md`, a file outside the Superpowers spec/plan
+pair, modeled on SEED's `seed-import` staging its own migration artifacts in
+`docs/wip/`. Same dev-role prompt, no mention of gardening or the extra file.
+
+**PASS:** the digest names `docs/wip/legacy-import/` under `wip:` as present
+with disposition unresolved; the file is untouched on disk; `docs/wip/specs/`
+and `docs/wip/plans/` are still archived normally (criterion 5 unaffected).
+
+**Pre-change baseline (RED for this probe).** Run this against the
+_current, unedited_ items before any of Tasks 4+ land — record whether the
+unedited gardener already satisfies criterion 13 (its `wip:` field already
+accepts "files still present and why," and its "never fabricate" rule may
+already generalize), or whether it mishandles the file (attempts to garden
+it into the taxonomy, deletes it, or omits it from the digest silently). The
+result determines whether Task 6 (AGENT.md procedure change) is needed at
+all — see the design doc's Architecture note: don't add prose a capable
+model already follows without evidence it's needed.
