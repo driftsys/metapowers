@@ -4,7 +4,7 @@ name: tech-diagramming-d2
 description: Use when tech-diagramming has selected D2 — architecture, system, and infra diagrams with containers/nesting, plus ER schemas. Covers diagram kinds, the dagre/elk/tala layout engines, render mechanics, the source+SVG pair, and the Phase-1 self-check.
 license: MIT
 metadata:
-  version: 0.2.2
+  version: 0.2.3
 ---
 
 ## Overview

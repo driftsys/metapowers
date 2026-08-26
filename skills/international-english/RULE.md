@@ -4,7 +4,7 @@ name: international-english
 description: Always active — write code comments, commit messages, documentation, and PR descriptions in plain, literal English so a non-native English speaker who knows standard software and domain-engineering vocabulary can follow without knowing idiom or slang.
 license: MIT
 metadata:
-  version: 0.2.2
+  version: 0.2.3
 ---
 
 Write prose — code comments, commit messages, docs, PR descriptions — in

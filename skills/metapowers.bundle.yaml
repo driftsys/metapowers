@@ -12,4 +12,4 @@ requires:
 - name: gardenpowers
 - name: diagrampowers
 metadata:
-  version: 0.2.2
+  version: 0.2.3

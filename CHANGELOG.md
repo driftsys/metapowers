@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.2.3] (2026-08-26)
+
+### Features
+
+- **metapowers:** add the model-routing rule ([6b838f8])
+
+[0.2.3]: https://github.com/driftsys/metapowers/compare/v0.2.2...v0.2.3
+[6b838f8]: https://github.com/driftsys/metapowers/commit/6b838f8
+
 ## [0.2.2] (2026-07-07)
 
 ### Features

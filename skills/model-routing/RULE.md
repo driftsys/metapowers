@@ -4,7 +4,7 @@ name: model-routing
 description: Route bounded mechanical and ops work to Sonnet subagents, keep the main loop on the strong model, and hold multi-agent fan-out behind an explicit request.
 license: MIT
 metadata:
-  version: 0.1.0
+  version: 0.2.3
 ---
 
 Delegate bounded mechanical work to a Sonnet subagent — the `Agent` tool with

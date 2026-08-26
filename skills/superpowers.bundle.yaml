@@ -19,5 +19,5 @@ plugins:
       plugin_uri: superpowers@git+https://github.com/obra/superpowers.git
       install_url: https://github.com/obra/superpowers/blob/main/.opencode/INSTALL.md
 metadata:
-  version: 0.2.2
+  version: 0.2.3
   upstream: https://github.com/obra/superpowers

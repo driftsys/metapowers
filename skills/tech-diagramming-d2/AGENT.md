@@ -6,7 +6,7 @@ license: MIT
 mode: subagent
 model: haiku
 metadata:
-  version: 0.2.2
+  version: 0.2.3
 ---
 
 You are a mechanical install specialist for D2 — a single static Go binary, no

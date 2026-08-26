@@ -4,7 +4,7 @@ name: tech-diagramming-ascii
 description: Use when tech-diagramming has selected ASCII — inline monospace diagrams in code comments, READMEs, and console/CLI output. Covers the scratch vs durable split, shape routing, grid-code width discipline, charset rules, and the Phase-1 self-check.
 license: MIT
 metadata:
-  version: 0.2.2
+  version: 0.2.3
 ---
 
 ## Overview
