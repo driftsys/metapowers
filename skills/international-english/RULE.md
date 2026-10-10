@@ -4,7 +4,7 @@ name: international-english
 description: Always active — regardless of what language the prompt or chat is in, write code comments, commit messages, docs, and PR descriptions in plain, literal English, avoiding idioms and slang. Content whose job is a translation is written in its target language instead.
 license: MIT
 metadata:
-  version: 0.2.3
+  version: 0.2.4
 ---
 
 Write code comments, commit messages, documentation, and PR descriptions in
