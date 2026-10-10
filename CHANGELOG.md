@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.2.4] (2026-10-10)
+
+### Bug Fixes
+
+- **sdd-gardening:** follow the project's existing docs layout ([d0fd98e])
+
+### Features
+
+- **international-english:** enforce English regardless of prompt language
+  ([b78ae9b])
+
+[0.2.4]: https://github.com/driftsys/metapowers/compare/v0.2.3...v0.2.4
+[d0fd98e]: https://github.com/driftsys/metapowers/commit/d0fd98e
+[b78ae9b]: https://github.com/driftsys/metapowers/commit/b78ae9b
+
 ## [0.2.3] (2026-08-26)
 
 ### Features
