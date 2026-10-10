@@ -113,6 +113,13 @@ Naming rules:
   write-ownership (a hand-authored system file, a generated software file) —
   never separate `system/`/`software/` trees.
 
+These names, the `docs/wip/specs/` + `docs/wip/plans/` split, and the
+`docs/archive/specs/` + `docs/archive/plans/` split are the defaults. The
+`sdd-gardener` agent uses them only where a project has no established
+convention: when a project's `docs/` already uses another scheme (for example
+bare-slug decision records with no `AD-` id, or dated files in a flat
+`docs/wip/`), the gardener follows that scheme instead.
+
 ## Commands
 
 ```bash

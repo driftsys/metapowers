@@ -5,7 +5,7 @@
 The `http_get` helper fails permanently on the first transient error (connection
 reset, 503, timeout). Callers that hit a flaky upstream get spurious failures.
 We want transient failures to be retried automatically with an increasing delay,
-so a brief upstream blip is absorbed rather than surfaced.
+so a brief upstream failure is absorbed rather than surfaced.
 
 ## Requirements
 

@@ -10,6 +10,8 @@
 #   setup-sandbox.sh override           <dir>   # green + a synthetic substrate override rule
 #   setup-sandbox.sh red                <dir>   # control: NO metapowers items installed
 #   setup-sandbox.sh unrecognized-wip   <dir>   # green + an extra docs/wip/<name>/ dir outside the spec/plan pair
+#   setup-sandbox.sh project-layout     <dir>   # green, but in the project's own layout (flat docs/wip/, bare-slug decisions)
+#   setup-sandbox.sh project-layout-ids <dir>   # project-layout + an AD-NNNN id in each existing decision record
 #
 # In GREEN/OVERRIDE the metapowers items (sdd-working-memory-lifecycle RULE, the
 # sdd-gardening SKILL + its co-located sdd-gardener AGENT) are installed into the
@@ -29,16 +31,18 @@
 
 set -euo pipefail
 
-MODE="${1:?usage: setup-sandbox.sh <green|green-empty|override|red|unrecognized-wip> <dir>}"
-DIR="${2:?usage: setup-sandbox.sh <green|green-empty|override|red|unrecognized-wip> <dir>}"
+USAGE="usage: setup-sandbox.sh <green|green-empty|override|red|unrecognized-wip|project-layout|project-layout-ids> <dir>"
+MODE="${1:?$USAGE}"
+DIR="${2:?$USAGE}"
 
 case "$MODE" in
-  green | green-empty | override | red | unrecognized-wip) ;;
-  *) echo "mode must be 'green', 'green-empty', 'override', 'red', or 'unrecognized-wip', got '$MODE'" >&2; exit 2 ;;
+  green | green-empty | override | red | unrecognized-wip | project-layout | project-layout-ids) ;;
+  *) echo "mode must be 'green', 'green-empty', 'override', 'red', 'unrecognized-wip', 'project-layout', or 'project-layout-ids', got '$MODE'" >&2; exit 2 ;;
 esac
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 FIXTURES="$HERE/fixtures/sandbox"
+PROJECT_LAYOUT="$HERE/fixtures/project-layout"
 SUBSTRATE_RULE="$HERE/fixtures/substrate-rule/acme-sdd-substrate.md"
 REPO_ROOT="$(cd "$HERE/../../.." && pwd)"          # metapowers repo root
 BUNDLE="$REPO_ROOT/skills/metapowers.bundle.yaml"
@@ -78,6 +82,25 @@ if [ "$MODE" = "unrecognized-wip" ]; then
   cp "$HERE/fixtures/unrecognized-wip/legacy-import/brief.md" docs/wip/legacy-import/brief.md
 fi
 
+# project-layout: the same feature, in a project whose docs follow its own
+# convention instead of the default. The spec and plan move to dated files in a
+# flat docs/wip/, and the overlay adds bare-slug decision records with no AD-
+# ids, a flat docs/archive/ plus a per-story folder that holds no spec or plan,
+# docs/wip/README.md, and a held capture on the same topic that is not part of
+# the spec/plan pair. project-layout-ids also adds an AD-NNNN id to each
+# existing decision record, so the file-naming rule and the id rule can be
+# tested apart.
+if [ "$MODE" = "project-layout" ] || [ "$MODE" = "project-layout-ids" ]; then
+  mv docs/wip/specs/retry-backoff.md docs/wip/2026-09-05-retry-backoff-design.md
+  mv docs/wip/plans/retry-backoff.md docs/wip/2026-09-05-retry-backoff-plan.md
+  rmdir docs/wip/specs docs/wip/plans
+  cp -R "$PROJECT_LAYOUT"/. .
+fi
+if [ "$MODE" = "project-layout-ids" ]; then
+  printf '\nId: AD-0007\n' >> docs/decisions/http-client-timeouts.md
+  printf '\nId: AD-0008\n' >> docs/decisions/review-before-ready-not-before-open.md
+fi
+
 # Tests must be green BEFORE the agent runs (gardening reconciles against as-built).
 # Suppress bytecode so no __pycache__ is staged into the seed commit below.
 PYTHONDONTWRITEBYTECODE=1 python3 tests/test_retry.py > /dev/null
@@ -85,7 +108,7 @@ PYTHONDONTWRITEBYTECODE=1 python3 tests/test_retry.py > /dev/null
 git add -A
 git commit -q -m "feat: HTTP client retry with backoff (wip not yet gardened)"
 
-if [ "$MODE" = "green" ] || [ "$MODE" = "green-empty" ] || [ "$MODE" = "override" ] || [ "$MODE" = "unrecognized-wip" ]; then
+if [ "$MODE" != "red" ]; then
   upskill add "$BUNDLE" --project --quiet
 fi
 
