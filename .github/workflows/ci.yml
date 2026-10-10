@@ -61,7 +61,9 @@ jobs:
           fetch-depth: 0
       - name: Install convco
         run: |
-          curl -sSfL https://github.com/convco/convco/releases/latest/download/convco-ubuntu.zip -o /tmp/convco.zip
+          # Pinned: convco v0.7.0 renamed its release assets, so the
+          # latest/download URL for convco-ubuntu.zip returns 404.
+          curl -sSfL https://github.com/convco/convco/releases/download/v0.6.4/convco-ubuntu.zip -o /tmp/convco.zip
           unzip -o /tmp/convco.zip -d /usr/local/bin
           chmod +x /usr/local/bin/convco
       - run: convco check ${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}
