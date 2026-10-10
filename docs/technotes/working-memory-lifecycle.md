@@ -86,6 +86,13 @@ docs/
 └── technotes/<slug>.md         # explanatory notes (informative)
 ```
 
+This tree, the `NNNN-slug` decision file names, and the `AD-NNNN` ids are the
+**default**. Where a project's `docs/` already follows another convention (for
+example bare-slug decision records with no `AD-` id, dated spec and plan files
+in a flat `docs/wip/`, or a flat `docs/archive/`), gardening follows that
+convention instead (see the "Project layout" section of the `sdd-gardener`
+agent).
+
 **The durable taxonomy.** Gardening routes a feature's working memory into four
 artifact homes:
 
@@ -102,8 +109,12 @@ means "this branch has ungardened work in progress."
 ## 4. Lifecycle mechanism
 
 Working memory is committed to `docs/wip/` on the feature branch (visible in the
-MR). At feature completion, gardening produces the durable records in `docs/`,
-moves the raw spec/plan to `docs/archive/`, and empties `docs/wip/`.
+MR). At feature completion, gardening produces the durable records in `docs/`
+and moves this feature's raw spec/plan to `docs/archive/`. Other files in
+`docs/wip/` (another feature's working memory, a held capture) stay in place:
+`docs/wip/` is then empty only when they are gardened or removed by a human.
+Accepting them as debt (§5) does not empty it: the files stay and the gate stays
+red until they are removed. The diagram below shows the default layout.
 
 ```text
 main:  A ───────────────────────────────────────────── M   ← merge
@@ -115,7 +126,7 @@ feat/x:      C1 ── … ── Cg ──────────────�
    (visible in MR)         + docs/decisions/<NNNN-slug>.md (decisions, AD-NNNN)
                            + docs/design/x.md       (architecture + design, de-tasked)
                            git mv docs/wip/{specs,plans} → docs/archive/  (raw)
-                           docs/wip/ now empty → WIP-gate green
+                           docs/wip/ now empty (when no work is held as accepted debt) → WIP-gate green
 ```
 
 The durable records **persist in `docs/`** regardless of merge strategy
@@ -133,7 +144,7 @@ that exits non-zero and lists the ungardened files when tracked `docs/wip/` is
 non-empty, and a host-specific **wrapper** that surfaces the result as a
 **blocking review thread**.
 
-- **Green = gardened.** Gardening is the act that empties `docs/wip/`.
+- **Green = gardened.** Gardening is the act that empties `docs/wip/`, when no work is held as accepted debt.
 - **Resolve by gardening or accepting the debt.** The thread auto-resolves when a
   later push empties `docs/wip/`. The override — "accept the debt" — is self-serve
   but must be made visible to approvers (explicit reason + a durable marker), so
@@ -173,10 +184,12 @@ rebuild.
 3. Filter      Drop the ephemeral: TDD task ceremony, step-by-step plan
                mechanics, code snippets (point to code), verbatim requirements.
 4. Decorate    Format so each part's nature is obvious; stamp stable AD-NNNN ids
-               on decisions; keep close to the Superpowers prose and order.
+               on decisions where the project uses them; keep close to the
+               Superpowers prose and order.
 5. Reconcile   Light review vs. merged code + tests; flag divergences.
 6. Rewrite     Edit superseded pieces in place (§8); never deprecate-and-replace.
-7. Archive     git mv raw spec/plan to docs/archive/; empty docs/wip/ → gate green.
+7. Archive     git mv this feature's raw spec/plan to docs/archive/; other
+               docs/wip/ files stay → gate green once docs/wip/ is empty.
 ```
 
 ### 6.0 Execution — delegated to the `sdd-gardener` subagent
@@ -194,10 +207,10 @@ keeping the main session's context lean.
   artifacts; the cross-session gap is covered by capture-at-source (§10), never by
   transcript mining.
 - **Return contract — a summary with references, never raw content:** records
-  created/edited (paths + `AD-NNNN` ids), divergences flagged during
-  reconciliation, and open offers needing a human (create a requirement? update
-  system architecture?). The main session keeps the summary and `Read`s the actual
-  files only when needed.
+  created/edited (paths, plus `AD-NNNN` ids where the project uses them),
+  divergences flagged during reconciliation, and open offers needing a human
+  (create a requirement? update system architecture?). The main session keeps
+  the summary and `Read`s the actual files only when needed.
 - **Scope:** one `sdd-gardener` subagent per feature — the route → reconcile → rewrite chain
   shares state on the records, so splitting risks incoherent edits. Parallel
   gardening across many features is a future scale option, not now.

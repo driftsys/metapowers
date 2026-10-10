@@ -5,7 +5,7 @@
 The `http_get` helper fails permanently on the first transient error (connection
 reset, 503, timeout). Callers that hit a flaky upstream get spurious failures.
 We want transient failures to be retried automatically with an increasing delay,
-so a brief upstream blip is absorbed rather than surfaced.
+so a brief upstream failure is absorbed rather than surfaced.
 
 ## Requirements
 
@@ -23,8 +23,8 @@ so a brief upstream blip is absorbed rather than surfaced.
 ## Alternatives considered
 
 - **Fixed-interval retry** (constant delay). Simpler, but a constant delay either
-  hammers a struggling upstream (too short) or wastes time on quick blips (too
-  long). Rejected in favour of exponential backoff.
+  overloads an upstream that is already failing (too short) or wastes time on
+  brief failures (too long). Rejected in favour of exponential backoff.
 - **No jitter.** Easier to reason about and test, but synchronised retries after
   a shared outage cause a thundering herd. Rejected; full jitter chosen.
 - **A third-party library (e.g. `tenacity`).** More features, but adds a runtime
