@@ -218,10 +218,12 @@ class RuntimeIntegrationTests(unittest.TestCase):
         self.assertTrue(report["checks"]["selected_pair_preserved"])
 
     def test_collision_harness_requires_refusal_path_and_reason(self):
-        code, report = self.run_trace("vague-conflict", "U4")
-        self.assertEqual(code, 1)
-        self.assertFalse(report["checks"]["archive_conflict_reported"])
-        self.assertTrue(report["checks"]["index_unchanged"])
+        for mode in ("vague-conflict", "missing-conflict-path", "missing-conflict-reason"):
+            with self.subTest(mode=mode):
+                code, report = self.run_trace(mode, "U4")
+                self.assertEqual(code, 1)
+                self.assertFalse(report["checks"]["archive_conflict_reported"])
+                self.assertTrue(all(value for name, value in report["checks"].items() if name != "archive_conflict_reported"), report["checks"])
 
     def test_harness_rejects_skipped_verification_despite_correct_writes(self):
         code, report = self.run_trace("skip-verification")

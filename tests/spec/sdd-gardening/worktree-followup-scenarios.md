@@ -65,6 +65,6 @@ The mutation command changes nine observer guards in memory. Every mutant must
 cause assertion failures without test errors. Negative traces now include
 matching results and assert their intended rejection reason. Separate tests pin
 root-result ordering, failed verification, branch-result ordering, and an
-otherwise valid trace with an unanswered read. Four fake-agent integration cases
+otherwise valid trace with an unanswered read. Six fake-agent integration trace variants
 pin the U4 oracle: preservation passes; overwriting, staging only the archive
-index entry, and merely mentioning a conflict with a success status fail. Fake-agent outcomes do not evaluate the gardener prompt.
+index entry, a success status, a missing conflicting path, and a missing existence reason fail. Fake-agent outcomes do not evaluate the gardener prompt.

@@ -76,3 +76,9 @@ existence reason. This is a bounded text check, not a general response parser.
 The retained live captures were produced before this oracle refinement; the
 revised refusal text satisfies the stronger check on offline inspection. No
 additional live run is claimed for the final harness hash.
+
+The response test uses three subcases, each missing exactly one component:
+refusal status, exact path, or existence reason. All other U4 checks must pass
+in each subcase, so the response guards cannot mask one another. There are six
+U4 trace variants across four integration test methods; the suite still has 37
+test methods.
