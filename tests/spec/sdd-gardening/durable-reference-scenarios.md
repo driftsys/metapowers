@@ -209,3 +209,12 @@ checks retained rationale, accepted choice, considered alternative, implemented
 interface/default, and explicit unimplemented status for deferred Retry-After
 handling. It also checks the existing byte/path predicates and runs the fixture
 tests and path gate. It is an evaluation tool, not a general semantic validator.
+
+### Whole-pair preflight regression
+
+With all lasting citations resolved, occupy only the selected plan archive and
+leave the spec destination free. PASS: refuse with the plan path and conflict
+reason; preserve both source byte sequences, the existing plan archive and index;
+create no spec archive. Runtime U5 and its sequential-move negative control pin
+the filesystem observer, and the separate plan-collision execution evaluates the
+current gardener instructions.

@@ -43,13 +43,24 @@ if mode != "skip-verification":
 for relative in ("docs/wip/specs/retry-backoff.md", "docs/wip/plans/retry-backoff.md", "src/retry.py", "tests/test_retry.py"):
     source = (primary if mode == "wrong-source" else target) / relative
     operation("Read", {"file_path": str(source)}, source.read_text())
-if mode in ("archive-conflict", "stage-conflict", "vague-conflict", "missing-conflict-path", "missing-conflict-reason"):
+if mode in ("archive-conflict", "stage-conflict", "vague-conflict", "missing-conflict-path", "missing-conflict-reason", "partial-spec-first"):
     if mode == "stage-conflict":
         blob = subprocess.check_output(["git", "-C", str(target), "hash-object", "-w", "docs/wip/specs/retry-backoff.md"], text=True).strip()
         subprocess.run(["git", "-C", str(target), "update-index", "--cacheinfo", "100644", blob, "docs/archive/specs/retry-backoff.md"], check=True)
-    archive = target / "docs/archive/specs/retry-backoff.md"
+    if mode == "partial-spec-first":
+        source = target / "docs/wip/specs/retry-backoff.md"
+        destination = target / "docs/archive/specs/retry-backoff.md"
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        source.rename(destination)
+        operation("Bash", {"command": f"mv {source} {destination}"})
+        subprocess.run(["git", "-C", str(target), "add", "--", "docs/archive/specs/retry-backoff.md"], check=True)
+        operation("Bash", {"command": f"git -C {target} add -- docs/archive/specs/retry-backoff.md"})
+    relative = "docs/archive/specs/retry-backoff.md"
+    if not (target / relative).exists() or mode == "partial-spec-first":
+        relative = "docs/archive/plans/retry-backoff.md"
+    archive = target / relative
     operation("Read", {"file_path": str(archive)}, archive.read_text())
-    response = "status: refused; archive conflict: docs/archive/specs/retry-backoff.md already exists"
+    response = f"status: refused; archive conflict: {relative} already exists"
     if mode == "vague-conflict":
         response = response.replace("status: refused", "status: done")
     elif mode == "missing-conflict-path":

@@ -86,3 +86,33 @@ and the [independent observer](runs/issue-67/integrated-blocked-observer.json)
 confirm the pair, caller bytes, existing archive and index remained unchanged.
 Input hashes identify the merged production instructions. This is a bounded
 Codex execution; it does not claim a new Claude runtime probe or paid-model battery.
+
+## Final-pass corrections
+
+The final pass identified two remaining coverage gaps. The content observer now
+requires a bounded selected budget and exactly three total attempts. Negative
+controls for an unbounded budget, 30 attempts and three retries after the initial
+attempt first failed the assertions ([RED](runs/issue-67/budget-red.txt)); the
+corrected observer passes all four reference tests ([GREEN](runs/issue-67/budget-green.txt)).
+An additional scan-option test rejects external pattern files and unsupported
+options; it kills the [broadened grep mutation](runs/issue-67/grep-boundary-mutant.txt).
+
+Runtime case U5 occupies only the plan archive, leaving the spec destination free.
+The new positive control requires both source byte sequences, the existing plan
+archive and index to remain unchanged, with no new spec archive. A sequential
+move-and-stage-spec-before-checking-plan double is rejected. The two tests failed
+before U5 existed ([RED](runs/issue-67/plan-harness-red.txt)) and pass with the
+extended fixture and observer ([GREEN](runs/issue-67/plan-harness-green.txt)).
+These doubles validate observer outcomes, not model compliance.
+
+A separate [fresh gardener execution](runs/issue-67/plan-collision.txt) exercised
+the same plan-only conflict with current merged instructions and no lasting WIP
+citations. It verified the assigned root/branch, passed four retry tests and the
+path gate, then refused the entire pair before moving or staging. The
+[independent byte/index observer](runs/issue-67/plan-collision-observer.json)
+confirms preservation and absence of a spec archive.
+
+The historical upstream verification statement is now explicitly an author report
+with no retained command output. Current checks do not retroactively establish
+those historical runs. No further numbered review pass is performed over these
+final-pass corrections.

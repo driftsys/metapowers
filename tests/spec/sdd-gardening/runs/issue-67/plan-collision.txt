@@ -1,0 +1,30 @@
+Actual gardener execution: plan collision
+Assigned root: /private/tmp/metapowers-67-plan-collision
+Assigned branch: feat/retry
+Read candidate rule and agent snapshots from /private/tmp/metapowers-67-integrated-{rule,agent}.md.
+Commands and observed outcomes:
+- pwd; git branch --show-current: assigned root; feat/retry.
+- git rev-parse --show-toplevel; pwd -P: both /private/tmp/metapowers-67-plan-collision. Verified before feature reads.
+- git status --short: pre-existing modifications docs/design/retry.md, fixtures/retry.ridl, src/retry.py; untracked docs/archive/plans/.
+- rg --files: enumerated feature, records, checks and archive paths.
+- cat justfile src/retry.py tests/test_retry.py assigned spec and plan, existing design/decision, README.md CONTRIBUTING.md: inspected reconciliation inputs.
+- git diff main...HEAD -- src tests: no output.
+- git grep --untracked -n -F 'docs/wip/' -- .: only docs/archive/history.md and docs/wip/held.md cite assigned spec; both excluded historical archive/WIP. Inspected lasting inputs showed durable decision references, not WIP dependencies.
+- git check-ignore docs/wip/specs/retry-backoff.md: exit 1, collaborative mode.
+- python3 tests/test_retry.py: exit 0, four PASS lines and All tests passed.
+- just doc-path-check: exit 0; doc-path-check: durable decision exists.
+- Python os.path.lexists / Path.is_symlink preflight on both exact destinations and parents: spec destination absent; plan destination exists as ordinary file; no archive parent symlinks.
+Blocker established before any move or staging. No fixture content changed, no archive paths staged, no caller edits, no commits, no external contact.
+
+Full gardener digest:
+status: refused
+records: none; stopped on archive preflight collision
+divergences: spec and README claim default 5 attempts; implementation defaults to 3. README import backoff.retry differs from src/retry.py retry_with_backoff. Existing design and AD-0007 say not implemented although code and tests implement bounded exponential retries with jitter.
+offers: CONTRIBUTING.md requires PR descriptions to state default budget of 5; human policy reconciliation required.
+references: none; historical archive and unrelated WIP matches excluded after inspection
+checks: python3 tests/test_retry.py PASS (4 tests); just doc-path-check PASS
+wip:
+  - docs/wip/specs/retry-backoff.md: retained because archival refused
+  - docs/wip/plans/retry-backoff.md: retained because archival refused
+  - docs/wip/held.md: disposition unresolved — not this feature's spec/plan; leave it for the human or the producing skill's own completion step; branch remains unfinished without gardening or accepted debt
+notes: docs/archive/plans/retry-backoff.md already exists; entire selected pair left unchanged. No alternate destination chosen.

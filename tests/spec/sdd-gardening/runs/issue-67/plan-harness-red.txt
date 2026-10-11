@@ -1,0 +1,35 @@
+FF
+======================================================================
+FAIL: test_plan_collision_harness_accepts_preserved_pair_and_conflict (__main__.RuntimeIntegrationTests.test_plan_collision_harness_accepts_preserved_pair_and_conflict)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/sebastientasson/Workspace/driftsys/metapowers/tests/spec/sdd-gardening/worktree-observer.test.py", line 230, in test_plan_collision_harness_accepts_preserved_pair_and_conflict
+    code, report = self.run_trace("archive-conflict", "U5")
+                   ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sebastientasson/Workspace/driftsys/metapowers/tests/spec/sdd-gardening/worktree-observer.test.py", line 204, in run_trace
+    self.assertTrue(output.exists(), result.stdout + result.stderr)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : usage: run-worktree-runtime.py [-h] [--revision REVISION] --output OUTPUT
+                               {U1,U2,U3,U4}
+run-worktree-runtime.py: error: argument case: invalid choice: 'U5' (choose from U1, U2, U3, U4)
+
+
+======================================================================
+FAIL: test_plan_collision_harness_rejects_spec_moved_before_plan_preflight (__main__.RuntimeIntegrationTests.test_plan_collision_harness_rejects_spec_moved_before_plan_preflight)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/sebastientasson/Workspace/driftsys/metapowers/tests/spec/sdd-gardening/worktree-observer.test.py", line 234, in test_plan_collision_harness_rejects_spec_moved_before_plan_preflight
+    code, report = self.run_trace("partial-spec-first", "U5")
+                   ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sebastientasson/Workspace/driftsys/metapowers/tests/spec/sdd-gardening/worktree-observer.test.py", line 204, in run_trace
+    self.assertTrue(output.exists(), result.stdout + result.stderr)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : usage: run-worktree-runtime.py [-h] [--revision REVISION] --output OUTPUT
+                               {U1,U2,U3,U4}
+run-worktree-runtime.py: error: argument case: invalid choice: 'U5' (choose from U1, U2, U3, U4)
+
+
+----------------------------------------------------------------------
+Ran 2 tests in 1.233s
+
+FAILED (failures=2)

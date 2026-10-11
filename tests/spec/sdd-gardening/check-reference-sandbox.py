@@ -14,7 +14,7 @@ def content_failures(decision: str, design: str) -> list[str]:
     checks = {
         "decision retains accepted choice": all(
             re.search(pattern, choice, re.I)
-            for pattern in (r"exponential", r"full jitter", r"bound\w*.*(?:budget|attempt)")
+            for pattern in (r"exponential", r"full jitter", r"\bbounded (?:attempt )?budget\b")
         ) and not bool(re.search(r"\b(?:reject|not|without|no)\b", choice, re.I)),
         "decision retains rationale": all(
             re.search(pattern, decision, re.I) for pattern in (r"transient", r"fail")
@@ -25,7 +25,7 @@ def content_failures(decision: str, design: str) -> list[str]:
         "design retains implemented interface": "retry_with_backoff" in design
         and "zero-argument callable" in design
         and bool(re.search(r"^(?:Status:\s*implemented\b|Implemented:)", design, re.I | re.M))
-        and bool(re.search(r"(?:three|3).*attempt", design, re.I)),
+        and bool(re.search(r"\b(?:three|3) total attempts\b", design, re.I)),
         "design preserves deferred work as unimplemented": bool(
             re.search(r"Retry-After[^\n]*(?:not implemented|deferred|future)", design, re.I)
         ),

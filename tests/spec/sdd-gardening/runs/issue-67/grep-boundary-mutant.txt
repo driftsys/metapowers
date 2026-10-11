@@ -1,0 +1,41 @@
+FFF
+======================================================================
+FAIL: test_reference_scan_rejects_altered_options_and_external_patterns (__main__.ObserverTests.test_reference_scan_rejects_altered_options_and_external_patterns) (arguments='grep -f /private/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/tmpln6s4o5x/primary/patterns -- .')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/metapowers-67-scan-mutation-186tdtcr/worktree-observer.test.py", line 141, in test_reference_scan_rejects_altered_options_and_external_patterns
+    self.assert_rejected(self.verified + [scan, result("scan", "")], "unsupported shell command")
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/metapowers-67-scan-mutation-186tdtcr/worktree-observer.test.py", line 55, in assert_rejected
+    self.assertFalse(audit["valid"], audit)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: True is not false : {'valid': True, 'errors': [], 'root_verified': True, 'branch_verified': True, 'reads': []}
+
+======================================================================
+FAIL: test_reference_scan_rejects_altered_options_and_external_patterns (__main__.ObserverTests.test_reference_scan_rejects_altered_options_and_external_patterns) (arguments='grep --textconv -n -F docs/wip/ -- .')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/metapowers-67-scan-mutation-186tdtcr/worktree-observer.test.py", line 141, in test_reference_scan_rejects_altered_options_and_external_patterns
+    self.assert_rejected(self.verified + [scan, result("scan", "")], "unsupported shell command")
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/metapowers-67-scan-mutation-186tdtcr/worktree-observer.test.py", line 55, in assert_rejected
+    self.assertFalse(audit["valid"], audit)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: True is not false : {'valid': True, 'errors': [], 'root_verified': True, 'branch_verified': True, 'reads': []}
+
+======================================================================
+FAIL: test_reference_scan_rejects_altered_options_and_external_patterns (__main__.ObserverTests.test_reference_scan_rejects_altered_options_and_external_patterns) (arguments='grep --no-index --untracked -n -F docs/wip/ -- .')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/metapowers-67-scan-mutation-186tdtcr/worktree-observer.test.py", line 141, in test_reference_scan_rejects_altered_options_and_external_patterns
+    self.assert_rejected(self.verified + [scan, result("scan", "")], "unsupported shell command")
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/metapowers-67-scan-mutation-186tdtcr/worktree-observer.test.py", line 55, in assert_rejected
+    self.assertFalse(audit["valid"], audit)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: True is not false : {'valid': True, 'errors': [], 'root_verified': True, 'branch_verified': True, 'reads': []}
+
+----------------------------------------------------------------------
+Ran 1 test in 0.004s
+
+FAILED (failures=3)

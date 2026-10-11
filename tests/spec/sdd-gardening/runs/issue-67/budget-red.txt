@@ -1,0 +1,32 @@
+FFF
+======================================================================
+FAIL: test_observer_checks_content_and_rejects_each_semantic_loss (__main__.ReferenceRegressions.test_observer_checks_content_and_rejects_each_semantic_loss) (name='unbounded choice')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/metapowers-67-budget-red-94z0m111/test_reference_regressions.py", line 75, in test_observer_checks_content_and_rejects_each_semantic_loss
+    self.assertTrue(module.content_failures(changed_decision, changed_design))
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: [] is not true
+
+======================================================================
+FAIL: test_observer_checks_content_and_rejects_each_semantic_loss (__main__.ReferenceRegressions.test_observer_checks_content_and_rejects_each_semantic_loss) (name='wrong attempt count')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/metapowers-67-budget-red-94z0m111/test_reference_regressions.py", line 75, in test_observer_checks_content_and_rejects_each_semantic_loss
+    self.assertTrue(module.content_failures(changed_decision, changed_design))
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: [] is not true
+
+======================================================================
+FAIL: test_observer_checks_content_and_rejects_each_semantic_loss (__main__.ReferenceRegressions.test_observer_checks_content_and_rejects_each_semantic_loss) (name='retries versus total attempts')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/metapowers-67-budget-red-94z0m111/test_reference_regressions.py", line 75, in test_observer_checks_content_and_rejects_each_semantic_loss
+    self.assertTrue(module.content_failures(changed_decision, changed_design))
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: [] is not true
+
+----------------------------------------------------------------------
+Ran 1 test in 0.004s
+
+FAILED (failures=3)

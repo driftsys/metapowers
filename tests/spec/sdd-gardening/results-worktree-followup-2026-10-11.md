@@ -120,8 +120,10 @@ activation reevaluation, PR-timing change or citation repair was attempted.
 
 ## Repository checks
 
-Strict upskill lint, Markdown checks, install round-trip tests and the five
-existing WIP gate tests passed. `just test` and a dedicated CI job now include
+The author reported that strict upskill lint, Markdown checks, install round-trip
+tests and the five existing WIP gate tests passed. Command output for those
+historical checks was not retained; this report does not independently establish
+their execution. `just test` and a dedicated CI job now include
 the deterministic observer tests; CI confirmation is reported with the PR. The affected refusal guide now supplies an
 absolute Git root and root-relative fixture inputs, including for R9 where
 only the pair names are intentionally absent. Historical refusal captures were
