@@ -1,0 +1,28 @@
+{
+  "passed": true,
+  "errors": [],
+  "records": {
+    "decision": "# AD-0007: Bounded retries\n\nAccepted; implemented in `src/retry.py`, with retry behavior verified by\n`tests/test_retry.py`.\n\nContext: upstream requests can fail transiently.\nOptions: fixed intervals or exponential backoff; no jitter or full jitter.\nDecision: exponential backoff with full jitter and a bounded attempt budget.\n\nConsequences: retries have a bounded cost and jitter reduces synchronized\nrequests. The implemented default is three total attempts; the working spec\nrequested five and needs human reconciliation. A third-party retry library was\ndeferred because the policy was small; revisit if the policy grows.\n\nRelated: `docs/design/retry.md`.\n",
+    "design": "# Retry design\n\nStatus: implemented; verified by `tests/test_retry.py`.\n\nRationale: `docs/decisions/0007-retry-budget.md`.\n\nInterface: `retry_with_backoff` in `src/retry.py` wraps a zero-argument callable.\nThe default budget is three total attempts and the base delay is 0.1 seconds.\nConnection errors, timeouts, and HTTP status codes 502, 503, and 504 are\ntransient. Other errors propagate immediately. Between retry attempts, the\nwrapper sleeps for a uniformly sampled delay from zero to\n`base_delay * 2**(attempt - 1)`. Callers can inject the classifier, sleep, and\njitter functions. The last error propagates when the attempt budget is exhausted.\n\n## Deferred work\n\nRetry-After handling is not implemented.\n"
+  },
+  "checks": [
+    {
+      "command": [
+        "python3",
+        "tests/test_retry.py"
+      ],
+      "exit_code": 0,
+      "stdout": "PASS test_gives_up_after_max_attempts\nPASS test_non_transient_not_retried\nPASS test_retries_then_succeeds\nPASS test_succeeds_first_try\nAll tests passed.\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "just",
+        "doc-path-check"
+      ],
+      "exit_code": 0,
+      "stdout": "doc-path-check: durable decision exists\n",
+      "stderr": "python3 tools/doc_path_check.py\n"
+    }
+  ]
+}

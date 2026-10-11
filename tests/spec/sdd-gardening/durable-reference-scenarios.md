@@ -146,6 +146,25 @@ assigned pair in place, and do not invent default WIP paths or decision IDs.
 
 ## Filesystem execution probe
 
+### Review regressions
+
+Run `python3 tests/spec/sdd-gardening/test_reference_regressions.py`. The scan
+case invokes the actual documented Git command in a disposable repository with
+an untracked lasting caller to another feature's WIP. Its absence must not be
+mistaken for a clean tree. The content observer is exercised with intact records,
+heading-only stubs, lost rationale/alternatives, and lost implementation/deferred
+status. A filesystem negative control keeps all old path predicates valid while
+deleting record bodies; the observer must fail. The seeder is also invoked against
+an existing repository with pending changes and must fail without changing its
+file, HEAD, index, or configuration.
+
+For an executed gardener probe, seed a fresh repository, resolve the three seeded
+lasting citations to the existing bounded-retry decision, and create an untracked
+requirement citing `docs/wip/held.md`. PASS: refuse archive, report that caller and
+target, retain both assigned files and held WIP. After the dispatcher supplies a
+self-contained explanation for that unrelated requirement, rerun with a fresh
+executor and use the content-aware observer below on the clean result.
+
 Seed two separate disposable repositories:
 
 ```bash
@@ -177,3 +196,15 @@ unchanged; the existing `just doc-path-check` runs successfully. The sandbox
 check verifies existence of one durable decision, intentionally narrower than a
 general path extractor. The held WIP still prevents branch completion; a successful
 gardening pass does not resolve its disposition.
+
+Check the resulting record contents, not just their paths:
+
+```bash
+python3 tests/spec/sdd-gardening/check-reference-sandbox.py /tmp/reference-green
+```
+
+The fixture-specific observer records the full resulting decision and design and
+checks retained rationale, accepted choice, considered alternative, implemented
+interface/default, and explicit unimplemented status for deferred Retry-After
+handling. It also checks the existing byte/path predicates and runs the fixture
+tests and path gate. It is an evaluation tool, not a general semantic validator.

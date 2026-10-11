@@ -1,0 +1,22 @@
+Actual commands (working directory /private/tmp/metapowers-67-fix-run):
+1. cat /private/tmp/metapowers-67-fix-rule.md /private/tmp/metapowers-67-fix-agent.md
+2. pwd; git status --short; rg --files -g '!\.git'
+3. cat assigned spec/plan, src/retry.py, tests/test_retry.py, existing design/specification/decision, README.md, CONTRIBUTING.md, justfile, tools/doc_path_check.py; git diff main -- src tests; git grep --untracked -n -F 'docs/wip/' -- .; rg -n 'wip|retry-backoff' --glob '!docs/wip/**' --glob '!docs/archive/**' .; python3 -m unittest discover -s tests -v
+   unittest discovery exited 5: zero tests discovered. This was not treated as passing validation.
+4. python3 tests/test_retry.py; cat fixtures/retry.ridl src/vendor/jitter.py; git diff main...HEAD -- src tests; git diff -- docs/design/retry.md fixtures/retry.ridl; git ls-files; python3 tools/doc_path_check.py
+   Direct test runner passed all four tests. Path checker passed. Committed main...HEAD code/test diff was empty; working code diff only changed a rationale citation.
+5. python3 heredoc edited docs/design/retry.md and docs/decisions/0007-retry-budget.md in place to describe implemented retry behavior, preserve deferred Retry-After handling, and record the three-versus-five attempt discrepancy. Existing caller fixes were preserved.
+6. just doc-path-check; git grep --untracked -n -F 'docs/wip/' -- .; git status --short
+   just doc-path-check passed. Lasting untracked requirement still cites other WIP. Historical archive and WIP matches excluded. No git mv, staging, commits, external contact, or delegation occurred.
+
+Actual gardener digest:
+status: refused
+records:
+  - edited docs/design/retry.md
+  - edited docs/decisions/0007-retry-budget.md (AD-0007)
+divergences: spec requests five attempts; implemented default is three. Existing README facts were not flagged as new feature drift because main...HEAD has no changed code/test surface.
+offers: requirements R1-R5 lack a durable feature requirement record; human should establish one. Existing README/CONTRIBUTING facts and policy require human reconciliation if this feature is taken beyond the empty base diff.
+references: docs/specification/new-requirement.md:3 cites docs/wip/held.md; blocking lasting dependency on another feature's WIP remains. Caller left untouched.
+checks: python3 tests/test_retry.py passed four tests; just doc-path-check passed; unittest discovery found zero tests and exited 5, superseded by the documented direct runner.
+wip: docs/wip/specs/retry-backoff.md and docs/wip/plans/retry-backoff.md retained because references block archival; docs/wip/held.md disposition unresolved — not this feature's spec/plan; leave it for the human or producing skill's completion step. Branch remains unfinished until remaining WIP is gardened or debt explicitly accepted with a reason and durable marker.
+notes: passing path check does not clear the lasting citation blocker. No pair archival or completion claimed.

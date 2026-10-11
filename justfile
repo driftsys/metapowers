@@ -16,6 +16,7 @@ lint:
 
 # Run end-to-end install round-trip tests
 test:
+    python3 tests/spec/sdd-gardening/test_reference_regressions.py
     bash tools/bash_unit tests/e2e/install_test.sh
 
 # Validate commits on branch + lint + e2e tests — run before PR

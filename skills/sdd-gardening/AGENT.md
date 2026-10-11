@@ -124,10 +124,11 @@ Before you write, look at what is already on disk and follow it:
    dispatcher relays both; the human applies the fix.
 8. **Rewrite in place**: when work changes an existing record, edit it; create a
    new record only for a genuinely new topic.
-9. **Check references before archive**: inspect tracked files for citations to
+9. **Check references before archive**: inspect tracked and non-ignored untracked
+   lasting files, including newly created records, for citations to
    this project's WIP files and directories, including bare prose, inline code,
    Markdown links, fixtures, and source comments (`//!`, `//`, `#`). Use
-   `git grep -n -F 'docs/wip/' -- .` for the default layout; also inspect
+   `git grep --untracked -n -F 'docs/wip/' -- .` for the default layout; also inspect
    relative links and the project's own working-memory paths. Read matches to
    distinguish citations from descriptions of directory conventions and literal
    test inputs that exercise path handling. A fixture's rationale comment that
@@ -135,6 +136,8 @@ Before you write, look at what is already on disk and follow it:
    exemption. Exclude
    working memory itself and historical archive records; leave both untouched.
    This reference check is separate from the feature-scoped project-doc diff-gate.
+   Check references to other features' WIP too; a clean assigned pair does not
+   clear lasting dependencies elsewhere. Do not stage files just to inspect them.
    If lasting citations remain, return `status: refused` before moving the pair,
    listing caller paths and cited targets under `references:`. Do not rewrite
    callers, blindly repoint to archive or an existing ADR, or invent a target:

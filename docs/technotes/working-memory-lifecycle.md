@@ -307,7 +307,9 @@ Literal path strings in rejection tests or simulated examples are not dependenci
 on WIP. A fixture comment that relies on actual working rationale still is.
 
 The lifecycle rule applies this policy during design, planning, implementation,
-and review. Before archiving, the gardener inspects tracked files across prose,
+and review. Before archiving, the gardener inspects tracked and non-ignored
+untracked lasting files, including new records and citations to other features'
+WIP, across prose,
 inline code, Markdown links, fixtures, and source comments, including relative
 links and project-specific WIP paths. It reports blocking callers and targets
 under `references:` and leaves the assigned pair in place. The dispatcher

@@ -105,3 +105,5 @@ all client runtimes, or a general path extractor. D7, D8, and failed-gate D6 are
 decision tests; the executed sandbox uses the default layout and a narrow
 existence check for one durable decision. The source registry's existing install
 round-trip tests cover generation separately.
+
+Review follow-up: [content and untracked-caller regressions](results-durable-reference-fixes-2026-10-12.md).

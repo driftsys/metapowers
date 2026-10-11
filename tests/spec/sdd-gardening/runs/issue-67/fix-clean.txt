@@ -1,0 +1,33 @@
+Execution workspace: /private/tmp/metapowers-67-fix-run
+Instructions read: /private/tmp/metapowers-67-fix-rule.md and /private/tmp/metapowers-67-fix-agent.md.
+Assigned pair: docs/wip/specs/retry-backoff.md and docs/wip/plans/retry-backoff.md.
+
+Commands and actual outcomes:
+1. cat instruction snapshots: exit 0; loaded lifecycle rule and gardener procedure.
+2. pwd; git status --short; rg --files -g '! .git' -g '!node_modules' .; git grep --untracked -n -F 'docs/wip/' -- .: exit 0. Existing dispatcher edits in src/retry.py, fixtures/retry.ridl, docs/design/retry.md, docs/decisions/0007-retry-budget.md; non-ignored untracked docs/specification/new-requirement.md inspected. Only WIP references were docs/archive/history.md:3 and docs/wip/held.md:3, both citing docs/wip/specs/retry-backoff.md. Historical archive and working memory are excluded from lasting-citation blockers.
+3. cat README.md CONTRIBUTING.md justfile src/retry.py src/vendor/jitter.py tests/test_retry.py fixtures/retry.ridl docs/specification/new-requirement.md docs/design/retry.md docs/decisions/0007-retry-budget.md docs/wip/specs/retry-backoff.md docs/wip/plans/retry-backoff.md docs/wip/held.md tools/doc_path_check.py; git log --oneline -3; git diff -- src tests; git ls-files: exit 0. Existing design and AD-0007 already describe implemented behavior; untracked requirement describes unrelated proposed work and has no WIP dependency. No new durable record needed solely for a reference. Base commit afaaa77 is the seed; no main feature diff available, so inspected feature source/tests and canonical docs directly.
+4. python3 tests/test_retry.py: exit 0; PASS test_gives_up_after_max_attempts, test_non_transient_not_retried, test_retries_then_succeeds, test_succeeds_first_try; All tests passed.
+5. rg -n -i 'wip|retry-backoff|\.\./(specs|plans)' --hidden -g '!.git/**' .: matches only held WIP, archive history, and vendor helper feature description; no relative-link caller found.
+6. shasum -a 256 docs/wip/held.md docs/archive/history.md docs/wip/specs/retry-backoff.md docs/wip/plans/retry-backoff.md: recorded hashes below.
+7. just --list: exit 0; doc-path-check available.
+8. mkdir -p docs/archive/specs docs/archive/plans; git mv docs/wip/specs/retry-backoff.md docs/archive/specs/retry-backoff.md; git mv docs/wip/plans/retry-backoff.md docs/archive/plans/retry-backoff.md: succeeded. No archived spec/plan layout existed; used default split.
+9. just doc-path-check: exit 0; python3 tools/doc_path_check.py; doc-path-check: durable decision exists.
+10. git grep --untracked -n -F 'docs/wip/' -- .: only docs/archive/history.md:3 and docs/wip/held.md:3 remain, unchanged and exempt.
+11. shasum -a 256 docs/wip/held.md docs/archive/history.md docs/archive/specs/retry-backoff.md docs/archive/plans/retry-backoff.md: all four hashes match pre-archive values.
+held.md: 51f176054193a097c4c69451704ba131e93ee90d37e7f578042b26d583fc9688
+history.md: ba3963d4ab464ce26316c2fe2d26876a479c274cb8d953867b82cf70c3dd5a5a
+spec: b9ec7371f267a4ae901f7e0a31f69a416c0a9b9a1407242ff87d6b0e66ee7f27
+plan: 27e05df0bb346c29f93da7d8b758977cd60519434d97c61f35ff76e8cfc10e43
+12. git status --short: two staged renames for assigned pair; dispatcher edits and untracked specification remain intact. No commits or external contact.
+
+Full gardener digest:
+status: done
+records:
+  - reused docs/design/retry.md (already reconciled by dispatcher; no additional edit)
+  - reused docs/decisions/0007-retry-budget.md (AD-0007; no additional edit)
+divergences: Spec requests five attempts; code defaults to three. README imports backoff.retry instead of retry.retry_with_backoff and states five retries. Jitter schedule is implemented but not pinned by the existing four tests.
+offers: Reconcile CONTRIBUTING's mandatory five-attempt PR statement with the implemented three-attempt default. Review missing third-party attribution: src/vendor/jitter.py is vendored full-jitter v1.2.0, MIT, and no NOTICE(S) exists. No durable retry requirements record exists; offer human review rather than autonomously create missing requirements.
+references: none; tracked and non-ignored untracked lasting files checked, including unrelated proposed requirement. Held WIP and archive history citations preserved as exemptions.
+checks: python3 tests/test_retry.py passed (four cases); just doc-path-check passed after archive.
+wip: docs/wip/held.md — disposition unresolved; not this feature's spec/plan; leave for human or producing skill. Branch remains unfinished until gardened or debt explicitly accepted with a reason and durable marker.
+notes: Assigned pair archived verbatim to default split; held WIP and archive history hashes unchanged. No human-facing project documents edited.

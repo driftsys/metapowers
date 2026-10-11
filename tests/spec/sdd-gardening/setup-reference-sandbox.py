@@ -24,6 +24,8 @@ def seed(destination: Path) -> None:
         "docs/design/retry.md": (
             "# Retry design\n\nStatus: proposed; not implemented.\n\n"
             "Rationale: `docs/wip/specs/retry-backoff.md`.\n"
+            "\nInterface: retry_with_backoff wraps a zero-argument callable.\n"
+            "\n## Deferred work\n\nRetry-After handling is not implemented.\n"
         ),
         "docs/decisions/0007-retry-budget.md": (
             "# AD-0007: Bounded retries\n\nAccepted; not implemented.\n\n"
