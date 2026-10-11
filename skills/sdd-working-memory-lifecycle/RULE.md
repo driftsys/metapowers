@@ -19,6 +19,11 @@ records describe the system, they do not drive it.
 - Keep working memory collaborative by tracking `docs/wip/` in git, or private by
   gitignoring it — the gitignore entry is the only switch; do not add a config
   flag. Tracked is the default.
+- A new worktree does not inherit ignored, untracked, or uncommitted working
+  memory. Before executing or gardening there, run the repository's setup and
+  explicitly copy the selected missing spec/plan from an identified source,
+  preserving source originals and existing destination files; resolve differing
+  copies before use (the `sdd-gardening` skill gives the transfer procedure).
 - A skill other than the Superpowers spec/plan flow that stages its own
   transient content in `docs/wip/<name>/` (e.g., an import/migration skill
   writing a staging brief) owns that content's disposition: it must document,

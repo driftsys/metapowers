@@ -51,6 +51,18 @@ jobs:
           git config --global user.name "metapowers ci"
       - run: bash tools/bash_unit tests/e2e/install_test.sh
 
+  worktree-observer:
+    name: worktree observer
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: just
+      - run: PYTHONDONTWRITEBYTECODE=1 python3 tests/spec/sdd-gardening/test_reference_regressions.py
+      - run: PYTHONDONTWRITEBYTECODE=1 python3 tests/spec/sdd-gardening/worktree-observer.test.py
+      - run: PYTHONDONTWRITEBYTECODE=1 python3 tests/spec/sdd-gardening/check-observer-mutations.py
+
   convco:
     name: Conventional commits
     if: github.event_name == 'pull_request'
@@ -71,7 +83,7 @@ jobs:
   ci:
     name: CI
     if: always()
-    needs: [dprint, markdownlint, upskill-lint, e2e, convco]
+    needs: [dprint, markdownlint, upskill-lint, e2e, worktree-observer, convco]
     runs-on: ubuntu-latest
     steps:
       - name: Check results

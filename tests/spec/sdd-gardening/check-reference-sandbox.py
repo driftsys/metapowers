@@ -9,11 +9,13 @@ import subprocess
 
 def content_failures(decision: str, design: str) -> list[str]:
     """Check fixture-specific concepts; this is not a general prose validator."""
+    selected = re.search(r"^Decision:[^\n]+", decision, re.I | re.M)
+    choice = selected.group() if selected else ""
     checks = {
         "decision retains accepted choice": all(
-            re.search(pattern, decision, re.I)
+            re.search(pattern, choice, re.I)
             for pattern in (r"exponential", r"full jitter", r"bound\w*.*(?:budget|attempt)")
-        ),
+        ) and not bool(re.search(r"\b(?:reject|not|without|no)\b", choice, re.I)),
         "decision retains rationale": all(
             re.search(pattern, decision, re.I) for pattern in (r"transient", r"fail")
         ),
@@ -21,6 +23,8 @@ def content_failures(decision: str, design: str) -> list[str]:
         "decision reconciles implementation status": bool(re.search(r"accepted.*implemented", decision, re.I))
         and not bool(re.search(r"accepted[^\n]*not implemented", decision, re.I)),
         "design retains implemented interface": "retry_with_backoff" in design
+        and "zero-argument callable" in design
+        and bool(re.search(r"^(?:Status:\s*implemented\b|Implemented:)", design, re.I | re.M))
         and bool(re.search(r"(?:three|3).*attempt", design, re.I)),
         "design preserves deferred work as unimplemented": bool(
             re.search(r"Retry-After[^\n]*(?:not implemented|deferred|future)", design, re.I)

@@ -52,11 +52,15 @@ class ReferenceRegressions(unittest.TestCase):
             "Decision: exponential backoff with full jitter and a bounded budget.\n"
         )
         design = (
-            "# Retry design\nImplemented: retry_with_backoff uses three total attempts.\n"
+            "# Retry design\nImplemented: retry_with_backoff wraps a zero-argument callable with three total attempts.\n"
             "Status: deferred; Retry-After handling is not implemented.\n"
         )
         self.assertEqual(module.content_failures(decision, design), [])
         for name, changed_decision, changed_design in (
+            ("reversed choice", decision.replace("Decision: exponential backoff with full jitter and a bounded budget.", "Decision: fixed intervals with no jitter and a bounded budget.\nRejected: exponential backoff with full jitter."), design),
+            ("rejected choice", decision.replace("Decision: exponential", "Decision: reject exponential"), design),
+            ("unimplemented design", decision, design.replace("Implemented:", "Status: proposed; not implemented:")),
+            ("changed interface", decision, design.replace("zero-argument", "two-argument")),
             ("decision stub", "# Bounded retries\n", design),
             ("design stub", decision, "# Retry design\n"),
             ("lost alternatives", decision.replace("Options: fixed intervals; no jitter.\n", ""), design),
@@ -75,7 +79,7 @@ class ReferenceRegressions(unittest.TestCase):
             decision.write_text(decision.read_text().replace("not implemented", "implemented"))
             design = root / "docs/design/retry.md"
             design.write_text(
-                "# Retry design\nImplemented: retry_with_backoff uses three total attempts.\n"
+                "# Retry design\nImplemented: retry_with_backoff wraps a zero-argument callable with three total attempts.\n"
                 "Retry-After handling is not implemented.\n"
             )
             for relative in ("src/retry.py", "fixtures/retry.ridl"):

@@ -1,0 +1,92 @@
+{
+  "observer_sha256": "90e29588d02d7fd68cb8bf636484ebcfee422e8bb9b9ebbb4531c987aa61806e",
+  "kind": "offline-replay-of-retained-tool-events",
+  "runs": [
+    {
+      "capture": "worktree-followup-u1-green-2026-10-11.json",
+      "capture_sha256": "edde59a3c2a05be8403b01653b11860ae8c52dfe6014fcb66f444a63dcad8bcf",
+      "audit": {
+        "valid": true,
+        "errors": [],
+        "root_verified": false,
+        "branch_verified": false,
+        "reads": []
+      }
+    },
+    {
+      "capture": "worktree-followup-u2-first-2026-10-11.json",
+      "capture_sha256": "ff8827ddc8640bb92d2bb7a1a120c5885233a5b39196a5ad7b107c0fa320b297",
+      "audit": {
+        "valid": true,
+        "errors": [],
+        "root_verified": true,
+        "branch_verified": true,
+        "reads": [
+          "/private/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/gardening-runtime-n0447znw/feature/CONTRIBUTING.md",
+          "/private/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/gardening-runtime-n0447znw/feature/NOTICE",
+          "/private/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/gardening-runtime-n0447znw/feature/README.md",
+          "/private/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/gardening-runtime-n0447znw/feature/docs/wip/plans/retry-backoff.md",
+          "/private/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/gardening-runtime-n0447znw/feature/docs/wip/specs/retry-backoff.md",
+          "/private/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/gardening-runtime-n0447znw/feature/src/retry.py",
+          "/private/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/gardening-runtime-n0447znw/feature/tests/test_retry.py"
+        ]
+      }
+    },
+    {
+      "capture": "worktree-followup-u2-green-2026-10-11.json",
+      "capture_sha256": "5e0f35906c5dd0ed031371374e6a026f1e903a60521598f2f94046ef91eba6d4",
+      "audit": {
+        "valid": true,
+        "errors": [],
+        "root_verified": true,
+        "branch_verified": true,
+        "reads": [
+          "/private/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/gardening-runtime-woto3s6f/feature/CONTRIBUTING.md",
+          "/private/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/gardening-runtime-woto3s6f/feature/NOTICE",
+          "/private/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/gardening-runtime-woto3s6f/feature/README.md",
+          "/private/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/gardening-runtime-woto3s6f/feature/docs/wip/plans/retry-backoff.md",
+          "/private/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/gardening-runtime-woto3s6f/feature/docs/wip/specs/retry-backoff.md",
+          "/private/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/gardening-runtime-woto3s6f/feature/src/retry.py",
+          "/private/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/gardening-runtime-woto3s6f/feature/src/vendor/jitter.py",
+          "/private/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/gardening-runtime-woto3s6f/feature/tests/test_retry.py"
+        ]
+      }
+    },
+    {
+      "capture": "worktree-followup-u3-baseline-2026-10-11.json",
+      "capture_sha256": "d2c2b498d3a8633b325ce5bf70786ef1a550835e5cd38333e1e0808be61e1443",
+      "audit": {
+        "valid": true,
+        "errors": [],
+        "root_verified": true,
+        "branch_verified": true,
+        "reads": [
+          "/private/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/gardening-runtime-pq1cmy3i/feature/CONTRIBUTING.md",
+          "/private/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/gardening-runtime-pq1cmy3i/feature/NOTICE",
+          "/private/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/gardening-runtime-pq1cmy3i/feature/README.md",
+          "/private/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/gardening-runtime-pq1cmy3i/feature/docs/wip/plans/retry-backoff.md",
+          "/private/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/gardening-runtime-pq1cmy3i/feature/docs/wip/specs/retry-backoff.md",
+          "/private/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/gardening-runtime-pq1cmy3i/feature/src/retry.py",
+          "/private/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/gardening-runtime-pq1cmy3i/feature/src/vendor/jitter.py",
+          "/private/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/gardening-runtime-pq1cmy3i/feature/tests/test_retry.py"
+        ]
+      }
+    },
+    {
+      "capture": "worktree-followup-u3-green-2026-10-11.json",
+      "capture_sha256": "fa7a917ead2e9fafdb49976bfc9be09d1a1396cd6ba2e70fb964fb422bcb35c0",
+      "audit": {
+        "valid": true,
+        "errors": [],
+        "root_verified": true,
+        "branch_verified": true,
+        "reads": [
+          "/private/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/gardening-runtime-vjs09x7k/feature/docs/wip/plans/retry-backoff.md",
+          "/private/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/gardening-runtime-vjs09x7k/feature/docs/wip/specs/retry-backoff.md",
+          "/private/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/gardening-runtime-vjs09x7k/feature/src/retry.py",
+          "/private/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/gardening-runtime-vjs09x7k/feature/tests/test_retry.py"
+        ]
+      }
+    }
+  ]
+}

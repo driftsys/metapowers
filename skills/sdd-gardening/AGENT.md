@@ -15,8 +15,9 @@ nothing else.
 
 ## Inputs (provided by the dispatcher)
 
-The spec + plan for this feature in `docs/wip/` (see Project layout for where
-they sit); pointers to the merged code + tests; the existing
+Required: `worktree`, the absolute root of the assigned checkout. The spec + plan
+for this feature in `docs/wip/`, with paths relative to that root (see Project
+layout for where they sit); pointers to the merged code + tests; the existing
 `docs/specification/`, `docs/design/`, `docs/decisions/`, `docs/technotes/`;
 and, if supplied, the brainstorming discussion (it carries the
 considered-options rationale). The dispatcher may also note a `docs/wip/<name>/`
@@ -70,6 +71,26 @@ Before you write, look at what is already on disk and follow it:
   the dispatcher passes no story identifier. When the archived spec and plan
   files sit only in such folders, archive flat under `docs/archive/` and say so
   under `notes:`.
+
+## Verify the assigned checkout first
+
+Before reading feature files or writing, run
+`git -C <worktree> rev-parse --show-toplevel` and compare its resolved physical
+path with the resolved assigned root (for example using `pwd -P`). They must
+match; a directory nested inside another checkout is not a checkout root.
+Check the branch too when the dispatcher supplied one. Accept equivalent symlink
+spellings and an explicitly assigned primary checkout; a linked worktree is not
+required. Use that root as the working directory, or scope each command and file
+operation to it, including mode detection, reconciliation and archival.
+
+If the assignment is absent, relative, missing, not a Git checkout root, or does
+not match the supplied branch, return `status: refused` with the reason before
+reading feature material or changing files. Do not infer the assignment from the
+initial cwd, a shared Git common directory, or matching files in another checkout.
+Named inputs and write destinations must stay within the assigned root. Missing
+working memory is for the dispatcher to transfer; never search sibling checkouts
+or copy their files yourself. Once the root is verified, the existing partial-pair
+handling below still applies.
 
 ## Procedure
 
@@ -144,9 +165,24 @@ Before you write, look at what is already on disk and follow it:
    the dispatcher must establish the appropriate durable record or local
    explanation through the normal implementation/review flow. Path existence,
    prior link approval, and release pressure do not clear this blocker.
-10. **Archive**: in collaborative mode (`docs/wip/` tracked), `git mv` the raw
+10. **Archive**: in collaborative mode (`docs/wip/` not gitignored), move the raw
     spec/plan into `docs/archive/`, mirroring the project's existing archive
-    layout (see Project layout). Leave no file of this feature's spec/plan in
+    layout (see Project layout). Before moving any selected file, inspect every
+    exact archive destination and its parent directories. If a destination already
+    exists (file, directory, or symlink, including a dangling symlink), or an
+    archive parent is a symlink, stop archival for the whole selected pair. Leave
+    both sources and existing archives unchanged, stage no archive paths, and
+    report `status: refused` with the conflicting path and reason. Do not overwrite,
+    merge, rename, or choose a different destination to resolve the conflict.
+    Check each selected source with
+    `git ls-files --error-unmatch -- <source>` from the assigned root. For a
+    tracked source, use `git mv -- <source> <archive-path>`. For an untracked,
+    nonignored source (including a copied file), use a normal file move, then
+    `git add -- <archive-path>` for that file alone. Preserve the raw bytes and
+    verify the archive exists before reporting completion. Stage only those
+    explicit archive paths; never bulk-stage `docs/` or unrelated WIP. In private
+    mode, leave the raw working memory in place: no archive move or staging.
+    Leave no file of this feature's collaborative spec/plan in
     `docs/wip/`; files that step 2 leaves in place stay, and so do the
     `README.md` and `.gitkeep` placeholders, which the WIP-gate ignores. While
     files that step 2 leaves in place keep `docs/wip/` non-empty, the

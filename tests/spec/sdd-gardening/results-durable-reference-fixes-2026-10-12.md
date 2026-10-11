@@ -8,7 +8,8 @@ and address PR 76 findings F1 and F2 without changing the historical reports.
 The new regression runner first failed twice against the reviewed content:
 the documented tracked-only scan missed an untracked requirement pointing to
 another feature’s WIP, and the content-aware observer did not exist.
-After adding `--untracked` and the fixture-specific observer, all four tests pass:
+Those initial runner outputs were not retained. After adding `--untracked` and
+the fixture-specific observer, all four tests pass:
 
 ```bash
 python3 tests/spec/sdd-gardening/test_reference_regressions.py
@@ -54,3 +55,17 @@ The observer checks known retry-fixture concepts; it is not a general semantic
 validator. The executed probe uses default paths. Custom relative paths and
 missing/failed gates retain their original decision-test coverage. This does not
 claim live client activation or universal prose preservation.
+
+## Quick-review negative controls
+
+Quick review found that the initial observer accepted reversed decision wording,
+an unimplemented design status, and a changed callable interface. Three additional
+mutations first failed the regression assertions ([RED output](runs/issue-67/fix-observer-red.txt)).
+The observer now checks the selected `Decision:` statement independently from
+alternatives, explicit implemented design status, and the zero-argument interface.
+All four tests pass with those negative controls ([GREEN output](runs/issue-67/fix-observer-green.txt)).
+The fixture-specific wording predicates intentionally do not accept arbitrary prose.
+
+Integration preserves main’s assigned-checkout verification, archive collision
+preflight and precise staging behavior. CI runs these reference regressions alongside
+the existing worktree observer and mutation suite.

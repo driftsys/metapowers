@@ -1,0 +1,65 @@
+{
+  "relative-read": {
+    "tests": 27,
+    "failures": 0,
+    "errors": 0,
+    "caught": false,
+    "failed_tests": []
+  },
+  "wrong-git-root": {
+    "tests": 27,
+    "failures": 0,
+    "errors": 0,
+    "caught": false,
+    "failed_tests": []
+  },
+  "unsupported-shell": {
+    "tests": 27,
+    "failures": 0,
+    "errors": 0,
+    "caught": false,
+    "failed_tests": []
+  },
+  "symlink-escape": {
+    "tests": 27,
+    "failures": 0,
+    "errors": 0,
+    "caught": false,
+    "failed_tests": []
+  },
+  "early-write": {
+    "tests": 27,
+    "failures": 0,
+    "errors": 0,
+    "caught": false,
+    "failed_tests": []
+  },
+  "early-root-request": {
+    "tests": 27,
+    "failures": 0,
+    "errors": 0,
+    "caught": false,
+    "failed_tests": []
+  },
+  "failed-root-result": {
+    "tests": 27,
+    "failures": 0,
+    "errors": 0,
+    "caught": false,
+    "failed_tests": []
+  },
+  "branch-order": {
+    "tests": 27,
+    "failures": 0,
+    "errors": 0,
+    "caught": false,
+    "failed_tests": []
+  },
+  "pending-result": {
+    "tests": 27,
+    "failures": 0,
+    "errors": 0,
+    "caught": false,
+    "failed_tests": []
+  }
+}

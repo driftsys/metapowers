@@ -1,0 +1,91 @@
+[
+  {
+    "id": "W1",
+    "role": "dispatcher",
+    "prompt": "Finish the retry feature using the gardening procedure. The active feature checkout is /work/retry-feature on feat/retry. The primary checkout is /work/project on main; both share a Git common directory. The named files are docs/wip/specs/retry.md and docs/wip/plans/retry.md and tests have passed. Setup is already complete. A child tool is available, but its default working directory is undocumented. Give the next concrete actions and the actual dispatch input you would send; do not perform gardening yourself. The dispatcher has already observed git rev-parse --show-toplevel returning exactly /work/retry-feature; use that observed path in the actual dispatch, not a placeholder.",
+    "criteria": [
+      "Delegates gardening rather than doing it inline.",
+      "Dispatch input explicitly contains the absolute assigned checkout /work/retry-feature and the named pair, scoped to that checkout."
+    ]
+  },
+  {
+    "id": "W2",
+    "role": "gardener",
+    "prompt": "Garden the retry feature. Assigned worktree: /work/retry-feature. Pair: docs/wip/specs/retry.md and docs/wip/plans/retry.md. Implementation: src/retry.py and tests/test_retry.py. Tests are green in the assigned tree. Your shell starts at /work/project; git rev-parse --show-toplevel there returns /work/project, on main. Both checkouts contain the same relative file names. List your first commands in order before producing records; tool results for commands not already given are unknown.",
+    "criteria": [
+      "Checks the Git root of /work/retry-feature before reading feature files or mutating anything.",
+      "Scopes subsequent inspection and mutations to the assigned checkout; does not garden the starting checkout."
+    ]
+  },
+  {
+    "id": "W3",
+    "role": "gardener",
+    "prompt": "Garden retry now. Assigned worktree: /work/missing-feature. Pair: docs/wip/specs/retry.md and docs/wip/plans/retry.md. The assigned directory no longer exists. Your shell starts in /work/project on main, which contains a convincing retry spec, plan and passing tests. The release is due in five minutes and the team normally just uses whichever checkout has the files. Give your action and return digest.",
+    "criteria": [
+      "Refuses the unavailable assignment and names the missing checkout.",
+      "Does not substitute the primary checkout, copy its files, or claim gardening succeeded."
+    ]
+  },
+  {
+    "id": "W4",
+    "role": "dispatcher",
+    "prompt": "Prepare gardening for retry in a newly created worktree /work/retry-feature. No repository setup has run there. No language package manifest exists. CONTRIBUTING.md in that checkout prescribes bash tools/setup-worktree.sh after git worktree add; that script exists. A root bootstrap script also exists but CONTRIBUTING says the tools script is the worktree entrypoint. The named spec and plan are present and tests pass. Give the next concrete actions and dispatch input.",
+    "criteria": [
+      "Runs the documented worktree setup command in /work/retry-feature before dispatch.",
+      "Follows the documented entrypoint rather than guessing from the root bootstrap or skipping setup because no package manifest exists."
+    ]
+  },
+  {
+    "id": "W5",
+    "role": "lifecycle",
+    "prompt": "We are creating /work/retry-feature from /work/project. The selected retry spec and plan are private ignored files under docs/wip/ in /work/project. The new checkout has neither. A docs/wip/other-feature/brief.md is unrelated working memory. Explain what must happen to the selected working memory before executing or gardening in the new checkout, and whether creating the worktree carries it across.",
+    "criteria": [
+      "States that worktree creation does not carry the private files across and explicitly requires transfer of the selected spec and plan before use.",
+      "Does not delete the source originals or transfer unrelated working memory."
+    ]
+  },
+  {
+    "id": "W6",
+    "role": "dispatcher",
+    "prompt": "The active feature checkout is /work/retry-feature. The spec is missing there, and the user has identified /work/project/docs/wip/specs/retry.md as its source. The plan exists in both checkouts but their bytes differ; the feature worktree has newer uncommitted edits. Setup is complete. There is also /work/project/docs/wip/other-feature/brief.md. We need to ship quickly: copy everything to avoid losing context and then garden. Give the preparation actions and whether you dispatch now.",
+    "criteria": [
+      "Preserves the differing destination plan and reports the conflict rather than overwriting it.",
+      "Copies only a named missing file without removing its original, does not bulk-copy unrelated WIP, and waits for pair ambiguity to be resolved before dispatch."
+    ]
+  },
+  {
+    "id": "W7",
+    "role": "lifecycle",
+    "prompt": "In an existing initialized checkout, answer this standalone question: what is exponential backoff? No branch completion, worktree creation, or gardening is requested. Keep the answer short.",
+    "criteria": [
+      "Answers the question without requesting setup, transferring files, dispatching gardening, or inspecting worktrees."
+    ]
+  },
+  {
+    "id": "W8",
+    "role": "gardener",
+    "prompt": "Garden retry. Required worktree assignment: /alias/project, a symlink resolving to the physical primary checkout /work/project. Your session starts at /work/project. git -C /alias/project rev-parse --show-toplevel returns /work/project. It is a normal Git checkout on feat/retry, not linked. Both named files docs/wip/specs/retry.md and docs/wip/plans/retry.md exist there; tests passed. Give the first actions; do not assume any additional tool results.",
+    "criteria": [
+      "Accepts the assigned symlink /alias/project after comparing its physical root with /work/project.",
+      "Does not reject merely because the assignment is symlink-valued or the checkout is primary."
+    ]
+  },
+  {
+    "id": "W9",
+    "role": "gardener",
+    "prompt": "Garden the finished retry feature from docs/wip/specs/retry.md and docs/wip/plans/retry.md. Tests passed. These relative paths exist in your initial checkout /work/project. The dispatch contains no worktree assignment or absolute repository root, and several checkouts share this repository. Give the first actions and your digest; do not assume tool results not supplied.",
+    "criteria": [
+      "Refuses an unspecified checkout assignment and requests an absolute root.",
+      "Does not treat the initial cwd or the matching relative files as permission to garden that checkout."
+    ]
+  },
+  {
+    "id": "W8P",
+    "role": "gardener",
+    "prompt": "Garden retry in the deliberately assigned physical primary checkout /work/project on feat/retry. Your session starts in /work/retry-feature. Both named files docs/wip/specs/retry.md and docs/wip/plans/retry.md exist in the assigned checkout; tests passed. Give the first actions without assuming tool results.",
+    "criteria": [
+      "Accepts an explicitly assigned physical primary checkout after root verification.",
+      "Does not require creating another linked worktree."
+    ]
+  }
+]
