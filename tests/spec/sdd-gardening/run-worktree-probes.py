@@ -58,15 +58,18 @@ def main():
     def run(case):
         # A new cwd and process prevent project discovery and session reuse.
         with tempfile.TemporaryDirectory(prefix="gardening-probe-") as directory:
-            base = Path(directory)
+            base = Path(directory).resolve()
             primary, target = base / "project", base / "retry-feature"
             primary.mkdir()
+            target_branch = "feat/other-checkout" if case["id"] in ("W8", "W8P") else "feat/retry"
             for operation in (
                 ["git", "init", "-q", "--initial-branch=main"],
                 ["git", "-c", "user.name=Harness", "-c", "user.email=harness@example.invalid", "commit", "--allow-empty", "-qm", "chore: baseline"],
-                ["git", "worktree", "add", "-qb", "feat/retry", str(target)],
+                ["git", "worktree", "add", "-qb", target_branch, str(target)],
             ):
                 subprocess.run(operation, cwd=primary, capture_output=True, check=True)
+            if case["id"] in ("W8", "W8P"):
+                subprocess.run(["git", "switch", "-qc", "feat/retry"], cwd=primary, capture_output=True, check=True)
             (base / "alias").mkdir()
             (base / "alias/project").symlink_to(primary, target_is_directory=True)
             # Keep the model's real environment consistent with scenario facts.

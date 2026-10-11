@@ -1,0 +1,10 @@
+{
+  "command": [
+    "mv",
+    "<source>",
+    "<existing-archive>"
+  ],
+  "exit_code": 0,
+  "earlier_archive_preserved": false,
+  "source_preserved": false
+}

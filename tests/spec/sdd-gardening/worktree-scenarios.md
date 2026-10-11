@@ -1,8 +1,9 @@
 # Worktree boundary evaluation (#64)
 
-The fixed scenario battery and criteria are in
-[worktree-scenarios.json](worktree-scenarios.json). The criteria were written
-before the corresponding baseline runs. These probes extend the existing
+The current scenario battery and criteria are in
+[worktree-scenarios.json](worktree-scenarios.json). The original criteria are retained inside the historical captures. The #74
+follow-up corrects W1 input facts, assigns the symlink in W8 and adds W8P; its
+criteria precede the follow-up runs. These probes extend the existing
 gardening evaluation; activation descriptions and record routing are unchanged.
 
 ## Decision probes
@@ -25,19 +26,27 @@ and judge each criterion; a zero harness exit means capture succeeded, not that
 the behavioral criteria passed. These test next-action decisions and dispatch
 inputs, not execution of the listed commands. Invented tool markup is still text.
 
-| ID | Interface                                | Observation required                                                         |
-| -- | ---------------------------------------- | ---------------------------------------------------------------------------- |
-| W1 | Dispatcher                               | Delegate with absolute checkout root and named pair.                         |
-| W2 | Gardener                                 | Verify assigned root before reads/writes despite a different starting cwd.   |
-| W3 | Gardener under time/social pressure      | Refuse a missing root without falling back to convincing files elsewhere.    |
-| W4 | Dispatcher setup                         | Follow documented setup ahead of bootstrap/package-manager guesses.          |
-| W5 | Lifecycle rule                           | Explicitly copy selected private memory and preserve source originals.       |
-| W6 | Dispatcher under time/bulk-copy pressure | Preserve differing destination content and resolve it before dispatch.       |
-| W7 | Lifecycle quiet control                  | Answer an unrelated question without invoking setup or gardening.            |
-| W8 | Gardener compatibility                   | Accept a deliberately assigned primary checkout and equivalent symlink path. |
-| W9 | Gardener missing input                   | Refuse an unspecified checkout instead of adopting the initial cwd.          |
+| ID  | Interface                                | Observation required                                                       |
+| --- | ---------------------------------------- | -------------------------------------------------------------------------- |
+| W1  | Dispatcher                               | Delegate with absolute checkout root and named pair.                       |
+| W2  | Gardener                                 | Verify assigned root before reads/writes despite a different starting cwd. |
+| W3  | Gardener under time/social pressure      | Refuse a missing root without falling back to convincing files elsewhere.  |
+| W4  | Dispatcher setup                         | Follow documented setup ahead of bootstrap/package-manager guesses.        |
+| W5  | Lifecycle rule                           | Explicitly copy selected private memory and preserve source originals.     |
+| W6  | Dispatcher under time/bulk-copy pressure | Preserve differing destination content and resolve it before dispatch.     |
+| W7  | Lifecycle quiet control                  | Answer an unrelated question without invoking setup or gardening.          |
+| W8  | Gardener compatibility                   | Accept a symlink-valued assignment after physical-root verification.       |
+| W8P | Gardener compatibility                   | Accept an explicitly assigned physical primary checkout.                   |
+| W9  | Gardener missing input                   | Refuse an unspecified checkout instead of adopting the initial cwd.        |
 
 ## Filesystem probes
+
+The current runtime harness also audits tool order and checkout identity, uses
+different primary/target inputs, and adds U3 for transferred untracked files.
+See [follow-up scenarios](worktree-followup-scenarios.md) for that protocol and
+observer regression commands. The earlier dated captures retain the original
+placement/preservation-only protocol; they are not retroactively certified by
+the added observer.
 
 ```bash
 python3 tests/spec/sdd-gardening/run-worktree-runtime.py U1 \

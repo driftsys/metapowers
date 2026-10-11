@@ -142,9 +142,24 @@ handling below still applies.
    dispatcher relays both; the human applies the fix.
 8. **Rewrite in place**: when work changes an existing record, edit it; create a
    new record only for a genuinely new topic.
-9. **Archive**: in collaborative mode (`docs/wip/` tracked), `git mv` the raw
+9. **Archive**: in collaborative mode (`docs/wip/` not gitignored), move the raw
    spec/plan into `docs/archive/`, mirroring the project's existing archive
-   layout (see Project layout). Leave no file of this feature's spec/plan in
+   layout (see Project layout). Before moving any selected file, inspect every
+   exact archive destination and its parent directories. If a destination already
+   exists (file, directory, or symlink, including a dangling symlink), or an
+   archive parent is a symlink, stop archival for the whole selected pair. Leave
+   both sources and existing archives unchanged, stage no archive paths, and
+   report `status: refused` with the conflicting path and reason. Do not overwrite,
+   merge, rename, or choose a different destination to resolve the conflict.
+   Check each selected source with
+   `git ls-files --error-unmatch -- <source>` from the assigned root. For a
+   tracked source, use `git mv -- <source> <archive-path>`. For an untracked,
+   nonignored source (including a copied file), use a normal file move, then
+   `git add -- <archive-path>` for that file alone. Preserve the raw bytes and
+   verify the archive exists before reporting completion. Stage only those
+   explicit archive paths; never bulk-stage `docs/` or unrelated WIP. In private
+   mode, leave the raw working memory in place: no archive move or staging.
+   Leave no file of this feature's collaborative spec/plan in
    `docs/wip/`; files that step 2 leaves in place stay, and so do the
    `README.md` and `.gitkeep` placeholders, which the WIP-gate ignores. While
    files that step 2 leaves in place keep `docs/wip/` non-empty, the
