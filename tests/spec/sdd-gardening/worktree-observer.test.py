@@ -210,6 +210,19 @@ class RuntimeIntegrationTests(unittest.TestCase):
         self.assertFalse(report["checks"]["existing_archive_preserved"])
         self.assertFalse(report["checks"]["selected_pair_preserved"])
 
+    def test_collision_harness_rejects_staging_without_moves(self):
+        code, report = self.run_trace("stage-conflict", "U4")
+        self.assertEqual(code, 1)
+        self.assertFalse(report["checks"]["index_unchanged"])
+        self.assertTrue(report["checks"]["existing_archive_preserved"])
+        self.assertTrue(report["checks"]["selected_pair_preserved"])
+
+    def test_collision_harness_requires_refusal_path_and_reason(self):
+        code, report = self.run_trace("vague-conflict", "U4")
+        self.assertEqual(code, 1)
+        self.assertFalse(report["checks"]["archive_conflict_reported"])
+        self.assertTrue(report["checks"]["index_unchanged"])
+
     def test_harness_rejects_skipped_verification_despite_correct_writes(self):
         code, report = self.run_trace("skip-verification")
         self.assertEqual(code, 1)

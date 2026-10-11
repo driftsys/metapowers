@@ -15,7 +15,7 @@ branch verification cannot mask an early-root regression. Failed-root tests
 assert that the root remains unverified. A completed read before the branch
 result pins branch ordering; a separate unanswered-read test pins pending calls.
 
-The 35-test suite includes 29 observer tests and six full harness tests.
+The final 37-test suite includes 29 observer tests and eight full harness tests.
 `check-observer-mutations.py` changes nine guards independently in memory and
 runs the observer tests. All nine mutants survive the baseline tests; all nine
 cause assertion failures without errors in the revised suite. Captures:
@@ -55,7 +55,7 @@ all eleven U4 checks passed. Both runs completed normally. Captures:
 - `runs/worktree-review-collision-baseline-2026-10-11.json`
 - `runs/worktree-review-collision-green-2026-10-11.json`
 
-Two fake-agent integration tests establish that the U4 oracle accepts preservation
+The first two fake-agent integration tests establish that the U4 oracle accepts preservation
 and rejects an overwrite even if the response mentions a conflict. These are
 oracle checks, not gardener evaluations.
 
@@ -65,3 +65,14 @@ symlink/symlink-parent behavior, concurrent destination creation, cross-client
 compliance, or all possible record edits. Preflight is a procedural safeguard,
 not an atomic filesystem guarantee. Existing no-collision captures refer to the
 prior prompt and have not been relabeled as runs of the revised prompt.
+
+## Quick-review assertion refinements
+
+The quick tests review found that a staging-only collision regression was not
+pinned independently. Two additional integration traces now reject staging
+without moves and a vague conflict response without refusal/path/reason. U4's
+response check requires refusal, the exact conflicting relative path, and an
+existence reason. This is a bounded text check, not a general response parser.
+The retained live captures were produced before this oracle refinement; the
+revised refusal text satisfies the stronger check on offline inspection. No
+additional live run is claimed for the final harness hash.

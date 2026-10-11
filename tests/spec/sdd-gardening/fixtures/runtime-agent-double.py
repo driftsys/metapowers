@@ -7,6 +7,7 @@ import json
 import os
 from pathlib import Path
 import sys
+import subprocess
 
 if "--version" in sys.argv:
     print("observer-test-double")
@@ -42,10 +43,13 @@ if mode != "skip-verification":
 for relative in ("docs/wip/specs/retry-backoff.md", "docs/wip/plans/retry-backoff.md", "src/retry.py", "tests/test_retry.py"):
     source = (primary if mode == "wrong-source" else target) / relative
     operation("Read", {"file_path": str(source)}, source.read_text())
-if mode == "archive-conflict":
+if mode in ("archive-conflict", "stage-conflict", "vague-conflict"):
+    if mode == "stage-conflict":
+        blob = subprocess.check_output(["git", "-C", str(target), "hash-object", "-w", "docs/wip/specs/retry-backoff.md"], text=True).strip()
+        subprocess.run(["git", "-C", str(target), "update-index", "--cacheinfo", "100644", blob, "docs/archive/specs/retry-backoff.md"], check=True)
     archive = target / "docs/archive/specs/retry-backoff.md"
     operation("Read", {"file_path": str(archive)}, archive.read_text())
-    print(json.dumps({"type": "result", "is_error": False, "result": "status: refused; archive conflict"}))
+    print(json.dumps({"type": "result", "is_error": False, "result": "status: done; archive conflict" if mode == "vague-conflict" else "status: refused; archive conflict: docs/archive/specs/retry-backoff.md already exists"}))
     raise SystemExit(0)
 
 record = target / "docs/design/retry.md"

@@ -264,7 +264,8 @@ if __name__ == "__main__":'''))
             checks["refused"] = "status: refused" in final.get("result", "").lower()
             checks["target_clean"] = not command(["git", "status", "--porcelain"], target)
         elif args.case == "U4":
-            checks["archive_conflict_reported"] = "conflict" in final.get("result", "").lower()
+            response = final.get("result", "").lower()
+            checks["archive_conflict_reported"] = all(value in response for value in ("status: refused", "conflict", "docs/archive/specs/retry-backoff.md", "exist"))
             checks["existing_archive_preserved"] = collision.read_bytes() == collision_bytes
             checks["selected_pair_preserved"] = all(
                 (target / relative).is_file() and (target / relative).read_bytes() == content
