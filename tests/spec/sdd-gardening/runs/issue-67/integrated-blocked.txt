@@ -1,0 +1,77 @@
+Assignment: /private/tmp/metapowers-67-integrated-run, branch feat/retry
+Instructions read: /private/tmp/metapowers-67-integrated-rule.md and /private/tmp/metapowers-67-integrated-agent.md
+
+Actual commands and observed results (all feature inspection commands scoped to assigned root):
+$ git -C /private/tmp/metapowers-67-integrated-run rev-parse --show-toplevel
+/private/tmp/metapowers-67-integrated-run
+$ cd /private/tmp/metapowers-67-integrated-run; pwd -P
+/private/tmp/metapowers-67-integrated-run
+$ git branch --show-current
+feat/retry
+Root and branch verified before feature file reads.
+$ git status --short
+?? docs/archive/specs/
+$ cat docs/wip/specs/retry-backoff.md docs/wip/plans/retry-backoff.md docs/decisions/0007-retry-budget.md docs/design/retry.md src/retry.py tests/test_retry.py justfile tools/doc_path_check.py README.md CONTRIBUTING.md
+Read assigned material, existing records, implementation, tests, and canonical docs.
+$ git diff main...HEAD -- src tests fixtures
+No output.
+$ git diff main...HEAD --stat
+No output.
+$ git log --oneline --all -4
+73cefe6 test: seed gardening evaluation
+The seeded feature is already on main; there is no feature diff to derive a changed surface. Feature-scoped observations below use assigned implementation and documents, not an unrelated repository audit.
+$ git grep --untracked -n -F 'docs/wip/' -- .
+docs/archive/history.md:3:See docs/wip/specs/retry-backoff.md.
+docs/design/retry.md:5:Rationale: `docs/wip/specs/retry-backoff.md`.
+docs/wip/held.md:3:See docs/wip/specs/retry-backoff.md.
+fixtures/retry.ridl:1:# Rationale: docs/wip/specs/retry-backoff.md
+src/retry.py:1:# Rationale: docs/wip/specs/retry-backoff.md
+Reviewed matches: archive history is exempt historical material; held.md is excluded working memory owned by another feature. The remaining three matches are lasting rationale dependencies, including the fixture comment. They block archival despite existing target paths.
+$ rg -n 'wip|retry-backoff|retry-budget' --glob '!docs/wip/**' --glob '!docs/archive/**' --hidden -g '!.git/**'
+Matched src/vendor/jitter.py:3, tools/doc_path_check.py:2, src/retry.py:1, fixtures/retry.ridl:1, docs/design/retry.md:5. No additional relative WIP citations observed.
+$ git check-ignore docs/wip/specs/retry-backoff.md
+No output (exit 1): collaborative working memory.
+$ find docs/archive -maxdepth 3 -print
+docs/archive
+docs/archive/specs
+docs/archive/specs/retry-backoff.md
+docs/archive/history.md
+$ ls -l docs/archive/specs/retry-backoff.md
+Existing regular file, 44 bytes. Exact selected spec destination conflicts; no move attempted and no archive paths staged.
+$ python3 tests/test_retry.py
+PASS test_gives_up_after_max_attempts
+PASS test_non_transient_not_retried
+PASS test_retries_then_succeeds
+PASS test_succeeds_first_try
+All tests passed.
+Exit 0.
+$ just doc-path-check
+python3 tools/doc_path_check.py
+doc-path-check: durable decision exists
+Exit 0. This check verifies existence only, not citation meaning.
+$ cat src/vendor/jitter.py
+Observed vendored full-jitter v1.2.0 header and MIT license statement. No NOTICE(S) present in file inventory.
+$ git status --short
+?? docs/archive/specs/
+Final status matches initial status. No fixture changes, caller rewriting, commits, or archival.
+
+Gardener digest:
+status: refused
+records:
+  - none; existing records left untouched because lasting citations require caller resolution and this assignment prohibits caller rewriting.
+divergences:
+  - Spec R4 and README claim default 5 attempts; src/retry.py defaults to 3.
+  - README imports backoff.retry; assigned implementation exposes retry.retry_with_backoff.
+  - docs/design/retry.md says proposed/not implemented and AD-0007 says accepted/not implemented; implementation and four passing tests now exist. Retry-After remains unimplemented.
+offers:
+  - CONTRIBUTING.md requires PR descriptions to state 5 attempts; human policy reconciliation needed against implemented default 3.
+  - Vendored src/vendor/jitter.py declares third-party MIT content; NOTICE(S) absent. Human legal/documentation review needed.
+references:
+  - docs/design/retry.md:5 -> docs/wip/specs/retry-backoff.md
+  - fixtures/retry.ridl:1 -> docs/wip/specs/retry-backoff.md
+  - src/retry.py:1 -> docs/wip/specs/retry-backoff.md
+checks: root/branch match; python3 tests/test_retry.py PASS (4 tests); just doc-path-check PASS; citation review BLOCKED; existing archive destination BLOCKED.
+wip:
+  - docs/wip/specs/retry-backoff.md and docs/wip/plans/retry-backoff.md remain because lasting citations and an existing archive destination block archival.
+  - docs/wip/held.md: disposition unresolved — not this feature's spec/plan; leave it for the human or the producing skill's own completion step. Branch remains unfinished until disposition is resolved or debt explicitly accepted with a reason and durable marker.
+notes: Existing docs/archive/specs/retry-backoff.md left unchanged. No feature diff exists in this seeded checkout; reported document observations are bounded to assigned retry material.

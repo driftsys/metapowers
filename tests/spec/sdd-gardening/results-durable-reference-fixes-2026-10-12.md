@@ -53,7 +53,7 @@ This distinguishes content preservation from mere path existence.
 
 The observer checks known retry-fixture concepts; it is not a general semantic
 validator. The executed probe uses default paths. Custom relative paths and
-missing/failed gates retain their original decision-test coverage. This does not
+failed gates retain their original decision-test coverage; absent gates are not separately exercised. This does not
 claim live client activation or universal prose preservation.
 
 ## Quick-review negative controls
@@ -69,3 +69,20 @@ The fixture-specific wording predicates intentionally do not accept arbitrary pr
 Integration preserves main’s assigned-checkout verification, archive collision
 preflight and precise staging behavior. CI runs these reference regressions alongside
 the existing worktree observer and mutation suite.
+
+The integration quick review also found that the legacy runtime audit rejected
+the newly prescribed Git citation scan. Its bounded command protocol now accepts
+that exact scan after successful root/branch verification, and still rejects it
+before verification or with an escaping path. [RED](runs/issue-67/fix-runtime-red.txt)
+and [GREEN](runs/issue-67/fix-runtime-green.txt) retain the three targeted results.
+The execution recipe now supplies the required absolute worktree assignment.
+This protocol correction is deterministic coverage, not a new live model execution.
+
+A fresh executor also ran the merged rule/agent in an explicitly assigned checkout
+with three lasting WIP callers and an existing archive destination. It verified the
+root and branch, ran four retry tests and the path gate, reported all three callers
+and the collision, and refused archival. [Actual execution](runs/issue-67/integrated-blocked.txt)
+and the [independent observer](runs/issue-67/integrated-blocked-observer.json)
+confirm the pair, caller bytes, existing archive and index remained unchanged.
+Input hashes identify the merged production instructions. This is a bounded
+Codex execution; it does not claim a new Claude runtime probe or paid-model battery.

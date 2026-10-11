@@ -118,6 +118,18 @@ class ObserverTests(unittest.TestCase):
         events = self.verified + [call("ls", "Bash", command=f"git -C {self.root} ls-files --error-unmatch -- docs/wip/retry.md"), result("ls", "docs/wip/retry.md")]
         self.assertTrue(self.audit(events)["valid"])
 
+    def test_reference_scan_after_verification_is_accepted(self):
+        scan = call("scan", "Bash", command=f"git -C {self.root} grep --untracked -n -F 'docs/wip/' -- .")
+        self.assertTrue(self.audit(self.verified + [scan, result("scan", "")])["valid"])
+
+    def test_reference_scan_before_verification_is_rejected(self):
+        scan = call("scan", "Bash", command=f"git -C {self.root} grep --untracked -n -F 'docs/wip/' -- .")
+        self.assert_rejected([scan, result("scan", "")] + self.verified, "feature operation before")
+
+    def test_reference_scan_outside_root_is_rejected(self):
+        scan = call("scan", "Bash", command=f"git -C {self.root} grep --untracked -n -F 'docs/wip/' -- ../primary")
+        self.assert_rejected(self.verified + [scan, result("scan", "")], "unsupported shell command")
+
     def test_ignore_check_of_named_file_is_accepted(self):
         events = self.verified + [call("ignore", "Bash", command=f"git -C {self.root} check-ignore docs/wip/retry.md"), result("ignore", "", error=True)]
         self.assertTrue(self.audit(events)["valid"])

@@ -173,7 +173,8 @@ python3 tests/spec/sdd-gardening/setup-reference-sandbox.py /tmp/reference-green
 ```
 
 Give a fresh executor only the baseline rule and gardener body for RED, and the
-candidate rule and gardener body for GREEN. Assign the spec and plan at
+candidate rule and gardener body for GREEN. Supply `worktree: <absolute sandbox root>`
+for each assigned repository, including clean continuations. Assign the spec and plan at
 `docs/wip/specs/retry-backoff.md` and `docs/wip/plans/retry-backoff.md`, code at
 `src/retry.py`, tests at `tests/test_retry.py`, existing `docs/` records, canonical
 README and CONTRIBUTING, and main as the base branch. Note `docs/wip/held.md` as

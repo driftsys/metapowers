@@ -67,6 +67,8 @@ def audit_events(events, assigned, expected_branch):
                         ["diff", "main...HEAD"], ["diff", "--stat", "main...HEAD"],
                         ["diff", "--name-only", "main...HEAD"]):
                 return "other"
+            if args == ["grep", "--untracked", "-n", "-F", "docs/wip/", "--", "."]:
+                return "other"
             if args[0] in ("mv", "add", "ls-files", "check-ignore"):
                 paths = args[1:]
                 options = {"mv": {"--"}, "add": {"--"},
