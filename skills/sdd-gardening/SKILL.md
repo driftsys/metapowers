@@ -8,8 +8,9 @@ metadata:
 
 ## Overview
 
-Gardening turns a finished Superpowers session's working memory (the spec and
-plan in `docs/wip/`) into the durable record taxonomy — `docs/specification/`,
+Gardening reconciles records captured during development and extracts remaining
+lasting content from a finished Superpowers session's working memory (the spec
+and plan in `docs/wip/`) into the durable record taxonomy — `docs/specification/`,
 `docs/design/`, `docs/decisions/`, `docs/technotes/` — and moves the raw
 spec/plan to `docs/archive/`. Because the work is context-heavy (it reads the
 spec/plan, the merged code + tests, and the existing `docs/` records), this skill
@@ -57,7 +58,8 @@ not authorize cleanup in the source checkout.
    and one plan; if you cannot tell which files are this feature's, ask the
    human instead of guessing. Also gather the merged code + tests, and the
    existing `docs/specification/`, `docs/design/`, `docs/decisions/`,
-   `docs/technotes/` records. If any other `docs/wip/<name>/` directory, or any
+   `docs/technotes/` records, including drafts created during design and planning.
+   If any other `docs/wip/<name>/` directory, or any
    other `docs/wip/` file outside the pair (except the `README.md` and
    `.gitkeep` placeholders), is present, mention its existence to the subagent
    when dispatching (so the subagent can name it in its report), but do not hand
@@ -80,8 +82,9 @@ not authorize cleanup in the source checkout.
    session's context lean.
 4. **Relay its summary** to the user: records created/edited (paths, plus
    `AD-NNNN` ids where the project uses them) and flagged divergences —
-   including any project-doc drift the gardener surfaced. Read the actual files
-   only if needed.
+   including project-doc drift, blocking WIP citations under `references:`, and
+   path-check results under `checks:`. A refused reference check leaves the raw
+   pair in place. Read the actual files only if needed.
 5. **Resolve its offers with the human:** a requirement gap to fill (author it as
    a durable record — descriptive prose by default, or in whatever substrate an
    inherited project rule prescribes), a system-architecture doc to
@@ -89,8 +92,13 @@ not authorize cleanup in the source checkout.
    stale fact in `README`/`AGENTS`, or a policy/legal line in
    `CONTRIBUTING`/`AGENTS`/`NOTICE(S)`) — apply the fix or accept it yourself.
    Never fabricate or auto-create.
+   For blocking WIP citations, establish the useful durable target with the
+   human, or use a self-contained explanation; do not blindly substitute an
+   archive path or invent a record. Resolve the reported callers through the
+   normal implementation/review flow, then rerun gardening and applicable checks.
 6. **Verify** this feature's spec + plan are gone from `docs/wip/`
-   (collaborative mode), then commit the gardened records + archived raw. A
+   (collaborative mode), `references:` is clear, and applicable path checks
+   passed, then commit the gardened records + archived raw. A
    `docs/wip/<name>/` directory, or any other `docs/wip/` file, outside the
    spec/plan pair is not this skill's to resolve — relay it to the human as-is
    (step 4). Do not garden it, do not delete it, and do not archive, move, or
@@ -106,6 +114,10 @@ not authorize cleanup in the source checkout.
 ## Common mistakes
 
 - Gardening before tests pass — records then describe as-planned, not as-built.
+- Deferring useful durable targets until gardening — capture them during design
+  and planning, with implementation status explicit; gardening reconciles them.
+- Treating a passing link check as permission to cite WIP — existing temporary
+  paths are still unsuitable targets for lasting references.
 - Doing the work inline instead of in the subagent — defeats the context saving.
 - Auto-creating requirements/architecture instead of offering — see the rule.
 - Naming a specific authoring tool — the substrate is descriptive prose unless an

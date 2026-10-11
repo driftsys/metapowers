@@ -1,0 +1,24 @@
+{
+  "red": {
+    "spec_exists": false,
+    "plan_exists": false,
+    "archived_spec": true,
+    "source_first_line": "# Rationale: docs/wip/specs/retry-backoff.md",
+    "fixture": "# Rationale: docs/wip/specs/retry-backoff.md",
+    "docs/archive/history.md_unchanged": true,
+    "docs/wip/held.md_unchanged": true,
+    "src/retry.py_unchanged": true,
+    "fixtures/retry.ridl_unchanged": true
+  },
+  "final": {
+    "spec_exists": true,
+    "plan_exists": true,
+    "archived_spec": false,
+    "source_first_line": "# Rationale: docs/wip/specs/retry-backoff.md",
+    "fixture": "# Rationale: docs/wip/specs/retry-backoff.md",
+    "docs/archive/history.md_unchanged": true,
+    "docs/wip/held.md_unchanged": true,
+    "src/retry.py_unchanged": true,
+    "fixtures/retry.ridl_unchanged": true
+  }
+}

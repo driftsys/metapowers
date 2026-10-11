@@ -118,6 +118,28 @@ class ObserverTests(unittest.TestCase):
         events = self.verified + [call("ls", "Bash", command=f"git -C {self.root} ls-files --error-unmatch -- docs/wip/retry.md"), result("ls", "docs/wip/retry.md")]
         self.assertTrue(self.audit(events)["valid"])
 
+    def test_reference_scan_after_verification_is_accepted(self):
+        scan = call("scan", "Bash", command=f"git -C {self.root} grep --untracked -n -F 'docs/wip/' -- .")
+        self.assertTrue(self.audit(self.verified + [scan, result("scan", "")])["valid"])
+
+    def test_reference_scan_before_verification_is_rejected(self):
+        scan = call("scan", "Bash", command=f"git -C {self.root} grep --untracked -n -F 'docs/wip/' -- .")
+        self.assert_rejected([scan, result("scan", "")] + self.verified, "feature operation before")
+
+    def test_reference_scan_outside_root_is_rejected(self):
+        scan = call("scan", "Bash", command=f"git -C {self.root} grep --untracked -n -F 'docs/wip/' -- ../primary")
+        self.assert_rejected(self.verified + [scan, result("scan", "")], "unsupported shell command")
+
+    def test_reference_scan_rejects_altered_options_and_external_patterns(self):
+        for arguments in (
+            f"grep -f {self.primary}/patterns -- .",
+            "grep --textconv -n -F docs/wip/ -- .",
+            "grep --no-index --untracked -n -F docs/wip/ -- .",
+        ):
+            with self.subTest(arguments=arguments):
+                scan = call("scan", "Bash", command=f"git -C {self.root} {arguments}")
+                self.assert_rejected(self.verified + [scan, result("scan", "")], "unsupported shell command")
+
     def test_ignore_check_of_named_file_is_accepted(self):
         events = self.verified + [call("ignore", "Bash", command=f"git -C {self.root} check-ignore docs/wip/retry.md"), result("ignore", "", error=True)]
         self.assertTrue(self.audit(events)["valid"])
@@ -203,6 +225,18 @@ class RuntimeIntegrationTests(unittest.TestCase):
     def test_collision_harness_accepts_preserved_pair_and_conflict(self):
         code, report = self.run_trace("archive-conflict", "U4")
         self.assertEqual(code, 0, report["checks"])
+
+    def test_plan_collision_harness_accepts_preserved_pair_and_conflict(self):
+        code, report = self.run_trace("archive-conflict", "U5")
+        self.assertEqual(code, 0, report["checks"])
+
+    def test_plan_collision_harness_rejects_spec_moved_before_plan_preflight(self):
+        code, report = self.run_trace("partial-spec-first", "U5")
+        self.assertEqual(code, 1)
+        self.assertTrue(report["checks"]["existing_archive_preserved"])
+        self.assertFalse(report["checks"]["selected_pair_preserved"])
+        self.assertFalse(report["checks"]["other_archive_not_created"])
+        self.assertFalse(report["checks"]["index_unchanged"])
 
     def test_collision_harness_rejects_overwrite_even_when_conflict_reported(self):
         code, report = self.run_trace("overwrite-conflict", "U4")

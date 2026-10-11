@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "inputs": {
+    "rule": "0246841c76202fff40eebb59fe9931a46de9e9911fb0610cf06577b823dd3784",
+    "agent": "2b0695af71129828c46117b23db371e71ee66f1b2c13e254831de3c502c194a9"
+  },
+  "pair_bytes_retained": true,
+  "index_unchanged": true,
+  "existing_archive_unchanged": true,
+  "plan_archive_absent": true,
+  "lasting_callers_unchanged": true
+}

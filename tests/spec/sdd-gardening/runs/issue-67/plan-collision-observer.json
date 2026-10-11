@@ -1,0 +1,7 @@
+{
+  "docs/wip/specs/retry-backoff.md": true,
+  "docs/wip/plans/retry-backoff.md": true,
+  "docs/archive/plans/retry-backoff.md": true,
+  ".git/index": true,
+  "spec_archive_absent": true
+}

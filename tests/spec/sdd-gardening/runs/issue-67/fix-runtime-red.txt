@@ -1,0 +1,26 @@
+FF.
+======================================================================
+FAIL: test_reference_scan_after_verification_is_accepted (__main__.ObserverTests.test_reference_scan_after_verification_is_accepted)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/sebastientasson/Workspace/driftsys/metapowers/tests/spec/sdd-gardening/worktree-observer.test.py", line 123, in test_reference_scan_after_verification_is_accepted
+    self.assertTrue(self.audit(self.verified + [scan, result("scan", "")])["valid"])
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_reference_scan_before_verification_is_rejected (__main__.ObserverTests.test_reference_scan_before_verification_is_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/sebastientasson/Workspace/driftsys/metapowers/tests/spec/sdd-gardening/worktree-observer.test.py", line 127, in test_reference_scan_before_verification_is_rejected
+    self.assert_rejected([scan, result("scan", "")] + self.verified, "feature operation before")
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sebastientasson/Workspace/driftsys/metapowers/tests/spec/sdd-gardening/worktree-observer.test.py", line 56, in assert_rejected
+    self.assertTrue(any(reason in error for error in audit["errors"]), audit)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : {'valid': False, 'errors': ['scan: unsupported shell command'], 'root_verified': True, 'branch_verified': True, 'reads': []}
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.014s
+
+FAILED (failures=2)

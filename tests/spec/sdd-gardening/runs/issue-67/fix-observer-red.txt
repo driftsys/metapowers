@@ -1,0 +1,32 @@
+..FFF.
+======================================================================
+FAIL: test_observer_checks_content_and_rejects_each_semantic_loss (__main__.ReferenceRegressions.test_observer_checks_content_and_rejects_each_semantic_loss) (name='reversed choice')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/sebastientasson/Workspace/driftsys/metapowers/tests/spec/sdd-gardening/test_reference_regressions.py", line 71, in test_observer_checks_content_and_rejects_each_semantic_loss
+    self.assertTrue(module.content_failures(changed_decision, changed_design))
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: [] is not true
+
+======================================================================
+FAIL: test_observer_checks_content_and_rejects_each_semantic_loss (__main__.ReferenceRegressions.test_observer_checks_content_and_rejects_each_semantic_loss) (name='unimplemented design')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/sebastientasson/Workspace/driftsys/metapowers/tests/spec/sdd-gardening/test_reference_regressions.py", line 71, in test_observer_checks_content_and_rejects_each_semantic_loss
+    self.assertTrue(module.content_failures(changed_decision, changed_design))
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: [] is not true
+
+======================================================================
+FAIL: test_observer_checks_content_and_rejects_each_semantic_loss (__main__.ReferenceRegressions.test_observer_checks_content_and_rejects_each_semantic_loss) (name='changed interface')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/sebastientasson/Workspace/driftsys/metapowers/tests/spec/sdd-gardening/test_reference_regressions.py", line 71, in test_observer_checks_content_and_rejects_each_semantic_loss
+    self.assertTrue(module.content_failures(changed_decision, changed_design))
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: [] is not true
+
+----------------------------------------------------------------------
+Ran 4 tests in 3.442s
+
+FAILED (failures=3)

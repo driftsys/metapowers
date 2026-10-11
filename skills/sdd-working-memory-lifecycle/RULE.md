@@ -1,14 +1,14 @@
 ---
 schema: 1
 name: sdd-working-memory-lifecycle
-description: Standing guardrails for Superpowers working memory — where specs/plans live, gardening them into durable docs before a PR lands, and editing those records in place. Applies when authoring a spec/plan or finishing a branch.
+description: Standing guardrails for Superpowers working memory and durable references. Applies during design, planning, implementation, review, and branch completion.
 metadata:
   version: 0.2.4
 ---
 
 A Superpowers session produces a **spec** and a **plan** — working memory.
-Durable engineering records are _gardened_ from that working memory; the working
-memory itself is transient. Code and tests remain the source of truth — these
+Durable engineering records are captured during development and reconciled by
+gardening; the working memory itself is transient. Code and tests remain the source of truth — these
 records describe the system, they do not drive it.
 
 ## Where working memory lives
@@ -50,7 +50,7 @@ records describe the system, they do not drive it.
 
 ## Durable records — the taxonomy
 
-- Garden working memory into four artifact homes: `docs/specification/`
+- Capture lasting content in four artifact homes: `docs/specification/`
   (requirements), `docs/design/` (architecture — interfaces and components),
   `docs/decisions/` (decision records), and `docs/technotes/` (explanatory
   notes).
@@ -63,13 +63,32 @@ records describe the system, they do not drive it.
   to create it, never auto-rewrite it.
 - Shipped docs — the project READMEs, `AGENTS.md`/`CLAUDE.md`, `CONTRIBUTING`,
   `NOTICE(S)`, and the `docs/` records — describe the system **as-built**.
-  Forward-looking concepts stay in `docs/wip/` until implemented and gardened in;
-  they do not leak into shipped docs. Code+tests are the SSOT: when a shipped doc
+  Mark proposed or unimplemented content explicitly in durable records; keep it
+  distinct from shipped behavior and reconcile it against code+tests before merge.
+  Code+tests are the SSOT: when a shipped doc
   and the code diverge, gardening **surfaces** the drift for a human to reconcile —
   it does not autonomously rewrite a human-facing doc to match code.
 
 ## Capture decisions at the source
 
+- During design and planning, record accepted decisions and useful requirements
+  or interface descriptions in their durable homes; update existing records for
+  the same topic. Keep exploration and execution steps in WIP.
+- Distinguish an accepted decision from its implementation status; an early
+  record does not establish implemented behavior or replace the TDD cycle.
 - When writing a spec, record an "Alternatives considered" section and the trace
   links (`Satisfies:`, related ids) so the decision rationale survives into the
   gardened records.
+
+## Lasting references
+
+- When writing code, tests, or durable documentation, reference useful durable
+  records directly; use a local explanation when no separate record adds value.
+  Do not create documents solely to provide a link.
+- Keep citations to WIP files or directories within WIP; this applies to prose,
+  code spans, Markdown links, fixtures, and source comments. Preserve historical
+  citations already in the archive; descriptions of the lifecycle's directory
+  conventions and literal test inputs are not dependencies on working content.
+- During review and before archiving, report lasting references to WIP as
+  blockers even when their paths exist. Resolve their meaning before completion;
+  replacing a WIP path with an archive path does not resolve the dependency.

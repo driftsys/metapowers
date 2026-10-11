@@ -43,9 +43,10 @@ drive.
 ## 2. Decision
 
 Track working memory on the feature branch so collaborators and agents can see
-it; **garden** it at feature completion — reformatting the spec/plan into durable,
-curated `docs/` records — while **moving the raw artifacts, as-is, to an
-archive**; and enforce, via CI, that no ungardened working memory reaches `main`.
+it. Capture useful durable records during development, then **garden** at feature
+completion: reconcile those records with code and tests, extract remaining
+lasting content, and **move the raw artifacts, as-is, to an archive**. Enforce,
+via CI, that no ungardened working memory reaches `main`.
 
 Gardening is a **transform-and-route** operation, not a rewrite into foreign
 templates: it keeps the existing documents close to their Superpowers form,
@@ -128,12 +129,17 @@ means "this branch has ungardened work in progress."
 ## 4. Lifecycle mechanism
 
 Working memory is committed to `docs/wip/` on the feature branch (visible in the
-MR). At feature completion, gardening produces the durable records in `docs/`
+MR). During design and planning, accepted decisions and useful requirements or
+interface descriptions are recorded in their durable homes. Proposed or
+unimplemented material is labeled explicitly, separate from shipped behavior.
+At feature completion, gardening reconciles these records and extracts remaining
+lasting content into `docs/`
 and moves this feature's raw spec/plan to `docs/archive/`. Other files in
 `docs/wip/` (another feature's working memory, a held capture) stay in place:
 `docs/wip/` is then empty only when they are gardened or removed by a human.
 Accepting them as debt (§5) does not empty it: the files stay and the gate stays
-red until they are removed. The diagram below shows the default layout.
+red until they are removed. The diagram below shows the default layout and
+records extracted at completion; records captured earlier are edited in place.
 
 ```text
 main:  A ───────────────────────────────────────────── M   ← merge
@@ -178,14 +184,11 @@ Gardening is triggered as a wrap-up step (§6).
 into branch wrap-up ("finishing a branch includes running gardening before
 merge"). The WIP-gate is the backstop if it is forgotten.
 
-It runs **once, before the PR lands** — after green tests — because that is the
-only point where as-built is known. Deliberately **not** at Superpowers'
-spec-review or plan-acceptance checkpoints: those are pre-implementation, so
-gardening there would capture as-planned content and need re-gardening anyway
-(decisions can reverse during implementation). The early-visibility those
-checkpoints would buy is already provided by branch-tracking (§2.1). A future
-enhancement could stage provisional drafts at the checkpoints and reconcile them
-before PR — deferred (YAGNI).
+It runs **before the PR lands**, after green tests, because that is when as-built
+can be checked. Useful durable records are captured earlier during design and
+planning; this does not invoke gardening before implementation. Those records
+carry explicit proposed or unimplemented status until code and tests establish
+the behavior. Gardening reconciles them in place rather than duplicating them.
 
 **As-built, lightly (load-bearing).** Because code + tests are authoritative, the
 records must describe what was **built**, not what was planned. But in
@@ -314,17 +317,51 @@ as-built code. It is **bounded and flag-first**:
   a vendored/third-party dependency absent from `NOTICE(S)`, or a user-facing
   capability absent from a README feature list). Both are flagged.
 
-This pass is why shipped docs can be trusted to describe the system as-built: every
-drift a feature introduces is surfaced before the PR lands, without the gardener
-ever overwriting human intent. Forward-looking concepts stay in `docs/wip/` until
-implemented and gardened in — they never leak into shipped docs (the standing rule
-in `sdd-working-memory-lifecycle`).
+This pass surfaces feature-related drift before the PR lands without the gardener
+overwriting human intent. Forward-looking material in durable records is clearly
+marked; gardening reconciles it against code and tests without presenting unbuilt
+behavior as shipped.
+
+### 6.5 Lasting references
+
+Code, tests, fixtures, and durable documents cite useful durable records directly.
+For example, an accepted retry-budget decision can be recorded before coding in
+`docs/decisions/0007-retry-budget.md`, with "Accepted; not implemented" stated
+explicitly. Its implementation comment can then refer to that durable path.
+An obvious loop condition needs no separate decision record or citation.
+
+Working memory may cite other working memory or durable records. Lasting
+artifacts do not cite WIP content, including directory-level citations. Naming
+`docs/wip/` to explain the lifecycle is a directory convention, not a citation to
+temporary rationale. Existing historical citations in the archive are preserved.
+Literal path strings in rejection tests or simulated examples are not dependencies
+on WIP. A fixture comment that relies on actual working rationale still is.
+
+The lifecycle rule applies this policy during design, planning, implementation,
+and review. Before archiving, the gardener inspects tracked and non-ignored
+untracked lasting files, including new records and citations to other features'
+WIP, across prose,
+inline code, Markdown links, fixtures, and source comments, including relative
+links and project-specific WIP paths. It reports blocking callers and targets
+under `references:` and leaves the assigned pair in place. The dispatcher
+establishes the appropriate durable target or local explanation through the
+normal implementation/review flow; the gardener does not automatically rewrite
+callers or substitute archive paths. This check is separate from the
+feature-scoped project-doc consistency pass.
+
+The gardener also runs available repository documentation/path checks before
+returning, after archive when applicable, and reports results under `checks:`.
+Failure prevents completion. Path-existence checks cannot enforce the lifecycle
+policy alone: temporary targets can exist and still be unsuitable dependencies.
+No new general-purpose link checker is introduced by this policy.
 
 ## 7. Output contract — minimal, git-backed templates
 
 Minimal, git-backed, standards-aligned. Metadata git already holds (author, date,
 status-history, version) is **omitted**; only the non-git-derivable trace footer
-stays. Grounded in MADR 4.0 (all metadata optional; spine = context → options →
+stays. Semantic implementation status is explicit when content is proposed or
+unimplemented; git history does not establish that distinction. Grounded in MADR
+4.0 (all metadata optional; spine = context → options →
 outcome), arc42 (all sections optional; black-box-before-white-box progressive
 discovery), and EARS for requirement phrasing. The record template is the
 **default shape for decisions** (which have no Superpowers source); for `spec`/
@@ -457,8 +494,9 @@ local and not recoverable cross-session.
 decision rationale, but the Superpowers spec often omits them (they live in the
 brainstorming dialogue). Rather than mine ephemeral transcripts (rejected as too
 complex — §13), the lifecycle rule nudges spec authoring to **record an
-"Alternatives considered" section + trace links** when the spec is written, so
-the durable artifact carries them. If they are still absent, gardening records
+"Alternatives considered" section + trace links** when the spec is written, and
+captures accepted decisions in their durable homes as they emerge. If considered
+options are still absent, gardening records
 "alternatives not documented" — never fabricates.
 
 ## 11. Packaging
@@ -468,8 +506,8 @@ Three installable items plus a CI script, all targeting Superpowers specifically
 - **`sdd-working-memory-lifecycle` (RULE.md)** — the always-on guardrails: where
   working memory lives, the mode switch, the WIP-invariant, edit-in-place living
   records, the durable taxonomy, the trigger wiring (finishing a branch runs
-  gardening), and a one-line clause requiring specs to record considered
-  alternatives + trace links. Ships the WIP-gate CI script as a resource.
+  gardening), early durable capture with explicit implementation status, and the
+  lasting-reference policy. Ships the WIP-gate CI script as a resource.
 - **`sdd-gardening` (SKILL.md)** — the on-demand procedure (§6): it **dispatches
   the co-located `sdd-gardener` subagent (AGENT.md)** (§6.0) and surfaces its
   summary to the user. The operation is referred to as "gardening" throughout
