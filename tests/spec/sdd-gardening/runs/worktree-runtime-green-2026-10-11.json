@@ -1,0 +1,759 @@
+{
+  "case": "U2",
+  "revision": "working-tree",
+  "prompt_sha256": "5621fc33e37d5fda04ab0a29b82f8676aa8fc166a4a5a48c327cba20bf9d6a7f",
+  "claude_version": "2.1.287 (Claude Code)",
+  "parent_cwd": "/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/gardening-runtime-4hkb06cl/primary",
+  "assigned_target": "/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/gardening-runtime-4hkb06cl/feature",
+  "user_prompt": "Garden the finished retry feature. Spec: docs/wip/specs/retry-backoff.md. Plan: docs/wip/plans/retry-backoff.md. Code: src/retry.py; tests: tests/test_retry.py. The observer ran python3 tests/test_retry.py successfully. Write the durable records and archive the pair if your input contract allows it; otherwise return your refusal. Do not commit, change implementation/tests, or access the network.\nworktree: /var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/gardening-runtime-4hkb06cl/feature\nbranch: feat/gardening-probe\n",
+  "checks": {
+    "process_completed": true,
+    "primary_bytes_unchanged": true,
+    "primary_clean": true,
+    "target_code_tests_unchanged": true,
+    "target_pair_archived": true,
+    "target_records_written": true
+  },
+  "events": [
+    {
+      "type": "system",
+      "subtype": "init",
+      "cwd": "/private/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/gardening-runtime-4hkb06cl/primary",
+      "session_id": "bd15fc16-763b-4715-9c05-1c1e48923edc",
+      "tools": [
+        "Bash",
+        "Edit",
+        "Glob",
+        "Grep",
+        "Read",
+        "Write"
+      ],
+      "mcp_servers": [],
+      "model": "claude-sonnet-5-5",
+      "permissionMode": "default",
+      "slash_commands": [],
+      "apiKeySource": "none",
+      "claude_code_version": "2.1.287",
+      "output_style": "default",
+      "agents": [
+        "claude",
+        "Explore",
+        "general-purpose",
+        "Plan"
+      ],
+      "skills": [],
+      "plugins": [
+        {
+          "name": "cc-plugin-agents-md",
+          "path": "builtin",
+          "source": "cc-plugin-agents-md@builtin"
+        },
+        {
+          "name": "cc-plugin-telemetry",
+          "path": "builtin",
+          "source": "cc-plugin-telemetry@builtin"
+        },
+        {
+          "name": "cc-plugin-plugin-authoring",
+          "path": "builtin",
+          "source": "cc-plugin-plugin-authoring@builtin"
+        }
+      ],
+      "capabilities": [
+        "interrupt_receipt_v1",
+        "interrupt_cancel_queued_v1",
+        "interrupt_send_now_v1",
+        "msg_lifecycle_v1",
+        "sdk_mcp_tools_list_changed",
+        "sdk_mcp_manifests",
+        "mcp_read_resource_v1",
+        "mcp_tool_ui_meta_v1",
+        "ui_surface_v1"
+      ],
+      "analytics_disabled": false,
+      "product_feedback_disabled": false,
+      "uuid": "b7d3ef56-4e96-4159-acee-cb780be01143",
+      "messaging_socket_path": "/tmp/cc-socks/15255.sock",
+      "fast_mode_state": "off",
+      "fast_mode_disabled_reason": "sdk_opt_in_required",
+      "per_turn_effort_active": true,
+      "view_mode": "default"
+    },
+    {
+      "type": "assistant",
+      "message": {
+        "model": "claude-sonnet-5-5",
+        "id": "msg_011Cfvw3A5NC7DhYCyP8cNcd",
+        "type": "message",
+        "role": "assistant",
+        "content": [
+          {
+            "type": "tool_use",
+            "id": "toolu_01BEHY56AUsz6NXrLNEosSEa",
+            "name": "Bash",
+            "input": {
+              "command": "cd /var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/gardening-runtime-4hkb06cl/feature && pwd -P && git rev-parse --show-toplevel && git branch --show-current && find docs -type f | head -50 && git status --short"
+            },
+            "caller": {
+              "type": "direct"
+            }
+          }
+        ],
+        "container": null,
+        "stop_reason": null,
+        "stop_sequence": null,
+        "stop_details": null,
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 5351,
+          "cache_read_input_tokens": 4272,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 5351
+          },
+          "output_tokens": 17,
+          "service_tier": "standard",
+          "inference_geo": "global"
+        },
+        "input_transformations": [],
+        "diagnostics": null,
+        "context_management": null
+      },
+      "parent_tool_use_id": null,
+      "session_id": "bd15fc16-763b-4715-9c05-1c1e48923edc",
+      "uuid": "5aa553df-9481-4ba1-9c8d-84d32d98a3d7",
+      "timestamp": "2026-10-11T18:35:34.157Z",
+      "request_id": "req_011Cfvw39pjY9hcVVdZpg7Eh",
+      "wire_tool_inputs": {
+        "toolu_01BEHY56AUsz6NXrLNEosSEa": {
+          "command": "cd /var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/gardening-runtime-4hkb06cl/feature && pwd -P && git rev-parse --show-toplevel && git branch --show-current && find docs -type f | head -50 && git status --short"
+        }
+      }
+    },
+    {
+      "type": "rate_limit_event",
+      "rate_limit_info": {
+        "status": "allowed_warning",
+        "resetsAt": 1792242000,
+        "rateLimitType": "seven_day",
+        "utilization": 0.56,
+        "isUsingOverage": false,
+        "unifiedWindows": {
+          "five_hour": {
+            "utilization": 0.06,
+            "resetsAt": 1791753600
+          },
+          "seven_day": {
+            "utilization": 0.56,
+            "resetsAt": 1792242000
+          }
+        }
+      },
+      "uuid": "129e5c42-6f7a-4129-a171-df67c820c07d",
+      "session_id": "bd15fc16-763b-4715-9c05-1c1e48923edc"
+    },
+    {
+      "type": "user",
+      "message": {
+        "role": "user",
+        "content": [
+          {
+            "tool_use_id": "toolu_01BEHY56AUsz6NXrLNEosSEa",
+            "type": "tool_result",
+            "content": "/private/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/gardening-runtime-4hkb06cl/feature\n/private/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/gardening-runtime-4hkb06cl/feature\nfeat/gardening-probe\ndocs/wip/plans/retry-backoff.md\ndocs/wip/specs/retry-backoff.md",
+            "is_error": false
+          }
+        ]
+      },
+      "parent_tool_use_id": null,
+      "session_id": "bd15fc16-763b-4715-9c05-1c1e48923edc",
+      "uuid": "65fbcbcd-a7d5-46f9-aae7-c93b347200a1",
+      "timestamp": "2026-10-11T18:35:34.385Z",
+      "tool_use_result": {
+        "stdout": "/private/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/gardening-runtime-4hkb06cl/feature\n/private/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/gardening-runtime-4hkb06cl/feature\nfeat/gardening-probe\ndocs/wip/plans/retry-backoff.md\ndocs/wip/specs/retry-backoff.md",
+        "stderr": "",
+        "interrupted": false,
+        "isImage": false,
+        "noOutputExpected": false
+      }
+    },
+    {
+      "type": "assistant",
+      "message": {
+        "model": "claude-sonnet-5-5",
+        "id": "msg_011Cfvw3Kcr8M2d2RHDbU7bg",
+        "type": "message",
+        "role": "assistant",
+        "content": [
+          {
+            "type": "tool_use",
+            "id": "toolu_011fkCsqJqHrG8dF18BYX79C",
+            "name": "Bash",
+            "input": {
+              "command": "cat docs/wip/specs/retry-backoff.md docs/wip/plans/retry-backoff.md src/retry.py tests/test_retry.py; ls; git log --oneline | head; python3 tests/test_retry.py; echo rc=$?"
+            },
+            "caller": {
+              "type": "direct"
+            }
+          }
+        ],
+        "container": null,
+        "stop_reason": null,
+        "stop_sequence": null,
+        "stop_details": null,
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 707,
+          "cache_read_input_tokens": 9623,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 707
+          },
+          "output_tokens": 16,
+          "service_tier": "standard",
+          "inference_geo": "global"
+        },
+        "input_transformations": [],
+        "diagnostics": null,
+        "context_management": null
+      },
+      "parent_tool_use_id": null,
+      "session_id": "bd15fc16-763b-4715-9c05-1c1e48923edc",
+      "uuid": "6a34b705-e73e-4038-ad49-94db4c32481e",
+      "timestamp": "2026-10-11T18:35:36.296Z",
+      "request_id": "req_011Cfvw3KMEWRfz4xNo2DPQ6",
+      "wire_tool_inputs": {
+        "toolu_011fkCsqJqHrG8dF18BYX79C": {
+          "command": "cd /private/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/gardening-runtime-4hkb06cl/feature && cat docs/wip/specs/retry-backoff.md docs/wip/plans/retry-backoff.md src/retry.py tests/test_retry.py; ls; git log --oneline | head; python3 tests/test_retry.py; echo rc=$?"
+        }
+      },
+      "wire_ingest_context": {
+        "toolu_011fkCsqJqHrG8dF18BYX79C": {
+          "cwd": "/private/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/gardening-runtime-4hkb06cl/feature"
+        }
+      }
+    },
+    {
+      "type": "user",
+      "message": {
+        "role": "user",
+        "content": [
+          {
+            "tool_use_id": "toolu_011fkCsqJqHrG8dF18BYX79C",
+            "type": "tool_result",
+            "content": "# Spec: HTTP client retry with backoff\n\n## Problem & goal\n\nThe `http_get` helper fails permanently on the first transient error (connection\nreset, 503, timeout). Callers that hit a flaky upstream get spurious failures.\nWe want transient failures to be retried automatically with an increasing delay,\nso a short upstream outage is retried instead of reported to the caller.\n\n## Requirements\n\n- R1. When a wrapped call raises a transient error, the client retries the call\n  rather than propagating the error on the first failure.\n- R2. The delay between retries grows exponentially with the attempt number\n  (delay = base \u00b7 2^attempt).\n- R3. Each delay has random jitter applied so that many clients retrying after a\n  shared outage do not synchronise into a thundering herd.\n- R4. After the retry budget is exhausted, the client raises the last error to\n  the caller. The default retry budget is 5 attempts.\n- R5. A non-transient error (e.g. a 400) is raised immediately and is never\n  retried.\n\n## Alternatives considered\n\n- **Fixed-interval retry** (constant delay). Simpler, but a constant delay either\n  sends too many requests to an overloaded upstream (too short) or waits too long\n  after a short outage (too long). Rejected in favour of exponential backoff.\n- **No jitter.** Easier to reason about and test, but synchronised retries after\n  a shared outage cause a thundering herd. Rejected; full jitter chosen.\n- **A third-party library (e.g. `tenacity`).** More features, but adds a runtime\n  dependency for ~30 lines of logic. Deferred \u2014 revisit if retry policy grows.\n\n## Out of scope\n\n- Per-host retry budgets and circuit breaking.\n- Respecting a server `Retry-After` header (future work).\n# Plan: HTTP client retry with backoff\n\n## Approach\n\nAdd a small `retry_with_backoff` wrapper in `src/retry.py`. It takes a\nzero-argument callable and a classifier that decides whether an exception is\ntransient. The wrapper owns the loop, the delay schedule, and the give-up\ncondition; the HTTP layer stays unaware of retry policy.\n\n## Building blocks\n\n- `is_transient(exc) -> bool` \u2014 classifies an exception as retryable. Transient:\n  `ConnectionError`, `TimeoutError`, and `HTTPError` with status in {502, 503,\n  504}. Everything else is non-transient.\n- `retry_with_backoff(call, *, max_attempts, base_delay, is_transient, sleep)` \u2014\n  runs `call()`; on a transient error sleeps `base_delay * 2**attempt` with full\n  jitter, then retries; re-raises the last error once attempts are exhausted; a\n  non-transient error propagates immediately. `sleep` is injected so tests can\n  pass a fake clock instead of really sleeping.\n\n## Interfaces\n\n```text\nretry_with_backoff(\n    call: Callable[[], T],\n    *,\n    max_attempts: int = 3,\n    base_delay: float = 0.1,\n    is_transient: Callable[[BaseException], bool] = is_transient,\n    sleep: Callable[[float], None] = time.sleep,\n) -> T\n```\n\n## Tasks (TDD)\n\n1. RED: write `test_succeeds_first_try` \u2014 call returning a value is returned\n   without sleeping. Run, watch it fail (no module yet).\n2. GREEN: implement the happy path.\n3. RED: `test_retries_then_succeeds` \u2014 fails N-1 times then succeeds; assert the\n   value and the number of sleeps.\n4. GREEN: add the retry loop with exponential delay.\n5. RED: `test_gives_up_after_max_attempts` \u2014 always-transient call re-raises the\n   last error after the budget.\n6. GREEN: add the give-up branch.\n7. RED: `test_non_transient_not_retried` \u2014 non-transient raises immediately, zero\n   sleeps.\n8. GREEN: add the classifier short-circuit.\n9. REFACTOR: extract the delay schedule; inject `sleep` and jitter source.\n\n## Verification\n\n`python3 tests/test_retry.py` runs the four cases with a fake clock (no real\ndelay) and exits non-zero on any failure.\n\"\"\"Retry a flaky call with exponential backoff and full jitter.\"\"\"\n\nfrom __future__ import annotations\n\nimport random\nimport time\nfrom typing import Callable, TypeVar\n\nT = TypeVar(\"T\")\n\n_TRANSIENT_STATUSES = {502, 503, 504}\n\n\nclass HTTPError(Exception):\n    def __init__(self, status: int) -> None:\n        super().__init__(f\"HTTP {status}\")\n        self.status = status\n\n\ndef is_transient(exc: BaseException) -> bool:\n    \"\"\"True if the error is worth retrying.\"\"\"\n    if isinstance(exc, (ConnectionError, TimeoutError)):\n        return True\n    if isinstance(exc, HTTPError):\n        return exc.status in _TRANSIENT_STATUSES\n    return False\n\n\ndef retry_with_backoff(\n    call: Callable[[], T],\n    *,\n    max_attempts: int = 3,\n    base_delay: float = 0.1,\n    is_transient: Callable[[BaseException], bool] = is_transient,\n    sleep: Callable[[float], None] = time.sleep,\n    jitter: Callable[[float], float] = random.uniform,\n) -> T:\n    \"\"\"Call ``call()``; on a transient error, back off and retry.\n\n    The delay before retry ``n`` is ``base_delay * 2**n`` with full jitter in\n    ``[0, delay]``. A non-transient error propagates immediately. Once\n    ``max_attempts`` is reached the last error is re-raised.\n    \"\"\"\n    attempt = 0\n    while True:\n        try:\n            return call()\n        except BaseException as exc:  # noqa: BLE001 - re-raised below\n            attempt += 1\n            if not is_transient(exc) or attempt >= max_attempts:\n                raise\n            delay = base_delay * (2 ** (attempt - 1))\n            sleep(jitter(0.0, delay))\n\"\"\"Tests for retry_with_backoff. Run: python3 tests/test_retry.py (exit 0 = pass).\"\"\"\n\nimport os\nimport sys\n\nsys.path.insert(0, os.path.join(os.path.dirname(__file__), \"..\", \"src\"))\n\nfrom retry import HTTPError, is_transient, retry_with_backoff  # noqa: E402\n\n\nclass _Counter:\n    \"\"\"A call that fails `fail_times` with `exc`, then returns `value`.\"\"\"\n\n    def __init__(self, fail_times, exc, value=\"ok\"):\n        self.fail_times = fail_times\n        self.exc = exc\n        self.value = value\n        self.calls = 0\n\n    def __call__(self):\n        self.calls += 1\n        if self.calls <= self.fail_times:\n            raise self.exc\n        return self.value\n\n\ndef _no_sleep(_):\n    return None\n\n\ndef test_succeeds_first_try():\n    call = _Counter(fail_times=0, exc=TimeoutError())\n    assert retry_with_backoff(call, sleep=_no_sleep) == \"ok\"\n    assert call.calls == 1\n\n\ndef test_retries_then_succeeds():\n    call = _Counter(fail_times=2, exc=ConnectionError())\n    assert retry_with_backoff(call, max_attempts=5, sleep=_no_sleep) == \"ok\"\n    assert call.calls == 3\n\n\ndef test_gives_up_after_max_attempts():\n    call = _Counter(fail_times=99, exc=HTTPError(503))\n    raised = False\n    try:\n        retry_with_backoff(call, max_attempts=3, sleep=_no_sleep)\n    except HTTPError:\n        raised = True\n    assert raised\n    assert call.calls == 3\n\n\ndef test_non_transient_not_retried():\n    call = _Counter(fail_times=99, exc=HTTPError(400))\n    raised = False\n    try:\n        retry_with_backoff(call, sleep=_no_sleep)\n    except HTTPError:\n        raised = True\n    assert raised\n    assert call.calls == 1\n    assert not is_transient(HTTPError(400))\n\n\nif __name__ == \"__main__\":\n    for name, fn in sorted(globals().items()):\n        if name.startswith(\"test_\") and callable(fn):\n            fn()\n            print(f\"PASS {name}\")\n    print(\"All tests passed.\")\nCONTRIBUTING.md\nNOTICE\nREADME.md\ndocs\nsrc\ntests\nfb9a460 feat: HTTP client retry with backoff (wip not yet gardened)\n8366b71 chore: baseline\nPASS test_gives_up_after_max_attempts\nPASS test_non_transient_not_retried\nPASS test_retries_then_succeeds\nPASS test_succeeds_first_try\nAll tests passed.\nrc=0",
+            "is_error": false
+          }
+        ]
+      },
+      "parent_tool_use_id": null,
+      "session_id": "bd15fc16-763b-4715-9c05-1c1e48923edc",
+      "uuid": "6f58e828-1f4f-4261-8d6f-c4b75cc10af0",
+      "timestamp": "2026-10-11T18:35:36.388Z",
+      "tool_use_result": {
+        "stdout": "# Spec: HTTP client retry with backoff\n\n## Problem & goal\n\nThe `http_get` helper fails permanently on the first transient error (connection\nreset, 503, timeout). Callers that hit a flaky upstream get spurious failures.\nWe want transient failures to be retried automatically with an increasing delay,\nso a short upstream outage is retried instead of reported to the caller.\n\n## Requirements\n\n- R1. When a wrapped call raises a transient error, the client retries the call\n  rather than propagating the error on the first failure.\n- R2. The delay between retries grows exponentially with the attempt number\n  (delay = base \u00b7 2^attempt).\n- R3. Each delay has random jitter applied so that many clients retrying after a\n  shared outage do not synchronise into a thundering herd.\n- R4. After the retry budget is exhausted, the client raises the last error to\n  the caller. The default retry budget is 5 attempts.\n- R5. A non-transient error (e.g. a 400) is raised immediately and is never\n  retried.\n\n## Alternatives considered\n\n- **Fixed-interval retry** (constant delay). Simpler, but a constant delay either\n  sends too many requests to an overloaded upstream (too short) or waits too long\n  after a short outage (too long). Rejected in favour of exponential backoff.\n- **No jitter.** Easier to reason about and test, but synchronised retries after\n  a shared outage cause a thundering herd. Rejected; full jitter chosen.\n- **A third-party library (e.g. `tenacity`).** More features, but adds a runtime\n  dependency for ~30 lines of logic. Deferred \u2014 revisit if retry policy grows.\n\n## Out of scope\n\n- Per-host retry budgets and circuit breaking.\n- Respecting a server `Retry-After` header (future work).\n# Plan: HTTP client retry with backoff\n\n## Approach\n\nAdd a small `retry_with_backoff` wrapper in `src/retry.py`. It takes a\nzero-argument callable and a classifier that decides whether an exception is\ntransient. The wrapper owns the loop, the delay schedule, and the give-up\ncondition; the HTTP layer stays unaware of retry policy.\n\n## Building blocks\n\n- `is_transient(exc) -> bool` \u2014 classifies an exception as retryable. Transient:\n  `ConnectionError`, `TimeoutError`, and `HTTPError` with status in {502, 503,\n  504}. Everything else is non-transient.\n- `retry_with_backoff(call, *, max_attempts, base_delay, is_transient, sleep)` \u2014\n  runs `call()`; on a transient error sleeps `base_delay * 2**attempt` with full\n  jitter, then retries; re-raises the last error once attempts are exhausted; a\n  non-transient error propagates immediately. `sleep` is injected so tests can\n  pass a fake clock instead of really sleeping.\n\n## Interfaces\n\n```text\nretry_with_backoff(\n    call: Callable[[], T],\n    *,\n    max_attempts: int = 3,\n    base_delay: float = 0.1,\n    is_transient: Callable[[BaseException], bool] = is_transient,\n    sleep: Callable[[float], None] = time.sleep,\n) -> T\n```\n\n## Tasks (TDD)\n\n1. RED: write `test_succeeds_first_try` \u2014 call returning a value is returned\n   without sleeping. Run, watch it fail (no module yet).\n2. GREEN: implement the happy path.\n3. RED: `test_retries_then_succeeds` \u2014 fails N-1 times then succeeds; assert the\n   value and the number of sleeps.\n4. GREEN: add the retry loop with exponential delay.\n5. RED: `test_gives_up_after_max_attempts` \u2014 always-transient call re-raises the\n   last error after the budget.\n6. GREEN: add the give-up branch.\n7. RED: `test_non_transient_not_retried` \u2014 non-transient raises immediately, zero\n   sleeps.\n8. GREEN: add the classifier short-circuit.\n9. REFACTOR: extract the delay schedule; inject `sleep` and jitter source.\n\n## Verification\n\n`python3 tests/test_retry.py` runs the four cases with a fake clock (no real\ndelay) and exits non-zero on any failure.\n\"\"\"Retry a flaky call with exponential backoff and full jitter.\"\"\"\n\nfrom __future__ import annotations\n\nimport random\nimport time\nfrom typing import Callable, TypeVar\n\nT = TypeVar(\"T\")\n\n_TRANSIENT_STATUSES = {502, 503, 504}\n\n\nclass HTTPError(Exception):\n    def __init__(self, status: int) -> None:\n        super().__init__(f\"HTTP {status}\")\n        self.status = status\n\n\ndef is_transient(exc: BaseException) -> bool:\n    \"\"\"True if the error is worth retrying.\"\"\"\n    if isinstance(exc, (ConnectionError, TimeoutError)):\n        return True\n    if isinstance(exc, HTTPError):\n        return exc.status in _TRANSIENT_STATUSES\n    return False\n\n\ndef retry_with_backoff(\n    call: Callable[[], T],\n    *,\n    max_attempts: int = 3,\n    base_delay: float = 0.1,\n    is_transient: Callable[[BaseException], bool] = is_transient,\n    sleep: Callable[[float], None] = time.sleep,\n    jitter: Callable[[float], float] = random.uniform,\n) -> T:\n    \"\"\"Call ``call()``; on a transient error, back off and retry.\n\n    The delay before retry ``n`` is ``base_delay * 2**n`` with full jitter in\n    ``[0, delay]``. A non-transient error propagates immediately. Once\n    ``max_attempts`` is reached the last error is re-raised.\n    \"\"\"\n    attempt = 0\n    while True:\n        try:\n            return call()\n        except BaseException as exc:  # noqa: BLE001 - re-raised below\n            attempt += 1\n            if not is_transient(exc) or attempt >= max_attempts:\n                raise\n            delay = base_delay * (2 ** (attempt - 1))\n            sleep(jitter(0.0, delay))\n\"\"\"Tests for retry_with_backoff. Run: python3 tests/test_retry.py (exit 0 = pass).\"\"\"\n\nimport os\nimport sys\n\nsys.path.insert(0, os.path.join(os.path.dirname(__file__), \"..\", \"src\"))\n\nfrom retry import HTTPError, is_transient, retry_with_backoff  # noqa: E402\n\n\nclass _Counter:\n    \"\"\"A call that fails `fail_times` with `exc`, then returns `value`.\"\"\"\n\n    def __init__(self, fail_times, exc, value=\"ok\"):\n        self.fail_times = fail_times\n        self.exc = exc\n        self.value = value\n        self.calls = 0\n\n    def __call__(self):\n        self.calls += 1\n        if self.calls <= self.fail_times:\n            raise self.exc\n        return self.value\n\n\ndef _no_sleep(_):\n    return None\n\n\ndef test_succeeds_first_try():\n    call = _Counter(fail_times=0, exc=TimeoutError())\n    assert retry_with_backoff(call, sleep=_no_sleep) == \"ok\"\n    assert call.calls == 1\n\n\ndef test_retries_then_succeeds():\n    call = _Counter(fail_times=2, exc=ConnectionError())\n    assert retry_with_backoff(call, max_attempts=5, sleep=_no_sleep) == \"ok\"\n    assert call.calls == 3\n\n\ndef test_gives_up_after_max_attempts():\n    call = _Counter(fail_times=99, exc=HTTPError(503))\n    raised = False\n    try:\n        retry_with_backoff(call, max_attempts=3, sleep=_no_sleep)\n    except HTTPError:\n        raised = True\n    assert raised\n    assert call.calls == 3\n\n\ndef test_non_transient_not_retried():\n    call = _Counter(fail_times=99, exc=HTTPError(400))\n    raised = False\n    try:\n        retry_with_backoff(call, sleep=_no_sleep)\n    except HTTPError:\n        raised = True\n    assert raised\n    assert call.calls == 1\n    assert not is_transient(HTTPError(400))\n\n\nif __name__ == \"__main__\":\n    for name, fn in sorted(globals().items()):\n        if name.startswith(\"test_\") and callable(fn):\n            fn()\n            print(f\"PASS {name}\")\n    print(\"All tests passed.\")\nCONTRIBUTING.md\nNOTICE\nREADME.md\ndocs\nsrc\ntests\nfb9a460 feat: HTTP client retry with backoff (wip not yet gardened)\n8366b71 chore: baseline\nPASS test_gives_up_after_max_attempts\nPASS test_non_transient_not_retried\nPASS test_retries_then_succeeds\nPASS test_succeeds_first_try\nAll tests passed.\nrc=0",
+        "stderr": "",
+        "interrupted": false,
+        "isImage": false,
+        "noOutputExpected": false
+      }
+    },
+    {
+      "type": "system",
+      "subtype": "thinking_tokens",
+      "estimated_tokens": 50,
+      "estimated_tokens_delta": 50,
+      "session_id": "bd15fc16-763b-4715-9c05-1c1e48923edc",
+      "uuid": "9b78f472-da01-4025-854b-b1f89b310faf"
+    },
+    {
+      "type": "system",
+      "subtype": "thinking_tokens",
+      "estimated_tokens": 184,
+      "estimated_tokens_delta": 134,
+      "session_id": "bd15fc16-763b-4715-9c05-1c1e48923edc",
+      "uuid": "06a37230-8644-456b-b0d5-bef1e020049e"
+    },
+    {
+      "type": "assistant",
+      "message": {
+        "model": "claude-sonnet-5-5",
+        "id": "msg_011Cfvw3UBJSnt77m3T3bLdd",
+        "type": "message",
+        "role": "assistant",
+        "content": [
+          {
+            "type": "thinking",
+            "thinking": "",
+            "signature": "CAQS1gUKEAgSGAI4AUIIdGhpbmtpbmcSDJTSP29pwGq6nao5fRoMCLVClnWQcY/nhoErIjCXzeF3QPG4ksrE3NW/P97erm+IflqFEH3OznNiRipKGluTDUWA/y3s2TRHqJQ+IBsq8wRdySYkMgVF0v1lq/b2EI2dyRdI7DOVSaDmHx3P6NimGsfrlq4ryC0PElJ9oHTJiqvN9WmoNBZJbS/381t0E/x13quYyOFX9BHcGbq8/itzUwoZzWw47HXINl/3SkJezcRF8seUtF8BIYBWSaC2oZtZzXspTraYzqkCXN1MvY9lB4e2hHS0KBICPMWS6V4BqeacuLxB9Ks1MSyYYi1+PEx+Y/7+fr84Sr9BXFAKBidfD6Pl1rwE1bucdvVd25Ys659CFFRJIPDAR4sgsH8gG3GPMeCMogH8FNTJm0V+h1E0e0fIzBKtjWRjalNc6bABH1GOEHZw9JANRxmdVqTbIViOY1wBvtWc56mhuvhm7QPZIbhKBkLcEDDT7sQq8Iafl2bXRQYAWkdhk5srqH5iO15d8APVapn1NG5AXF0o7BRzkspBgBdGEmElKziVuxrUwNVU12WGkM4tfLBnvSFLGgiAFGstTOBx2hNT1SMzBOzj0vqijkR/7fzo2K+5o080eWwatSR2nUkEvbg4fgi4E7LUNq8ni3Jp4MlzdsurDOKJyjazgi3l5Dx+cpRQHKzb7pwyGr+EahPibDK6EMQmxDVwbcJNK4ZqfEo4JkOUVHwvjcHKOmE19B9KoAFEREZZRPPqRw/OYfmZmZ2L6UMxoj81PQPZPYd2hCQgrtmDAGih3pT5a4H02XOJQs64UhuW6TytTuUnz+v7XhspPRGDR3fqorR+FYEHuloy/S0RVMAPARY84YaarDW3rbAe9+IN5LxwRi31BIAiGE36V7773Y3wJvi9OikSeTE4ii/N6T9EDNG5pH37FPDrAIKqqB7Hz4HloKcYAQ=="
+          }
+        ],
+        "container": null,
+        "stop_reason": null,
+        "stop_sequence": null,
+        "stop_details": null,
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 3163,
+          "cache_read_input_tokens": 10330,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 3163
+          },
+          "output_tokens": 5,
+          "service_tier": "standard",
+          "inference_geo": "global"
+        },
+        "input_transformations": [],
+        "diagnostics": null,
+        "context_management": null
+      },
+      "parent_tool_use_id": null,
+      "session_id": "bd15fc16-763b-4715-9c05-1c1e48923edc",
+      "uuid": "68628903-9ff5-4fb4-b37c-2e6110cab462",
+      "timestamp": "2026-10-11T18:35:38.136Z",
+      "request_id": "req_011Cfvw3Tqx9U7HA6HFewVEe",
+      "thinking_duration_ms": 846
+    },
+    {
+      "type": "assistant",
+      "message": {
+        "model": "claude-sonnet-5-5",
+        "id": "msg_011Cfvw3UBJSnt77m3T3bLdd",
+        "type": "message",
+        "role": "assistant",
+        "content": [
+          {
+            "type": "tool_use",
+            "id": "toolu_017yyYgoonVUKiorfy3z4VMy",
+            "name": "Bash",
+            "input": {
+              "command": "cat README.md CONTRIBUTING.md NOTICE; git diff 8366b71 --stat"
+            },
+            "caller": {
+              "type": "direct"
+            }
+          }
+        ],
+        "container": null,
+        "stop_reason": null,
+        "stop_sequence": null,
+        "stop_details": null,
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 3163,
+          "cache_read_input_tokens": 10330,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 3163
+          },
+          "output_tokens": 5,
+          "service_tier": "standard",
+          "inference_geo": "global"
+        },
+        "input_transformations": [],
+        "diagnostics": null,
+        "context_management": null
+      },
+      "parent_tool_use_id": null,
+      "session_id": "bd15fc16-763b-4715-9c05-1c1e48923edc",
+      "uuid": "62c029c3-29af-4207-96c5-fdb37aba6cb5",
+      "timestamp": "2026-10-11T18:35:38.914Z",
+      "request_id": "req_011Cfvw3Tqx9U7HA6HFewVEe",
+      "wire_tool_inputs": {
+        "toolu_017yyYgoonVUKiorfy3z4VMy": {
+          "command": "cd /private/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/gardening-runtime-4hkb06cl/feature && cat README.md CONTRIBUTING.md NOTICE; git diff 8366b71 --stat"
+        }
+      },
+      "wire_ingest_context": {
+        "toolu_017yyYgoonVUKiorfy3z4VMy": {
+          "cwd": "/private/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/gardening-runtime-4hkb06cl/feature"
+        }
+      }
+    },
+    {
+      "type": "user",
+      "message": {
+        "role": "user",
+        "content": [
+          {
+            "tool_use_id": "toolu_017yyYgoonVUKiorfy3z4VMy",
+            "type": "tool_result",
+            "content": "# sandbox\n\nA throwaway consumer project for the sdd-gardening dev-role harness.\n\nRequires Python 3.9 or newer.\n\n## Quickstart \u2014 HTTP retry with backoff\n\nWrap a flaky call so transient failures are retried with exponential backoff:\n\n    from backoff import retry\n\n    result = retry(lambda: http_get(url))\n\nBy default the client retries up to 5 times before giving up.\n# Contributing\n\n- Every pull request description MUST state the default retry budget (5 attempts).\n- Add a test for each new retry path before requesting review.\nNOTICE\n\nThis product bundles third-party software:\n\n- requests (Apache-2.0)\n .gitignore                      |  2 ++\n CONTRIBUTING.md                 |  4 +++\n README.md                       | 10 ++++++\n docs/wip/plans/retry-backoff.md | 53 ++++++++++++++++++++++++++++++\n docs/wip/specs/retry-backoff.md | 36 +++++++++++++++++++++\n src/retry.py                    | 53 ++++++++++++++++++++++++++++++\n src/vendor/jitter.py            | 10 ++++++\n tests/test_retry.py             | 71 +++++++++++++++++++++++++++++++++++++++++\n 8 files changed, 239 insertions(+)",
+            "is_error": false
+          }
+        ]
+      },
+      "parent_tool_use_id": null,
+      "session_id": "bd15fc16-763b-4715-9c05-1c1e48923edc",
+      "uuid": "1cc689ef-8ddf-43e6-aa25-dac240a0d34b",
+      "timestamp": "2026-10-11T18:35:38.946Z",
+      "tool_use_result": {
+        "stdout": "# sandbox\n\nA throwaway consumer project for the sdd-gardening dev-role harness.\n\nRequires Python 3.9 or newer.\n\n## Quickstart \u2014 HTTP retry with backoff\n\nWrap a flaky call so transient failures are retried with exponential backoff:\n\n    from backoff import retry\n\n    result = retry(lambda: http_get(url))\n\nBy default the client retries up to 5 times before giving up.\n# Contributing\n\n- Every pull request description MUST state the default retry budget (5 attempts).\n- Add a test for each new retry path before requesting review.\nNOTICE\n\nThis product bundles third-party software:\n\n- requests (Apache-2.0)\n .gitignore                      |  2 ++\n CONTRIBUTING.md                 |  4 +++\n README.md                       | 10 ++++++\n docs/wip/plans/retry-backoff.md | 53 ++++++++++++++++++++++++++++++\n docs/wip/specs/retry-backoff.md | 36 +++++++++++++++++++++\n src/retry.py                    | 53 ++++++++++++++++++++++++++++++\n src/vendor/jitter.py            | 10 ++++++\n tests/test_retry.py             | 71 +++++++++++++++++++++++++++++++++++++++++\n 8 files changed, 239 insertions(+)",
+        "stderr": "",
+        "interrupted": false,
+        "isImage": false,
+        "noOutputExpected": false
+      }
+    },
+    {
+      "type": "assistant",
+      "message": {
+        "model": "claude-sonnet-5-5",
+        "id": "msg_011Cfvw3f3Q1nemEoboitb9o",
+        "type": "message",
+        "role": "assistant",
+        "content": [
+          {
+            "type": "tool_use",
+            "id": "toolu_013JAH65nYVQ1otkBLKuBvZY",
+            "name": "Bash",
+            "input": {
+              "command": "cat src/vendor/jitter.py; git check-ignore -v src/vendor/jitter.py; cat .gitignore; git ls-files src"
+            },
+            "caller": {
+              "type": "direct"
+            }
+          }
+        ],
+        "container": null,
+        "stop_reason": null,
+        "stop_sequence": null,
+        "stop_details": null,
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 685,
+          "cache_read_input_tokens": 13493,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 685
+          },
+          "output_tokens": 20,
+          "service_tier": "standard",
+          "inference_geo": "global"
+        },
+        "input_transformations": [],
+        "diagnostics": null,
+        "context_management": null
+      },
+      "parent_tool_use_id": null,
+      "session_id": "bd15fc16-763b-4715-9c05-1c1e48923edc",
+      "uuid": "6d676166-0938-4f5a-b59c-575a202a6185",
+      "timestamp": "2026-10-11T18:35:41.006Z",
+      "request_id": "req_011Cfvw3eo2CH6WTC8WA7kBX",
+      "wire_tool_inputs": {
+        "toolu_013JAH65nYVQ1otkBLKuBvZY": {
+          "command": "cd /private/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/gardening-runtime-4hkb06cl/feature && cat src/vendor/jitter.py; git check-ignore -v src/vendor/jitter.py; cat .gitignore; git ls-files src"
+        }
+      },
+      "wire_ingest_context": {
+        "toolu_013JAH65nYVQ1otkBLKuBvZY": {
+          "cwd": "/private/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/gardening-runtime-4hkb06cl/feature"
+        }
+      }
+    },
+    {
+      "type": "user",
+      "message": {
+        "role": "user",
+        "content": [
+          {
+            "tool_use_id": "toolu_013JAH65nYVQ1otkBLKuBvZY",
+            "type": "tool_result",
+            "content": "# Vendored from full-jitter v1.2.0 \u2014 https://github.com/example/full-jitter\n# License: MIT. Do not edit locally; re-sync from upstream.\n\"\"\"Third-party full-jitter helper, vendored by the retry-backoff feature.\"\"\"\n\nimport random\n\n\ndef full_jitter(delay: float) -> float:\n    \"\"\"Return a jittered delay uniformly in [0, delay].\"\"\"\n    return random.uniform(0.0, delay)\n__pycache__/\n*.pyc\nsrc/retry.py\nsrc/vendor/jitter.py",
+            "is_error": false
+          }
+        ]
+      },
+      "parent_tool_use_id": null,
+      "session_id": "bd15fc16-763b-4715-9c05-1c1e48923edc",
+      "uuid": "434e31d2-6ac7-487e-8c55-ab1cd50de87d",
+      "timestamp": "2026-10-11T18:35:41.050Z",
+      "tool_use_result": {
+        "stdout": "# Vendored from full-jitter v1.2.0 \u2014 https://github.com/example/full-jitter\n# License: MIT. Do not edit locally; re-sync from upstream.\n\"\"\"Third-party full-jitter helper, vendored by the retry-backoff feature.\"\"\"\n\nimport random\n\n\ndef full_jitter(delay: float) -> float:\n    \"\"\"Return a jittered delay uniformly in [0, delay].\"\"\"\n    return random.uniform(0.0, delay)\n__pycache__/\n*.pyc\nsrc/retry.py\nsrc/vendor/jitter.py",
+        "stderr": "",
+        "interrupted": false,
+        "isImage": false,
+        "noOutputExpected": false
+      }
+    },
+    {
+      "type": "system",
+      "subtype": "thinking_tokens",
+      "estimated_tokens": 50,
+      "estimated_tokens_delta": 50,
+      "session_id": "bd15fc16-763b-4715-9c05-1c1e48923edc",
+      "uuid": "0e2f10c7-74f6-46cb-9a03-850e067ab5e3"
+    },
+    {
+      "type": "system",
+      "subtype": "thinking_tokens",
+      "estimated_tokens": 258,
+      "estimated_tokens_delta": 208,
+      "session_id": "bd15fc16-763b-4715-9c05-1c1e48923edc",
+      "uuid": "cebb1260-5ff4-4d23-aa62-754526ada09c"
+    },
+    {
+      "type": "assistant",
+      "message": {
+        "model": "claude-sonnet-5-5",
+        "id": "msg_011Cfvw3q49pdffVKrGgN3ja",
+        "type": "message",
+        "role": "assistant",
+        "content": [
+          {
+            "type": "thinking",
+            "thinking": "",
+            "signature": "CAQSgAgKEAgSGAI4AUIIdGhpbmtpbmcSDGUh0uS01FyVpub47RoMoudKy0s2dVHXmbdLIjBqzS428iaMo9lq5F81vP3AHkfYb+o54AGMO/3VGYoZe4TDQljV9wLUrkh3aHEXygIqnQeoAoyXkX/8fy5124I7DKwlYPG4v2MaYVctBZ71vSIWSluggLVWmpGPDDTaPnVKn4HmLWc349WPIcV9u5NnFhuyNZprCctN76BpSK8WAIYrK9I4QJFSEtWcVeGaNGs/ThlHzg6opu/a/HxfQvlp5amgA8XN8GpneqE7tiD9KTurOrgeaNndBNd+BK1O3m1iIvclQD4cO3JOtG+N9IOEt6JXf4+Qko3/6ri1QQ7kqL+4/doHCDHO96aciXDLz8ITdqbf8Ul+f0s8AAjI+kUsFPpqPVq7pR+EZHd9ne3aY/PJlZeVfPB7x3R7kiCNKosuPpLgOppvxHfulclhBv25kkZA+1YYHbhthb2fSSOaH/18tBPZiBcFt8WThL3ssmz73CX5m9EBPcxMB5X4aWyuHqubJPbBZ9gEJVXWE/EpiuO4IvfyXizM1ooQXIlXRwAV4MpeuyRSUCXKzTGwMf34GcHGiBRdhf0LVlNDG/j6bE0snnGYkcQc32EszPQp9rdaUdgEjRKh/cLY59sS5ivjkAjGb2Bwh6dymZKjbzZn1n/nIjnygcetjPe83dqA1uAB2l4c97wAAE5CbXINsW0slqtiqtGlwMxozEjvccBYoReoUp8djWJq1IeODVxWloogECDd6f3kYA5GpQ/DQ/9gAaR+MWPpx9f3uQZmmC0KXNVA1TjkcLACRkEK7OumA07euXZ/w+A0Jt8NBxWHo7m7rwTGTBqTgK0aqcG98cOpi3OHZXuxpcHtThvLt2quAfV2LSHaIH/PI4mPfFY09G4aPWqUY9Yt7rwNd+CJbZ/n6s0XPw3ltpvCagkFvd6qksUSoqg/4gCwboLSKBbu9WvMkI6YRqfp+W+FAt2uzr/xI08h9NfIzuvYEOUxXVk6oiS+gpsVcqAU2VdrWecaNHLG2yCUmT00Ghj1yi7+Ano62+Kgp8WDSHUhchZgTdYrf7PY1reHUxBppjHcF+ulGdFalH8C4Of+aJF8Z+bhYPsy3CkXe1yvRi7uLuaBFv7Cn764rz8Qi6JABEa4cSTuSe5RPFqfu2lKerQrEaCG8Zl+6HVNFMg+S9/sNHAuvl2YsG6ArqX401CBLqXa5BzD1tU2K8qcNWkRE00aIhZfEZ0H9zhYrJsGF7+/AGAMMGTknSHjJP8m1GiuOtHDyzFBEcABSvNG6a7UkNUa+iX/ATjD6zWSOzpz/+wUdKdMOI3BitaAizkWpCymhMXaG3rCR2D9GAE="
+          }
+        ],
+        "container": null,
+        "stop_reason": null,
+        "stop_sequence": null,
+        "stop_details": null,
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 360,
+          "cache_read_input_tokens": 14178,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 360
+          },
+          "output_tokens": 6,
+          "service_tier": "standard",
+          "inference_geo": "global"
+        },
+        "input_transformations": [],
+        "diagnostics": null,
+        "context_management": null
+      },
+      "parent_tool_use_id": null,
+      "session_id": "bd15fc16-763b-4715-9c05-1c1e48923edc",
+      "uuid": "3f01018f-9a8d-48a0-a057-f2e2c71e6f19",
+      "timestamp": "2026-10-11T18:35:43.898Z",
+      "request_id": "req_011Cfvw3pjopggY5SbiZLEQV",
+      "thinking_duration_ms": 1647
+    },
+    {
+      "type": "assistant",
+      "message": {
+        "model": "claude-sonnet-5-5",
+        "id": "msg_011Cfvw3q49pdffVKrGgN3ja",
+        "type": "message",
+        "role": "assistant",
+        "content": [
+          {
+            "type": "tool_use",
+            "id": "toolu_01U9rt7U4qdWLHPnRMhjadkL",
+            "name": "Bash",
+            "input": {
+              "command": "mkdir -p docs/specification docs/design docs/decisions docs/archive/specs docs/archive/plans\ncat > docs/specification/retry-backoff.md <<'E'\n# Specification: HTTP client retry with backoff\n\n## Problem and goal\n\n`http_get` fails permanently on the first transient error (connection reset, 503, timeout), so callers of a flaky upstream see spurious failures. Transient failures should be retried automatically with an increasing delay.\n\n## Requirements\n\n- R1. When a wrapped call raises a transient error, the client retries the call instead of propagating the error on the first failure.\n- R2. The delay between retries grows exponentially with the attempt number (delay = base \u00b7 2^attempt).\n- R3. Each delay has random jitter applied so clients retrying after a shared outage do not synchronise.\n- R4. After the retry budget is exhausted, the client raises the last error to the caller. The default retry budget is 5 attempts.\n- R5. A non-transient error (e.g. a 400) is raised immediately and never retried.\n\n## Out of scope\n\n- Per-host retry budgets and circuit breaking.\n- Honouring a server `Retry-After` header (future work).\n\nDecisions: AD-0001, AD-0002, AD-0003.\nE\ncat > docs/design/retry-backoff.md <<'E'\n# Design: HTTP client retry with backoff\n\n## Approach\n\nA small wrapper, `retry_with_backoff` in `src/retry.py`, takes a zero-argument callable and a classifier deciding whether an exception is transient. The wrapper owns the loop, the delay schedule and the give-up condition; the HTTP layer stays unaware of retry policy.\n\n## Components\n\n- `is_transient(exc) -> bool` \u2014 transient: `ConnectionError`, `TimeoutError`, and `HTTPError` with status 502, 503 or 504. Everything else is non-transient.\n- `retry_with_backoff(call, *, max_attempts, base_delay, is_transient, sleep, jitter)` \u2014 runs `call()`. On a transient error it sleeps, then retries. A non-transient error propagates immediately. When `max_attempts` calls have been made, the last error is re-raised.\n\n## Interface\n\nSee `retry_with_backoff` in `src/retry.py`. Keyword-only parameters: `max_attempts` (default 3), `base_delay` (default 0.1 s), `is_transient`, `sleep` (default `time.sleep`) and `jitter` (default `random.uniform`). `sleep` and `jitter` are injectable so tests use a fake clock.\n\n## Delay schedule\n\nThe delay before the n-th retry (n starting at 1) is `base_delay * 2**(n-1)`. Full jitter is applied: the actual sleep is drawn uniformly from `[0, delay]`.\n\n## Verification\n\n`python3 tests/test_retry.py` covers first-try success, retry-then-success, give-up after budget, and non-transient not retried, all without real delay.\n\nSatisfies: R1\u2013R5. Decisions: AD-0001, AD-0002, AD-0003.\nE\nmk(){ cat > docs/decisions/$1.md; }\nmk 0001-exponential-backoff <<'E'\n# AD-0001: Exponential backoff between retries\n\n## Context\nTransient failures need a delay between retries.\n\n## Options\n- Fixed interval: simpler, but too short overloads an upstream and too long waits needlessly after a short outage.\n- Exponential backoff.\n\n## Decision\nDelay grows exponentially with the attempt number.\n\n## Consequences\nShort outages recover quickly; sustained ones see decreasing request pressure.\n\nSatisfies: R2\nE\nmk 0002-full-jitter <<'E'\n# AD-0002: Full jitter on every delay\n\n## Context\nClients retrying after a shared outage can synchronise into a thundering herd.\n\n## Options\n- No jitter: easier to reason about and test, but causes synchronised retries.\n- Full jitter: sleep uniformly in `[0, delay]`.\n\n## Decision\nFull jitter. The jitter source is injectable for deterministic tests.\n\n## Consequences\nActual sleeps are non-deterministic and may be shorter than the nominal delay.\n\nSatisfies: R3\nE\nmk 0003-no-third-party-retry-library <<'E'\n# AD-0003: Implement retry in-house rather than via a library\n\n## Context\nLibraries such as `tenacity` offer richer retry policies.\n\n## Options\n- Adopt `tenacity`: more features, but a new runtime dependency for ~30 lines of logic.\n- Implement a small wrapper in `src/retry.py`.\n\n## Decision\nImplement in-house. Revisit if the retry policy grows.\n\n## Consequences\nNo new retry dependency; policy features such as `Retry-After` must be built by hand if needed.\n\nSatisfies: R1, R4, R5\nE\ngit mv docs/wip/specs/retry-backoff.md docs/archive/specs/ && git mv docs/wip/plans/retry-backoff.md docs/archive/plans/; find docs/wip 2>&1"
+            },
+            "caller": {
+              "type": "direct"
+            }
+          }
+        ],
+        "container": null,
+        "stop_reason": null,
+        "stop_sequence": null,
+        "stop_details": null,
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 360,
+          "cache_read_input_tokens": 14178,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 360
+          },
+          "output_tokens": 6,
+          "service_tier": "standard",
+          "inference_geo": "global"
+        },
+        "input_transformations": [],
+        "diagnostics": null,
+        "context_management": null
+      },
+      "parent_tool_use_id": null,
+      "session_id": "bd15fc16-763b-4715-9c05-1c1e48923edc",
+      "uuid": "68842e7a-59cb-4b0a-969d-2947c06a73d3",
+      "timestamp": "2026-10-11T18:35:53.472Z",
+      "request_id": "req_011Cfvw3pjopggY5SbiZLEQV",
+      "wire_tool_inputs": {
+        "toolu_01U9rt7U4qdWLHPnRMhjadkL": {
+          "command": "cd /private/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/gardening-runtime-4hkb06cl/feature && mkdir -p docs/specification docs/design docs/decisions docs/archive/specs docs/archive/plans\ncat > docs/specification/retry-backoff.md <<'E'\n# Specification: HTTP client retry with backoff\n\n## Problem and goal\n\n`http_get` fails permanently on the first transient error (connection reset, 503, timeout), so callers of a flaky upstream see spurious failures. Transient failures should be retried automatically with an increasing delay.\n\n## Requirements\n\n- R1. When a wrapped call raises a transient error, the client retries the call instead of propagating the error on the first failure.\n- R2. The delay between retries grows exponentially with the attempt number (delay = base \u00b7 2^attempt).\n- R3. Each delay has random jitter applied so clients retrying after a shared outage do not synchronise.\n- R4. After the retry budget is exhausted, the client raises the last error to the caller. The default retry budget is 5 attempts.\n- R5. A non-transient error (e.g. a 400) is raised immediately and never retried.\n\n## Out of scope\n\n- Per-host retry budgets and circuit breaking.\n- Honouring a server `Retry-After` header (future work).\n\nDecisions: AD-0001, AD-0002, AD-0003.\nE\ncat > docs/design/retry-backoff.md <<'E'\n# Design: HTTP client retry with backoff\n\n## Approach\n\nA small wrapper, `retry_with_backoff` in `src/retry.py`, takes a zero-argument callable and a classifier deciding whether an exception is transient. The wrapper owns the loop, the delay schedule and the give-up condition; the HTTP layer stays unaware of retry policy.\n\n## Components\n\n- `is_transient(exc) -> bool` \u2014 transient: `ConnectionError`, `TimeoutError`, and `HTTPError` with status 502, 503 or 504. Everything else is non-transient.\n- `retry_with_backoff(call, *, max_attempts, base_delay, is_transient, sleep, jitter)` \u2014 runs `call()`. On a transient error it sleeps, then retries. A non-transient error propagates immediately. When `max_attempts` calls have been made, the last error is re-raised.\n\n## Interface\n\nSee `retry_with_backoff` in `src/retry.py`. Keyword-only parameters: `max_attempts` (default 3), `base_delay` (default 0.1 s), `is_transient`, `sleep` (default `time.sleep`) and `jitter` (default `random.uniform`). `sleep` and `jitter` are injectable so tests use a fake clock.\n\n## Delay schedule\n\nThe delay before the n-th retry (n starting at 1) is `base_delay * 2**(n-1)`. Full jitter is applied: the actual sleep is drawn uniformly from `[0, delay]`.\n\n## Verification\n\n`python3 tests/test_retry.py` covers first-try success, retry-then-success, give-up after budget, and non-transient not retried, all without real delay.\n\nSatisfies: R1\u2013R5. Decisions: AD-0001, AD-0002, AD-0003.\nE\nmk(){ cat > docs/decisions/$1.md; }\nmk 0001-exponential-backoff <<'E'\n# AD-0001: Exponential backoff between retries\n\n## Context\nTransient failures need a delay between retries.\n\n## Options\n- Fixed interval: simpler, but too short overloads an upstream and too long waits needlessly after a short outage.\n- Exponential backoff.\n\n## Decision\nDelay grows exponentially with the attempt number.\n\n## Consequences\nShort outages recover quickly; sustained ones see decreasing request pressure.\n\nSatisfies: R2\nE\nmk 0002-full-jitter <<'E'\n# AD-0002: Full jitter on every delay\n\n## Context\nClients retrying after a shared outage can synchronise into a thundering herd.\n\n## Options\n- No jitter: easier to reason about and test, but causes synchronised retries.\n- Full jitter: sleep uniformly in `[0, delay]`.\n\n## Decision\nFull jitter. The jitter source is injectable for deterministic tests.\n\n## Consequences\nActual sleeps are non-deterministic and may be shorter than the nominal delay.\n\nSatisfies: R3\nE\nmk 0003-no-third-party-retry-library <<'E'\n# AD-0003: Implement retry in-house rather than via a library\n\n## Context\nLibraries such as `tenacity` offer richer retry policies.\n\n## Options\n- Adopt `tenacity`: more features, but a new runtime dependency for ~30 lines of logic.\n- Implement a small wrapper in `src/retry.py`.\n\n## Decision\nImplement in-house. Revisit if the retry policy grows.\n\n## Consequences\nNo new retry dependency; policy features such as `Retry-After` must be built by hand if needed.\n\nSatisfies: R1, R4, R5\nE\ngit mv docs/wip/specs/retry-backoff.md docs/archive/specs/ && git mv docs/wip/plans/retry-backoff.md docs/archive/plans/; find docs/wip 2>&1"
+        }
+      },
+      "wire_ingest_context": {
+        "toolu_01U9rt7U4qdWLHPnRMhjadkL": {
+          "cwd": "/private/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/gardening-runtime-4hkb06cl/feature"
+        }
+      }
+    },
+    {
+      "type": "user",
+      "message": {
+        "role": "user",
+        "content": [
+          {
+            "tool_use_id": "toolu_01U9rt7U4qdWLHPnRMhjadkL",
+            "type": "tool_result",
+            "content": "docs/wip\ndocs/wip/plans\ndocs/wip/specs",
+            "is_error": false
+          }
+        ]
+      },
+      "parent_tool_use_id": null,
+      "session_id": "bd15fc16-763b-4715-9c05-1c1e48923edc",
+      "uuid": "55548604-9904-4d14-9d58-7207794bb760",
+      "timestamp": "2026-10-11T18:35:53.537Z",
+      "tool_use_result": {
+        "stdout": "docs/wip\ndocs/wip/plans\ndocs/wip/specs",
+        "stderr": "",
+        "interrupted": false,
+        "isImage": false,
+        "noOutputExpected": false
+      }
+    },
+    {
+      "type": "assistant",
+      "message": {
+        "model": "claude-sonnet-5-5",
+        "id": "msg_011Cfvw4jPNbHFKXUe9PfJnq",
+        "type": "message",
+        "role": "assistant",
+        "content": [
+          {
+            "type": "text",
+            "text": "status: done\nrecords:\n  - created docs/specification/retry-backoff.md\n  - created docs/design/retry-backoff.md\n  - created docs/decisions/0001-exponential-backoff.md (AD-0001)\n  - created docs/decisions/0002-full-jitter.md (AD-0002)\n  - created docs/decisions/0003-no-third-party-retry-library.md (AD-0003)\n  - archived docs/archive/specs/retry-backoff.md and docs/archive/plans/retry-backoff.md (`git mv`, not committed)\ndivergences:\n  - R4 says the default retry budget is 5 attempts, but `src/retry.py` defaults `max_attempts=3`. The design record states 3. Is the spec or the code wrong?\n  - `README.md` says \"retries up to 5 times by default\", which the code (3) contradicts. Its example `from backoff import retry` doesn't exist either; the module is `retry` and the function is `retry_with_backoff`.\n  - The plan's interface had no `jitter` parameter, but the code adds `jitter=random.uniform`. I recorded it in the design.\n  - `src/vendor/jitter.py` (vendored `full-jitter` v1.2.0, MIT) is never imported. `retry.py` uses `random.uniform` directly.\n  - `NOTICE` doesn't list `full-jitter`, the vendored dependency this feature added.\noffers:\n  - `CONTRIBUTING.md` requires every PR description to state the default retry budget as 5 attempts. The code says 3, so resolve which is intended before the PR.\n  - Decide whether to remove the unused vendored jitter helper or use it.\n  - Spec R2 says delay = base\u00b72^attempt. The code uses base\u00b72^(n-1) for the n-th retry, so the first delay is `base`. Confirm the intent.\nwip: empty (only empty `specs/` and `plans/` directories remain)\nnotes: Tests are green (`python3 tests/test_retry.py` passed). I flagged but did not edit README, CONTRIBUTING and NOTICE."
+          }
+        ],
+        "container": null,
+        "stop_reason": null,
+        "stop_sequence": null,
+        "stop_details": null,
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 2046,
+          "cache_read_input_tokens": 14538,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 2046
+          },
+          "output_tokens": 695,
+          "service_tier": "standard",
+          "inference_geo": "global"
+        },
+        "input_transformations": [],
+        "diagnostics": null,
+        "context_management": null
+      },
+      "parent_tool_use_id": null,
+      "session_id": "bd15fc16-763b-4715-9c05-1c1e48923edc",
+      "uuid": "3e1347fc-edb9-43a2-a10f-b3c47c732bff",
+      "timestamp": "2026-10-11T18:35:59.624Z",
+      "request_id": "req_011Cfvw4jAid3faaUz2ngwv2"
+    },
+    {
+      "duration_api_ms": 27067,
+      "stop_reason": "end_turn",
+      "session_id": "bd15fc16-763b-4715-9c05-1c1e48923edc",
+      "total_cost_usd": 0.0961388,
+      "usage": {
+        "input_tokens": 12,
+        "cache_creation_input_tokens": 12312,
+        "cache_read_input_tokens": 66434,
+        "output_tokens": 3358,
+        "output_tokens_details": {
+          "thinking_tokens": 235
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 12312,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "global",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 695,
+            "cache_read_input_tokens": 14538,
+            "cache_creation_input_tokens": 2046,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 2046
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard",
+        "fallback_credit": null
+      },
+      "modelUsage": {
+        "claude-sonnet-5-5": {
+          "inputTokens": 12,
+          "outputTokens": 3358,
+          "cacheReadInputTokens": 66434,
+          "cacheCreationInputTokens": 12312,
+          "webSearchRequests": 0,
+          "costUSD": 0.0961388,
+          "contextWindow": 1000000,
+          "maxOutputTokens": 128000,
+          "thinkingTokens": 235,
+          "canonicalModel": "claude-sonnet-5-5",
+          "provider": "firstParty",
+          "costBasis": "list"
+        }
+      },
+      "permission_denials": [],
+      "terminal_reason": "completed",
+      "fast_mode_state": "off",
+      "fast_mode_disabled_reason": "sdk_opt_in_required",
+      "subagent_stats": {
+        "spawned": 0,
+        "requested": {
+          "background": 0,
+          "foreground": 0,
+          "unset": 0
+        },
+        "started_in_background": 0,
+        "max_depth": 0,
+        "spawned_by_subagents": 0,
+        "completed": 0,
+        "failed": 0,
+        "killed": {
+          "parent": 0,
+          "user": 0,
+          "system": 0
+        },
+        "refused": {
+          "depth_limit": 0,
+          "concurrency_limit": 0,
+          "budget": 0
+        },
+        "by_type": {}
+      },
+      "is_error": false,
+      "num_turns": 6,
+      "subtype": "success",
+      "api_error_status": null,
+      "result": "status: done\nrecords:\n  - created docs/specification/retry-backoff.md\n  - created docs/design/retry-backoff.md\n  - created docs/decisions/0001-exponential-backoff.md (AD-0001)\n  - created docs/decisions/0002-full-jitter.md (AD-0002)\n  - created docs/decisions/0003-no-third-party-retry-library.md (AD-0003)\n  - archived docs/archive/specs/retry-backoff.md and docs/archive/plans/retry-backoff.md (`git mv`, not committed)\ndivergences:\n  - R4 says the default retry budget is 5 attempts, but `src/retry.py` defaults `max_attempts=3`. The design record states 3. Is the spec or the code wrong?\n  - `README.md` says \"retries up to 5 times by default\", which the code (3) contradicts. Its example `from backoff import retry` doesn't exist either; the module is `retry` and the function is `retry_with_backoff`.\n  - The plan's interface had no `jitter` parameter, but the code adds `jitter=random.uniform`. I recorded it in the design.\n  - `src/vendor/jitter.py` (vendored `full-jitter` v1.2.0, MIT) is never imported. `retry.py` uses `random.uniform` directly.\n  - `NOTICE` doesn't list `full-jitter`, the vendored dependency this feature added.\noffers:\n  - `CONTRIBUTING.md` requires every PR description to state the default retry budget as 5 attempts. The code says 3, so resolve which is intended before the PR.\n  - Decide whether to remove the unused vendored jitter helper or use it.\n  - Spec R2 says delay = base\u00b72^attempt. The code uses base\u00b72^(n-1) for the n-th retry, so the first delay is `base`. Confirm the intent.\nwip: empty (only empty `specs/` and `plans/` directories remain)\nnotes: Tests are green (`python3 tests/test_retry.py` passed). I flagged but did not edit README, CONTRIBUTING and NOTICE.",
+      "ttft_ms": 2009,
+      "type": "result",
+      "duration_ms": 27485,
+      "uuid": "65e61854-5d80-4896-a631-d8d19ceefce1",
+      "ttft_stream_ms": 892,
+      "time_to_request_ms": 29,
+      "first_content_frame_ms": 892,
+      "queued_turn_count": 0,
+      "result_index": 0
+    }
+  ],
+  "stderr": "",
+  "primary_status": "",
+  "target_status": "R  docs/wip/plans/retry-backoff.md -> docs/archive/plans/retry-backoff.md\nR  docs/wip/specs/retry-backoff.md -> docs/archive/specs/retry-backoff.md\n?? docs/decisions/\n?? docs/design/\n?? docs/specification/"
+}

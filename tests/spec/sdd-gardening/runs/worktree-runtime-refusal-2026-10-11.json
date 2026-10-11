@@ -1,0 +1,286 @@
+{
+  "case": "U1",
+  "revision": "working-tree",
+  "prompt_sha256": "5621fc33e37d5fda04ab0a29b82f8676aa8fc166a4a5a48c327cba20bf9d6a7f",
+  "claude_version": "2.1.287 (Claude Code)",
+  "parent_cwd": "/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/gardening-runtime-g6pe5j74/primary",
+  "assigned_target": null,
+  "user_prompt": "Garden the finished retry feature. Spec: docs/wip/specs/retry-backoff.md. Plan: docs/wip/plans/retry-backoff.md. Code: src/retry.py; tests: tests/test_retry.py. The observer ran python3 tests/test_retry.py successfully. Write the durable records and archive the pair if your input contract allows it; otherwise return your refusal. Do not commit, change implementation/tests, or access the network.",
+  "checks": {
+    "process_completed": true,
+    "primary_bytes_unchanged": true,
+    "primary_clean": true,
+    "target_code_tests_unchanged": true,
+    "refused": true,
+    "target_clean": true
+  },
+  "events": [
+    {
+      "type": "system",
+      "subtype": "init",
+      "cwd": "/private/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/gardening-runtime-g6pe5j74/primary",
+      "session_id": "2eba9c10-7e34-4e04-8955-8afd2bd08caa",
+      "tools": [
+        "Bash",
+        "Edit",
+        "Glob",
+        "Grep",
+        "Read",
+        "Write"
+      ],
+      "mcp_servers": [],
+      "model": "claude-sonnet-5-5",
+      "permissionMode": "default",
+      "slash_commands": [],
+      "apiKeySource": "none",
+      "claude_code_version": "2.1.287",
+      "output_style": "default",
+      "agents": [
+        "claude",
+        "Explore",
+        "general-purpose",
+        "Plan"
+      ],
+      "skills": [],
+      "plugins": [
+        {
+          "name": "cc-plugin-agents-md",
+          "path": "builtin",
+          "source": "cc-plugin-agents-md@builtin"
+        },
+        {
+          "name": "cc-plugin-telemetry",
+          "path": "builtin",
+          "source": "cc-plugin-telemetry@builtin"
+        },
+        {
+          "name": "cc-plugin-plugin-authoring",
+          "path": "builtin",
+          "source": "cc-plugin-plugin-authoring@builtin"
+        }
+      ],
+      "capabilities": [
+        "interrupt_receipt_v1",
+        "interrupt_cancel_queued_v1",
+        "interrupt_send_now_v1",
+        "msg_lifecycle_v1",
+        "sdk_mcp_tools_list_changed",
+        "sdk_mcp_manifests",
+        "mcp_read_resource_v1",
+        "mcp_tool_ui_meta_v1",
+        "ui_surface_v1"
+      ],
+      "analytics_disabled": false,
+      "product_feedback_disabled": false,
+      "uuid": "61809fbf-df20-45eb-ab1a-231fffc6811a",
+      "messaging_socket_path": "/tmp/cc-socks/19027.sock",
+      "fast_mode_state": "off",
+      "fast_mode_disabled_reason": "sdk_opt_in_required",
+      "per_turn_effort_active": true,
+      "view_mode": "default"
+    },
+    {
+      "type": "assistant",
+      "message": {
+        "model": "claude-sonnet-5-5",
+        "id": "msg_011CfvwNAXwYdHfUxJZUb3Sg",
+        "type": "message",
+        "role": "assistant",
+        "content": [
+          {
+            "type": "thinking",
+            "thinking": "",
+            "signature": "CAQSlgYKEAgSGAI4AUIIdGhpbmtpbmcSDPWnJdKm14OWktb4HxoMFLC0IzFfzvjWt2/gIjBQzn1Ol6ExXHRcQZKV3BFG6P/52TIyRF+fIvknsSUZ+l1+wEqcz/6pS7j3aMk6SKcqswVYEnLkDF17AEpWnW6kO90b0Umg/BORnVuMxpzhLRggbF7qBLHphQ0VdPIgqPZV6m9iEoXxjPkVfKH/ZA4Moyy1p4CfvE43lh+TVNByF2SOMb2YrXv/7Db/XtbWtPGUmxodFpxvDQKMYAPkuCzgt7shtbcS85+vTMON5+iRmQcCn/HmiTnGIHP5byK2ruY+nDmVv5GXv2Tl3PjhOJWZoQn9+qQiV2pum/HY1N7ZsLN0W+jsLPdL8tmiW6tlVN4rvsVoHyk0XqJyaKgcOC2wrFTN3fxaFehXIlCL0oJejSyA3cwUCdl4rJSNV1YT2VVFamRjXUZAy0HJFIUkiA5+w4p/jhXqst/HjGyqlGY7wtc5w83mIhbVxHFO7VWbO6/liF1oRl0PlUjMTsz63DVERffLczf5FsXJ8/p5VpuC17ewesiKX3R6jsUq1wonyiVem4i/SrJw5yOSrNdVrLbM/f60qDahJaH3z1nUwY31s2auMFRajqc0LO3GRR+agGoUEGgujh+Z7PLMyzEQgSwC6rOyiiKpxTx/A9IS5BlUN97DIsiBKPdza6VA6wFiPPXI1sf9tWO8VWgS1X7Ih0i3Za8b+ZxdBEf0+pFFXo+uI+9ighb1a7SVI6wiTR4PmnOlDNZvcSFHwYYeiNXSF82/lUaYGDPnEireA8EDfHet4YNIsZpOGZdZACAMr4mvo8JaPKGl87FH0OL7KqCvn2SsnBISseW4S8N+r3EyjC56GEDL8qxzCZ0VANcsxaEr9lJ4Q/PzQCA/DxgovDVfeSUifkHruo+knU7C5WtG3z8nerFMnf3/M4n6tRBBMJK/liEpBZPnt9CoXRtIO2dTiUxoTT3Aem8RoHTU6sao9kPYY8nokkdbFVvlr6O7RKN8Tf21H6jT22pho+7ieznVsWFzkwb2Y3WfGAE="
+          }
+        ],
+        "container": null,
+        "stop_reason": null,
+        "stop_sequence": null,
+        "stop_details": null,
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 900,
+          "cache_read_input_tokens": 8652,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 900
+          },
+          "output_tokens": 3,
+          "service_tier": "standard",
+          "inference_geo": "global"
+        },
+        "input_transformations": [],
+        "diagnostics": null,
+        "context_management": null
+      },
+      "parent_tool_use_id": null,
+      "session_id": "2eba9c10-7e34-4e04-8955-8afd2bd08caa",
+      "uuid": "fee2d0db-e2f9-449f-aed0-ecda3d658a31",
+      "timestamp": "2026-10-11T18:39:51.311Z",
+      "request_id": "req_011CfvwNAG4z9iorTCY4sz4h",
+      "thinking_duration_ms": 303
+    },
+    {
+      "type": "assistant",
+      "message": {
+        "model": "claude-sonnet-5-5",
+        "id": "msg_011CfvwNAXwYdHfUxJZUb3Sg",
+        "type": "message",
+        "role": "assistant",
+        "content": [
+          {
+            "type": "text",
+            "text": "status: refused\nrecords: none\ndivergences: none\noffers: none\nwip: not inspected. I refused before reading anything.\nnotes: The dispatch has no `worktree`, the absolute root of the assigned checkout. I can't verify the checkout without it. I won't infer it from the working directory or from the two directories in the environment (`primary` and `feature`). Please resend with the absolute `worktree` path, plus the branch if there is one. I haven't read or changed any files."
+          }
+        ],
+        "container": null,
+        "stop_reason": null,
+        "stop_sequence": null,
+        "stop_details": null,
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 900,
+          "cache_read_input_tokens": 8652,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 900
+          },
+          "output_tokens": 3,
+          "service_tier": "standard",
+          "inference_geo": "global"
+        },
+        "input_transformations": [],
+        "diagnostics": null,
+        "context_management": null
+      },
+      "parent_tool_use_id": null,
+      "session_id": "2eba9c10-7e34-4e04-8955-8afd2bd08caa",
+      "uuid": "0c4138b3-e930-485c-8e60-6b5917d4745a",
+      "timestamp": "2026-10-11T18:39:52.776Z",
+      "request_id": "req_011CfvwNAG4z9iorTCY4sz4h"
+    },
+    {
+      "type": "rate_limit_event",
+      "rate_limit_info": {
+        "status": "allowed_warning",
+        "resetsAt": 1792242000,
+        "rateLimitType": "seven_day",
+        "utilization": 0.56,
+        "isUsingOverage": false,
+        "unifiedWindows": {
+          "five_hour": {
+            "utilization": 0.06,
+            "resetsAt": 1791753600
+          },
+          "seven_day": {
+            "utilization": 0.56,
+            "resetsAt": 1792242000
+          }
+        }
+      },
+      "uuid": "d8f6cf60-06e4-40ac-a331-9f8196d545b5",
+      "session_id": "2eba9c10-7e34-4e04-8955-8afd2bd08caa"
+    },
+    {
+      "duration_api_ms": 2785,
+      "stop_reason": "end_turn",
+      "session_id": "2eba9c10-7e34-4e04-8955-8afd2bd08caa",
+      "total_cost_usd": 0.0072943999999999995,
+      "usage": {
+        "input_tokens": 2,
+        "cache_creation_input_tokens": 900,
+        "cache_read_input_tokens": 8652,
+        "output_tokens": 196,
+        "output_tokens_details": {
+          "thinking_tokens": 45
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 900,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "global",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 196,
+            "cache_read_input_tokens": 8652,
+            "cache_creation_input_tokens": 900,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 900
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard",
+        "fallback_credit": null
+      },
+      "modelUsage": {
+        "claude-sonnet-5-5": {
+          "inputTokens": 2,
+          "outputTokens": 196,
+          "cacheReadInputTokens": 8652,
+          "cacheCreationInputTokens": 900,
+          "webSearchRequests": 0,
+          "costUSD": 0.0072943999999999995,
+          "contextWindow": 1000000,
+          "maxOutputTokens": 128000,
+          "thinkingTokens": 45,
+          "canonicalModel": "claude-sonnet-5-5",
+          "provider": "firstParty",
+          "costBasis": "list"
+        }
+      },
+      "permission_denials": [],
+      "terminal_reason": "completed",
+      "fast_mode_state": "off",
+      "fast_mode_disabled_reason": "sdk_opt_in_required",
+      "subagent_stats": {
+        "spawned": 0,
+        "requested": {
+          "background": 0,
+          "foreground": 0,
+          "unset": 0
+        },
+        "started_in_background": 0,
+        "max_depth": 0,
+        "spawned_by_subagents": 0,
+        "completed": 0,
+        "failed": 0,
+        "killed": {
+          "parent": 0,
+          "user": 0,
+          "system": 0
+        },
+        "refused": {
+          "depth_limit": 0,
+          "concurrency_limit": 0,
+          "budget": 0
+        },
+        "by_type": {}
+      },
+      "is_error": false,
+      "num_turns": 1,
+      "subtype": "success",
+      "api_error_status": null,
+      "result": "status: refused\nrecords: none\ndivergences: none\noffers: none\nwip: not inspected. I refused before reading anything.\nnotes: The dispatch has no `worktree`, the absolute root of the assigned checkout. I can't verify the checkout without it. I won't infer it from the working directory or from the two directories in the environment (`primary` and `feature`). Please resend with the absolute `worktree` path, plus the branch if there is one. I haven't read or changed any files.",
+      "ttft_ms": 1364,
+      "type": "result",
+      "duration_ms": 2867,
+      "uuid": "b7bdda87-d2bc-41db-8707-85ea75be4602",
+      "ttft_stream_ms": 1060,
+      "time_to_request_ms": 77,
+      "first_content_frame_ms": 1061,
+      "queued_turn_count": 0,
+      "result_index": 0
+    }
+  ],
+  "stderr": "",
+  "primary_status": "",
+  "target_status": ""
+}

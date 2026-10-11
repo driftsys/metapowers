@@ -15,8 +15,9 @@ nothing else.
 
 ## Inputs (provided by the dispatcher)
 
-The spec + plan for this feature in `docs/wip/` (see Project layout for where
-they sit); pointers to the merged code + tests; the existing
+Required: `worktree`, the absolute root of the assigned checkout. The spec + plan
+for this feature in `docs/wip/`, with paths relative to that root (see Project
+layout for where they sit); pointers to the merged code + tests; the existing
 `docs/specification/`, `docs/design/`, `docs/decisions/`, `docs/technotes/`;
 and, if supplied, the brainstorming discussion (it carries the
 considered-options rationale). The dispatcher may also note a `docs/wip/<name>/`
@@ -70,6 +71,26 @@ Before you write, look at what is already on disk and follow it:
   the dispatcher passes no story identifier. When the archived spec and plan
   files sit only in such folders, archive flat under `docs/archive/` and say so
   under `notes:`.
+
+## Verify the assigned checkout first
+
+Before reading feature files or writing, run
+`git -C <worktree> rev-parse --show-toplevel` and compare its resolved physical
+path with the resolved assigned root (for example using `pwd -P`). They must
+match; a directory nested inside another checkout is not a checkout root.
+Check the branch too when the dispatcher supplied one. Accept equivalent symlink
+spellings and an explicitly assigned primary checkout; a linked worktree is not
+required. Use that root as the working directory, or scope each command and file
+operation to it, including mode detection, reconciliation and archival.
+
+If the assignment is absent, relative, missing, not a Git checkout root, or does
+not match the supplied branch, return `status: refused` with the reason before
+reading feature material or changing files. Do not infer the assignment from the
+initial cwd, a shared Git common directory, or matching files in another checkout.
+Named inputs and write destinations must stay within the assigned root. Missing
+working memory is for the dispatcher to transfer; never search sibling checkouts
+or copy their files yourself. Once the root is verified, the existing partial-pair
+handling below still applies.
 
 ## Procedure
 

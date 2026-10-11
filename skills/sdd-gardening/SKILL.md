@@ -27,6 +27,27 @@ summary. See the `sdd-working-memory-lifecycle` rule for the standing guardrails
 
 ## Procedure
 
+Before gathering feature material, resolve the intended checkout with
+`git rev-parse --show-toplevel` from the active feature workspace and record its
+absolute root as `worktree`. Keep every subsequent file and Git operation scoped
+to that root; the primary checkout and Git common directory are not substitutes.
+An explicitly assigned primary checkout is also valid.
+
+When entering a newly created worktree, run the repository's documented setup
+there before execution or dispatch. Follow `AGENTS.md`/`CLAUDE.md` and
+`CONTRIBUTING*`; if no setup is documented but a root `bootstrap` exists, run
+`./bootstrap`. Package-manager detection alone is insufficient. Do not repeat
+setup already completed in this worktree; report a setup failure before proceeding.
+
+If the named spec or plan is missing, copy only the selected files from an
+identified source checkout, preserving their relative paths and source originals.
+Ignored, untracked and uncommitted working memory does not travel with
+`git worktree add`. Verify the copies before use; leave unrelated WIP behind.
+If a destination already exists, keep it: reuse an identical copy, but surface
+different contents for resolution before dispatch instead of overwriting or
+choosing a version yourself. If the source is unknown, ask for it. Transfer does
+not authorize cleanup in the source checkout.
+
 1. **Detect mode.** `git check-ignore -q docs/wip/` → if ignored, this is
    private mode (no archive step, no CI gate); otherwise collaborative.
 2. **Gather inputs** for the subagent: this feature's Superpowers spec + plan in
@@ -51,8 +72,12 @@ summary. See the `sdd-working-memory-lifecycle` rule for the standing guardrails
    the gardener can diff-gate and feature-scope.
 3. **Dispatch the `sdd-gardener` subagent** with those inputs. (Claude Code:
    Agent/Task tool, `subagent_type: sdd-gardener`. Other clients: the equivalent
-   subagent dispatch.) Do not garden inline — the point is to keep this session's
-   context lean.
+   subagent dispatch.) Include a required `worktree: <absolute checkout root>`
+   field and the named spec/plan paths relative to it; instruct the gardener to
+   verify that root before reading feature material or writing. Set the child
+   working directory when the client supports it, and pass the root in the prompt
+   regardless of that setting. Do not garden inline — the point is to keep this
+   session's context lean.
 4. **Relay its summary** to the user: records created/edited (paths, plus
    `AD-NNNN` ids where the project uses them) and flagged divergences —
    including any project-doc drift the gardener surfaced. Read the actual files
