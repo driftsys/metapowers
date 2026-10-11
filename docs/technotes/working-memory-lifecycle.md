@@ -70,6 +70,25 @@ flag is required.
 
 Gardening detects the active mode with `git check-ignore`.
 
+### 2.2 Worktree preparation and delegation
+
+The gardening dispatcher records the active feature checkout's absolute root
+and passes it with the selected spec/plan. The gardener verifies the physical
+Git root before reading feature material or writing records; a missing or
+ambiguous assignment is a refusal, not a search for another checkout. An
+explicitly assigned primary checkout and equivalent symlink paths are valid.
+
+Before using a new worktree, the dispatcher follows the repository's setup
+instructions. Missing working memory is copied explicitly from an identified
+source: only the selected files, without overwriting conflicting destination
+files or removing source originals. Ignored, untracked and uncommitted files
+do not follow `git worktree add`. This preparation does not change private or
+collaborative mode or authorize cleanup in the source checkout.
+
+[AD-0004](../decisions/0004-gardening-worktree-boundary.md) records why these
+guardrails live in the existing metapowers items rather than depending on an
+upstream Superpowers update.
+
 ## 3. Layout
 
 ```text
