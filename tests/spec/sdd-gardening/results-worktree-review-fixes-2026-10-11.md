@@ -69,8 +69,9 @@ prior prompt and have not been relabeled as runs of the revised prompt.
 ## Quick-review assertion refinements
 
 The quick tests review found that a staging-only collision regression was not
-pinned independently. Two additional integration traces now reject staging
-without moves and a vague conflict response without refusal/path/reason. U4's
+pinned independently. Four refinement traces now reject staging without moves, a conflict response
+with a success status, a missing conflicting path, and a missing existence
+reason. U4's
 response check requires refusal, the exact conflicting relative path, and an
 existence reason. This is a bounded text check, not a general response parser.
 The retained live captures were produced before this oracle refinement; the
