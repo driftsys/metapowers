@@ -15,8 +15,11 @@ criterion 2) — cited. New cases:
 ## Interface 2 — Return + refusal (clean-room subagent loaded with `AGENT.md` + a fixture)
 
 Harness: spawn a clean-room subagent whose instructions are the verbatim body of
-`skills/sdd-gardening/AGENT.md`, then point it at a fixture. R1–R5 use a fixture
-under [fixtures/refusal/](fixtures/refusal/): the subagent **inspects** (reads the
+`skills/sdd-gardening/AGENT.md`, then pass `worktree: <absolute Git checkout root>`
+and fixture paths relative to that root. Verify that the assigned directory is
+the Git root, not a fixture subdirectory inside the metapowers checkout. R1–R5
+use a disposable Git repository containing a copy of the selected fixture
+from [fixtures/refusal/](fixtures/refusal/): the subagent **inspects** (reads the
 spec/plan, runs the tests read-only) and emits its **return digest** — it does
 not mutate files or run git-writes, so it stays isolated from the metapowers
 repo. The R3-final run is the exception: it wrote a record and the observer
@@ -49,6 +52,22 @@ The R7 clause that allows naming `README.md` as an unchanged placeholder was
 added after the runs, in `31f55c0`. R7 is a regression guard: the earlier text
 also passes it. driftsys/metapowers#71 tracks the scenarios that would pin the
 named-pair rule.
+
+## Current reproduction inputs
+
+For R1–R5, copy the selected fixture into a fresh disposable directory and run
+`git init` there. Resolve that root with `git rev-parse --show-toplevel` and pass
+it as `worktree`; name `docs/wip/specs/retry-backoff.md` and
+`docs/wip/plans/retry-backoff.md`, with code/tests relative to the same root.
+Keep the inspection-only restriction except for the documented R3-final case.
+For R6–R9 use the absolute root printed by the disposable sandbox's Git command,
+not the metapowers root. R6–R8 name the two flat files listed in the table; R9
+still supplies the checkout root while intentionally omitting the spec/plan
+names. Supply a branch only if it was observed in that sandbox.
+
+These instructions target the current required-root contract. The linked
+historical captures are retained as observations of their original revisions;
+adding this input does not claim those old runs used it or revalidate them.
 
 ## Rationalization table
 

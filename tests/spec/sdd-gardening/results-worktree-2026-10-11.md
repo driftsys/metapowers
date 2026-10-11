@@ -2,7 +2,7 @@
 
 ## Method
 
-The predefined [nine scenarios](worktree-scenarios.json) compare baseline
+The original nine scenarios embedded in the raw captures compare baseline
 `21639c0` with the revised item bodies. Each decision probe uses a fresh Claude
 process and a disposable primary checkout plus linked worktree. Claude Code
 2.1.287 resolved `sonnet` to `claude-sonnet-5-5`. The harness isolates settings,
@@ -16,20 +16,24 @@ statistical reliability estimate or cross-client certification.
 
 ## Decision probes
 
-| Scenario                             | Baseline | Revised | Observation                                                         |
-| ------------------------------------ | -------- | ------- | ------------------------------------------------------------------- |
-| W1 explicit dispatch                 | PASS     | PASS    | Absolute root and named pair passed to gardener.                    |
-| W2 different initial cwd             | PASS     | PASS    | Assigned root checked before feature reads.                         |
-| W3 unavailable assigned root         | PASS     | PASS    | Refused fallback despite release pressure.                          |
-| W4 documented setup                  | PASS     | PASS    | Documented setup preferred over bootstrap guesses.                  |
-| W5 private memory transfer           | FAIL     | PASS    | Selected files copied with source originals preserved.              |
-| W6 destination conflict              | FAIL     | PASS    | Existing plan preserved; conflict surfaced before dispatch.         |
-| W7 unrelated question                | PASS     | PASS    | No gardening or setup invoked.                                      |
-| W8 primary and symlink compatibility | PASS     | PASS    | Explicit primary assignment and equivalent physical paths accepted. |
-| W9 missing assignment                | FAIL     | PASS    | Refused instead of adopting initial cwd.                            |
+| Scenario                     | Baseline | Revised | Observation                                                                              |
+| ---------------------------- | -------- | ------- | ---------------------------------------------------------------------------------------- |
+| W1 explicit dispatch         | PASS     | FAIL    | Revised dispatch retained a root placeholder; literal transmission was not demonstrated. |
+| W2 different initial cwd     | PASS     | PASS    | Assigned root checked before feature reads.                                              |
+| W3 unavailable assigned root | PASS     | PASS    | Refused fallback despite release pressure.                                               |
+| W4 documented setup          | PASS     | PASS    | Documented setup preferred over bootstrap guesses.                                       |
+| W5 private memory transfer   | FAIL     | PASS    | Selected files copied with source originals preserved.                                   |
+| W6 destination conflict      | FAIL     | PASS    | Existing plan preserved; conflict surfaced before dispatch.                              |
+| W7 unrelated question        | PASS     | PASS    | No gardening or setup invoked.                                                           |
+| W8 physical primary control  | PASS     | PASS    | Explicit primary assignment accepted; symlink-valued assignment was not exercised.       |
+| W9 missing assignment        | FAIL     | PASS    | Refused instead of adopting initial cwd.                                                 |
 
-Baseline: **6/9**. Revised: **9/9** for the declared worktree criteria.
+Baseline: **6/9**. Revised: **8/9** for the declared worktree criteria.
 Existing passing cases are regression guards, not newly demonstrated failures.
+This judgment was corrected after review: the original 9/9 count accepted W1's
+placeholder too broadly. W8 only exercised a physical primary assignment with
+a symlink cwd; it did not establish acceptance of a symlink-valued assignment.
+The #74 follow-up supplies that assignment explicitly.
 
 Raw captures:
 [baseline](runs/worktree-red-2026-10-11.json),

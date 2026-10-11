@@ -1,0 +1,15 @@
+{
+  "case": "copied-untracked-archive",
+  "revision": "391d7f2",
+  "command": [
+    "git",
+    "mv",
+    "docs/wip/specs/retry.md",
+    "docs/archive/specs/retry.md"
+  ],
+  "exit_code": 128,
+  "stdout": "",
+  "stderr": "fatal: not under version control, source=docs/wip/specs/retry.md, destination=docs/archive/specs/retry.md\n",
+  "source_preserved": true,
+  "archive_exists": false
+}

@@ -207,9 +207,15 @@ rebuild.
                Superpowers prose and order.
 5. Reconcile   Light review vs. merged code + tests; flag divergences.
 6. Rewrite     Edit superseded pieces in place (§8); never deprecate-and-replace.
-7. Archive     git mv this feature's raw spec/plan to docs/archive/; other
+7. Archive     Move this feature's raw spec/plan to docs/archive/; other
                docs/wip/ files stay → gate green once docs/wip/ is empty.
 ```
+
+Collaborative archival handles each selected file according to its Git state:
+tracked files use `git mv`; copied, untracked files use a normal move followed
+by `git add -- <archive-path>` for that file alone. The gardener preserves the
+raw bytes and stages no unrelated working memory. Private working memory is
+left in place without archival or staging.
 
 ### 6.0 Execution — delegated to the `sdd-gardener` subagent
 
@@ -218,7 +224,8 @@ the existing `docs/` records), so the `sdd-gardening` skill (SKILL.md) **dispatc
 its co-located `sdd-gardener` subagent (AGENT.md)** rather than running inline —
 keeping the main session's context lean.
 
-- **Inputs handed to the subagent:** the `docs/wip/` spec + plan; pointers to the
+- **Inputs handed to the subagent:** the required absolute `worktree` root; the
+  `docs/wip/` spec + plan with paths relative to that root; pointers to the
   merged code + tests; the existing `docs/` records (for the consistency engine);
   and — **only when the current session still holds it** — the brainstorming
   discussion (which carries the considered-options/rationale directly). When
