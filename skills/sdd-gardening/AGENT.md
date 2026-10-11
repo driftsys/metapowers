@@ -144,7 +144,14 @@ handling below still applies.
    new record only for a genuinely new topic.
 9. **Archive**: in collaborative mode (`docs/wip/` not gitignored), move the raw
    spec/plan into `docs/archive/`, mirroring the project's existing archive
-   layout (see Project layout). Check each selected source with
+   layout (see Project layout). Before moving any selected file, inspect every
+   exact archive destination and its parent directories. If a destination already
+   exists (file, directory, or symlink, including a dangling symlink), or an
+   archive parent is a symlink, stop archival for the whole selected pair. Leave
+   both sources and existing archives unchanged, stage no archive paths, and
+   report `status: refused` with the conflicting path and reason. Do not overwrite,
+   merge, rename, or choose a different destination to resolve the conflict.
+   Check each selected source with
    `git ls-files --error-unmatch -- <source>` from the assigned root. For a
    tracked source, use `git mv -- <source> <archive-path>`. For an untracked,
    nonignored source (including a copied file), use a normal file move, then

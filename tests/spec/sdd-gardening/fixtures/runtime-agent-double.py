@@ -42,6 +42,12 @@ if mode != "skip-verification":
 for relative in ("docs/wip/specs/retry-backoff.md", "docs/wip/plans/retry-backoff.md", "src/retry.py", "tests/test_retry.py"):
     source = (primary if mode == "wrong-source" else target) / relative
     operation("Read", {"file_path": str(source)}, source.read_text())
+if mode == "archive-conflict":
+    archive = target / "docs/archive/specs/retry-backoff.md"
+    operation("Read", {"file_path": str(archive)}, archive.read_text())
+    print(json.dumps({"type": "result", "is_error": False, "result": "status: refused; archive conflict"}))
+    raise SystemExit(0)
+
 record = target / "docs/design/retry.md"
 record.parent.mkdir(parents=True, exist_ok=True)
 record.write_text("# Retry\n\nThe default budget is five attempts.\n")
@@ -52,4 +58,4 @@ for kind in ("specs", "plans"):
     destination.parent.mkdir(parents=True, exist_ok=True)
     source.rename(destination)
     operation("Bash", {"command": f"mv {source} {destination}"})
-print(json.dumps({"type": "result", "is_error": False, "result": "status: done"}))
+print(json.dumps({"type": "result", "is_error": False, "result": "status: done; archive conflict" if mode == "overwrite-conflict" else "status: done"}))

@@ -57,6 +57,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - run: PYTHONDONTWRITEBYTECODE=1 python3 tests/spec/sdd-gardening/worktree-observer.test.py
+      - run: PYTHONDONTWRITEBYTECODE=1 python3 tests/spec/sdd-gardening/check-observer-mutations.py
 
   convco:
     name: Conventional commits

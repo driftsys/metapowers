@@ -144,7 +144,7 @@ feat/x:      C1 ── … ── Cg ──────────────�
    in docs/wip/            + docs/specification/x.md (requirements)
    (visible in MR)         + docs/decisions/<NNNN-slug>.md (decisions, AD-NNNN)
                            + docs/design/x.md       (architecture + design, de-tasked)
-                           git mv docs/wip/{specs,plans} → docs/archive/  (raw)
+                           Move docs/wip/{specs,plans} → docs/archive/    (raw)
                            docs/wip/ now empty (when no work is held as accepted debt) → WIP-gate green
 ```
 
@@ -210,6 +210,11 @@ rebuild.
 7. Archive     Move this feature's raw spec/plan to docs/archive/; other
                docs/wip/ files stay → gate green once docs/wip/ is empty.
 ```
+
+Before collaborative archival, inspect every selected destination and its
+parents. An existing destination (including a dangling symlink) or a symlink
+parent stops archival for the whole selected pair: preserve both sources and
+existing archives, stage no archive paths, and report the conflict.
 
 Collaborative archival handles each selected file according to its Git state:
 tracked files use `git mv`; copied, untracked files use a normal move followed

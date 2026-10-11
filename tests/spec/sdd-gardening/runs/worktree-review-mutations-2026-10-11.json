@@ -1,0 +1,84 @@
+{
+  "relative-read": {
+    "tests": 29,
+    "failures": 1,
+    "errors": 0,
+    "caught": true,
+    "failed_tests": [
+      "test_relative_read_cannot_use_initial_cwd (observer_tests.ObserverTests.test_relative_read_cannot_use_initial_cwd)"
+    ]
+  },
+  "wrong-git-root": {
+    "tests": 29,
+    "failures": 1,
+    "errors": 0,
+    "caught": true,
+    "failed_tests": [
+      "test_wrong_root_git_command_fails (observer_tests.ObserverTests.test_wrong_root_git_command_fails)"
+    ]
+  },
+  "unsupported-shell": {
+    "tests": 29,
+    "failures": 1,
+    "errors": 0,
+    "caught": true,
+    "failed_tests": [
+      "test_unsupported_git_external_diff_fails_closed (observer_tests.ObserverTests.test_unsupported_git_external_diff_fails_closed)"
+    ]
+  },
+  "symlink-escape": {
+    "tests": 29,
+    "failures": 1,
+    "errors": 0,
+    "caught": true,
+    "failed_tests": [
+      "test_escaping_symlink_read_fails (observer_tests.ObserverTests.test_escaping_symlink_read_fails)"
+    ]
+  },
+  "early-write": {
+    "tests": 29,
+    "failures": 1,
+    "errors": 0,
+    "caught": true,
+    "failed_tests": [
+      "test_write_before_verification_fails (observer_tests.ObserverTests.test_write_before_verification_fails)"
+    ]
+  },
+  "early-root-request": {
+    "tests": 29,
+    "failures": 2,
+    "errors": 0,
+    "caught": true,
+    "failed_tests": [
+      "test_failed_verification_cannot_unlock_feature_reads (observer_tests.ObserverTests.test_failed_verification_cannot_unlock_feature_reads)",
+      "test_read_before_verification_result_fails (observer_tests.ObserverTests.test_read_before_verification_result_fails)"
+    ]
+  },
+  "failed-root-result": {
+    "tests": 29,
+    "failures": 1,
+    "errors": 0,
+    "caught": true,
+    "failed_tests": [
+      "test_failed_verification_cannot_unlock_feature_reads (observer_tests.ObserverTests.test_failed_verification_cannot_unlock_feature_reads)"
+    ]
+  },
+  "branch-order": {
+    "tests": 29,
+    "failures": 1,
+    "errors": 0,
+    "caught": true,
+    "failed_tests": [
+      "test_completed_read_before_branch_result_is_rejected (observer_tests.ObserverTests.test_completed_read_before_branch_result_is_rejected)"
+    ]
+  },
+  "pending-result": {
+    "tests": 29,
+    "failures": 1,
+    "errors": 0,
+    "caught": true,
+    "failed_tests": [
+      "test_unanswered_feature_read_is_rejected (observer_tests.ObserverTests.test_unanswered_feature_read_is_rejected)"
+    ]
+  }
+}
