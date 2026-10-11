@@ -1,0 +1,17 @@
+{
+  "red": {
+    "rule.md": "c6021dec62e126096d4e9deec3f1ae2a24e14bab3d29a82d7716b11e2649f085",
+    "skill.md": "c27888ba74257f93ed87ee65fdae7246367f7c52eaf79b26a71cd2f25a07204f",
+    "agent.md": "6ef8e904ffccbb99a5c5df273f71c047ecd5edb08372183ec438df08ae66695d"
+  },
+  "green": {
+    "rule.md": "8dd8386ae79a2ff3ccc29aa6b5e89eda7e06ed42a87f7dfb19906a5689b9de4c",
+    "skill.md": "d1f38ceb02eddf9ff2c93a062a8cc16ff3e3b44223144310054ec1371ea1b73f",
+    "agent.md": "f8e75918db94802cd959b61eb282a5a99d1323497340197b3e940f63c8d88865"
+  },
+  "final": {
+    "rule.md": "495079e1ea1e4b1fed4a30cebe1786c9d7e50948f3a4d4614eb81a42f20d1e9e",
+    "skill.md": "d1f38ceb02eddf9ff2c93a062a8cc16ff3e3b44223144310054ec1371ea1b73f",
+    "agent.md": "fa023976475f90ef46b5f588b829b5b7529c72b9e5622735f5e1a9a4464c28a0"
+  }
+}

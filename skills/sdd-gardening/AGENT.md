@@ -73,7 +73,8 @@ Before you write, look at what is already on disk and follow it:
 
 ## Procedure
 
-1. **Triage** per topic: new, or touches an existing record?
+1. **Triage** per topic: new, or touches an existing record? Reuse records drafted
+   during development; creating the durable target is not deferred to gardening.
 2. **Unrecognized WIP passthrough.** If the dispatcher noted a
    `docs/wip/<name>/` directory outside the spec/plan pair — or you notice one
    yourself — do not triage, route, garden, delete, or archive it, however
@@ -81,7 +82,7 @@ Before you write, look at what is already on disk and follow it:
    not a spec, plan, or record candidate, and its disposition is a human
    decision, not yours. Leave it at its exact original path, byte-for-byte
    untouched — do not `git mv` it to `docs/archive/` alongside the legitimate
-   spec/plan archival; that archival step (step 9) is scoped to this feature's
+   spec/plan archival; that archival step (step 10) is scoped to this feature's
    spec/plan files only. The same applies to every other `docs/wip/` file
    outside this feature's spec/plan pair (see Project layout). Always name it in
    the return contract's `wip:` field — path + one line ("disposition
@@ -101,6 +102,8 @@ Before you write, look at what is already on disk and follow it:
    the source prose and chapter order.
 6. **Reconcile (lightly)**: skim each record against the merged code + tests; fix
    obvious as-planned/as-built divergences; **flag** uncertain ones in the return.
+   Reconcile explicit proposed/unimplemented status too: distinguish accepted
+   decisions from implemented behavior, and retain clear status for unbuilt work.
 7. **Reconcile project docs (consistency pass)**: surface where human-facing docs
    drift from the as-built code, bounded to this feature — **flag, never edit**.
    **Diff-gate** — from the feature's code+test diff (e.g. `git diff main...HEAD`),
@@ -121,16 +124,39 @@ Before you write, look at what is already on disk and follow it:
    dispatcher relays both; the human applies the fix.
 8. **Rewrite in place**: when work changes an existing record, edit it; create a
    new record only for a genuinely new topic.
-9. **Archive**: in collaborative mode (`docs/wip/` tracked), `git mv` the raw
-   spec/plan into `docs/archive/`, mirroring the project's existing archive
-   layout (see Project layout). Leave no file of this feature's spec/plan in
-   `docs/wip/`; files that step 2 leaves in place stay, and so do the
-   `README.md` and `.gitkeep` placeholders, which the WIP-gate ignores. While
-   files that step 2 leaves in place keep `docs/wip/` non-empty, the
-   `sdd-working-memory-lifecycle` rule treats the branch as unfinished until the
-   human gardens them or accepts the debt with a reason and a durable marker
-   (for example an entry in a ledger such as `docs/wip/README.md`). Say so under
-   `wip:`; do not write that marker yourself.
+9. **Check references before archive**: inspect tracked files for citations to
+   this project's WIP files and directories, including bare prose, inline code,
+   Markdown links, fixtures, and source comments (`//!`, `//`, `#`). Use
+   `git grep -n -F 'docs/wip/' -- .` for the default layout; also inspect
+   relative links and the project's own working-memory paths. Read matches to
+   distinguish citations from descriptions of directory conventions and literal
+   test inputs that exercise path handling. A fixture's rationale comment that
+   actually relies on WIP remains a citation; being under `tests/` is not an
+   exemption. Exclude
+   working memory itself and historical archive records; leave both untouched.
+   This reference check is separate from the feature-scoped project-doc diff-gate.
+   If lasting citations remain, return `status: refused` before moving the pair,
+   listing caller paths and cited targets under `references:`. Do not rewrite
+   callers, blindly repoint to archive or an existing ADR, or invent a target:
+   the dispatcher must establish the appropriate durable record or local
+   explanation through the normal implementation/review flow. Path existence,
+   prior link approval, and release pressure do not clear this blocker.
+10. **Archive**: in collaborative mode (`docs/wip/` tracked), `git mv` the raw
+    spec/plan into `docs/archive/`, mirroring the project's existing archive
+    layout (see Project layout). Leave no file of this feature's spec/plan in
+    `docs/wip/`; files that step 2 leaves in place stay, and so do the
+    `README.md` and `.gitkeep` placeholders, which the WIP-gate ignores. While
+    files that step 2 leaves in place keep `docs/wip/` non-empty, the
+    `sdd-working-memory-lifecycle` rule treats the branch as unfinished until the
+    human gardens them or accepts the debt with a reason and a durable marker
+    (for example an entry in a ledger such as `docs/wip/README.md`). Say so under
+    `wip:`; do not write that marker yourself.
+11. **Validate paths**: discover and run the repository's documentation/path
+    checks (for example `just doc-path-check`) before returning, after archive
+    when applicable. If a check fails, return `status: refused` with the command
+    and failure report under `checks:`; do not invent a missing record or claim
+    completion. If no check exists, report `checks: not available`. A passing
+    check does not replace step 9's citation review.
 
 ## Authoring substrate
 
@@ -141,12 +167,16 @@ Context / Options / Decision / Consequences write-up with a trace footer
 one stated in this same vocabulary (`specification`, `design`, `decisions`,
 `technotes`, "durable records", "specs and plans") — prescribes _how_ records are
 authored, follow it; it is already in your context. Name no specific authoring
-tool of your own. Omit git-derivable metadata (author, date, status) — git holds
-it.
+tool of your own. Omit git-derivable metadata (author, date, revision history).
+Keep semantic status such as "accepted; not implemented" explicit; git does not
+establish whether a proposal has been implemented.
 
 ## Refusal conditions — return REFUSED with the reason
 
 - Tests are not green / implementation incomplete — you cannot reconcile as-built.
+- Lasting references cite WIP — report callers and targets under `references:`
+  and leave the assigned pair in place. An applicable path check fails — report
+  its command and failure under `checks:`. Neither condition permits completion.
 - You are asked to fabricate considered options — record "alternatives not
   documented" instead.
 - Edit-vs-new is genuinely ambiguous for a record — do NOT overwrite; create a new
@@ -174,6 +204,8 @@ records:
   - created|edited docs/<...>  (AD-NNNN if applicable)
 divergences: <as-planned vs as-built items needing human confirmation, or none>
 offers: <requirement gaps to fill / system-architecture updates to make, or none>
+references: none | <blocking caller paths and cited WIP targets; full report path if needed>
+checks: <commands and results, failure report path if needed, or not available / not run with reason>
 wip: empty | <files still present and why, by path; every other docs/wip/ directory or file except the README.md and .gitkeep placeholders>
 notes: <one or two lines max>
 ```

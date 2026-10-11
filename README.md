@@ -10,7 +10,7 @@ metapowers is part of the [driftsys](https://github.com/driftsys) project. It di
 
 **The code and its tests are the source of truth. Requirements and architecture are how humans understand and evolve the system. TDD is how we make sure the truth stays trustworthy.**
 
-metapowers extends Superpowers' TDD discipline by capturing the working artifacts (specs, plans, architecture decisions) into durable engineering records — so the _why_ and _how_ remain clear as code evolves.
+metapowers extends Superpowers' TDD discipline by capturing useful decisions, requirements, and design descriptions during development, then reconciling them with code and tests before archiving specs and plans. Code and lasting documentation reference durable records directly, so their rationale remains available when working memory moves.
 
 - **Skills** teach procedures: "to accomplish X, follow these steps"
 - **Rules** provide always-on guidance: "never do X", "always check Y"
