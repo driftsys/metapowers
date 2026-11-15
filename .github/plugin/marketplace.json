@@ -5,9 +5,9 @@
   },
   "plugins": [
     {
-      "name": "upskill-notice-copilot",
-      "source": "./plugins/upskill-notice-copilot",
-      "description": "Report available upskill updates once when a Copilot CLI session starts."
+      "name": "upskill",
+      "source": "./plugins/upskill-copilot",
+      "description": "upskill integration for Copilot CLI. When a session starts, it reports available upskill updates, once for each set of updates."
     }
   ]
 }
