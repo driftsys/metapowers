@@ -1,0 +1,13 @@
+{
+  "name": "metapowers",
+  "owner": {
+    "name": "driftsys"
+  },
+  "plugins": [
+    {
+      "name": "upskill-notice-claude",
+      "source": "./plugins/upskill-notice-claude",
+      "description": "Report available upskill updates once when a Claude Code session starts."
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "name": "metapowers",
+  "owner": {
+    "name": "driftsys"
+  },
+  "plugins": [
+    {
+      "name": "upskill-notice-copilot",
+      "source": "./plugins/upskill-notice-copilot",
+      "description": "Report available upskill updates once when a Copilot CLI session starts."
+    }
+  ]
+}
