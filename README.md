@@ -37,6 +37,30 @@ upskill add driftsys/metapowers metapowers
 
 See the [upskill documentation](https://driftsys.github.io/upskill/) for more commands.
 
+## upskill plugins
+
+This repository publishes one plugin named `upskill` for each client: one for
+Claude Code and one for Copilot CLI. Each plugin is the upskill integration for
+that client. Today it does one thing: when a session starts, it runs
+`upskill update --notice` and reports the available upskill updates, once for
+each set of updates. In Claude Code, the user sees the line at the start of the
+session and the agent receives it. In Copilot CLI, only the agent receives it.
+The plugins need an `upskill` binary that has `update --notice` on your `PATH`.
+
+The sources are maintained in
+[driftsys/upskill](https://github.com/driftsys/upskill) under `plugins/`. The
+copy in this repository is a published copy.
+
+```bash
+# Claude Code
+claude plugin marketplace add driftsys/metapowers
+claude plugin install upskill@metapowers
+
+# Copilot CLI
+copilot plugin marketplace add driftsys/metapowers
+copilot plugin install upskill@metapowers
+```
+
 ## Documentation
 
 - [CONTRIBUTING.md](CONTRIBUTING.md) — How to contribute skills, rules, and bundles

@@ -1,0 +1,13 @@
+{
+  "name": "metapowers",
+  "owner": {
+    "name": "driftsys"
+  },
+  "plugins": [
+    {
+      "name": "upskill",
+      "source": "./plugins/upskill-copilot",
+      "description": "upskill integration for Copilot CLI. When a session starts, it reports available upskill updates, once for each set of updates."
+    }
+  ]
+}
