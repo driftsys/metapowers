@@ -41,11 +41,19 @@ See the [upskill documentation](https://driftsys.github.io/upskill/) for more co
 
 This repository publishes one plugin named `upskill` for each client: one for
 Claude Code and one for Copilot CLI. Each plugin is the upskill integration for
-that client. Today it does one thing: when a session starts, it runs
-`upskill update --notice` and reports the available upskill updates, once for
-each set of updates. In Claude Code, the user sees the line at the start of the
-session and the agent receives it. In Copilot CLI, only the agent receives it.
-The plugins need an `upskill` binary that has `update --notice` on your `PATH`.
+that client. Today it does one thing: when a session starts, it reports the
+available upskill updates.
+
+- In Claude Code, the plugin runs `upskill update --notice`. The user sees the
+  line at the start of the session, once for each set of updates, and the agent
+  receives it.
+- In Copilot CLI, only the agent receives the line, so the plugin asks the agent
+  to tell the user. It runs `upskill update --notice --repeat`, so the line is
+  given at every session start until `upskill update` runs.
+
+The Claude Code plugin needs upskill 0.9.0 or later on your `PATH`, and the
+Copilot CLI plugin needs upskill 0.9.1 or later. With an older binary the
+Copilot CLI plugin prints nothing.
 
 The sources are maintained in
 [driftsys/upskill](https://github.com/driftsys/upskill) under `plugins/`. The
