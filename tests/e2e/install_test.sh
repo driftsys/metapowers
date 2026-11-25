@@ -16,6 +16,9 @@ set -u
 
 METAPOWERS_ROOT="$(git rev-parse --show-toplevel)"
 BUNDLE_PATH="$METAPOWERS_ROOT/skills/metapowers.bundle.yaml"
+# The metapowers bundle no longer requires gardenpowers, so the tests of the
+# gardenpowers items install that bundle directly.
+GARDEN_BUNDLE_PATH="$METAPOWERS_ROOT/skills/gardenpowers.bundle.yaml"
 
 # Per-test fixture: a brand-new temp directory acting as a consumer project.
 # `setup` and `teardown` are bash_unit lifecycle hooks invoked for every test.
@@ -57,7 +60,7 @@ test_install_delivers_rule_supporting_resource() {
     # The sdd-working-memory-lifecycle rule ships wip-gate.sh as a supporting resource.
     # upskill >= 0.7.2 must deliver sibling resource files alongside the rule body,
     # not just the entrypoint (regression guard for upskill#199).
-    upskill add "$BUNDLE_PATH" --project --quiet
+    upskill add "$GARDEN_BUNDLE_PATH" --project --quiet
     assert "[ -f .claude/rules/sdd-working-memory-lifecycle/wip-gate.sh ]" \
         "expected wip-gate.sh delivered next to the Claude rule"
     assert "[ -f .agents/rules/sdd-working-memory-lifecycle/wip-gate.sh ]" \
@@ -70,7 +73,7 @@ test_colocated_agent_keeps_divergent_name() {
     # The sdd-gardener agent is co-located in the sdd-gardening/ directory but keeps
     # its own divergent name (upskill >= 0.7.4 relaxed co-location naming). It must
     # install under its effective name, not the directory name.
-    upskill add "$BUNDLE_PATH" --project --quiet
+    upskill add "$GARDEN_BUNDLE_PATH" --project --quiet
     assert "[ -f .claude/agents/sdd-gardener.md ]" \
         "expected the agent installed under its divergent name (.claude/agents/sdd-gardener.md)"
     assert "[ ! -f .claude/agents/sdd-gardening.md ]" \
