@@ -1,0 +1,21 @@
+**Plan: session expiry in `src/auth/session.py`**
+
+The file has `create_session`, which stores `created` as a timestamp, and `validate_session`, which looks the token up in the `SESSIONS` dict. Nothing checks age yet. `tests/test_session.py` already exists.
+
+1. **Add a TTL constant** at module level, e.g. `SESSION_TTL_SECONDS = 3600`. Confirm the value with the team.
+2. **Check age in `validate_session`.** If `time.time() - session["created"]` exceeds the TTL, return `None`. This is the real one-line change. It should also delete the stale entry from `SESSIONS` so expired tokens don't pile up. That makes it two or three lines, not one.
+3. **Tests in `tests/test_session.py`:**
+   - A fresh session validates and returns the user id.
+   - A session older than the TTL returns `None`.
+   - A session exactly at the boundary behaves as intended. Decide whether the check is `>` or `>=`.
+   - An expired token is removed from `SESSIONS`.
+   - Patch `time.time` for these, with no real sleeping.
+4. **Run the test suite** and confirm the existing tests still pass.
+
+**Decisions to settle before coding:**
+- The TTL value.
+- Whether this is an absolute expiry from creation, as the existing `created` field implies, or an idle timeout that refreshes on use. The plan assumes absolute expiry, which keeps it simple.
+
+**A caveat on skipping review:** this is auth code, and an off-by-one or a wrong comparison would either lock users out or leave sessions alive forever. The tests above cover those cases, so if you skip review, at least run them. A two-minute look from a teammate is cheap for a change that touches authentication.
+
+I haven't edited anything. Say go and I'll implement it.

@@ -1,0 +1,26 @@
+ $ Shell Inspect target files 21 lines…
+   cat src/ui/settings_view.py scripts/build.sh 2>&1 | head -80; git ls-files | head -30
+
+## Implementation plan
+
+**1. Dark-mode toggle in `src/ui/settings_view.py`**
+- `render_settings(user)` currently reads `user.get("theme", "light")` and renders it as plain text.
+- Replace the "Theme: …" paragraph with a toggle control (a checkbox or switch), checked when `theme == "dark"`.
+- Name the control `theme` and give it an id like `dark-mode-toggle`, so a form post or JS handler can persist it.
+- Keep the default as "light" and don't change the function signature.
+- Persisting the choice is outside this file. The plan assumes some other code saves `user["theme"]`. I found none in the repo, so say so in the PR if that's still missing.
+- Add a small test in `tests/` (e.g. `test_settings_view.py`). It should check the toggle is checked for a dark user and unchecked for light or missing.
+
+**2. Elapsed time in `scripts/build.sh`**
+- Record the start time at the top, using `SECONDS` (bash built-in) or `date +%s`.
+- Change the final output to `echo "build done in ${SECONDS}s"`, or print a separate "elapsed: Ns" line after "build done".
+- Keep `set -eu`. If the elapsed time should also print when the build fails, add a `trap … EXIT`.
+
+**Verification:** run `bash scripts/build.sh` and check the elapsed line appears. Run the tests, and view the rendered HTML for both themes.
+
+
+
+Changes    +0 -0
+AI Credits 8.67 (10s)
+Tokens     ↑ 61.8k (30.7k cached, 31.0k written) • ↓ 600
+Resume     copilot --resume=33551ec9-6f46-4cad-8087-9d2e13be5487

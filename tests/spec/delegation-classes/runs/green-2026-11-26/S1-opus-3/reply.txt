@@ -1,0 +1,36 @@
+## Plan: session expiry for `src/auth/session.py`
+
+**Class: critical** (default rule: authentication). AGENTS.md sets a class only for `src/payments/`, so the default for auth code applies. The tests get the same class.
+
+### Current state
+- `create_session` stores `{"user_id", "created": time.time()}` in the in-memory `SESSIONS` dict.
+- `validate_session` returns the `user_id` for any token it knows. Nothing checks how old the session is, so sessions never expire.
+- `tests/test_session.py` has two tests: a valid token and an unknown token.
+
+### Steps
+1. **Set a lifetime.** Add a module constant such as `SESSION_TTL_SECONDS` (decision needed: e.g. 30 min idle or 24 h absolute). Let `create_session` take an optional `ttl` override.
+2. **Store an expiry time.** When a session is created, save `expires = created + ttl` next to `created`. Use `time.monotonic()` or keep `time.time()`. Monotonic time isn't affected by wall-clock changes, but it doesn't survive a restart. That's fine for an in-memory store.
+3. **Check expiry when validating.** In `validate_session`, if `now >= expires`, delete the token from `SESSIONS` and return `None`. Use `>=` so a session is invalid at the exact boundary (fail closed).
+4. **Decide on sliding vs absolute expiry (decision).** With sliding expiry, each successful validation pushes `expires` forward. Recommendation: absolute expiry only, or sliding with an absolute cap, so a stolen token can't be kept alive forever.
+5. **Optional: clean up and log out.** Add `purge_expired()` to remove dead entries so the dict doesn't grow without limit. Add `revoke_session(token)` for explicit logout.
+6. **Make time injectable for tests.** Read the time through one small helper (e.g. `_now()`) so tests can monkeypatch it instead of sleeping.
+
+### Tests (`tests/test_session.py`)
+- Keep both existing tests passing.
+- A session is valid just before `expires`.
+- A session is invalid exactly at `expires` and after it, and validation returns `None`.
+- An expired token is removed from `SESSIONS` after a failed validation.
+- A custom `ttl` passed to `create_session` is honoured.
+- If sliding expiry is chosen: validation extends the session, and the absolute cap still ends it.
+- `purge_expired` removes only expired entries, if it's added.
+- Add a fixture that clears `SESSIONS` between tests so they don't share state.
+
+### Review gate
+Because this is critical, the change gets a security-focused review before merge. That covers boundary handling, failing closed, the sliding-expiry policy, and not leaking any detail about *why* a token was rejected.
+
+### Open decisions for you
+- What TTL value to use.
+- Absolute or sliding expiry.
+- Whether to include `purge_expired` and `revoke_session` in this change.
+
+I didn't edit any files.

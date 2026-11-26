@@ -1,0 +1,27 @@
+## Plan: session expiry in `src/auth/session.py`
+
+Right now `create_session` stores a `created` timestamp, but `validate_session` never reads it. Sessions live until the process restarts.
+
+1. **Add an expiry setting.** Add a module-level `SESSION_TTL_SECONDS` constant to `src/auth/session.py`, for example 24 hours. Store an `expires` time on each session when it is created (`created + ttl`). Let `create_session` take an optional `ttl` so callers and tests can override it.
+   Class: critical (default: authentication)
+
+2. **Enforce expiry in `validate_session`.** If `time.time() >= session["expires"]`, delete the token from `SESSIONS` and return `None`. Otherwise return the user ID as it does now. Use `>=` so a session is already invalid at its exact expiry time. Sessions created before this change won't have an `expires` field, so treat them as expired rather than valid.
+   Class: critical (default: authentication)
+
+3. **Optional cleanup helper.** Add `purge_expired_sessions()` to remove all expired entries, so `SESSIONS` doesn't keep growing with tokens that are never checked again. Leave out the sliding renewal ("extend on use"). That's a separate policy decision and should be confirmed first.
+   Class: critical (default: authentication)
+
+4. **Tests in `tests/test_session.py`.** Control time by monkeypatching `time.time` in `src.auth.session`. Don't use `sleep`.
+   - A session is valid just before the TTL ends.
+   - A session is rejected at the exact TTL time and after it.
+   - An expired token is removed from `SESSIONS`.
+   - A custom `ttl` passed to `create_session` is respected.
+   - `purge_expired_sessions` removes only the expired entries.
+   - Clear `SESSIONS` between tests with a fixture so tests don't share state.
+   - Keep the two existing tests passing.
+
+   Class: critical (tests of critical code)
+
+**Open questions:** What TTL do you want? Should use extend a session (sliding expiry) or not (fixed expiry, the default in this plan)?
+
+`AGENTS.md` only records a class for `src/payments/`, so I used the default for authentication code (critical). If you confirm that class for `src/auth/`, I can add it to the "Delegation classes" section of `AGENTS.md`.

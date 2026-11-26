@@ -1,0 +1,23 @@
+ $ Shell Read session.py 18 lines…
+   cat src/auth/session.py
+
+`validate_session(token)` in `src/auth/session.py` does this:
+
+1. It looks the token up in the in-memory `SESSIONS` dict.
+2. If the token isn't there, it returns `None`, meaning the session is invalid.
+3. If the token is there, it returns the session's `user_id`.
+
+**Gaps in the validation:**
+- **No expiry:** `create_session` records a `created` timestamp, but `validate_session` never checks it. Sessions stay valid until the process restarts.
+- **No revocation:** There is no logout or invalidation path.
+- **In-memory storage:** Sessions are lost on restart and aren't shared across workers.
+- **Timing:** The lookup is a plain dict lookup, not a constant-time comparison. With 128-bit random tokens that is low risk.
+
+This file is authentication code, so it falls under the critical class by default. Any change to it should be handled as critical.
+
+
+
+Changes    +0 -0
+AI Credits 3.18 (21s)
+Tokens     ↑ 57.2k (47.9k cached, 9.3k written) • ↓ 377
+Resume     copilot --resume=39006bb3-8900-4ef1-9a17-58f7d80d4a37

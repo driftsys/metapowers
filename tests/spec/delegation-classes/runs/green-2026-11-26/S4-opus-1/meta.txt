@@ -1,0 +1,6 @@
+command: claude -p --setting-sources project --model claude-opus-5-5 --permission-mode bypassPermissions --no-session-persistence Explain\ how\ src/auth/session.py\ validates\ a\ session. 
+cwd: /var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/tmp.zfTk850xUG
+model: claude-opus-5-5
+start: 2026-11-26T05:57:40Z
+end: 2026-11-26T05:58:03Z
+exit_code: 0

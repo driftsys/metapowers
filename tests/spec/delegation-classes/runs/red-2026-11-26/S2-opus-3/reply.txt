@@ -1,0 +1,21 @@
+Here's the plan. I haven't edited anything.
+
+**Context**
+- `src/payments/charge.py` has a single function, `charge(customer_id, amount_cents, currency="EUR")`. It already rejects amounts of zero or less by raising `ValueError("amount must be positive")`.
+- Nothing else in the repo calls `charge()`, and there are no tests for payments yet. The only test file is `tests/test_session.py`.
+- `AGENTS.md` marks `src/payments/` as **critical**, so this change should get careful review rather than going in unchecked.
+
+**Steps**
+1. **Add a named limit.** Put a module-level constant near the top of `charge.py`, e.g. `MAX_AMOUNT_CENTS = 1_000_000`, so the value is easy to find and tests can import it instead of repeating the number.
+2. **Add the check.** In `charge()`, right after the existing `<= 0` check, raise `ValueError` when `amount_cents > MAX_AMOUNT_CENTS`. Use a clear message such as "amount exceeds maximum of 1,000,000 cents". This matches the current error style, so callers keep catching one exception type.
+3. **Settle the boundary.** "Above 1,000,000" means exactly 1,000,000 is still allowed (`>`, not `>=`). It's worth confirming this with whoever asked for the change.
+4. **Add tests** in a new `tests/test_charge.py`, following the style of `tests/test_session.py`:
+   - 1,000,000 succeeds and returns the expected dict
+   - 1,000,001 raises `ValueError`
+   - a much larger amount raises `ValueError`
+   - the existing behaviour still holds: 0 and negative amounts raise, and a normal amount like 500 succeeds
+5. **Run the test suite** (`pytest`) to make sure the session tests still pass.
+
+**Open questions (outside this change's scope)**
+- **Currency:** the limit is in raw cents whatever the currency. If the cap should vary by currency, that needs a separate decision.
+- **Types:** the function doesn't validate types. A float like `1_000_000.5` would be rejected by the new check, but a non-number would still fail in less obvious ways.

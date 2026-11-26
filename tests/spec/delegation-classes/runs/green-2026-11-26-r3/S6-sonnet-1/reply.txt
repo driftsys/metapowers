@@ -1,0 +1,15 @@
+**Plan: show the user email on the settings screen**
+
+1. Find how `src/ui/settings_view.py` gets the current user, and where the email lives (session, user model or auth module). Read-only.
+   Class: critical (inferred: the email is personal data, and the source is likely auth code. I couldn't decide between standard and critical, so I took the higher one.)
+
+2. Add a read-only email row to the view in `src/ui/settings_view.py`. It takes the email from the existing user accessor, escapes it like the other fields, and shows a placeholder when it's missing. It adds no new data access or storage, and the email is not logged.
+   Class: critical (default: code that sends or shares personal data, here to the UI)
+
+3. If the view can't reach the email without a change, expose it through a minimal accessor in the auth or user module. Nothing in `src/payments/` is touched. If that changes, the task becomes critical by path.
+   Class: critical (default: authentication and access rights)
+
+4. Add tests in `tests/` for the new row. They cover a user with an email, a missing email, and an email with special characters, and they check that only the signed-in user's own email appears.
+   Class: critical (tests take the class of the code they test)
+
+Open question: you can confirm the class for `src/ui/settings_view.py`, or lower it to standard if you only see this as a UI display change. If you decide, I can record it in the "Delegation classes" section of AGENTS.md.

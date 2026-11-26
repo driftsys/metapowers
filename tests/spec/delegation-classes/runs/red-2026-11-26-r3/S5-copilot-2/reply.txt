@@ -1,0 +1,31 @@
+I'll quickly look at the two files so the plan is grounded.
+
+ $ Shell Inspect target files 15 lines…
+   cat src/ui/settings_view.py scripts/build.sh 2>&1 | head -80; ls
+
+## Implementation plan
+
+**1. Dark-mode toggle (`src/ui/settings_view.py`)**
+- `render_settings` already reads `user["theme"]` (default `"light"`) and displays it as text.
+- Replace the plain "Theme: …" line with a labelled checkbox or switch. It is checked when `theme == "dark"`, with an accessible label such as "Dark mode".
+- Make the toggle submit to the existing settings-save path, setting `theme` to `"dark"` or `"light"`.
+  - First find where user settings are persisted. Only the view file turned up in my quick look, so I may need a small handler.
+  - If no handler exists, add a minimal one that updates `user["theme"]`.
+- Add a test in `tests/` covering three cases: the default light state, the dark state with the box checked, and the user name still rendering.
+- Check `README.md` and `AGENTS.md` for conventions and any settings docs to update.
+
+**2. Elapsed time in `scripts/build.sh`**
+- Record the start time with bash's built-in `SECONDS` variable, or `date +%s` if portability matters. `SECONDS` is simplest and works on macOS bash.
+- After `compileall`, change the final output to `build done in ${SECONDS}s`, or print a separate "elapsed: Ns" line.
+- Keep `set -eu`. To report time on failure too, add an `EXIT` trap.
+- Verify by running `bash scripts/build.sh` and confirming the elapsed line appears.
+
+**Validation**
+- Run the test suite, then the build script.
+
+
+
+Changes    +0 -0
+AI Credits 8.7 (14s)
+Tokens     ↑ 61.7k (30.7k cached, 31.0k written) • ↓ 644
+Resume     copilot --resume=cc93f186-f386-40cd-a853-cd71e2dc30cb

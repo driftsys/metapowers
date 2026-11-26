@@ -1,0 +1,20 @@
+**Plan: show the user email on the settings screen**
+
+I haven't opened `src/ui/settings_view.py` or the auth code yet, so step 1 confirms the assumptions below.
+
+1. Find where the current user's email is available (session or user model) and how `src/ui/settings_view.py` gets its data. Read-only.
+   Class: standard (default: user-facing feature; investigation only, no change)
+
+2. Pass the email into the settings view through the existing data path. Don't add a new lookup or storage. Escape it for display, and handle a missing or unverified email with a placeholder.
+   Class: critical (inferred: the change renders personal data, so a bug could expose someone's email to a customer, later. The default list puts personal-data code in critical and user-facing features in standard. I couldn't decide between the two, so I took the higher one.)
+
+3. Add the read-only email row to the layout in `src/ui/settings_view.py`, matching the existing rows' style and labels.
+   Class: critical (same file and same change as step 2; a task takes the highest class among the code it touches)
+
+4. Add tests to cover three cases: the email shows for a signed-in user, the empty or missing case, and one user never seeing another user's email.
+   Class: critical (tests take the class of the code they test)
+
+5. Run the existing UI and auth tests, then check the screen manually.
+   Class: standard (verification only, no code change)
+
+**Open question:** I rated steps 2–4 critical because they display personal data. If you see this as an ordinary user-facing feature, I can lower them to standard. Tell me and I'll record that decision in the plan. I can also offer to add it to the "Delegation classes" section of AGENTS.md.

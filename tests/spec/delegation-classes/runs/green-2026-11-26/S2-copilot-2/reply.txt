@@ -1,0 +1,29 @@
+**Plan: reject charge amounts above 1,000,000 cents**
+
+**Task 1: Add the amount limit check in `src/payments/charge.py`**
+- Class: critical (AGENTS.md: `src/payments/`)
+- Define a named constant for the maximum, `MAX_CHARGE_CENTS = 1_000_000`.
+- Validate the amount at the top of the charge function, before any call to the payment provider and before any state is written.
+- If `amount > MAX_CHARGE_CENTS`, raise the module's existing validation error type. If none exists, add a specific one such as `AmountTooLargeError`.
+- Exactly 1,000,000 stays allowed. Only amounts above it are rejected.
+- Keep the error message free of card or customer data.
+- Check how existing callers handle validation errors, so the rejection reaches the API as a client error (4xx) and not a 500.
+
+**Task 2: Tests for the limit**
+- Class: critical (tests take the class of the code they test; AGENTS.md)
+- Add focused cases to the existing payments test file:
+  - 1,000,000 is accepted.
+  - 1,000,001 is rejected.
+  - A rejected charge makes no provider call and writes no record.
+- Run the targeted payments tests.
+
+**Delegation:** Both tasks are critical. Before dispatching any subagents, load the `delegation-routing` skill. Whoever implements this should have the diff independently reviewed.
+
+**Open point:** Confirm whether the limit should be configurable or per-currency. This plan assumes a single fixed constant.
+
+
+
+Changes    +0 -0
+AI Credits 2.95 (14s)
+Tokens     ↑ 28.4k (19.4k cached, 9.0k written) • ↓ 519
+Resume     copilot --resume=7f2cb3b2-a3d7-42ab-9c39-9dd27ad99a57

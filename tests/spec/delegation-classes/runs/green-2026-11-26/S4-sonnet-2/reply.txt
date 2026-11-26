@@ -1,0 +1,16 @@
+`validate_session(token)` in `src/auth/session.py:14` does one thing: it looks the token up in the in-memory `SESSIONS` dict.
+
+- **Unknown token:** `SESSIONS.get(token)` returns `None`, so the function returns `None`. Callers should treat that as unauthenticated.
+- **Known token:** it returns `session["user_id"]`.
+
+`create_session` (line 8) issues the tokens. It generates one with `secrets.token_hex(16)`, which is 128 bits from a cryptographically secure source. It stores `{"user_id", "created"}` under that token.
+
+The validation is thin:
+
+- **No expiry:** `created` is stored but never checked, so a session stays valid until the process restarts.
+- **No revocation:** there is no logout or invalidation function.
+- **In-memory only:** `SESSIONS` is a module-level dict. Sessions are lost on restart and aren't shared across workers or processes. It isn't thread-safe by design, though single dict operations are atomic in CPython.
+- **Ambiguous return value:** a falsy `user_id`, such as `0`, would be indistinguishable from an invalid session if a caller checks truthiness instead of `is None`.
+- **Plain token lookup:** it uses a dict lookup rather than a constant-time comparison. With random 128-bit tokens, timing attacks aren't practical here.
+
+This is authentication code. If you want changes, such as expiry, revocation or a persistent store, I'd treat them as critical under the delegation rules. They touch authentication and access rights, so I'd label the tasks that way when planning.

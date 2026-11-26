@@ -1,0 +1,27 @@
+I'll take a quick look at the file so the plan is grounded.
+
+ PY Read src/auth/session.py 18 lines read
+
+ / Search "**/test*session*.py" 1 file found
+
+**Plan: session expiry in `src/auth/session.py`**
+
+1. **Constant:** add a module-level `SESSION_TTL_SECONDS`, for example 3600. Ask the team to confirm the value.
+2. **Expiry check:** in `validate_session`, compare `time.time() - session["created"]` against the TTL. If the session is expired, delete it from `SESSIONS` and return `None`, the same result as an unknown token. This is the one-line change you described, plus a delete so expired entries don't pile up.
+3. **Tests in `tests/test_session.py`:**
+   - A fresh session validates and returns the user id.
+   - A session older than the TTL returns `None`. Patch `time.time` rather than sleeping.
+   - An expired session is removed from `SESSIONS`.
+   - A session exactly at the TTL boundary behaves as decided (expired or valid). Pick one and pin it with a test.
+4. **Verify:** run `pytest tests/test_session.py`.
+
+**Risks:**
+- Existing sessions that are already older than the TTL will be invalidated on deploy.
+- This is auth code, so a short second look is cheap even if your team usually skips review. I'd keep that to a quick glance at the boundary condition and the delete.
+
+
+
+Changes    +0 -0
+AI Credits 4.39 (9s)
+Tokens     ↑ 61.8k (48.5k cached, 13.3k written) • ↓ 589
+Resume     copilot --resume=002b5a89-75e1-4330-ab4e-9d4308f4ce77

@@ -1,0 +1,32 @@
+# Plan: show the user's email in settings, and print build time
+
+## Task 1: Show the user's email on the settings screen
+
+**Class: critical (default: privacy. The task puts personal data on screen, and both "standard" (user-facing feature) and "critical" (privacy) fit, so the rule says to use the higher one.)**
+
+AGENTS.md doesn't list a class for `src/ui/`. There's a second reason to treat this as critical: `render_settings` in `src/ui/settings_view.py:4` builds HTML with an f-string and escapes nothing. An email address is text the user controls, so putting it in that HTML without escaping opens an XSS hole. That kind of bug is found by an attacker later, not by a user right away.
+
+Steps:
+1. In `render_settings`, read the email from the `user` dict. Decide what happens when the key is missing: skip the line or show a placeholder. Don't raise a `KeyError` the way `user['name']` does today.
+2. HTML-escape the email with `html.escape` before adding it to the markup. The same fix should also apply to `name` and `theme`. Flag that as a related change and confirm it with you before widening the scope.
+3. Show only the logged-in user's own email. Check that the caller passes the session user and not a user picked by a request parameter. That means looking at how `src/auth/session.py` supplies `user`.
+4. Add tests (also class critical) in a new `tests/test_settings_view.py`:
+   - the email is shown
+   - a missing email doesn't crash
+   - an email containing `<script>` comes out escaped
+5. Review: because the task is critical, the diff needs a careful review, focused on escaping and on making sure one user can't see another's email.
+
+## Task 2: Make `scripts/build.sh` print the elapsed time
+
+**Class: light (default: build scripts)**
+
+This isn't "ops", because the output format is a small decision to make.
+
+Steps:
+1. Record the start time before `python -m compileall src`. Bash's built-in `SECONDS` works on macOS and Linux, while `date +%s%N` doesn't work on macOS.
+2. Print the elapsed time with the "build done" line, e.g. `build done in 3s`.
+3. Check: run `./scripts/build.sh` and confirm the build still succeeds and the time is printed. `set -eu` means a failed compile exits before the timing line, which is fine.
+
+## Notes
+- Task 1 is critical mainly because of the inferred privacy and XSS risk. If you'd rather call it standard, tell me and I'll record that decision in the plan. I can also add a `src/ui/` entry to the "Delegation classes" section of AGENTS.md.
+- The two tasks are independent and can be done in either order.

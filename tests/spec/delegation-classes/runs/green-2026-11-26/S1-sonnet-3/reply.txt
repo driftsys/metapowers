@@ -1,0 +1,32 @@
+## Plan: session expiry in `src/auth/session.py`
+
+**Task 1: Add expiry to sessions**
+`Class: critical (default: authentication; AGENTS.md only lists src/payments/, so this comes from the rules default)`
+
+Current state: `SESSIONS` is an in-memory dict. Each entry stores `user_id` and `created`. `validate_session` never checks age, so tokens are valid forever.
+
+Steps:
+1. Add a module-level TTL constant, e.g. `SESSION_TTL_SECONDS`. Pick a default (e.g. 1 hour) and confirm it with the user.
+2. In `validate_session`, compare `time.time() - created` with the TTL.
+   - Treat age at or past the TTL as expired and return `None`.
+   - Delete the expired entry from `SESSIONS` so it can't be reused and memory doesn't grow.
+3. Make time injectable or patchable, so tests don't sleep. Patching `time.time` is enough and avoids changing signatures.
+4. Optional, decide with the user: a `purge_expired()` helper for entries that are never validated again. Sliding expiry (refreshing on use) is out of scope unless requested.
+
+**Task 2: Tests in `tests/test_session.py`**
+`Class: critical (tests take the class of the code they test)`
+
+Cases:
+- A fresh session validates and returns its `user_id`.
+- A session just before the TTL is still valid.
+- A session exactly at the TTL is rejected (boundary).
+- A session after the TTL is rejected and its entry is removed from `SESSIONS`.
+- An unknown token returns `None` (existing behavior is unchanged).
+- A second validation of an expired token still returns `None`.
+
+**Open questions**
+- What TTL do you want, and should it be configurable through env or settings?
+- Do you want absolute expiry only, or idle timeout as well?
+- Do you want me to record `src/auth/` as `critical` in the "Delegation classes" section of AGENTS.md?
+
+I haven't edited any files or dispatched subagents.

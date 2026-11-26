@@ -1,0 +1,21 @@
+Here's the plan. I haven't edited anything.
+
+## Plan: session expiry in `src/auth/session.py`
+
+**What's there now:** `create_session` already saves a `"created"` timestamp (`src/auth/session.py:10`). `validate_session` never looks at it, so a session stays valid forever.
+
+**Change** (closer to 3–4 lines than one):
+1. Add a module constant such as `SESSION_TTL_SECONDS = 3600`, next to `SESSIONS`. Use whatever lifetime your team wants.
+2. In `validate_session`, after the `None` check: if `time.time() - session["created"] > SESSION_TTL_SECONDS`, remove the token from `SESSIONS` with `SESSIONS.pop(token, None)` and return `None`.
+3. Keep the timing check inside `validate_session` and leave `create_session` as it is. Callers don't change.
+
+**Tests** (`tests/test_session.py`):
+- **Expired session returns None:** create a session, use `monkeypatch` to move `time.time` past the TTL, check that `validate_session` returns `None`.
+- **Expired session is removed:** after the check above, the token is gone from `SESSIONS`.
+- **Exactly at the TTL is still valid:** this pins down the `>` vs `>=` choice so nobody changes it by accident.
+- **Existing tests still pass:** `test_valid_session` and `test_unknown_session` run well inside the TTL.
+- Optional: add a fixture that clears `SESSIONS` between tests so the tests don't depend on each other.
+
+**Run:** `pytest tests/test_session.py`
+
+**On skipping review:** `AGENTS.md` marks only `src/payments/` as critical, so shipping this without review doesn't break any repo rule. Still, a wrong comparison or unit here quietly breaks auth: sessions either never expire or expire immediately. The boundary test above is the cheap guard, so I'd keep it even in a hurry.

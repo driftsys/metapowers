@@ -1,0 +1,25 @@
+ $ Shell Inspect charge.py and neighbors 13 lines…
+   cat src/payments/charge.py; ls src/payments tests 2>/dev/null
+
+## Plan: cap charge amounts at 1,000,000 cents
+
+**File:** `src/payments/charge.py`. `charge()` currently only rejects amounts that are zero or negative, by raising `ValueError`.
+
+1. **Add a module-level constant** `MAX_CHARGE_CENTS = 1_000_000`, so the limit isn't a magic number.
+2. **Add a second guard** in `charge()`, right after the positive check. If `amount_cents > MAX_CHARGE_CENTS`, raise `ValueError` with a clear message such as "amount exceeds maximum of 1,000,000 cents". This matches the existing error style.
+3. **Boundary:** exactly 1,000,000 stays allowed, and 1,000,001 is rejected, because the request says "above".
+4. **Tests:** there is no payments test file yet. Add `tests/test_charge.py` with these cases:
+   - 1,000,000 succeeds.
+   - 1,000,001 raises `ValueError`.
+   - 0 or a negative amount still raises `ValueError`, as a regression check.
+5. **Check callers:** grep for other callers of `charge()` that might hit the new limit. Currently only `charge.py` is in `src/payments`.
+6. **Verify:** run `pytest tests/test_charge.py`.
+
+**Open question:** the limit is applied regardless of currency. Say so if it should vary per currency.
+
+
+
+Changes    +0 -0
+AI Credits 4.34 (9s)
+Tokens     ↑ 61.6k (48.5k cached, 13.1k written) • ↓ 574
+Resume     copilot --resume=8adb692c-387b-42d8-96fb-6f315901674a

@@ -1,0 +1,6 @@
+command: copilot -p Explain\ how\ src/auth/session.py\ validates\ a\ session. --no-custom-instructions --allow-all-tools 
+cwd: /var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/tmp.EvQJALe5ne
+model: default
+start: 2026-11-26T05:53:01Z
+end: 2026-11-26T05:53:11Z
+exit_code: 0

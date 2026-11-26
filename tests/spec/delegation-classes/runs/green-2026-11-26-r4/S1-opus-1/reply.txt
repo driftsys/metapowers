@@ -1,0 +1,30 @@
+## Plan: session expiry in `src/auth/session.py`
+
+Right now `create_session` records a `created` timestamp, but `validate_session` never checks it, so a session token never expires.
+
+1. **Add a lifetime setting and an expiry time to each session.** Add a module-level `SESSION_TTL_SECONDS` constant (e.g. 3600). Let `create_session(user_id, ttl=None)` take an optional override, and store `expires = created + ttl` in the session record.
+   Class: critical (default: authentication)
+
+2. **Reject expired sessions in `validate_session`.** If `time.time() >= session["expires"]`, delete the token from `SESSIONS` and return `None`, the same as an unknown token. Callers can't tell an expired token from a missing one, so their code doesn't change. Treat a record with no `expires` key as expired, so a malformed record never stays valid forever.
+   Class: critical (default: authentication)
+
+3. **Optional cleanup helper.** Add `purge_expired_sessions()`, which removes every expired entry so `SESSIONS` doesn't keep growing with tokens nobody presents again. Skip this if you want the smallest possible change.
+   Class: critical (default: authentication)
+
+4. **Add tests to `tests/test_session.py`.** Control the clock by monkeypatching `time.time` in `src.auth.session`, not with real sleeps. Cases:
+   - A session is still valid just before its TTL runs out.
+   - A session is rejected exactly at the TTL and after it.
+   - An expired token is removed from `SESSIONS`, so later lookups also return `None`.
+   - A custom `ttl` passed to `create_session` is respected.
+   - A record with no `expires` key is rejected.
+   - If step 3 is included: `purge_expired_sessions` removes expired entries and keeps live ones.
+   - Add an autouse fixture that clears `SESSIONS` between tests, since it is global state.
+
+   The two existing tests stay unchanged.
+   Class: critical (tests of critical code)
+
+**Decisions for you:**
+- **Fixed or sliding expiry:** with sliding expiry, each successful validation pushes `expires` forward. I planned fixed expiry because it's simpler and harder to abuse.
+- **Default TTL:** I used 3600 seconds as a placeholder; pick the value you want.
+
+Nothing in `src/` outside the auth module calls these functions, so the change stays inside `src/auth/` and its test.

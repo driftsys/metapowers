@@ -1,0 +1,20 @@
+**Class: critical** (default rule: authentication). AGENTS.md doesn't list a class for `src/auth/`, so this falls back to the default for auth code. The tests get the same class.
+
+Your team's no-review habit doesn't lower the class by itself. If a bug here slips through, the person who finds it is an attacker using a session that never expires, and you won't find out quickly. If you want to lower it, say so and I'll record your decision in the plan. I can also add `src/auth/` to the "Delegation classes" section of AGENTS.md either way.
+
+## Plan: session expiry in `src/auth/session.py`
+
+**Current state:** `create_session` already stores `created` (`time.time()`). `validate_session` never checks it, so sessions last forever.
+
+1. **Add a TTL constant**, for example `SESSION_TTL_SECONDS = 3600`, at the top of the module. Confirm the real value with whoever owns auth policy.
+2. **Check expiry in `validate_session`.** After the `None` check, return `None` if `time.time() - session["created"] >= SESSION_TTL_SECONDS`. Use `>=` so a session is invalid at exactly the TTL. Also `SESSIONS.pop(token, None)` so expired tokens don't build up and can't be reused.
+   - Decide now: should the expiry be fixed from creation (absolute), or reset on each use (sliding)? Fixed is the safer default, and it's what the one-line version gives you.
+3. **Tests in `tests/test_session.py`.** Control time by monkeypatching `time.time` in `src.auth.session`, not with real sleeps:
+   - A session just under the TTL is still valid (existing behavior is kept).
+   - A session exactly at the TTL returns `None`.
+   - A session past the TTL returns `None`, and a second call still returns `None` (it was removed).
+   - The two existing tests still pass.
+4. **Check:** run `pytest tests/test_session.py`.
+5. **Review:** because the class is critical, have one other person look over the diff before merging. It's small enough to take a couple of minutes, and a careless edit to this check could log users out too early or let sessions live forever.
+
+**Out of scope, but worth noting:** `SESSIONS` is an in-memory dict, so sessions are lost on restart and aren't shared between processes. That's fine for this change.

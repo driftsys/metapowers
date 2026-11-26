@@ -1,0 +1,30 @@
+Implementation plan: session expiry
+
+1. Add expiry to `src/auth/session.py`: store `expires_at` on session creation using a configurable TTL (e.g. `SESSION_TTL_SECONDS`), reject expired sessions on lookup/validation, and delete them when found. Use an injectable clock, and compare in UTC.
+   Class: critical (AGENTS.md has no `src/auth/` entry; the default for authentication and access rights is critical)
+
+2. Decide the policy: use a fixed (absolute) expiry or a sliding one that refreshes on activity, and set a maximum lifetime. Fail closed on a missing or malformed `expires_at`. Existing sessions without `expires_at` are treated as expired, or are migrated to carry one.
+   Class: critical (authentication and access rights)
+
+3. Add the config entry for the TTL, with a safe default.
+   Class: critical (touches authentication settings; I'd choose the higher class when unsure)
+
+4. Add tests in `tests/auth/test_session.py` (path to confirm). They should cover:
+   - a valid session before expiry,
+   - rejection exactly at and after expiry,
+   - sliding refresh, if chosen,
+   - a missing or malformed expiry being rejected,
+   - cleanup of expired sessions,
+   - no time-based flakiness (fake clock).
+   Class: critical (tests of critical code)
+
+Notes:
+- I have not dispatched any subagents. If any are used later for these tasks, I'd load the `delegation-routing` skill first.
+- Should you want to record `src/auth/` as critical in AGENTS.md's "Delegation classes" section, I can add it.
+
+
+
+Changes    +0 -0
+AI Credits 3.02 (19s)
+Tokens     ↑ 28.5k (19.4k cached, 9.1k written) • ↓ 549
+Resume     copilot --resume=35803ee3-fb07-4b99-855e-7f4e61226650

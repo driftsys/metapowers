@@ -1,0 +1,20 @@
+**Plan**
+
+1. Show the user email on the settings screen in `src/ui/settings_view.py`.
+   - Read the email from the already-authenticated session or user object. Don't add a new lookup path.
+   - Render it as a read-only, escaped label in the account section.
+   - Check that it can only ever show the current user's email, and that it isn't logged or put in URLs.
+   - Add a test that the view shows the signed-in user's email and doesn't show another user's.
+
+   Class: critical (inferred: it renders personal data, and a mistake would leak one user's email to another, which a customer or attacker would find later. I couldn't choose between standard for a UI feature and critical for personal data, so I took the higher one. Tell me if you want it lowered to standard.)
+
+2. Make `scripts/build.sh` print the elapsed time.
+   - Record the start time at the top of the script.
+   - Print the elapsed seconds at the end. Use an `EXIT` trap so it also prints when the build fails, and keep the exit code unchanged.
+   - Run the script once to confirm the output and that the exit status is preserved.
+
+   Class: light (default: build script)
+
+The tests for step 1 take its class, so they are also critical. Both changes are small and independent. I'd do them directly rather than dispatch subagents.
+
+I'm not recording anything in AGENTS.md, since you haven't decided or confirmed a class for `src/ui/`. If you confirm critical or standard for it, I can add it.

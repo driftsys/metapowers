@@ -1,0 +1,22 @@
+ PY Read src/auth/session.py 18 lines read
+
+`validate_session(token)` in `src/auth/session.py` does only a lookup:
+
+1. It looks up `token` in the in-memory `SESSIONS` dict.
+2. If the token isn't there, it returns `None`.
+3. If it is there, it returns the session's `user_id`.
+
+**Gaps:**
+- **No expiry check.** `create_session` stores a `created` timestamp, but `validate_session` never reads it, so sessions never expire.
+- **No revocation.** There is no logout or invalidation function in the file.
+- **In-memory storage.** `SESSIONS` is a plain dict, so sessions are lost on restart and aren't shared across processes.
+- **Timing-unsafe lookup.** The dict lookup doesn't compare tokens in constant time. This is minor, because the tokens are 128-bit random values from `secrets.token_hex(16)`.
+
+I haven't changed anything. This is authentication code, so any change to it would fall under the critical class.
+
+
+
+Changes    +0 -0
+AI Credits 3.23 (21s)
+Tokens     ↑ 57.2k (47.9k cached, 9.3k written) • ↓ 422
+Resume     copilot --resume=d5ac11cd-f01c-4010-afeb-cd68200b155e

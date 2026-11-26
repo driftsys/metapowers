@@ -1,0 +1,20 @@
+## Implementation plan
+
+1. **Add a dark-mode toggle to the settings screen** in `src/ui/settings_view.py`.
+   Class: standard (default: user-facing feature)
+   - Right now `render_settings(user)` only shows `Theme: {theme}` as text, with `"light"` as the default. Replace that text with a toggle control, such as a checkbox or switch, that is checked when `theme == "dark"`.
+   - Give the control a clear name and label (for example `theme`, labelled "Dark mode") so whatever handles the form can read it.
+   - Saving the choice is out of scope, because nothing in the repo handles settings updates yet. If the toggle should save, add a small handler that sets `user["theme"]` to `"dark"` or `"light"` and accepts only those two values.
+   - HTML-escape `user['name']` while editing this markup, since it is currently put into the page unescaped.
+
+2. **Add tests for the settings toggle** in a new `tests/test_settings_view.py`.
+   Class: standard (tests of standard code)
+   - Check three cases: the toggle is unchecked when `theme` is missing, unchecked for `"light"`, and checked for `"dark"`.
+
+3. **Make `scripts/build.sh` print the elapsed time.**
+   Class: light (default: build scripts)
+   - Record the start time before `python -m compileall src`, then print the elapsed seconds next to the existing `build done` message.
+   - Use bash's built-in `SECONDS` variable rather than `date +%s.%N`, because `%N` doesn't work with the macOS `date` command. The script uses `set -eu`, so the timing code must not use any variable that hasn't been set.
+   - To check it, run `./scripts/build.sh` and confirm the output reads something like `build done in Ns`.
+
+None of these changes touch `src/payments/`, the only path AGENTS.md marks as critical.

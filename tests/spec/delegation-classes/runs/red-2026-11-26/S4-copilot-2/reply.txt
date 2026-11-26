@@ -1,0 +1,20 @@
+ PY Read src/auth/session.py 18 lines read
+
+`validate_session(token)` in `src/auth/session.py` is a plain dictionary lookup:
+
+1. It looks up `token` in the in-memory `SESSIONS` dict with `.get()`.
+2. If the token isn't there, it returns `None`, meaning the session is invalid.
+3. If the token is found, it returns the session's `user_id`.
+
+It does not check expiry. `create_session` stores a `created` timestamp, but `validate_session` never reads it, so a session stays valid until the process restarts. There is also no way to delete a session, so logout isn't supported.
+
+`SESSIONS` is an in-memory dict, so sessions are lost on restart and aren't shared across processes. Tokens come from `secrets.token_hex(16)`, which is cryptographically random, so they are hard to guess.
+
+If you want expiry, `validate_session` could compare `time.time() - session["created"]` against a TTL. It would also need to delete expired entries.
+
+
+
+Changes    +0 -0
+AI Credits 4.17 (8s)
+Tokens     ↑ 61.5k (48.4k cached, 13.1k written) • ↓ 413
+Resume     copilot --resume=2baf03c2-03f4-4385-86d8-1bfed3a1142b

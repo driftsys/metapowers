@@ -1,0 +1,19 @@
+`validate_session` in `src/auth/session.py:14` is a plain dictionary lookup.
+
+1. **Storage:** Sessions live in the module-level dict `SESSIONS` (`session.py:5`). `create_session` (`session.py:8`) generates a random token with `secrets.token_hex(16)`, which is 128 bits from a cryptographically secure source. It stores `{"user_id": ..., "created": time.time()}` under that token and returns the token.
+
+2. **Validation:** `validate_session(token)` does `SESSIONS.get(token)`.
+   - If the token isn't in the dict, it returns `None`, meaning the session is invalid.
+   - If the token is found, it returns `session["user_id"]`.
+
+   Callers have to treat `None` as unauthenticated.
+
+**Gaps**
+
+- **No expiry.** `created` is stored but never checked, so a session stays valid until the process restarts.
+- **No revocation.** There is no logout or delete function, so a session can't be invalidated.
+- **In-memory only.** Sessions are lost on restart. They aren't shared across multiple workers or processes, and the dict grows without bound.
+- **Lookup timing.** The dict lookup is not constant-time. With 128-bit random tokens this is unlikely to be exploitable in practice.
+- **Falsy user IDs.** If a `user_id` could be falsy (such as `0`), a caller that writes `if not validate_session(t)` would wrongly reject a valid session.
+
+Authentication code is critical under the project's delegation-class defaults. Any change to this file should therefore be classed critical.

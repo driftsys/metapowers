@@ -1,0 +1,15 @@
+**Plan: show the user email on the settings screen**
+
+1. Read `src/ui/settings_view.py` and find where the current user is available (session or user model). Check that the email can be read without touching `src/payments/`. This is a read-only step and needs no class.
+
+2. Render the user's email in `src/ui/settings_view.py`, read-only, in the account section of the settings screen.
+   Class: standard (default: user-facing screen that displays personal data; privacy question pending, see below)
+
+3. Add a test to the existing UI test file that checks the email appears for a signed-in user and that nothing breaks when the email is missing.
+   Class: standard (tests of standard code)
+
+**Question for you:** the email is personal data, and nothing in the repo says whether privacy requirements apply to this screen. Examples would be masking the email, a "don't show in shared or screen-share contexts" rule, or logging limits. Do any apply?
+- If **no**, I keep both tasks as standard.
+- If **yes**, I'll raise the class for the affected tasks to critical (the personal-data default) and add steps for masking or logging.
+
+Until you answer, I'm planning both tasks as standard. If you confirm a class for `src/ui/`, I can record it in the "Delegation classes" section of AGENTS.md.

@@ -1,0 +1,11 @@
+## Plan: show the user's email on the settings screen
+
+Right now `render_settings(user)` in `src/ui/settings_view.py:4` builds an HTML string with an f-string. It shows `user['name']` and the theme, and escapes neither. There are no UI tests yet, since `tests/` only has `test_session.py`.
+
+1. **Add the email line to `render_settings`** in `src/ui/settings_view.py`. Read it with `user.get("email")` and add a line such as `<p>Email: …</p>` after the name heading. If the user has no email, leave the line out (or show a placeholder) so the screen doesn't raise a `KeyError`. Escape the email with `html.escape` before putting it in the page, so a crafted address can't inject HTML. The name has the same problem, and it's worth escaping in the same change.
+   Class: standard (default: user-facing screen that displays personal data; pending your answer on privacy below)
+
+2. **Add tests in a new `tests/test_settings_view.py`.** Cover three cases: the email appears when it is set; the screen still renders when it is missing; and an address containing HTML characters comes out escaped.
+   Class: standard (tests of standard code)
+
+**Open question:** this screen will now show personal data, and there's no spec saying whether privacy rules apply. For example: should the address be partly masked (`s***@gmail.com`), shown only to the account owner, or kept out of logs and caches? If yes, step 1 gets more work and its class may go up. The plan stays standard until you decide. Once you do, I can record the class for `src/ui/` in the "Delegation classes" section of AGENTS.md.

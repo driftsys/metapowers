@@ -1,0 +1,7 @@
+The line, quoted verbatim:
+
+```
+- When a task displays personal data and no spec says whether privacy applies,
+```
+
+The rule wraps onto the next line, which reads: `  ask the user, and plan the task as standard until the user answers.`

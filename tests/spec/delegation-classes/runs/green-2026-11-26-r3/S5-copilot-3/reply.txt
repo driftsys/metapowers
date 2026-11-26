@@ -1,0 +1,25 @@
+Plan (no files edited):
+
+1. Add a dark-mode toggle to the settings screen in `src/ui/settings_view.py`.
+   - Add a toggle control to the settings view and wire it to a theme preference.
+   - Persist the choice and apply it on load.
+   Class: standard (default: user-facing feature)
+
+2. Add tests for the dark-mode toggle (render, toggle, persistence).
+   Class: standard (tests of standard code)
+
+3. Make `scripts/build.sh` print the elapsed time.
+   - Record the start time at the top and print the elapsed seconds at the end, including on failure, for example through an EXIT trap.
+   Class: light (default: build script, no shared data, failures are visible right away)
+
+Notes:
+- `src/ui/` is not listed in AGENTS.md, so the defaults apply. Only `src/payments/` is recorded as critical.
+- If the toggle stores the preference alongside account or personal data, I would raise task 1 to critical. I'm assuming it's a local UI preference.
+- The two changes are independent, so they can be done in either order.
+
+
+
+Changes    +0 -0
+AI Credits 2.83 (10s)
+Tokens     ↑ 28.5k (19.4k cached, 9.1k written) • ↓ 356
+Resume     copilot --resume=6ef761bf-4d5a-47cd-a4cc-8bb11873a984

@@ -1,0 +1,20 @@
+ $ Shell Inspect settings view and email usage 6 lines…
+   cat src/ui/settings_view.py; grep -rniE "email|class User" src --include=*.py | head -20
+
+## Plan: show user email on settings screen
+
+**Context:** `render_settings(user)` in `src/ui/settings_view.py` takes a `user` dict and returns an HTML string with name and theme. Nothing else in `src` references email.
+
+1. **Confirm the data source.** Find where `user` is built and passed to `render_settings`. It isn't in `src`, so check callers outside it. Make sure an `email` key is populated there. If it isn't, add it to the user loading or serialization code.
+2. **Update the view.** In `render_settings`, read `user.get("email")` the way `theme` is read, then add a line such as `<p>Email: …</p>` after the heading.
+3. **Handle a missing email.** Either skip the line or show a placeholder such as "Not set", rather than raising `KeyError`.
+4. **Escape the value.** The output is raw HTML, so escape the email with `html.escape`. Consider escaping `name` too, but that is a separate change.
+5. **Test.** Add a test that renders with an email and one without. Assert the email appears in the first case and nothing breaks in the second.
+6. **Privacy check.** Confirm that the settings screen is only shown to the account owner.
+
+
+
+Changes    +0 -0
+AI Credits 8.53 (15s)
+Tokens     ↑ 61.5k (30.7k cached, 30.9k written) • ↓ 504
+Resume     copilot --resume=663f1600-6048-407a-9817-63d9e498352f

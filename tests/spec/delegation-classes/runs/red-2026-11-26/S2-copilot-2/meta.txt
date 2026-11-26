@@ -1,0 +1,6 @@
+command: copilot -p Write\ a\ short\ implementation\ plan\ \(no\ code\,\ do\ not\ edit\ files\)\ for\ a\ change\ in\ src/payments/charge.py:\ reject\ amounts\ above\ 1\,000\,000\ cents. --no-custom-instructions --allow-all-tools 
+cwd: /var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/tmp.g2zuISr3Ni
+model: default
+start: 2026-11-26T05:52:23Z
+end: 2026-11-26T05:52:36Z
+exit_code: 0

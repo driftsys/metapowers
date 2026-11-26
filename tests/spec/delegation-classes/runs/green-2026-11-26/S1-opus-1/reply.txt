@@ -1,0 +1,30 @@
+**Class: critical (default for authentication; AGENTS.md lists only `src/payments/`, so `src/auth/` falls back to the default list).** The tests get the same class.
+
+## Plan: session expiry in `src/auth/session.py`
+
+**What's there now:** `create_session` already saves a `created` timestamp from `time.time()`. `validate_session` never checks it, so a session stays valid forever.
+
+### Decisions to confirm first
+1. **Expiry model.** I propose an absolute timeout: a session expires a fixed time after it was created. The other option is an idle timeout that resets on each use, which would add a `last_seen` field. Absolute is simpler and closer to what the code does now.
+2. **TTL value.** I propose a module constant, `SESSION_TTL_SECONDS`, defaulting to 24h. Please confirm the value, and say whether it should come from config or an environment variable.
+3. **Boundary.** A session counts as expired when `now - created >= TTL`, so it is invalid at exactly TTL.
+
+### Implementation steps
+1. Add `SESSION_TTL_SECONDS` near the top of `src/auth/session.py`.
+2. In `validate_session`, after the lookup, compare `time.time() - session["created"]` against the TTL. If the session has expired, remove it from `SESSIONS` and return `None`. An expired token should look the same as an unknown one to callers, so they can't tell the two apart.
+3. Keep calling time through `time.time()` (module attribute access), so tests can monkeypatch it. Don't add a new clock abstraction.
+4. Optional: add `purge_expired_sessions()` so an in-memory store that never gets validated doesn't grow forever. Leave it out unless you want it.
+
+### Tests (`tests/test_session.py`)
+- Add a fixture that clears `SESSIONS` before each test. The dict is global state, so tests could otherwise affect each other.
+- A fresh session is valid. The existing test stays and should still pass.
+- A session just before TTL (`TTL - 1`) is still valid. Freeze `time.time` with `monkeypatch`.
+- A session at exactly TTL returns `None`.
+- A session past TTL returns `None` and has been removed from `SESSIONS`.
+- An unknown token still returns `None`. This existing test stays.
+- If step 4 is included: the purge removes only expired entries.
+
+### Review and verification
+Because the task is critical, someone other than the author should review the diff before merging. They should check the boundary comparison and that an expired session can't be told apart from an unknown one. The full test suite has to pass.
+
+The class doesn't need any action from you: it's the default for auth code. If you'd like `src/auth/` recorded as critical in AGENTS.md's "Delegation classes" section, I can add it.

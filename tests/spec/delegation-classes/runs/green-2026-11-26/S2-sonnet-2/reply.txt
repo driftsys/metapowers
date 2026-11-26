@@ -1,0 +1,30 @@
+## Plan: reject charge amounts above 1,000,000 cents
+
+I haven't opened `src/payments/charge.py` yet. The steps below assume a single charge entry point, which I'll confirm first.
+
+**Task 1: Inspect `charge.py` and its callers**
+Class: critical (AGENTS.md: `src/payments/`)
+- Find where the amount is first validated and how existing rejections are raised (exception type, error codes).
+- Find the callers and any API or UI layer that surfaces those errors.
+
+**Task 2: Add the upper-bound check**
+Class: critical (AGENTS.md: `src/payments/`)
+- Put the check at the top of the charge path, before any call to the payment provider or any write.
+- Define the limit as a named constant (1,000,000 cents). It is inclusive, so exactly 1,000,000 is accepted and 1,000,001 is rejected.
+- Raise the module's existing validation error, using the same type and message style as the other rejections.
+- Don't change behavior for amounts at or below the limit. Leave the existing checks for non-positive or non-integer amounts as they are.
+
+**Task 3: Add tests**
+Class: critical (tests take the class of the code they test)
+- Cover three amounts: exactly 1,000,000 (accepted), 1,000,001 (rejected), and a very large value (rejected).
+- Assert that a rejected charge makes no provider call and writes no record.
+- Confirm the existing tests still pass.
+
+**Task 4: Check callers' error handling**
+Class: critical (touches payment paths; the highest class among the code it touches applies)
+- Confirm callers turn the new error into a clear client error and not a 500.
+- Make no changes outside `src/payments/` without asking you first.
+
+**Decision for you:** should the limit be a fixed constant, or configurable per account or environment? I'd default to a constant unless you say otherwise.
+
+Because this is critical, I'd want a human review of the diff before merging, not only passing tests.

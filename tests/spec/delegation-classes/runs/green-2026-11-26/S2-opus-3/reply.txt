@@ -1,0 +1,22 @@
+## Plan: reject charges above 1,000,000 cents
+
+**Class: critical (AGENTS.md: `src/payments/` is critical)**. The new tests are critical too, since tests take the class of the code they test.
+
+**What's there now:** `src/payments/charge.py` has a single `charge(customer_id, amount_cents, currency="EUR")` function. Its only check rejects amounts of zero or less. Nothing tests it yet: the only test file is `tests/test_session.py`.
+
+### Steps
+
+1. **Add the limit as a named constant.** Put `MAX_AMOUNT_CENTS = 1_000_000` at the top of `charge.py` so the limit isn't a bare number inside the function.
+2. **Add the check.** In `charge()`, right after the existing positive-amount check, raise `ValueError` when `amount_cents > MAX_AMOUNT_CENTS`. This matches how the function already reports bad amounts. The message should state the limit.
+3. **Boundary:** "above 1,000,000" means exactly 1,000,000 is still allowed and 1,000,001 is rejected.
+4. **Add tests** in a new `tests/test_charge.py`:
+   - 1,000,000 is accepted and returns the expected dict
+   - 1,000,001 is rejected with `ValueError`
+   - a much larger amount is rejected
+   - the existing checks still hold: 0 and negative amounts are rejected, and 1 is accepted
+5. **Check:** run the full test suite, and read over the diff before merging, since this is critical code.
+
+### Questions to settle before implementing
+- **Currency:** the function defaults to EUR. Should the limit be the same 1,000,000 minor units for every currency? (That's €10,000, but a very different amount in JPY, for example.) The plan assumes yes: one flat limit.
+- **Callers:** no other code calls `charge()` today, so the new `ValueError` doesn't need changes anywhere else. If callers outside the repo exist, they need to expect it.
+- **Wrong input types** (floats, strings, `True`) are outside this change. It might be worth a separate critical-class task.

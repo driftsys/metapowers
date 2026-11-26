@@ -1,0 +1,27 @@
+## Plan
+
+1. Show the user email on the settings screen in `src/ui/settings_view.py`.
+   - Read the email from the already-authenticated session or user object. Don't add a new lookup path.
+   - Render it as read-only text with output escaping.
+   - Don't log it, and don't expose it to anyone other than the signed-in user.
+   Class: critical (default: code that sends or shares personal data. It could also count as a standard user-facing feature, so I chose the higher class.)
+
+2. Add a test for the settings view that checks the email is rendered for the signed-in user and for no one else.
+   Class: critical (tests take the class of the code they test)
+
+3. Make `scripts/build.sh` print the elapsed time.
+   - Record the start time at the top and print the elapsed seconds on exit.
+   - Use a trap so the time is printed even when the build fails.
+   - Leave the existing output and exit codes unchanged.
+   Class: light (default: build script)
+
+No class is set in AGENTS.md for these paths, since only `src/payments/` is listed. Neither change touches that path.
+
+If you want, I can record a class for `src/ui/` in AGENTS.md.
+
+
+
+Changes    +0 -0
+AI Credits 3.09 (19s)
+Tokens     ↑ 28.5k (19.4k cached, 9.1k written) • ↓ 615 (237 reasoning)
+Resume     copilot --resume=29b1e7e8-3f86-4b27-bad3-f663210bb545

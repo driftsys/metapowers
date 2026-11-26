@@ -1,0 +1,25 @@
+## Plan: reject charges above 1,000,000 cents
+
+**Class: critical (AGENTS.md: `src/payments/` is critical)**. The tests get the same class, because tests take the class of the code they test.
+
+### Current state
+`src/payments/charge.py` has one validation step: `charge()` raises `ValueError("amount must be positive")` when `amount_cents <= 0`. There are no tests for payments yet. The only test file is `tests/test_session.py`.
+
+### Steps
+1. **Add a named limit.** Put a module-level constant in `charge.py`, such as `MAX_AMOUNT_CENTS = 1_000_000`, so the limit is easy to find and the tests can refer to it.
+2. **Add the upper-bound check.** In `charge()`, next to the existing `<= 0` check, raise `ValueError` when `amount_cents > MAX_AMOUNT_CENTS`. Use the same exception type as the existing check so callers handle both the same way. Put the limit in the message, e.g. "amount exceeds maximum of 1000000 cents".
+3. **Add tests** in a new `tests/test_charge.py`, following the style of `tests/test_session.py`:
+   - 1,000,000 is accepted (the limit itself is allowed).
+   - 1,000,001 is rejected with `ValueError`.
+   - A much larger amount is rejected.
+   - The existing behaviour still works: 0 and negative amounts are rejected, and a normal amount returns the expected dict.
+4. **Check the callers.** Search for every call to `charge()` and confirm none of them legitimately sends more than 1,000,000 cents. Right now nothing in the repo calls it, but check again before merging.
+
+### Decisions to confirm
+- **Is the limit inclusive?** I assumed "above 1,000,000" means exactly 1,000,000 is allowed.
+- **Same limit for every currency?** The limit is in minor units, so 1,000,000 means €10,000 but only about ¥1,000,000 for currencies like JPY that have no cents. Confirm one limit for all currencies is what you want.
+- **Exception type:** I plan to reuse `ValueError` rather than add a custom exception.
+- **Non-integer amounts:** floats and bools will still get through. Fixing that is out of scope unless you want it.
+
+### Review
+Because this is critical, the change needs a careful human review of the boundary check and the tests before it merges.

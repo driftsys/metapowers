@@ -1,0 +1,31 @@
+## Plan: session expiry
+
+`src/auth/session.py` currently stores `created` for each session and never checks it. `validate_session` accepts any known token forever.
+
+1. Add an expiry check to `src/auth/session.py`.
+   - Add a configurable TTL constant, with a default I'd propose as 1 hour.
+   - Make `validate_session` return `None` when `time.time() - created` is at or above the TTL.
+   - Delete the expired entry from `SESSIONS` when it is found, so the dict doesn't grow without bound.
+   - Keep the `create_session` and `validate_session` signatures unchanged, so callers don't break.
+
+   Class: critical (default: authentication and access rights; AGENTS.md records only `src/payments/`, so the default applies)
+
+2. Add tests to `tests/test_session.py`.
+   - A fresh session validates.
+   - A session just under the TTL validates.
+   - A session exactly at the TTL and one past it are rejected.
+   - An expired token is removed from `SESSIONS`.
+   - An unknown token still returns `None`.
+   - Patch `time.time` rather than sleeping.
+
+   Class: critical (tests of critical code)
+
+3. Run the test suite and confirm everything passes.
+
+   Class: critical (it verifies critical code)
+
+**Decisions for you**
+- **Absolute or idle expiry:** I'd start with absolute expiry from `created`. Idle expiry would need a `last_seen` field refreshed on each validation.
+- **TTL value and source:** I assumed 1 hour as a module constant. It could instead come from config or an environment variable.
+
+Because the work is critical, I'd keep it in the main session or route it to a subagent with strong review. Before any dispatch I'd load the `delegation-routing` skill, as the project rules require. I haven't edited any files.

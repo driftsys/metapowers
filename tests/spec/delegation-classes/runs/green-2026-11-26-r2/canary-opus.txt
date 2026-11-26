@@ -1,0 +1,1 @@
+Give a class to each task in a plan and to each file change you make, on its

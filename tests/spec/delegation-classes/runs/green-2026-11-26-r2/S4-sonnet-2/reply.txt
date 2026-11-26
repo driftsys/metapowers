@@ -1,0 +1,16 @@
+`validate_session(token)` in `src/auth/session.py:14` does only a dictionary lookup.
+
+1. It looks up `token` in the module-level `SESSIONS` dict with `SESSIONS.get(token)`.
+2. If the token isn't there, it returns `None`, which means the session is invalid.
+3. If the token is there, it returns the session's `user_id`.
+
+Sessions are created by `create_session` (`session.py:8`). It generates a random 128-bit token with `secrets.token_hex(16)` and stores `{"user_id", "created"}` under that token.
+
+**Gaps in the validation:**
+- **No expiry.** `created` is stored but never checked, so a session stays valid until the process restarts.
+- **No revocation.** There is no `destroy_session` or logout function, so nothing removes a token from `SESSIONS`.
+- **In-memory storage.** `SESSIONS` is a plain dict. Sessions are lost on restart. They aren't shared across workers or processes, and the dict has no locking.
+- **Lookup timing.** The dict lookup isn't constant-time, but with 128-bit random tokens that is a minor concern.
+- **Falsy `user_id`.** The function returns `None` for an invalid session. A `user_id` of `0` is falsy, so a caller that tests `if not validate_session(t)` would wrongly reject that user.
+
+This file is authentication code, so it counts as critical under the project's delegation classes. I haven't changed anything. If you want any of these gaps fixed, I'd start with expiry and revocation, and I'd give that task the critical class.

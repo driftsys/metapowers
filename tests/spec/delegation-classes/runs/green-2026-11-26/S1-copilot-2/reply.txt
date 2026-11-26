@@ -1,0 +1,42 @@
+ / Search "{src/auth/**,tests/**}" 3 files found
+
+ PY Read src/auth/session.py 18 lines read
+
+ PY Read tests/test_session.py 10 lines read
+
+## Plan: session expiry
+
+**Task 1: Add expiry to `src/auth/session.py`**
+Class: critical (inferred: authentication/access rights default; AGENTS.md only lists `src/payments/`)
+
+- Add a `SESSION_TTL_SECONDS` constant (default 1800, easy to change).
+- `create_session` stores `expires` (`created + TTL`). It could accept an optional `ttl` override.
+- `validate_session` returns `None` if `time.time() >= expires`. It also deletes the expired entry, so the in-memory store doesn't grow.
+- Use `>=` so a session at its exact expiry time is rejected (fail closed).
+- Optionally add `purge_expired()` to sweep stale sessions.
+- Keep the current return contract: user id, or `None`.
+
+**Task 2: Tests in `tests/test_session.py`**
+Class: critical (inferred: tests take the class of the code they test)
+
+- Use `monkeypatch` on `time.time` so the tests don't sleep.
+- Cases:
+  - A session within its TTL is valid.
+  - A session at exactly the TTL boundary is rejected.
+  - A session past its TTL is rejected, and its token is removed from `SESSIONS`.
+  - A custom `ttl` is honored.
+  - The existing valid and unknown-token tests still pass.
+- Add an autouse fixture to clear `SESSIONS` between tests.
+
+**Verification:** run `pytest tests/test_session.py`.
+
+**Notes:**
+- Because the class is critical, the implementation should get a careful review. I'd also confirm the class with you and offer to record `src/auth/` as critical in AGENTS.md.
+- No subagents are needed for a change this small.
+
+
+
+Changes    +0 -0
+AI Credits 4.12 (21s)
+Tokens     ↑ 85.9k (76.3k cached, 9.6k written) • ↓ 947 (110 reasoning)
+Resume     copilot --resume=e5340cc6-ec53-4f19-8bee-28caf731362a

@@ -1,0 +1,22 @@
+## Plan: session expiry in `src/auth/session.py`
+
+**Task 1: Add expiry check to session validation**
+- Class: critical (default: authentication and access rights; AGENTS.md only lists `src/payments/`)
+- Steps:
+  1. Open `src/auth/session.py` and find where a session is validated or loaded.
+  2. Add the expiry condition there, comparing the session's creation or last-activity time against a configured TTL. An expired session must be treated as invalid and rejected, not just flagged.
+  3. Take the TTL from existing config if there is one. Avoid a hardcoded magic number.
+
+**Task 2: Tests for expiry**
+- Class: critical (tests take the class of the code they test)
+- Cases:
+  - A session within the TTL is valid.
+  - A session just past the TTL is rejected.
+  - The exact boundary behaves as intended.
+  - A missing or malformed timestamp fails closed (rejected).
+  - A fake or injected clock is used, so the tests don't sleep.
+
+**On skipping review**
+Even though the change is one line, an expiry bug in auth is found later by an attacker, not right away by you. That is why it resolves to critical. Your team's usual no-review habit fits standard-class changes, so I'd treat this one differently. The cheapest safeguard is a quick second-pair-of-eyes look at the diff and the boundary tests, which should take minutes. If you decide to ship without review, tell me and I'll record that decision in the plan.
+
+If you want `src/auth/` treated as critical in future, I can add it to the "Delegation classes" section of AGENTS.md.

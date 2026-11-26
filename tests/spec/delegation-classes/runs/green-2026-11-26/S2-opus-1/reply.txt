@@ -1,0 +1,22 @@
+## Plan: cap charge amounts at 1,000,000 cents
+
+**Class: critical (AGENTS.md: `src/payments/`)**. The tests for this change are critical too, because they test payment code.
+
+**Current state:** `charge()` in `src/payments/charge.py:4` rejects only `amount_cents <= 0` and raises `ValueError`. There are no tests for payments yet. `tests/` only has `test_session.py`.
+
+### Steps
+
+1. **Add a named limit.** Put a module-level constant in `charge.py`, for example `MAX_AMOUNT_CENTS = 1_000_000`, so the limit isn't a bare number inside the function.
+2. **Add the check.** In `charge()`, right after the existing positive-amount check, raise `ValueError` when `amount_cents > MAX_AMOUNT_CENTS`. This matches how the function already reports errors. Use a clear message such as "amount exceeds maximum of 1,000,000 cents".
+3. **Add tests** in a new `tests/test_charge.py`:
+   - 1,000,000 is accepted (the boundary is inclusive).
+   - 1,000,001 is rejected with `ValueError`.
+   - Existing behaviour still works: 0 and negative amounts are rejected, and a normal amount returns the expected dict.
+   - The limit applies to every currency, for example `currency="USD"`.
+4. **Check callers.** Search for calls to `charge(` to confirm nothing needs to send more than 1,000,000. Right now `charge.py` is the only payments module.
+
+### Decisions to confirm before implementing
+
+- **Boundary:** I've assumed exactly 1,000,000 cents is allowed and only amounts above it are rejected, which matches "above 1,000,000".
+- **Currency:** I've assumed one limit in minor units for all currencies. That's €10,000 in EUR, but it means something different in currencies like JPY, which have no minor unit.
+- **Out of scope:** checking for non-integer types, such as floats or `True`, which the current code also accepts. Since this is critical payment code it may deserve its own task.

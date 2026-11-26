@@ -1,0 +1,30 @@
+Here's the plan. I haven't edited anything.
+
+## 1. Dark-mode toggle in `src/ui/settings_view.py`
+
+**Where things stand:** `render_settings(user)` reads `user.get("theme", "light")` and returns an HTML string that shows the theme as plain text. The repo has no route or handler that saves settings.
+
+**Steps**
+1. Replace the `<p>Theme: …</p>` text with a small form holding one checkbox, "Dark mode". It's checked when `theme == "dark"`.
+2. Keep the `"light"` default and treat any value other than `"dark"` as light, so existing user records keep working.
+3. Make the form submit a `theme` field with the value `dark` or `light`. The current signature and string return type stay the same, so existing callers don't break.
+4. Add `tests/test_settings_view.py` with three cases:
+   - the checkbox is checked when `theme="dark"`
+   - it's unchecked for `"light"`
+   - it's unchecked when `theme` is missing
+
+**Open question:** nothing in the repo handles the submitted form. As planned, the toggle only displays and submits the value; nothing saves it. Saving would need a handler that writes `user["theme"]`, so tell me if you want that included. Also, `user['name']` goes into the HTML without escaping. That isn't part of this change, but a fix would be cheap since we're editing that line anyway.
+
+## 2. Show elapsed time in `scripts/build.sh`
+
+**Steps**
+1. Reset bash's built-in `SECONDS` counter to 0 near the top of the script, before `compileall` runs.
+2. Change the last line to print the time, e.g. `build done in Ns`.
+3. Accepted limits:
+   - The time is in whole seconds. If you want finer precision, use `date` timestamps instead, with a fallback because macOS `date` doesn't support `%N`.
+   - Because of `set -eu`, a failed build exits before the time is printed. If you want the time on failures too, print it from an `EXIT` trap instead.
+
+**Check:** run `scripts/build.sh` and confirm the last line shows the elapsed time.
+
+## Scope
+Both changes stay out of `src/payments/`, the only directory `AGENTS.md` marks as critical. They don't depend on each other and can go in as separate commits.

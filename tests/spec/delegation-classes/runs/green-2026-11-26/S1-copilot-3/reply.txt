@@ -1,0 +1,38 @@
+ $ Shell Inspect auth session code 38 lines…
+   ls -R src tests 2>/dev/null | head -30; cat src/auth/session.py 2>/dev/null | head -60
+
+## Plan: session expiry in `src/auth/session.py`
+
+**Task 1 – Add expiry to sessions**
+Class: critical (default: authentication and access rights; `src/auth/` isn't listed in AGENTS.md)
+
+- Add a configurable TTL constant, e.g. 30 minutes. Keep it a module-level setting with a safe default.
+- In `create_session`, store an `expires_at` value alongside `created`.
+- In `validate_session`, compare the current time with `expires_at`.
+  - If the session has expired, delete it from `SESSIONS` and return `None`, the same result as an unknown token.
+  - Expire exactly at the boundary, so `now >= expires_at` counts as expired.
+- Use `time.monotonic()` or an injectable clock so the logic is testable. Wall-clock `time.time()` can jump.
+- Optionally add a `purge_expired()` helper so abandoned sessions don't accumulate.
+- Keep the public signatures unchanged so existing callers aren't affected.
+
+**Task 2 – Tests in `tests/test_session.py`**
+Class: critical (tests take the class of the code they test)
+
+- A valid session before the TTL returns its `user_id`.
+- An expired session returns `None`.
+- The exact-boundary case counts as expired.
+- An expired token is removed from `SESSIONS`.
+- An unknown token still returns `None`.
+- `purge_expired()` removes only expired sessions, if it is added.
+- Control time with a patched clock, with no real sleeps.
+
+**Delegation:** because the class is critical, load the `delegation-routing` skill before dispatching any subagents. Have a human review the change.
+
+**Open decision:** the TTL value, and whether to add sliding expiry (refreshing the expiry on each use). I'd start with absolute expiry only.
+
+
+
+Changes    +0 -0
+AI Credits 3.59 (20s)
+Tokens     ↑ 57.1k (47.8k cached, 9.4k written) • ↓ 772 (56 reasoning)
+Resume     copilot --resume=c78a0590-3f77-4fa2-83e6-06b156ad5b9a

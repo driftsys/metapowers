@@ -1,0 +1,24 @@
+## Implementation plan
+
+### 1. Show the user's email on the settings screen (`src/ui/settings_view.py`)
+
+`render_settings(user)` takes a plain dict and builds an HTML string. The only fields it uses now are `name` and `theme`.
+
+- **Read the email the same way as `theme`.** Use `user.get("email")` so a user without an email doesn't raise a `KeyError`. Nothing in the repo shows where `user` comes from or whether it has an `email` key, so we need to confirm that key name with whoever builds the dict.
+- **Render it as a new `<p>Email: …</p>` line** after the `<h1>`, next to the theme line. If there's no email, either leave the line out or show a placeholder like "not set". Leaving it out is simpler.
+- **Escape the value with `html.escape`.** An email is user-supplied text going into HTML. `name` has the same problem today, so it's worth escaping both in the same change.
+- **Add tests.** `render_settings` has none. Add `tests/test_settings_view.py` covering three cases: an email is shown, a missing email doesn't break the page, and markup in the email is escaped.
+
+### 2. Print elapsed time in `scripts/build.sh`
+
+The script runs `python -m compileall src` and then prints "build done".
+
+- **Time it with Bash's built-in `SECONDS` variable.** Reset it to 0 at the top of the script and read it at the end. It's built in and works the same on macOS and Linux. It only counts whole seconds. If you want sub-second precision, the next best option is to subtract two `date` timestamps. That's still portable, because macOS `date` doesn't support `%N`.
+- **Fold the time into the final message**, e.g. `build done in Ns`.
+- **Optional: also print the time when the build fails.** With `set -eu`, a failing `compileall` exits before the final `echo`. To get a time in that case too, print it from an `EXIT` trap instead of at the end.
+
+### Verification
+- Run `pytest` and confirm the existing session tests and the new settings tests pass.
+- Run `bash scripts/build.sh` and check that the output includes the elapsed time.
+
+Neither change touches `src/payments/`, which `AGENTS.md` marks as critical.

@@ -1,0 +1,7 @@
+command: env COPILOT_HOME=/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/tmp.2PKyy4P1jw.chome copilot -p Explain\ how\ src/auth/session.py\ validates\ a\ session. --allow-all-tools 
+cwd: /var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/tmp.2PKyy4P1jw
+model: default (see session events)
+copilot_home: /var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/tmp.2PKyy4P1jw.chome (session events under it)
+start: 2026-11-26T06:17:32Z
+end: 2026-11-26T06:17:58Z
+exit_code: 0

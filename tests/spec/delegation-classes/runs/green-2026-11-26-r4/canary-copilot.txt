@@ -1,0 +1,7 @@
+
+You've reached your additional usage limit for your plan. Go to https://github.com/settings/copilot/features for more details. (Request ID: 6E9F:29DE8C:2159EC4:23E6F53:6B07D280)
+
+
+Changes    +0 -0
+AI Credits 0 (3s)
+Resume     copilot --resume=41e38dad-592d-4a92-a86d-f1b206776da7

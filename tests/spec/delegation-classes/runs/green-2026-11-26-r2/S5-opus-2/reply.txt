@@ -1,0 +1,15 @@
+## Implementation plan
+
+1. **Show the user's email on the settings screen** in `src/ui/settings_view.py`.
+   In `render_settings(user)`, read the email from the `user` dict and add a `<p>Email: …</p>` line after the theme paragraph. Escape the value with `html.escape` before putting it in the f-string. The existing `user['name']` is not escaped either, so escape it in the same change. Decide how to handle a missing email: either show nothing or show a placeholder like "not set", instead of raising `KeyError`. Check that `render_settings` only ever gets the logged-in user's own record, so nobody can see another person's email.
+   Class: critical (default: code that shows personal data. The screen displays the email to the user, and if the wrong record or unescaped HTML gets through, a customer or an attacker finds out later. The task is between standard (user-facing feature) and critical, so I chose the higher one.)
+
+2. **Add tests for the email display** in a new `tests/test_settings_view.py`.
+   Test four cases: the email appears in the output; HTML in the email is escaped (e.g. `<script>`); HTML in the name is escaped; a missing email doesn't crash.
+   Class: critical (tests of critical code)
+
+3. **Print the elapsed time** in `scripts/build.sh`.
+   Save the start time before `python -m compileall src` using bash's built-in `SECONDS` (or `date +%s`). Then change the last line to something like `build done in Ns`. `set -eu` already stops the script if the build fails, so the time only prints on success.
+   Class: light (default: build script)
+
+The whole plan is critical because its highest class wins, and that comes from steps 1–2. If you'd rather treat showing the email as standard, tell me and I'll lower it and record your decision here.

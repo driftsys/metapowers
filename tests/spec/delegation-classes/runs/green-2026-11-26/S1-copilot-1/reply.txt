@@ -1,0 +1,38 @@
+ $ Shell Inspect session module and tests 24 lines…
+   ls src/auth tests 2>&1 | head -30; head -60 src/auth/session.py 2>&1
+
+## Plan: session expiry in `src/auth/session.py`
+
+**Task 1: Add expiry to session creation and validation**
+Class: critical (inferred from the delegation-classes defaults: authentication and access rights; AGENTS.md records no class for `src/auth/`)
+
+- Add a configurable TTL constant. Choose a default and allow an override, for example from an env var.
+- `create_session` already stores `created`. Add an `expires_at` field so a later TTL change doesn't alter existing sessions.
+- `validate_session` returns `None` for an expired session and deletes it from `SESSIONS`.
+- Use `<=` for the boundary check, so a session expires exactly at its deadline.
+- Use an injectable clock, or monkeypatch `time.time`, so tests don't sleep.
+- Add a `purge_expired()` helper so abandoned sessions don't accumulate in memory.
+- Keep the return contract unchanged: `user_id` on success, `None` otherwise.
+
+**Task 2: Tests in `tests/test_session.py`**
+Class: critical (tests take the class of the code they test)
+
+- A valid session before expiry returns its `user_id`.
+- A session at exactly the expiry time and one past it return `None`.
+- An expired session is removed from `SESSIONS`.
+- An unknown token still returns `None`.
+- `purge_expired` removes only expired sessions.
+- A TTL override takes effect.
+
+**Delegation:** Because both tasks are critical, I'd review the diff carefully before finishing. Run the existing tests first to get a baseline.
+
+**Open decisions:** the default TTL value, and whether to add sliding expiry (refresh on use). I'd leave sliding expiry out unless you want it.
+
+AGENTS.md lists only `src/payments/` as critical. I can add `src/auth/: critical` there if you confirm it.
+
+
+
+Changes    +0 -0
+AI Credits 3.62 (20s)
+Tokens     ↑ 57.1k (47.8k cached, 9.3k written) • ↓ 810 (88 reasoning)
+Resume     copilot --resume=7a1f2c0b-7f2e-4721-a90b-3cff11ee7024

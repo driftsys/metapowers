@@ -1,0 +1,20 @@
+Validation is a single dictionary lookup. Nothing else is checked.
+
+**How it works** (`src/auth/session.py:14-18`):
+
+1. `validate_session(token)` looks up the token in the module-level `SESSIONS` dict with `SESSIONS.get(token)`.
+2. If the token isn't there, it returns `None`, meaning the session is invalid.
+3. If it is there, it returns the `user_id` stored for that session.
+
+So a session counts as valid if and only if its token is a key in `SESSIONS`.
+
+**Where tokens come from** (`src/auth/session.py:8-11`): `create_session` makes a random 32-character hex token with `secrets.token_hex(16)`. It saves `{"user_id": ..., "created": time.time()}` under that token and returns the token. Tokens are hard to guess.
+
+**What validation doesn't check:**
+
+- **Expiry:** each session stores a `created` timestamp, but `validate_session` never reads it. Sessions never expire.
+- **Revocation:** nothing ever removes entries from `SESSIONS`, so there's no logout or invalidation. Sessions stay valid until the process restarts.
+- **Storage:** `SESSIONS` is an in-memory dict in one process. Sessions are lost on restart and aren't shared between workers, so a token created in one worker fails validation in another.
+- **Input:** the token isn't type-checked. Any value that matches a key is accepted.
+
+If you want sessions to expire, the obvious fix is to compare `time.time() - session["created"]` against a TTL in `validate_session`, and delete the entry once it's too old.

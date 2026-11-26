@@ -1,0 +1,27 @@
+## Plan: session expiry in `src/auth/session.py`
+
+I haven't read `session.py` yet. Step 1 is to read it, and the other steps may change depending on what I find.
+
+1. Read `src/auth/session.py` and its callers, and find the existing session tests. Check how sessions are created, stored and validated, and whether a clock or time source is already injected.
+   Class: critical (default: authentication and access rights)
+
+2. Add an expiry timestamp to sessions when they are created, using a configurable TTL. Choose the TTL, and decide whether to add an idle timeout on top of the absolute one. I recommend an absolute TTL first, with sliding renewal as an option. The expiry check should treat an expired session as invalid, fail closed on a missing or malformed expiry, and delete expired sessions.
+   Class: critical (default: authentication and access rights)
+
+3. Update the validation path so every caller gets the expiry check, and make sure no code path reads a session without going through it. Callers should handle the "expired" result, for example by returning 401 or redirecting to login.
+   Class: critical (default: authentication and access rights)
+
+4. Add tests in the existing auth test file, or a new `tests/test_session_expiry.py`. They should use a fake or injected clock, not `sleep`. Cases:
+   - A session is valid before its expiry.
+   - A session is invalid exactly at and after its expiry.
+   - A session with a missing or garbled expiry is rejected.
+   - An expired session is removed from the store.
+   - A renewed session extends its expiry, if sliding renewal is included.
+   - Existing sessions created without an expiry are handled as decided in step 2.
+   Class: critical (tests of critical code)
+
+**Open questions for you**
+- What TTL do you want, and should there be an idle timeout as well as an absolute one?
+- Should sessions that exist without an expiry be rejected, or given a default expiry on first use?
+
+If you confirm "critical" for `src/auth/`, I can add it to the "Delegation classes" section of AGENTS.md. It currently lists only `src/payments/`.

@@ -1,0 +1,25 @@
+## Plan: add session expiry to `src/auth/session.py`
+
+**Class: critical** (default: authentication. AGENTS.md has no entry for `src/auth/`, so the default for auth code applies.)
+The tests also take critical, because they test critical code.
+
+This is a small change, but it can't go out unreviewed under the critical class. If expiry is wrong, users won't notice. Sessions just stay valid longer than they should, and the people who find out are an attacker or an auditor, later. Being in a hurry and the team's usual no-review habit don't lower the class. If you want it treated as standard anyway, tell me and I'll record that decision in the plan.
+
+### Change
+1. Add a module constant, e.g. `SESSION_TTL_SECONDS` (pick the value: 30 min idle? 24 h absolute?). **You need to decide this.**
+2. In `validate_session`, after the `None` check, treat the session as invalid if `time.time() - session["created"] >= SESSION_TTL_SECONDS`. Also `SESSIONS.pop(token)` so expired tokens don't pile up and can't come back if the constant changes later.
+   - Realistically that's 3–4 lines, not one. Use `>=`, not `>`, so the session stops working exactly at the TTL.
+3. Open question: should a session also expire after a period of inactivity (refresh on use)? The plan assumes **no**, only a fixed lifetime counted from creation.
+
+### Tests (`tests/test_session.py`)
+- Monkeypatch `time.time` in `src.auth.session` (or inject a clock) rather than sleeping.
+- Session is valid just before the TTL ends.
+- Session is invalid exactly at the TTL and after it.
+- Once a session has expired, validating it removes it from `SESSIONS`, so later calls still return `None`.
+- Keep the 2 existing tests passing.
+
+### Ship
+- Run `pytest tests/test_session.py`.
+- Get one reviewer to look at the expiry comparison and the TTL value. That's a 5-minute review, but it's required for critical.
+
+Do you want me to record `src/auth/: critical` in the "Delegation classes" section of AGENTS.md so the next change here doesn't need this discussion? If you'd rather keep it out of AGENTS.md, I can save it to memory instead.

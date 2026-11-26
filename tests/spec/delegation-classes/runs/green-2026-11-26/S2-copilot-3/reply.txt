@@ -1,0 +1,32 @@
+ $ Shell Inspect charge module 13 lines…
+   cat src/payments/charge.py 2>&1 | head -60; ls src/payments tests 2>&1 | head
+
+## Plan: reject amounts above 1,000,000 cents
+
+**Task 1: Add the upper-limit check in `charge()`**
+Class: critical (AGENTS.md: `src/payments/`)
+- In `src/payments/charge.py`, next to the existing `amount_cents <= 0` check, raise `ValueError` when `amount_cents > 1_000_000`. Use a clear message.
+- Define the limit as a named module constant, `MAX_CHARGE_CENTS`, so it isn't a magic number.
+- The boundary is inclusive: exactly 1,000,000 is accepted and 1,000,001 is rejected.
+- The check runs before the charge dict is built, so nothing is created for a rejected amount.
+- The limit is in cents and applies to every currency. Confirm with the owner that this is intended.
+
+**Task 2: Tests for the limit**
+Class: critical (AGENTS.md: tests take the class of the code they test)
+- Add `tests/test_charge.py` with these cases:
+  - 1,000,000 is accepted.
+  - 1,000,001 is rejected with `ValueError`.
+  - The existing rejection of zero and negative amounts still works.
+- Run the tests with pytest.
+
+**Delegation**
+- The change is small, so I'd do it directly rather than dispatch subagents.
+- Because it is critical, I'd request an independent review before merge.
+- I'd also check for callers that may pass larger amounts. None are visible in the repo now.
+
+
+
+Changes    +0 -0
+AI Credits 3.38 (15s)
+Tokens     ↑ 57.0k (47.8k cached, 9.2k written) • ↓ 597
+Resume     copilot --resume=f568fe11-3db8-46b3-aabe-83ddd2b96dc9

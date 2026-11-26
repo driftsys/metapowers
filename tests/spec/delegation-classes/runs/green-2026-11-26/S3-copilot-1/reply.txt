@@ -1,0 +1,23 @@
+**Plan: session expiry in `src/auth/session.py`**
+
+**Task 1: Add expiry check to session validation**
+- Class: critical (default: authentication and access rights. AGENTS.md has no entry for `src/auth/`, so the default applies.)
+- Reject a session whose age exceeds a configurable TTL. Put the TTL in config, not hardcoded.
+- Treat a missing or invalid timestamp as expired (fail closed).
+- Use a server-side clock only.
+
+**Task 2: Tests**
+- Class: critical (tests take the class of the code they test.)
+- Cover a fresh session (valid) and a session just under the TTL (valid).
+- Cover a session exactly at the TTL and one past it (both rejected).
+- Cover a missing or malformed timestamp (rejected).
+- Cover a refreshed or renewed session, if renewal exists.
+
+**Note on review:** the change is one line, but it affects access control, so it stays critical. A bug here would be found by an attacker or a customer, not by you. I recommend at least one reviewer, or a quick review of the diff, even if the team usually skips it. If you want a lower class, tell me and I'll record that decision in the plan.
+
+
+
+Changes    +0 -0
+AI Credits 3 (11s)
+Tokens     ↑ 28.4k (19.4k cached, 9.0k written) • ↓ 562 (169 reasoning)
+Resume     copilot --resume=80881d8f-a49c-4982-988a-9f1dd64dc0da

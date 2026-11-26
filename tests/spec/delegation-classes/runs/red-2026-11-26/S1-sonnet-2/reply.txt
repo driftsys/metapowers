@@ -1,0 +1,27 @@
+## Plan: session expiry in `src/auth/session.py`
+
+**Current state:** `SESSIONS` is an in-memory dict. Each entry stores `user_id` and `created`. `validate_session` never checks age. Nothing outside the module uses it, and `src/auth/` isn't marked critical in `AGENTS.md`.
+
+**Design**
+1. Add a module-level `SESSION_TTL` constant, for example 3600 seconds. Optionally let `create_session` accept a per-session `ttl` override.
+2. Store an `expires_at` on each session when it is created. It is simpler to check than recomputing from `created`.
+3. In `validate_session`, compare `time.time()` to `expires_at`. If the session is expired, delete it from `SESSIONS` and return `None`, the same as for an unknown token. The expiry boundary is exclusive: a session is expired once `now >= expires_at`.
+4. Add a small `purge_expired()` helper that sweeps stale entries, so abandoned sessions don't accumulate forever. Don't start a background thread. Call the helper opportunistically, for example from `create_session`.
+5. Keep the public signatures backward compatible, so existing callers and tests are unaffected.
+
+**Tests** (add to `tests/test_session.py`, keeping the existing two)
+- A session is valid before the TTL elapses.
+- A session returns `None` at and after the TTL.
+- An expired session is removed from `SESSIONS` after a failed validation.
+- A custom `ttl` overrides the default, if I add that option.
+- `purge_expired()` removes only expired entries and keeps live ones.
+- Time handling: monkeypatch `time.time` (pytest `monkeypatch`) instead of sleeping, so the tests are fast and deterministic.
+- Clear `SESSIONS` in a fixture so tests don't leak state into each other.
+
+**Open questions**
+- What default TTL do you want?
+- Should expiry be absolute (fixed from creation) or sliding (refreshed on each validation)? I'd start with absolute since it's simpler and safer, and add sliding later if needed.
+
+**Verification:** run `pytest tests/test_session.py`.
+
+Tell me your answers on TTL and absolute vs. sliding, and I'll implement it.

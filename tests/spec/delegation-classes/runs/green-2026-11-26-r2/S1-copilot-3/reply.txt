@@ -1,0 +1,33 @@
+## Plan: session expiry in `src/auth/session.py`
+
+1. Inspect `src/auth/session.py` and its callers, including how sessions are created, stored and validated.
+   Class: critical (default: authentication and access rights; AGENTS.md has no entry for `src/auth/`)
+
+2. Add an expiry timestamp to the session at creation. This covers an absolute lifetime and, optionally, an idle timeout. Read the durations from config rather than hardcoding them.
+   Class: critical (default: authentication)
+
+3. Check expiry on every session validation, using a server-side clock. Reject and delete expired sessions, and fail closed on a missing or malformed timestamp.
+   Class: critical (default: authentication)
+
+4. Decide how existing sessions that have no expiry are handled. The options are to treat them as expired or to backfill a timestamp. Any stored-data change counts as a migration.
+   Class: critical (default: data migrations)
+
+5. Add tests in `tests/auth/test_session.py` using a frozen or injected clock. Cover these cases:
+   - valid before expiry
+   - rejected exactly at and after expiry
+   - idle refresh, if used
+   - legacy sessions with no expiry
+   - expired sessions removed from storage
+   Class: critical (tests of critical code)
+
+6. Run the existing auth tests and the new ones to check for regressions.
+   Class: critical (verifies critical code)
+
+**Note:** All tasks are critical, so subagent dispatch should follow the `delegation-routing` skill. I'd suggest keeping the plan as is. Say if you want a different class, and I can record it in AGENTS.md.
+
+
+
+Changes    +0 -0
+AI Credits 3.08 (23s)
+Tokens     ↑ 28.5k (19.4k cached, 9.1k written) • ↓ 612 (73 reasoning)
+Resume     copilot --resume=d82011fc-0b67-454e-b02c-375ed7742a07

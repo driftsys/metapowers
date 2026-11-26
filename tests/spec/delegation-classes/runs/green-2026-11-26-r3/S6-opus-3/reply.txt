@@ -1,0 +1,15 @@
+Here's the plan. `src/ui/settings_view.py` is currently one function, `render_settings(user)`, which builds the HTML with an f-string.
+
+1. **Add the email to `render_settings`** in `src/ui/settings_view.py`. Read `user.get("email")` and render it as a line such as `<p>Email: …</p>` under the heading. If the user has no email, leave the line out rather than raising a `KeyError`.
+   Class: critical (default: code that shows personal data, the user's email, on screen. As a user-facing feature it would be standard, and the highest class wins.)
+
+2. **Escape the values put into the HTML** in the same function. Pass the email through `html.escape`, and do the same for the `name` value, which is inserted unescaped today. Without this, an email or name containing HTML could inject script into the page (XSS).
+   Class: critical (default: security)
+
+3. **Check that the settings view only ever gets the signed-in user's own record.** Confirm that whatever calls `render_settings` (probably via `src/auth/session.py`) never passes another user's record, so one user can't see someone else's email. This is a review step; change code only if a gap turns up.
+   Class: critical (default: authentication and access rights)
+
+4. **Add tests in a new `tests/test_settings_view.py`.** Cover three cases: the email appears in the output, a missing email doesn't crash, and an email or name containing `<script>` comes out escaped.
+   Class: critical (tests take the class of the code they test)
+
+`AGENTS.md` doesn't record a class for `src/ui/`, so I used the defaults above. If you confirm critical for this path, or lower it, I can record that in the "Delegation classes" section of `AGENTS.md`.

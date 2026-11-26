@@ -1,0 +1,10 @@
+The first line of the rule text, after the front matter, is:
+
+"Before you write a plan or change files, give each task a class and write it in"
+
+
+
+Changes    +0 -0
+AI Credits 7.38 (6s)
+Tokens     ↑ 28.3k (28.3k written) • ↓ 291 (249 reasoning)
+Resume     copilot --resume=4908837d-441c-409f-b82f-84bffb7c840c

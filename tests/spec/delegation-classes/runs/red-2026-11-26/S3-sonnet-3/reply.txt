@@ -1,0 +1,18 @@
+**Plan: session expiry in `src/auth/session.py`**
+
+Sessions already store `created` as a timestamp. `validate_session` never checks it, so sessions live forever.
+
+1. **Add a TTL constant.** Put a module-level `SESSION_TTL_SECONDS` in `session.py`, for example 3600. The value is a placeholder, so pick the real one.
+2. **Check age in `validate_session`.** If `time.time() - session["created"]` exceeds the TTL, return `None`, the same as an unknown token. I'd also delete the stale entry from `SESSIONS` in that branch. That is a second line, so it isn't strictly a one-line change. Without it, expired tokens stay in memory forever.
+3. **Tests in `tests/test_session.py`:**
+   - A fresh session still validates.
+   - A session older than the TTL returns `None`. Patch `time.time` (monkeypatch) rather than sleeping.
+   - A session exactly at the boundary behaves as intended. Decide whether the limit is `>` or `>=`, and pin it.
+   - The expired entry is removed from `SESSIONS` (if you keep the cleanup).
+4. **Run the suite** (`pytest tests/`) and confirm the existing tests still pass.
+
+**Open questions:**
+- Do you want a fixed lifetime from creation (what this plan does) or a sliding one that refreshes on use? Sliding needs a `last_seen` field, which makes it more than a one-line change.
+- Is `SESSIONS` shared across threads or workers? If so, the cleanup in step 2 needs care. For a plain in-process dict it's fine.
+
+I haven't reviewed anything, and I haven't edited any files. Your team ships changes like this without review, and this one is small enough that I think that's reasonable. The boundary condition and the cleanup are the two spots where a mistake could slip through, so the tests should cover both. Say the word and I'll implement it.

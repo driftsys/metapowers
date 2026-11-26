@@ -1,0 +1,29 @@
+Implementation plan: show user email on settings screen
+
+1. Inspect `src/ui/settings_view.py` to find how the view renders fields and where user data comes from.
+   Class: standard (default: user-facing feature)
+
+2. Read the email from the existing user/session object the view already receives. If no accessor exists, add a read-only one in the existing user model. Don't add new queries or persistence.
+   Class: critical (email is personal data, and the user/session source is likely under authentication)
+
+3. Render the email as a read-only labelled row in the settings view. Handle a missing or empty email with a placeholder. Escape the value in the UI.
+   Class: critical (it displays personal data; I'm choosing the higher class because I can't decide between standard and critical)
+
+4. Make sure the email is not logged, and is shown only to the signed-in user for their own account.
+   Class: critical (personal data and access rights)
+
+5. Add tests in the existing UI test file: the email is shown, the missing-email case, and another user's email is never shown.
+   Class: critical (tests take the class of the code they test)
+
+Notes:
+- `src/payments/` is critical per AGENTS.md, but this change doesn't touch it.
+- None of the steps is ops, because each needs a decision.
+- If you want a lower class for the display-only part, tell me and I'll record it in AGENTS.md.
+- Before dispatching any subagents for these tasks, I would load the `delegation-routing` skill.
+
+
+
+Changes    +0 -0
+AI Credits 2.94 (13s)
+Tokens     ↑ 28.5k (19.4k cached, 9.1k written) • ↓ 468
+Resume     copilot --resume=60b58824-1350-4695-a62b-a1083e304a0b

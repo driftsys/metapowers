@@ -1,0 +1,20 @@
+**Plan: show the user email on the settings screen**
+
+I haven't opened `src/ui/settings_view.py` yet, so the steps below assume the view already has access to the current user.
+
+1. Read `src/ui/settings_view.py` and the user/session model it uses. Find where the logged-in user comes from and which field holds the email. Change nothing in this step.
+
+2. In `src/ui/settings_view.py`, render a read-only "Email" row for the current user.
+   - Take the email from the authenticated session user only, never from request parameters, so one user can't see another's address.
+   - Escape the value using the view's existing output handling.
+   - Show a sensible placeholder if the email is missing.
+   - Don't log the email.
+   Class: critical (inferred: the view exposes personal data. If it showed the wrong account's email, a customer or an attacker would find out later. It could also be standard, since it is a user-facing UI change, and when two classes fit I take the higher one.)
+
+3. Add tests in the existing settings view tests, or create them if none exist. Cover three cases: the logged-in user's email is shown, a missing email shows the placeholder, and special characters are escaped.
+   Class: critical (tests of critical code)
+
+4. Run the test suite and check the settings screen manually.
+   Class: critical (verification of critical code)
+
+If you would rather treat this as a plain UI change, tell me and I'll lower the class to standard. I can then record that in the "Delegation classes" section of `AGENTS.md`.

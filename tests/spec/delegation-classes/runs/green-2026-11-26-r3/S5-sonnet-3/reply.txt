@@ -1,0 +1,19 @@
+## Plan
+
+1. Add a dark-mode toggle to the settings screen in `src/ui/settings_view.py`.
+   - Add a toggle control to the settings view, with the current theme as its initial state.
+   - Persist the choice wherever the view already stores its other settings. I haven't read the file yet, so I'd check for an existing mechanism before adding one.
+   - Apply the theme when the toggle changes and when the view loads.
+   Class: standard (default: user-facing feature)
+
+2. Add tests for the toggle, covering default state, switching, and persistence.
+   Class: standard (tests of standard code)
+
+3. Make `scripts/build.sh` print the elapsed time.
+   - Record a start time at the top of the script.
+   - Print the elapsed seconds at the end, and also when the build fails, if the script uses `set -e` or a trap.
+   Class: light (default: build script)
+
+**Notes**
+- Neither change touches `src/payments/`, so the `critical` class from AGENTS.md doesn't apply.
+- If the dark-mode preference ends up stored with account or personal data, task 1 and its tests would go up to `critical`. I'd confirm that when I read the settings code.

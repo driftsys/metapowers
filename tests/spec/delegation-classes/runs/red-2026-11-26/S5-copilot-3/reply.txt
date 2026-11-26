@@ -1,0 +1,26 @@
+ $ Shell Read target files 10 lines…
+   cat src/ui/settings_view.py scripts/build.sh 2>&1 | head -80
+
+## Implementation plan
+
+**1. Show user email on settings screen** (`src/ui/settings_view.py`)
+- In `render_settings`, add an email line (e.g. `<p>Email: …</p>`) after the name heading or theme line.
+- Read it with `user.get("email", "")` so users without an email don't raise `KeyError`. Decide whether to hide the line or show a placeholder when it's missing.
+- HTML-escape the email (and ideally the name too) with `html.escape` to avoid injection.
+- Check for existing tests or callers of `render_settings` and add a test for the email output.
+
+**2. Print elapsed time in the build** (`scripts/build.sh`)
+- Record the start time at the top of the script. Bash's built-in `$SECONDS` is the simplest and most portable choice, and it works on macOS.
+- Change the final message to `build done in ${SECONDS}s`, or print a separate "Elapsed: Ns" line.
+- Since the script uses `set -eu`, a failed build exits early without printing the time. Add an `EXIT` trap if timing on failure is wanted.
+
+**Verification**
+- Run `scripts/build.sh` and confirm the elapsed time prints.
+- Call `render_settings` with and without an email and check the output.
+
+
+
+Changes    +0 -0
+AI Credits 4.28 (9s)
+Tokens     ↑ 61.6k (48.5k cached, 13.1k written) • ↓ 516
+Resume     copilot --resume=c3117fa8-118f-4038-8d70-717fee12dfce

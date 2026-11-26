@@ -1,0 +1,25 @@
+## Plan: add session expiry to `src/auth/session.py`
+
+**Class: critical (default: authentication. AGENTS.md has no entry for `src/auth/`)**
+
+I know you're in a hurry and that your team usually skips review for changes like this. The class is still critical because the code touches authentication. If expiry is wrong, nobody notices quickly: sessions just keep working when they shouldn't, and the person who finds out later is an attacker or an auditor. It's a small change, but the risk is high. I've kept the critical class. You can lower it if you want, and I'll record that decision in the plan.
+
+### Steps
+
+1. **Add a TTL constant.** Add `SESSION_TTL_SECONDS` to `session.py` (for example 3600, but confirm the value your product needs). Keep it in a module-level constant so tests can override it.
+2. **Enforce expiry in `validate_session`.** After the lookup, if `time.time() - session["created"]` is at or above the TTL, delete the token from `SESSIONS` and return `None`. Deleting it means an expired token can't be accepted again later.
+3. **Decide the boundary.** Treat a session as expired at exactly the TTL (`>=`). That way the session never lasts longer than the TTL.
+4. **Tests in `tests/test_session.py`** (critical, the same class as the code they test). Patch `time.time` instead of sleeping:
+   - A new session validates and returns its `user_id`.
+   - A session one second before the TTL still validates.
+   - A session exactly at the TTL returns `None`.
+   - A session past the TTL returns `None` and its token is removed from `SESSIONS`.
+   - An unknown token still returns `None`, so the existing behaviour doesn't change.
+5. **Review before merge.** Because this is critical, have one reviewer check the boundary and the deletion before merging, even if your team usually skips review. Running `/security-review` on the diff is a quick extra check.
+
+### Out of scope (flag as follow-ups)
+- Sliding expiry (refreshing the timer on each use).
+- Cleaning up expired sessions that are never validated again.
+- Clock skew, if sessions ever move out of process memory.
+
+If you want `src/auth/` recorded as critical in the "Delegation classes" section of AGENTS.md, or a different class you choose, I can add it. If you'd rather not change AGENTS.md, I can save it to memory instead.

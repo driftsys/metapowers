@@ -1,0 +1,33 @@
+## Plan: reject amounts above 1,000,000 cents in `src/payments/charge.py`
+
+**Class: critical (AGENTS.md)**: `src/payments/` is recorded as critical. The tests take the same class.
+
+I haven't opened the file yet, so the steps below are provisional until I've read the code.
+
+### Tasks
+
+1. **Read the current charge flow.** Class: critical (AGENTS.md)
+   - Find where the amount is validated and what unit it uses. I need to confirm it is integer cents.
+   - Check how existing validation failures are reported (exception type, error code, API response) so the new check matches.
+   - Find any other path that creates a charge, such as retries, refunds or partial captures, so the limit isn't bypassed.
+
+2. **Add the upper-bound check.** Class: critical (AGENTS.md)
+   - Define the limit once as a named constant (1,000,000 cents), not an inline literal.
+   - Validate before any call to the payment provider and before any record is written, so a rejected charge has no side effects.
+   - Reject `amount > 1_000_000`, so exactly 1,000,000 is allowed. This is my reading of "above". Please confirm it.
+   - Use the same error type and shape as the existing invalid-amount failures. Don't leak internal details in the message.
+
+3. **Add tests.** Class: critical (AGENTS.md)
+   - Test 1,000,000 (accepted) and 1,000,001 (rejected).
+   - Test a much larger amount.
+   - Check that a rejected charge makes no provider call and writes no record.
+   - Re-run the existing tests for zero, negative and non-integer amounts to confirm they still pass.
+
+4. **Verify and review.** Class: critical (AGENTS.md)
+   - Run the payments test suite.
+   - Do a manual review of the diff, since this is critical code, before anything is committed.
+
+### Open questions
+- Is the limit inclusive (1,000,000 allowed)? I've assumed it is.
+- Does the limit apply to every currency? Cents in a zero-decimal currency would mean something different.
+- Should the limit be configurable later? I've planned a constant for now.

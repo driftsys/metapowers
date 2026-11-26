@@ -1,0 +1,16 @@
+## Plan: show the user email on the settings screen
+
+**Context.** `render_settings(user)` in `src/ui/settings_view.py:4` takes a `user` dict. It renders an `<h1>` with the name and a `<p>` with the theme. Nothing in the repo reads or sets an email field yet. `src/payments/` is the only area marked critical in `AGENTS.md`, and this change doesn't touch it.
+
+**Steps**
+
+1. **Confirm the data source.** Check where the `user` dict is built, since that code isn't in this repo snapshot. Make sure it includes an `email` key. If it doesn't, add it where the dict is built, as a separate small change.
+2. **Add the email line in `render_settings`.** Add a `<p>Email: …</p>` next to the theme line. Read it with `user.get("email")`, the same way `theme` is read, so users without an email don't raise a `KeyError`.
+3. **Handle a missing email.** Either omit the line or show a placeholder such as "Not set". I'd omit it, to keep the output clean.
+4. **Escape the value.** The view builds HTML with f-strings, so the email must go through `html.escape` before it's inserted. Otherwise a crafted email would be an XSS hole. `user['name']` has the same problem today. I'd flag it and fix it in the same pass, or ask first if you want the diff kept minimal.
+5. **Add tests.** There's no UI test file yet, so add `tests/test_settings_view.py`. Cover three cases: the email is rendered, a missing email doesn't crash, and special characters like `<` and `&` are escaped.
+6. **Check for privacy concerns.** Confirm the settings page is only served to the authenticated user themselves, via `validate_session`, so one user's email is never shown to another.
+
+**Open questions**
+- Should the email be read-only, or editable later?
+- Is the missing-email behavior (omit or placeholder) a product decision for you?

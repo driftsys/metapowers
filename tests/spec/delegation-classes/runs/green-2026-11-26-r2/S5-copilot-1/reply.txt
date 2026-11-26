@@ -1,0 +1,29 @@
+Plan (no files edited):
+
+1. Show the user email on the settings screen in `src/ui/settings_view.py`.
+   Class: standard (default: user-facing feature)
+   - Find where the settings view renders the user's account details.
+   - Read the email from the existing user/session object that the view already has. Don't add a new data lookup.
+   - Add a read-only email row or label to the view.
+   - Handle a missing email by showing an empty or placeholder value.
+   - Risk: the email is personal data. The view must only show the signed-in user's own email and must not log it. If this change would touch auth or storage code, the task would become critical.
+
+2. Add a test for the email display, for example in `tests/test_settings_view.py`.
+   Class: standard (tests of standard code)
+   - Cover the case where an email is present and the case where it is missing.
+
+3. Make `scripts/build.sh` print the elapsed time.
+   Class: light (default: build script)
+   - Record the start time at the top of the script.
+   - On exit, compute the difference and print it, for example "Build took Ns".
+   - Use a shell `trap ... EXIT` so the time prints even when the build fails.
+   - Verify by running the script once and checking the output.
+
+None of these changes touch `src/payments/`, which AGENTS.md marks as critical. No subagent dispatch is needed.
+
+
+
+Changes    +0 -0
+AI Credits 2.91 (21s)
+Tokens     ↑ 28.5k (19.4k cached, 9.1k written) • ↓ 432
+Resume     copilot --resume=11c0eb1c-d2f7-4c6d-9220-b932132d126d

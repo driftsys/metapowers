@@ -1,0 +1,26 @@
+## Plan: reject charge amounts above 1,000,000 cents
+
+**Task 1: Add the amount limit in `src/payments/charge.py`**
+Class: critical (AGENTS.md)
+
+- Define the limit as a named constant (1,000,000 cents) at module level instead of a magic number.
+- Validate at the start of the charge entry point, before any call to the payment provider, ledger or database, so a rejected charge has no side effects.
+- Reject only amounts strictly greater than the limit. An amount of exactly 1,000,000 stays valid.
+- Raise the module's existing validation error type, or add one if none exists. The error message should state the limit but not echo sensitive payment data.
+- Check that the amount is an integer number of cents first. Reject non-integers, negatives and zero under the existing rules, so a float or string can't get past the comparison.
+- Find the callers (API handlers, retries, refunds if they share the function) and confirm they turn the new error into a clean client-facing 4xx response, not a 500.
+
+**Task 2: Tests for the limit**
+Class: critical (AGENTS.md, tests take the class of the code they test)
+
+- Test 1,000,000 (accepted), 1,000,001 (rejected) and a very large value (rejected).
+- Test that the provider and ledger are never called when the amount is rejected.
+- Test the caller's error mapping.
+- Run the existing payments test suite to check for regressions.
+
+**Open points for you to confirm**
+- Whether the limit should be configurable per currency or account, or stay a single global constant.
+- Whether refunds or other flows through `charge.py` should be subject to the same limit.
+- Because this is critical code, I'd want a human review of the diff before merge.
+
+I haven't read `charge.py` yet, so the exact function names and error types will be settled when I implement it.

@@ -1,0 +1,28 @@
+`validate_session` in `src/auth/session.py:14-18` does one thing: it looks the token up in an in-memory dictionary.
+
+```python
+def validate_session(token):
+    session = SESSIONS.get(token)
+    if session is None:
+        return None
+    return session["user_id"]
+```
+
+**How it works**
+
+1. `create_session` (`src/auth/session.py:8-11`) makes a random 128-bit token with `secrets.token_hex(16)`. It stores `{"user_id", "created"}` in the module-level `SESSIONS` dict, keyed by that token.
+2. `validate_session` looks the token up in `SESSIONS`:
+   - **Not found:** it returns `None`, meaning the session is invalid.
+   - **Found:** it returns the `user_id`, meaning the session is valid and belongs to that user.
+
+So a session counts as valid exactly when its token exists in `SESSIONS`.
+
+**What it doesn't check**
+
+- **Expiry:** `created` is stored but never read, so a session stays valid forever until the process restarts.
+- **Revocation:** there's no logout or delete function, so a token can't be invalidated early.
+- **Persistence and sharing:** `SESSIONS` is a plain dict in process memory. Every session is lost on restart, and sessions aren't shared between worker processes. A token made by one worker fails on another.
+- **Input type:** any hashable value can be passed as the token. Anything unknown just returns `None`.
+- **Binding:** the session isn't tied to an IP address, user agent or anything else, so anyone holding the token is treated as that user.
+
+The token itself is generated securely. The gaps are in lifecycle: expiry, revocation and storage. Fixing any of them would be a change to authentication code, which this project's rules class as **critical**. I can draft a fix, such as checking `created` against a TTL, if you want one.

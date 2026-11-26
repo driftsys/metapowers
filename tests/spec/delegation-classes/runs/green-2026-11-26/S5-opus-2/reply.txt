@@ -1,0 +1,25 @@
+## Plan
+
+### Task 1: Show the user's email on the settings screen
+**Class: critical (default: privacy, because the screen shows personal data).** The user-facing-feature default (standard) also fits; the rule says to take the higher class when two fit. AGENTS.md has no entry for `src/ui/`.
+
+1. In `render_settings` (`src/ui/settings_view.py:4`), read the email with `user.get("email")`. If it's missing, leave the line out rather than raising `KeyError` or printing "None".
+2. Add an "Email: …" line next to the existing Theme line.
+3. HTML-escape the email with `html.escape`. The function builds HTML with an f-string, so an email like `"<script>…"@x.com` would be injected as markup. `name` has the same problem today. I'd escape it in the same change, but that's a decision for you.
+4. Make sure only the logged-in user's own record ever reaches `render_settings`, so the screen can't show someone else's email. That means checking the caller and the session code in `src/auth/session.py`.
+5. Add `tests/test_settings_view.py` (also critical, since it tests critical code). It should cover:
+   - the email is shown
+   - a missing email leaves the line out
+   - an email containing HTML characters is escaped
+
+### Task 2: Print elapsed time in the build script
+**Class: light (default: build scripts).**
+
+1. In `scripts/build.sh`, save the start time before `compileall`. Bash's built-in `SECONDS` variable is the simplest way.
+2. Change the final line to something like `build done in ${SECONDS}s`. It still runs only on success, because `set -eu` stops the script at the first failure.
+3. Check it by running `bash scripts/build.sh` and reading the output.
+
+### Order and review
+The two tasks don't depend on each other. Task 2 can be done and checked in a minute. Task 1 should get a closer review because it's critical: check the escaping and the access step (4) as well as the visible output.
+
+If you'd rather treat the settings screen as **standard**, tell me and I'll record that decision in the plan. I can also add `src/ui/` to the "Delegation classes" section of AGENTS.md.

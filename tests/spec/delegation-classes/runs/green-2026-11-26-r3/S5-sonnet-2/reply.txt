@@ -1,0 +1,17 @@
+## Plan
+
+1. **Add a dark-mode toggle to the settings screen in `src/ui/settings_view.py`.**
+   Class: standard (default: user-facing feature)
+   - Read the file to see how existing settings controls are built and how their values are saved.
+   - Add a toggle control for the theme, wired the same way as the other settings.
+   - Apply the chosen theme through the existing styling mechanism. If there isn't one, add a small theme switch inside the UI layer.
+   - Add tests for the toggle, in the file's existing test location, with the same class as the code they test.
+   - Check whether the preference is saved per user on the server. If it is, tell me, because storing user data could raise the class to critical.
+
+2. **Make `scripts/build.sh` print the elapsed time.**
+   Class: light (default: build script)
+   - Record a start timestamp at the top of the script.
+   - At the end, print the elapsed seconds. Do this in an exit trap so the time also prints when the build fails.
+   - Run the script once to confirm the output.
+
+Neither change touches `src/payments/` (critical), so nothing in the plan is critical. The two tasks are independent and can be done in either order.

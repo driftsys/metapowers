@@ -1,0 +1,16 @@
+`validate_session(token)` in `src/auth/session.py:14` is a plain dictionary lookup. It does nothing else.
+
+1. **Lookup:** it calls `SESSIONS.get(token)`. `SESSIONS` is a module-level dict that `create_session` fills at `session.py:10`. Each entry maps a token to `{"user_id", "created"}`.
+2. **Unknown token:** if the token isn't in the dict, it returns `None`, meaning the session is invalid.
+3. **Known token:** it returns `session["user_id"]`, and callers treat that as the authenticated user.
+
+The tokens come from `secrets.token_hex(16)`, which gives 128 bits of randomness. That makes them infeasible to guess, and the lookup is the only thing protecting a session.
+
+Gaps you should know about, since this is authentication code:
+- **No expiry:** `created` is stored but never checked, so a session stays valid until the process restarts.
+- **No revocation:** there is no logout or delete function, so a session can't be invalidated.
+- **In-memory only:** sessions are lost on restart and aren't shared across workers or processes. With multiple workers, a token created by one fails validation in another.
+- **Unbounded growth:** entries are never removed, so `SESSIONS` grows without limit.
+- **No locking:** nothing guards the dict against concurrent access. This is probably fine under CPython's GIL for single get/set operations, but it matters if you add expiry or cleanup.
+
+I haven't changed anything. If you want these fixed, I'd treat the work as `Class: critical (inferred: authentication and access rights)`. `src/auth/` isn't listed in AGENTS.md, so the class comes from the defaults.

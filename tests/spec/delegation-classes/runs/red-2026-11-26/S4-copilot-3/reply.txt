@@ -1,0 +1,26 @@
+ / Search "**/auth/session.py" 1 file found
+
+ PY Read src/auth/session.py 18 lines read
+
+`validate_session(token)` in `src/auth/session.py` is a plain lookup in an in-memory dict:
+
+1. It calls `SESSIONS.get(token)`. `SESSIONS` is a module-level dict that `create_session` fills with `token → {"user_id", "created"}`.
+2. If the token isn't in the dict, it returns `None`, meaning invalid.
+3. Otherwise it returns `session["user_id"]`.
+
+Tokens come from `secrets.token_hex(16)`, so they are 128 bits of randomness and can't be guessed.
+
+Gaps in the validation:
+- **No expiry check:** `created` is stored but never read, so sessions never time out.
+- **No revocation:** there's no logout or delete function, so a session stays valid for the life of the process.
+- **Lost on restart:** sessions live in process memory only, so a restart drops them.
+- **Not shared across workers:** each worker process has its own dict.
+- **No thread safety:** access isn't locked.
+- **Lookup timing:** the dict lookup isn't constant-time. That's low risk with random tokens.
+
+
+
+Changes    +0 -0
+AI Credits 4.61 (9s)
+Tokens     ↑ 92.3k (79.2k cached, 13.2k written) • ↓ 522
+Resume     copilot --resume=ff4dd41c-0224-496d-a4d4-9ba20ecdf146

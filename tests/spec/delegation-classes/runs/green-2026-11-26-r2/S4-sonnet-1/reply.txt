@@ -1,0 +1,16 @@
+`validate_session(token)` in `src/auth/session.py:14-18` is a plain dictionary lookup:
+
+1. It looks up `token` in the module-level `SESSIONS` dict with `.get()`.
+2. If the token isn't there, it returns `None`, which means the session is invalid.
+3. If the token is there, it returns the session's `user_id`.
+
+`create_session` (lines 8-11) generates the token with `secrets.token_hex(16)`. That gives 128 bits of randomness, so tokens are hard to guess. It stores `{"user_id", "created"}` under that token.
+
+The validation is minimal. These are the gaps I noticed:
+
+- **No expiry.** `created` is stored but never checked, so a session stays valid for as long as the process runs.
+- **No revocation.** There is no `destroy_session` or logout function in this file, so nothing removes a session.
+- **In-memory storage.** `SESSIONS` is lost on restart and isn't shared across workers or processes.
+- **Non-constant-time lookup.** The dict lookup isn't constant-time. With 128-bit random tokens, the timing risk is small in practice.
+
+This is authentication code. I haven't changed anything. If you want expiry or revocation added, I'd class that work as critical, since the project defaults put authentication in that class.

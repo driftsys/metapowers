@@ -1,0 +1,25 @@
+# Plan: show the user's email in settings + build timing
+
+## Task 1: Show the user's email on the settings screen
+
+**Class: critical (default: privacy, because it displays personal data).** AGENTS.md doesn't list `src/ui/`. Showing a field on a screen is normally a standard user-facing change. This one puts an email address in the page, and the rule says to take the higher class when two fit. There's also a security angle: `render_settings` builds HTML with an f-string and escapes nothing. The email is something users type in, so adding it unescaped opens an injection risk.
+
+Steps:
+1. In `src/ui/settings_view.py:4`, read the email from the `user` dict. Decide what happens if it's missing: either `user.get("email")` and leave the line out, or show a placeholder. Don't raise a `KeyError`.
+2. HTML-escape the email with `html.escape`. Escape the existing `name` and `theme` values too, since they have the same problem.
+3. Show the email only to the logged-in user, on their own settings page. Confirm with whoever owns auth that `render_settings` is never called with another user's record.
+4. Add tests in a new `tests/test_settings_view.py` (also critical, since tests take the class of the code they test). Cover: the email is shown, a missing email is handled, and markup in the email or name comes out escaped.
+5. Review: someone other than the author checks the change before merging.
+
+## Task 2: Print elapsed time in `scripts/build.sh`
+
+**Class: light (default: build scripts).** If it breaks, you see it right away and nothing else is affected.
+
+Steps:
+1. Record the start time before `python -m compileall src`, using Bash's built-in `SECONDS` (it works on macOS without GNU `date`).
+2. Change the last line to print the time as well, e.g. `build done in Ns`.
+3. Check that `set -eu` doesn't trip on the new variable. Run the script once and look at the output.
+
+Neither task touches `src/payments/`. That path is the only one AGENTS.md classifies (as critical).
+
+If you'd rather treat the settings change as standard (the user's own email, shown only to them), tell me and I'll note your decision in the plan. I can also record that class for `src/ui/` in the "Delegation classes" section of AGENTS.md.

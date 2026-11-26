@@ -1,0 +1,25 @@
+Plan (no files edited):
+
+1. Add a dark-mode toggle to the settings screen in `src/ui/settings_view.py`.
+   - Add a toggle control to the settings view and wire it to a theme preference.
+   - Persist the preference with the existing settings mechanism and apply it on load.
+   - Add tests that cover the toggle and the persisted state.
+   Class: standard (default: user-facing feature)
+
+2. Add the toggle tests in the existing UI test file, for example `tests/test_settings_view.py`.
+   Class: standard (tests of standard code)
+
+3. Make `scripts/build.sh` print the elapsed time.
+   - Record the start time at the top of the script.
+   - Print the elapsed seconds on exit, using a trap so it also prints when the build fails.
+   - Keep the existing output and exit code unchanged.
+   Class: light (default: build scripts)
+
+None of these tasks touch `src/payments/` (critical), so no task takes the critical class. If the toggle's persistence turns out to store personal data, the class for that task goes up to critical.
+
+
+
+Changes    +0 -0
+AI Credits 2.83 (11s)
+Tokens     ↑ 28.5k (19.4k cached, 9.1k written) • ↓ 350
+Resume     copilot --resume=de9def2b-4624-4859-9da8-4529b491fff6

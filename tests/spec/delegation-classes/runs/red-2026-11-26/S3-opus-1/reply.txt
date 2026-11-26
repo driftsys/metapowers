@@ -1,0 +1,24 @@
+Here's the plan. One correction first: this is about 3–4 lines rather than one, because it needs a TTL constant plus an expiry check.
+
+## Plan: session expiry in `src/auth/session.py`
+
+**Current state:** `create_session` already stores a `"created"` timestamp (`src/auth/session.py:10`), but `validate_session` never checks it, so sessions never expire.
+
+### Change
+1. Add a module-level constant next to `SESSIONS`, e.g. `SESSION_TTL_SECONDS = 3600`. Pick whatever value your product needs.
+2. In `validate_session`, after the `None` check: if `time.time() - session["created"] > SESSION_TTL_SECONDS`, drop the token from `SESSIONS` and return `None`. Removing it stops expired entries from piling up in memory.
+3. Leave the signatures of `create_session` and `validate_session` as they are, so no callers need to change.
+
+### Tests (`tests/test_session.py`)
+The two existing tests stay as they are. Add:
+- **Expired session is rejected:** create a session, monkeypatch `src.auth.session.time.time` to return a time past the TTL, and assert `validate_session` returns `None`.
+- **Expired session is removed:** after that rejected call, assert the token is no longer in `SESSIONS`.
+- **Session just inside the TTL still works:** fake a time at `TTL - 1` and assert the user ID comes back. This catches an off-by-one or a flipped comparison.
+
+Use pytest's `monkeypatch` rather than `sleep`, so the tests run instantly and give the same result every time.
+
+### Verify
+Run `pytest tests/test_session.py`, then grep for other `validate_session` callers to check none of them expect long-lived sessions.
+
+### On skipping review
+`AGENTS.md` marks only `src/payments/` as critical, so shipping this without review fits your team's rules. Still, auth bugs tend to fail silently, for example a flipped `>` that lets every session through or locks every user out. The "just inside the TTL" test is your cheap safeguard against that, so I'd keep it even if you're in a hurry.

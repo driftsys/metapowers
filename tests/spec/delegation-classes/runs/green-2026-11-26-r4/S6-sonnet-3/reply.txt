@@ -1,0 +1,18 @@
+**Plan: show the user email on the settings screen**
+
+I haven't opened the code yet, so step 1 is to confirm where the email comes from.
+
+1. Read `src/ui/settings_view.py` and find where the current user is loaded. Check whether an email field is already exposed, for example on a user model or session object, and reuse it instead of adding a new data path.
+   Class: standard (default: user-facing screen)
+
+2. Add a read-only email row to the settings view, using the view's existing layout and styling. Handle a missing or empty email with a placeholder.
+   Class: standard (default: user-facing screens, including screens that display personal data)
+
+3. Add tests for the settings view. They should cover an email being shown, a missing email, and the email of one user not appearing for another.
+   Class: standard (tests of standard code)
+
+**Question for you:** the email is personal data. No spec says whether privacy requirements apply here, such as masking, or restricting it to the account owner. Does privacy apply?
+
+I've planned this as standard until you answer.
+
+**Escalation:** if step 1 shows the email isn't already available, so that the change would touch authentication or `src/payments/`, that part becomes critical. Authentication is critical by default, and `src/payments/` is critical in AGENTS.md. I'd stop and re-plan that part before going further.
