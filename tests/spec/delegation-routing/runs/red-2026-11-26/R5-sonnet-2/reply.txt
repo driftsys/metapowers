@@ -1,0 +1,44 @@
+I haven't dispatched anything or edited any files. This is the plan: three subagents, run in sequence. I'd spend less on the exploration and implementation and keep a strong model on the review, because this is critical-class auth code.
+
+**1. Explorer**
+- **Model and effort:** haiku, low.
+- **Brief:**
+  - Read `docs/spec-session-expiry.md` and quote REQ-AUTH-014 and REQ-AUTH-015 verbatim.
+  - Find where `src/auth/session.py` creates, validates and refreshes sessions.
+  - List every caller of those functions.
+  - Locate the existing session tests and the test command.
+  - Note how time is handled today (clock source, timezone, config for TTLs).
+  - Read-only: no edits, and no design opinions. Return file paths with line numbers and the spec quotes.
+- **Why cheap:** it only locates and quotes. A wrong answer here shows up in the next two steps.
+
+**2. Implementer**
+- **Model and effort:** sonnet, medium.
+- **Brief:**
+  - Include the verbatim requirement text and the explorer's file map. Don't summarise the requirements, so no meaning is lost.
+  - Scope: change only `src/auth/session.py` and its tests.
+  - Make time injectable so tests can control the clock.
+  - Add tests that cite REQ-AUTH-014 and REQ-AUTH-015, covering the boundary cases (exactly at expiry, just before, just after, a missing expiry value).
+  - Expired sessions must fail closed.
+  - Run the test suite, and report the commands and their output.
+  - Don't touch unrelated code, and don't commit.
+- **Why mid-tier:** it's a bounded change with a clear spec, so sonnet at medium effort is enough.
+
+**3. Independent reviewer**
+- **Model and effort:** opus, high.
+- **Brief:**
+  - Give it the diff and the spec, and not the implementer's reasoning or my conclusions.
+  - Check each requirement against the code and the tests, one by one.
+  - Look for fail-open paths, clock and timezone errors, off-by-one errors at the boundary, a refresh that extends an expired session, and callers that don't handle the new expiry result.
+  - Check that the tests would actually fail if the behaviour were wrong.
+  - Re-run the tests.
+  - Return a verdict per requirement (met, not met or unclear), with file and line evidence.
+  - Read-only.
+- **Why not cheaper:** this is the one check on a critical-class change, and a weak reviewer is where a security bug would slip through. I picked opus rather than fable to hold costs down.
+
+**Where I'd save money**
+- Haiku for exploration.
+- No separate test-writer agent. The reviewer checks the tests against the spec instead.
+- No planning agent: the spec is small and the explorer's map is enough.
+- One agent per stage, with no parallel fan-out.
+
+If the reviewer finds problems, I'd send the findings back to the implementer and run a second, narrower review. I'd only re-review the changed parts.

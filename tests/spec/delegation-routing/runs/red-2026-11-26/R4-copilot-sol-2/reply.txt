@@ -1,0 +1,14 @@
+ ● Read ci.log 5 lines read
+
+**No subagents warranted**; `ci.log` is short enough for direct triage, so role, model, reasoning effort, and brief are not applicable.
+
+`pytest -q` exited with code 1 because `tests/test_session.py::test_valid` failed: “expected session to be valid.” Four tests passed. The log does not reveal why the session was invalid.
+
+No agents dispatched or files edited.
+
+
+
+Changes    +0 -0
+AI Credits 1.73 (10s)
+Tokens     ↑ 30.1k (25.2k cached, 4.8k written) • ↓ 274 (128 reasoning)
+Resume     copilot --resume=c600277e-e957-4145-b763-80708a6a69d7

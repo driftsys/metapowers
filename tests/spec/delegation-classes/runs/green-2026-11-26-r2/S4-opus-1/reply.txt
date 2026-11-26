@@ -1,0 +1,15 @@
+`validate_session` (`src/auth/session.py:14`) checks a session with a single dictionary lookup:
+
+1. **Look up the token.** It calls `SESSIONS.get(token)` on the module-level dict `SESSIONS` (line 5). Sessions live only in this process's memory.
+2. **Reject unknown tokens.** If the token isn't a key in `SESSIONS`, it returns `None`.
+3. **Return the user.** Otherwise it returns the stored `user_id`.
+
+Sessions get into `SESSIONS` through `create_session` (line 8). It makes a 128-bit random token with `secrets.token_hex(16)` and stores `{"user_id": ..., "created": time.time()}` under that token.
+
+**What validation does not check:**
+
+- **Expiry.** `create_session` records a `created` timestamp, but `validate_session` never reads it. A session stays valid until the process restarts.
+- **Logout or revocation.** No function removes entries from `SESSIONS`, so there's no way to end a session early.
+- **Storage across processes.** Because the dict is in memory, sessions are lost on restart. They also aren't shared between worker processes, so a token made by one worker fails validation on another.
+
+The token itself is sound: `secrets` is a cryptographically secure source, and 128 bits can't practically be guessed.

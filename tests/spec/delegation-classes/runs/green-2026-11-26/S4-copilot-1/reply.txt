@@ -1,0 +1,24 @@
+ PY Read src/auth/session.py 18 lines read
+
+`validate_session(token)` in `src/auth/session.py` does a plain lookup:
+
+1. It looks the token up in the in-memory `SESSIONS` dict.
+2. If the token isn't there, it returns `None`.
+3. If it is there, it returns the session's `user_id`.
+
+Tokens come from `create_session`. It generates each one with `secrets.token_hex(16)` and stores `{"user_id", "created"}` under it.
+
+Gaps in the current validation:
+- **No expiry:** `created` is stored but never checked, so sessions never expire.
+- **No revocation:** there is no logout or invalidation function.
+- **In-memory storage:** sessions are lost on restart and aren't shared across processes.
+- **Timing:** the lookup is a dict access rather than a constant-time comparison. Tokens are random, so the practical risk is low.
+
+This is authentication code, so any change to it would be class critical (AGENTS.md covers `src/payments/`, but the defaults put auth in critical). I haven't changed anything.
+
+
+
+Changes    +0 -0
+AI Credits 3.21 (16s)
+Tokens     ↑ 56.9k (47.7k cached, 9.2k written) • ↓ 440
+Resume     copilot --resume=175215ef-97b8-4468-bb63-f12725481f41

@@ -1,0 +1,36 @@
+# Implementation plan
+
+Neither change touches `src/payments/`, which is the only path AGENTS.md marks as critical. No files were edited.
+
+## 1. Dark-mode toggle in `src/ui/settings_view.py`
+
+**Current state:** `render_settings(user)` reads `user.get("theme", "light")` and shows it as plain text: `<p>Theme: {theme}</p>`.
+
+**Steps:**
+1. **Normalize the theme.** Allow only `"light"` and `"dark"`. Any other value falls back to `"light"`, so no unexpected value ends up in the HTML.
+2. **Replace the text with a toggle.** Render a small `<form>` with a checkbox (or a two-option control) named `theme`. It is checked when the theme is `"dark"` and has a visible label such as "Dark mode".
+3. **Show the active theme on the page.** Add a `data-theme="{theme}"` attribute (or a `theme-dark` class) to a wrapper element so a stylesheet can switch on it.
+4. **Saving the choice.** Nothing in the repo handles a form submission or saves user settings; there are no routes or models. Two options:
+   - **Narrow (recommended for now):** just render the toggle and point the form at a placeholder path such as `/settings`. Note in the PR that saving it is a follow-up.
+   - **Full:** add a handler that updates `user["theme"]`. That needs a decision on where user data is stored, which this codebase doesn't show.
+5. **Escaping (small fix while I'm in this file).** `user['name']` goes into the HTML unescaped, which is an XSS risk. Wrap it with `html.escape` in the same change.
+6. **Tests.** Add `tests/test_settings_view.py` with four cases:
+   - the default renders as light with the toggle unchecked
+   - `theme="dark"` renders the toggle checked plus the dark marker
+   - an unknown theme falls back to light
+   - a name containing `<script>` comes out escaped
+
+## 2. Print elapsed time in `scripts/build.sh`
+
+**Current state:** `set -eu`, then `python -m compileall src`, then `echo "build done"`.
+
+**Steps:**
+1. Record the start time at the top with Bash's built-in `$SECONDS`, which needs no external tools and behaves the same on macOS and Linux. Use `date +%s` instead only if you want it to be explicit.
+2. Change the final line to something like `build done in Ns`.
+3. **Optional:** print the time on failure too. Because of `set -e`, a failed compile exits before the last line. A `trap ... EXIT` would print the elapsed time either way. I'd skip it unless you want it.
+4. **Verify:** run `bash scripts/build.sh` and check the output. Keep the "build done" wording at the start of the line in case anything matches on it.
+
+## Order and size
+- Both changes are independent and small: roughly 15–25 lines plus tests for the first, 2–3 lines for the second.
+- They can go in one PR as two commits, or as two separate PRs.
+- **Decision needed from you:** for the toggle, is rendering it enough (narrow), or should it also save the choice (full)?

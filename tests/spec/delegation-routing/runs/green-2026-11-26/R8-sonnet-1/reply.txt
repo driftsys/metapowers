@@ -1,0 +1,46 @@
+I would not dispatch an implementer yet. The skill's escalation rule sends the next attempt to the strongest model, but opus has already failed this task. In that case the skill says to suggest a frontier model to the user with the reason and wait for their answer. I would first diagnose why the attempts failed.
+
+**Task:** dark-mode toggle in `src/ui/settings_view.py`
+Class: standard (given by the user; the path has no AGENTS.md entry)
+Routing: no implementer dispatched until diagnosis finishes and the user answers on a frontier model.
+
+**1. Failure diagnostician (dispatch now)**
+- **Model and effort:** sonnet, high. High effort applies because this is root-cause debugging.
+- **Mode:** read-only, with no edits.
+- **Brief:**
+  - The task, its class, and the spec or requirement for the toggle.
+  - The three failed attempts: their diffs, test or run output, and the base commit recorded before the task started.
+  - The job: reproduce the failure and find the root cause. Candidates are a missing or ambiguous spec, theme state or persistence the view doesn't expose, a test or fixture problem, or a wrong assumption shared by all three attempts.
+  - The return format: a short report with the evidence, a proposed fix approach, and whether a model limit looks like the cause.
+
+**2. Consult (dispatch after 1)**
+- **Why:** the session runs on sonnet, below the strongest model, and routing is now in doubt. The skill says to consult the strongest model before planning in that case.
+- **Model and effort:** opus, high.
+- **Brief:**
+  - The task and class.
+  - The diagnostician's report.
+  - One question: is the failure fixable with a better brief, or does it need a stronger model?
+- **What I do with the answer:** follow it, or report any disagreement to you.
+
+**Then I stop and ask you.** I would give you the diagnosis and suggest a frontier model (Fable or Astra) if the failure is a model limit. I would wait for your answer.
+
+**3. Implementer (only after your answer)**
+- **If you approve a frontier model:** I dispatch that one. Otherwise I dispatch opus, since that is the strongest default.
+- **Effort:** medium, the ceiling for implementation.
+- **Brief:**
+  - The spec section and requirement ids.
+  - The failing test, which must exist or be written first.
+  - The class (standard).
+  - The root cause and fix approach from steps 1 and 2.
+  - A warning not to repeat the earlier attempts' approach.
+
+**4. Code reviewer (after 3)**
+- **Count:** one code review, as the table requires for standard.
+- **Model and effort:** opus, high.
+- **Brief:**
+  - The spec, the requirement, and the plan task.
+  - The merge request description.
+  - The diff as a file, computed from the base recorded before the task started.
+- **Cross-family review:** Claude Code offers one model family, so none is possible. The `Routing: no cross-family review` note is only required for critical tasks.
+
+A normal human review follows. No refuter or compliance review is needed at the standard class.

@@ -1,0 +1,18 @@
+ ● skill(delegation-routing)
+
+Class: ops (user-specified).
+
+Would dispatch **one subagent**:
+- **Role:** Read-only CI log triage.
+- **Model:** `gpt-6-luna`.
+- **Reasoning effort:** low.
+- **Brief:** Read `ci.log`, identify the first actionable failure, distinguish the likely cause from downstream errors, and summarize supporting log lines. State uncertainty where evidence is insufficient. Do not edit files or dispatch further agents.
+
+No reviewers required for ops. No subagents dispatched or files edited.
+
+
+
+Changes    +0 -0
+AI Credits 2.31 (10s)
+Tokens     ↑ 33.8k (26.3k cached, 7.4k written) • ↓ 189 (58 reasoning)
+Resume     copilot --resume=8e8ffe52-4a8f-4209-9aaa-daa1199d273b

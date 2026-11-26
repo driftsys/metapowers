@@ -1,0 +1,33 @@
+**Plan: session expiry in `src/auth/session.py`**
+
+I haven't read the file yet, so step 1 confirms how sessions are created and stored before anything changes.
+
+1. Read `src/auth/session.py` and its callers. Note how sessions are created, stored and validated, and whether a clock or timestamp already exists.
+   Class: critical (default: authentication and access rights)
+
+2. Add expiry settings: an absolute lifetime and, if wanted, an idle timeout. Both come from config with safe defaults, so no session lives forever.
+   Class: critical (default: authentication and access rights)
+
+3. Record issue and last-activity times when a session is created or refreshed. Use an injectable clock so tests don't depend on real time.
+   Class: critical (default: authentication and access rights)
+
+4. Check expiry in session validation. Treat an expired session as invalid, delete it from the store, and fail closed if the timestamps are missing or malformed.
+   Class: critical (default: authentication and access rights)
+
+5. Update callers so an expired session gives the same response as no session (re-authenticate). The response should not reveal that the session existed.
+   Class: critical (default: authentication and access rights; touches the same code path)
+
+6. Add tests to `tests/auth/test_session.py` (or the existing equivalent). Cover:
+   - a valid session;
+   - expiry just before and just after the lifetime boundary;
+   - the idle timeout, including a refresh extending it;
+   - cleanup of expired sessions;
+   - missing or corrupt timestamps being rejected;
+   - the config defaults.
+
+   Class: critical (tests take the class of the code they test)
+
+**Open questions for you**
+- Do you want an absolute lifetime only, or an idle timeout as well?
+- What durations should the defaults be?
+- Should the "Delegation classes" section of AGENTS.md record `src/auth/` as critical? It currently lists only `src/payments/`. I used the default for authentication, and I can offer to add it.

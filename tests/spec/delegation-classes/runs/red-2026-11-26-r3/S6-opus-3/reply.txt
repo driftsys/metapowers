@@ -1,0 +1,20 @@
+Here's the plan for showing the user's email in `render_settings`. I haven't edited any files.
+
+**What's there now**
+- `src/ui/settings_view.py:4`: `render_settings(user)` takes a plain dict and returns an HTML string built with an f-string. It reads `user['name']` and `user.get("theme", "light")`.
+- Nothing in the repo calls `render_settings` or uses an `email` field. There's no user model either (`src/auth/session.py` only maps a token to a `user_id`). So whatever builds the `user` dict will need to add an `email` key.
+- The settings UI has no tests (`tests/` only covers sessions).
+
+**Plan**
+
+1. **Read the email from the dict.** Use `user.get("email")` so a missing key doesn't raise `KeyError`. `theme` is already handled this way.
+2. **Escape before inserting it.** Pass the email through `html.escape` (standard library) before it goes into the HTML. Email addresses can legally contain characters like `<`, `>`, `"` and `&` in quoted local parts, so leaving it unescaped would allow HTML injection. `user['name']` has the same problem today. I suggest escaping it in the same change, since it's the same line of code.
+3. **Render it.** Add something like `<p>Email: …</p>` after the heading, matching the existing `Theme:` line. If there's no email, either leave the line out or show a placeholder such as "Not set". Your call; leaving it out is the simpler default.
+4. **Add tests** in a new `tests/test_settings_view.py`:
+   - The email appears in the output when it's provided.
+   - Nothing breaks and no `Email:` line appears when the key is missing.
+   - An email containing `<script>` comes out escaped.
+   - Theme still defaults to `light` (to check nothing regressed).
+5. **Upstream (outside this file).** Whatever eventually builds the `user` dict for this view needs to include `email`. No such caller exists in the repo yet, so this is out of scope for now and only worth noting.
+
+**Scope:** one function in `src/ui/settings_view.py` plus one new test file. This doesn't touch `src/payments/`, which `AGENTS.md` marks as critical.

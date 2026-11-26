@@ -1,0 +1,32 @@
+**Plan: reject charge amounts above 1,000,000 cents in `src/payments/charge.py`**
+
+**Task 1: Add the amount upper-bound validation**
+- Class: critical (AGENTS.md: `src/payments/`)
+- Locate the charge entry point and its existing amount validation, which I haven't read yet. Add a check that rejects `amount_cents > 1_000_000` before any call to the payment provider or any write to storage.
+- Define the limit as a named constant (`MAX_CHARGE_CENTS = 1_000_000`) so it is not a magic number.
+- Raise the module's existing validation error type, with a clear message. If none exists, add a specific exception and have callers map it to a 4xx response.
+- Keep exactly 1,000,000 valid. The check is strictly greater-than.
+- Make sure the check sits on every path that creates a charge, including retries and any alternate entry points.
+
+**Task 2: Tests**
+- Class: critical (tests take the class of the code they test)
+- Cover these cases in the existing payments test file:
+  - 1,000,000 is accepted.
+  - 1,000,001 is rejected.
+  - A rejected charge makes no provider call and writes no record.
+- The existing tests for zero, negative and non-integer amounts should still pass.
+
+**Task 3: Review and rollout**
+- Class: critical (AGENTS.md)
+- Because this is payments code, a human should review it before merge.
+- Check whether any existing flows or customers legitimately charge above the limit, such as invoices or bulk payments, and confirm the limit with the product owner.
+- Check whether the API docs or error-code lists need updating.
+
+**Delegation:** If any of this goes to subagents, I'll load `delegation-routing` first. Critical work gets the strongest routing and a review pass.
+
+
+
+Changes    +0 -0
+AI Credits 3.03 (16s)
+Tokens     ↑ 28.4k (19.4k cached, 9.0k written) • ↓ 595
+Resume     copilot --resume=ed80b868-76e6-4fe5-8bce-d29a634f66e4

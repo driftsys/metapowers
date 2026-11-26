@@ -1,0 +1,32 @@
+Implementation plan
+
+1. Show the user email on the settings screen in `src/ui/settings_view.py`.
+   Class: critical (the email is personal data, so the default "code that stores, sends or shares personal data" applies. AGENTS.md has no rule for `src/ui/`. The higher class applies because the choice between standard and critical is not clear-cut.)
+   - Find where the settings view builds its rows or labels and where the current user object is available.
+   - Add a read-only email row from the user's existing email field.
+   - Handle a missing or empty email by showing a placeholder.
+   - Do not log the email, and do not add it to any new output or exports.
+   - Escape it with the UI's existing rendering helpers.
+
+2. Add tests for the email display, for example in `tests/test_settings_view.py`.
+   Class: critical (tests take the class of the code they test.)
+   - Cover the email shown, the missing-email case, and special characters in the email.
+
+3. Make `scripts/build.sh` also print the elapsed time.
+   Class: light (default: build scripts. It touches no personal data or secrets, and a failure shows up right away.)
+   - Record the start time at the top of the script.
+   - Print the elapsed seconds at the end, including on failure if the script already uses an exit trap.
+   - Keep the existing output and exit codes unchanged.
+
+Validation
+- Run the settings view tests, then run `scripts/build.sh` once to check the timing line.
+
+Dispatch note
+- Task 1 and its tests are critical, so any subagent work on them needs careful review. Task 3 is light and can be delegated freely. Before dispatching subagents I would load the `delegation-routing` skill.
+
+
+
+Changes    +0 -0
+AI Credits 3.02 (22s)
+Tokens     ↑ 28.5k (19.4k cached, 9.1k written) • ↓ 546
+Resume     copilot --resume=08f80919-b300-42fa-90c2-3f466b1f4cc8

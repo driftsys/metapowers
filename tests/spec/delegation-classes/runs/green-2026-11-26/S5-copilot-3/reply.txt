@@ -1,0 +1,31 @@
+# Implementation plan
+
+## Task 1: Show the user email on the settings screen
+**Class: critical (inferred: the email is personal data, and privacy defaults to critical. The higher class applies because the screen is also user-facing, which would be standard.)**
+
+- Read `src/ui/settings_view.py` and find how it gets the current user.
+- Take the email from the authenticated session or user object. Do not use request parameters, so one user can never see another user's email.
+- Render it as read-only text in the settings layout, with escaping.
+- Handle a missing email by showing nothing or a placeholder.
+- Make sure the email is not written to logs or error output.
+- Add tests for these cases: the logged-in user's own email is shown, a missing email is handled, and special characters are escaped. The tests are also critical.
+- Review before merging, with a check for PII leakage.
+
+## Task 2: Print elapsed time in the build script
+**Class: light (default: build scripts)**
+
+- Read `scripts/build.sh`.
+- Record the start time at the top, using `date +%s` or the bash `SECONDS` variable.
+- At the end, print the elapsed seconds.
+- Also print it on failure, for example with a `trap ... EXIT`, if the script uses `set -e`.
+- Run the script once to check the output.
+
+## Order
+The tasks are independent. Do Task 1 first, with the stricter review. Task 2 needs only a manual run.
+
+
+
+Changes    +0 -0
+AI Credits 3.17 (20s)
+Tokens     ↑ 28.4k (19.4k cached, 9.0k written) • ↓ 732 (271 reasoning)
+Resume     copilot --resume=d8d9458f-a6c8-41c3-b33f-bfad0c3918d6

@@ -1,0 +1,52 @@
+Nothing is dispatched and no files are edited. I loaded the `delegation-routing` skill first, as the project rules require.
+
+**Task: add session expiry to `src/auth/session.py` (REQ-AUTH-014, REQ-AUTH-015)**
+Class: critical (user-stated; also the default for authentication and access rights)
+Routing: no cross-family review (Claude Code offers one model family)
+Human: expert review before merge
+
+Before dispatch I record the base commit, currently `a0d5b85`, so the reviewers get a diff computed from it.
+
+| # | Role | Model | Effort | Runs |
+|---|------|-------|--------|------|
+| 1 | Implementer | opus | medium | First |
+| 2 | Code reviewer | opus | high | After 1, in parallel with 3 and 4 |
+| 3 | Compliance reviewer | sonnet | high | After 1, in parallel with 2 and 4 |
+| 4 | Refuter | opus | high | After 1, in parallel with 2 and 3 |
+| 5 | Ops (optional) | haiku | n/a | After 1, before the reviews |
+
+**1. Implementer (opus, medium)**
+- **Effort:** Medium is the ceiling for implementation. I am not using low, because session expiry in auth code doesn't follow an existing pattern I have confirmed.
+- **Brief contents:**
+  - The relevant section of `docs/spec-session-expiry.md`.
+  - The ids REQ-AUTH-014 and REQ-AUTH-015.
+  - The task's class (critical) and the reason for it.
+  - The failing test. The same agent writes it first, so one dependent chain stays in one session. Tests take the class of the code they test, so they are critical too.
+  - The scope, `src/auth/session.py` and its tests only.
+- **Output:** The brief also asks for a merge request description that maps each requirement to the code and the test.
+
+**2. Code reviewer (opus, high)**
+- **Brief contents:**
+  - The spec.
+  - The two requirements.
+  - The plan task.
+  - The merge request description.
+  - The diff as a file, computed from the recorded base.
+- **Focus:** Correctness and security. For session expiry that means boundary and clock handling, and whether expired sessions are rejected on every code path.
+
+**3. Compliance reviewer (sonnet, high)**
+- **Effort:** The skill table doesn't give an effort for this role, so I'm treating it as a review and using high. Say so if you'd rather it ran at medium.
+- **Brief contents:** Same inputs as the code reviewer.
+- **Focus:** It checks each clause of REQ-AUTH-014 and REQ-AUTH-015 against the diff and the tests. It reports anything unmet, partly met or untested, and any behavior the spec doesn't ask for.
+
+**4. Refuter (opus, high)**
+- **Brief contents:** Same inputs as the code reviewer.
+- **Focus:** Its job is to falsify the change. It tries to build a concrete input, timing or state in which the implementation violates a requirement, for example expiry at the exact boundary, a clock skew, or a session reused after expiry. It runs experiments where it can.
+
+**5. Ops (haiku, optional)**
+- **Work:** Read-only tool runs, such as the test suite and linter, and a summary of the output. I would use it only if that work exceeds about four tool calls. It never edits code.
+
+**Not dispatched**
+- **Design consult:** I run on Sonnet, below the strongest model. If reading the spec shows no clear design for expiry, I would consult an opus subagent at high effort before dispatching. Its brief would be the task, the class and the specific design question. The class itself is settled, so that is the only trigger.
+- **Escalation:** After two failed implementer attempts, the next attempt goes to the strongest implementer, which is already opus. I would then suggest a frontier model to you and wait for your answer.
+- **Overrides:** There is no "Delegation" section in AGENTS.md and you have given no overrides, so the skill defaults apply.

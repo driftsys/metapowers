@@ -1,0 +1,27 @@
+ $ Shell Inspect the two target files 10 lines…
+   cat src/ui/settings_view.py scripts/build.sh 2>&1 | head -60
+
+## Plan
+
+**Task 1: Show the user email on the settings screen** (`src/ui/settings_view.py`)
+- Class: critical (inferred: it displays personal data, and the defaults treat privacy as critical. AGENTS.md has no entry for `src/ui/`.)
+- In `render_settings`, add a line to the returned HTML that shows `user["email"]`.
+- Escape the value with `html.escape`, because the current code interpolates raw values and an unescaped email would allow XSS.
+- Use `user.get("email")` with a fallback, so a missing email doesn't raise a `KeyError`.
+- Confirm the view is only rendered for the logged-in user's own data.
+- Tests: add a test with the same class (critical) that covers the email shown, an escaped email, and a missing email.
+
+**Task 2: Print elapsed time in the build** (`scripts/build.sh`)
+- Class: light (default: build scripts)
+- Record the start time at the top with `SECONDS=$SECONDS` or `date +%s`.
+- Change the final echo to `build done in Ns`, computed from the start time.
+- Verify by running `bash scripts/build.sh`.
+
+I'm not sending these to subagents, because both changes are small and I can make them directly. The `delegation-routing` skill isn't needed for that.
+
+
+
+Changes    +0 -0
+AI Credits 3.6 (20s)
+Tokens     ↑ 57.2k (47.8k cached, 9.4k written) • ↓ 758 (222 reasoning)
+Resume     copilot --resume=cc4e452e-3334-4b3e-beb0-0b381f5ac784

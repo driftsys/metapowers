@@ -1,10 +1,11 @@
 schema: 1
 name: metapowers
-description: The metapowers baseline — composes Superpowers (TDD/brainstorm/plan, via plugin) and metapowers-core (the scope-discipline and international-english rules)
+description: The metapowers baseline — composes Superpowers (TDD/brainstorm/plan, via plugin), metapowers-core (the scope-discipline and international-english rules), and delegation-policies (the delegation rules and the delegation-routing skill)
 license: MIT
 items: {}
 requires:
 - name: superpowers
 - name: metapowers-core
+- name: delegation-policies
 metadata:
   version: 0.2.4

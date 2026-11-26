@@ -1,0 +1,30 @@
+I wouldn't dispatch anything until I know why the two Sonnet attempts failed. That's a few tool calls, so I'd do it myself rather than hand it to a subagent: read their diffs or transcripts and the failure output. One thing already stands out. `ci.log` shows `tests/test_session.py::test_valid` failing, which is an existing auth failure that has nothing to do with the settings screen. If either attempt was judged by that red CI, it may have been sunk by something it couldn't fix.
+
+`AGENTS.md` only defines a `critical` class (for `src/payments/`), so "standard" sets no extra rules. The two failures are what drive the choices below.
+
+## 1. Implementer
+- **Model:** Opus. After two Sonnet failures, a third Sonnet run is a poor bet.
+- **Effort:** high. The task is small, but it has already failed twice, so the extra reasoning is cheap insurance.
+- **Brief contains:**
+  - **Goal:** add a dark-mode toggle to `render_settings` in `src/ui/settings_view.py`. It should render as a control that reflects `user["theme"]` (`"light"` or `"dark"`, defaulting to `"light"`, as now).
+  - **The current file**, all 6 lines inline: a server-side f-string HTML renderer. There's no framework, no form handler and no JS.
+  - **Scope:** render the toggle (for example a checkbox or switch in a `<form>` that posts `theme`) and show its checked state correctly. Saving the preference is out of scope unless a handler exists. Don't touch `src/payments/` or `src/auth/`.
+  - **Why the earlier attempts failed:** the specific causes I find, so it doesn't repeat them.
+  - **CI warning:** `test_session.py::test_valid` already fails and isn't theirs to fix or worry about.
+  - **Done means:** add `tests/test_settings_view.py`, covering the toggle unchecked for light and missing theme, and checked for dark. `pytest tests/test_settings_view.py` and `scripts/build.sh` must pass.
+  - **Report back:** the diff, the test output, and anything it assumed.
+
+## 2. Reviewer
+- **Model:** Sonnet. Checking a ~20-line diff against a clear spec is well within its range. Its failures were in implementing, not judging.
+- **Effort:** medium.
+- **Brief contains:**
+  - The original task statement, the scope limits above and the diff.
+  - Not the implementer's summary or my opinion, so it judges the code fresh.
+  - **Asks it to check:**
+    - The toggle state is right for light, dark, missing and unexpected theme values.
+    - The HTML is valid.
+    - Nothing outside `settings_view.py` and the new test changed.
+    - The tests would actually fail if the toggle broke.
+  - **Report back:** a pass or fail verdict, with a concrete failure case for each problem.
+
+I'd run them one after the other, since the reviewer needs the implementer's diff. I'd also run the tests myself before calling the task done rather than relying on either report.

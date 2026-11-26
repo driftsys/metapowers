@@ -1,0 +1,10 @@
+The first line of the rule body (after the front matter) is:
+
+"Give a class to each task in a plan and to each file change you make, on its"
+
+
+
+Changes    +0 -0
+AI Credits 7.44 (6s)
+Tokens     ↑ 28.5k (28.5k written) • ↓ 320 (277 reasoning)
+Resume     copilot --resume=eb943d75-57ef-4fd4-86fb-890f3dc0d59f

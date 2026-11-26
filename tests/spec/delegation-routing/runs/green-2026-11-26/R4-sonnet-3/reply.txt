@@ -1,0 +1,25 @@
+**Task:** Triage the failing CI log in `ci.log` and summarize the cause.
+Class: ops (user-assigned). Note that CI/CD would default to standard, so I'm using the class you gave.
+Routing: one ops subagent, per the skill. I'm dispatching nothing and editing nothing.
+
+**Subagent 1: log triage (the only one)**
+- **Role:** ops, read-only. It does log reading and a summary, which the skill lists as ops work.
+- **Model:** `haiku`, from the ops column. The `Agent` call would set `model: "haiku"`.
+- **Reasoning effort:** I'd leave it at the default, because the routing table sets no effort for read-only ops work. The one row that could apply is "debugging a root cause", which gets high. That is a separate task, and I'd only start it if the summary doesn't settle the cause.
+- **Agent type:** `general-purpose`. It only needs Read and Grep, and `Explore` would also work.
+- **Brief contents:**
+  - **Goal:** find why CI failed and summarize the cause.
+  - **Input:** the path to `ci.log` in the repo root. It should read the whole file, because the first error is often not the last one.
+  - **Constraints:** read-only. It must not edit files, run the build, or change anything.
+  - **Report format:**
+    - the first failing step or job, and the exact error lines quoted
+    - the likely root cause, separated from secondary or cascading failures
+    - the file, test or config the failure points to, if the log names one
+    - an explicit "unknown" if the log doesn't settle the cause, with no guessing
+  - **Length:** a short summary, not a log dump.
+
+**Why one agent:**
+- **Output check:** the output is read by me, not checked by tools. The skill says ops output is tool-checked, so I'd spot-check the quoted error lines against `ci.log` before reporting them.
+- **Reviews:** none are needed for ops (no code review, refuter or human review).
+- **Class caveat:** if the log points into `src/payments/`, any follow-up fix is critical. That fix would need an opus implementer with code review, compliance review and a refuter, plus `Routing: no cross-family review`. I'd re-class that follow-up task before dispatching anything.
+- **Inline option:** if `ci.log` is short, the rules say a subagent costs more than doing it inline, since delegation only pays above roughly four tool calls. In that case I'd read it myself.

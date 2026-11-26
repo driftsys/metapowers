@@ -1,0 +1,3 @@
+Ticket 18
+Customer: user18@example.com
+The save button overlaps the footer on small screens. Seen on a 13 inch laptop.

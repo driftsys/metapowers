@@ -1,0 +1,28 @@
+## Plan: add session expiry
+
+Right now `src/auth/session.py` saves a `created` timestamp for each session, but `validate_session` never checks it. A session never expires.
+
+1. **Add a session lifetime setting** in `src/auth/session.py`. Add a module constant `SESSION_TTL_SECONDS`, for example 24 hours. Also let `create_session` take an optional `ttl` argument. When it creates a session, it stores `expires = created + ttl`. Storing the expiry time, rather than working it out at check time, means a later change to the setting doesn't change how long existing sessions last.
+   Class: critical (default: authentication)
+
+2. **Reject expired sessions** in `validate_session`. If the current time is at or past `expires`, delete the session from `SESSIONS` and return `None`, the same result as an unknown token. Callers can't tell an expired token from an invalid one, so nothing leaks. Read the clock through one small helper, such as `_now()`, so tests can control time without sleeping.
+   Class: critical (default: authentication)
+
+3. **Optional: add `purge_expired_sessions()`**, which removes every expired entry so `SESSIONS` doesn't keep growing. Only callers that want it would use it. Nothing calls it automatically.
+   Class: critical (default: authentication)
+
+4. **Add tests** to `tests/test_session.py`. Use `monkeypatch` on `_now` to fake the clock:
+   - A session is still valid just before it expires.
+   - A session is rejected exactly at the expiry time and after it, and its entry is removed from `SESSIONS`.
+   - A custom `ttl` passed to `create_session` is respected.
+   - `purge_expired_sessions` removes only expired entries.
+   - The existing tests still pass.
+   - Add a fixture that clears `SESSIONS` between tests.
+
+   Class: critical (tests of critical code)
+
+**Open questions**
+- **Lifetime:** what should the default be?
+- **Expiry type:** should it be absolute (a fixed time from login, as planned above) or sliding (each successful check pushes the expiry back)? Sliding expiry would need a `last_seen` field and an extra test.
+
+AGENTS.md doesn't record a class for `src/auth/`, so I used the default that puts authentication code in critical. If you confirm that class for the path, I can add it to the "Delegation classes" section of AGENTS.md.

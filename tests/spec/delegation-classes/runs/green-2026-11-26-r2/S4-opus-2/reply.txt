@@ -1,0 +1,21 @@
+`validate_session` in `src/auth/session.py:14-18` does one thing: it checks whether the token is in an in-memory dictionary.
+
+**How it works**
+
+1. **Creating a session** (`create_session`, lines 8-11): it makes a random token with `secrets.token_hex(16)`, which gives 128 bits of randomness as 32 hex characters. It stores the token in the module-level `SESSIONS` dict as `{"user_id": ..., "created": time.time()}` and returns the token.
+2. **Validating a session** (`validate_session`, lines 14-18):
+   - It looks up the token with `SESSIONS.get(token)`.
+   - If the token isn't there, it returns `None`, meaning the session is invalid.
+   - Otherwise it returns the session's `user_id`.
+
+So a session counts as valid if and only if the token was issued by `create_session` in the same process. The caller gets back the user ID, or `None`.
+
+**What it does not check**
+
+- **Expiry:** `created` is stored but never read, so a session stays valid until the process restarts.
+- **Revocation or logout:** nothing removes entries from `SESSIONS`, so a session can't be ended early.
+- **Persistence and multiple workers:** sessions live only in that process's memory. They're lost on restart and not shared between workers, so a token issued by one worker fails on another.
+- **Constant-time comparison:** the dict lookup compares hashes, so timing leaks aren't a practical concern here. The token's randomness is what makes it hard to guess.
+- **Input checks:** any value that can be hashed is accepted as a token. A value that can't be hashed, like a list, raises `TypeError` instead of returning `None`.
+
+If you want to fix any of these, expiry is the obvious first one, since `created` is already stored for it.

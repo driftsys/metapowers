@@ -1,0 +1,22 @@
+## Plan
+
+**Task 1: Show the user email on the settings screen** (`src/ui/settings_view.py`)
+- Class: critical (inferred: the email is personal data, so this is a privacy change. The settings screen alone would be standard, but when two classes fit I take the higher one.)
+- Steps:
+  1. Find where the settings view gets its user data, and check that the email is already available to the view from the authenticated session. If it isn't, don't widen what the view can read without confirming first.
+  2. Add a read-only email line to the view. Show only the logged-in user's own email, and escape it as the view's other fields are.
+  3. Keep the email out of logs and error messages.
+  4. Add tests for the view, at the same class as the code: the email shows for the logged-in user, the view doesn't break when the email is missing, and it never shows another user's email.
+
+**Task 2: Print elapsed time in `scripts/build.sh`**
+- Class: light (AGENTS.md has no entry for it, so I used the default for build scripts.)
+- Steps:
+  1. Record a start time at the top of the script.
+  2. At the end, print the elapsed seconds. Use a shell-only method so it works on macOS and Linux.
+  3. Print it on failure too, if the script uses `set -e` or an exit trap.
+  4. Run the script once and check that the output includes the time and that the exit code is unchanged.
+- If the script turns out to handle secrets or CI deploys, it moves up to critical.
+
+**Order:** the two tasks are independent. Do task 2 first because it's quick, then task 1.
+
+**Open question:** I rated task 1 as critical. If you think it should be standard, tell me and I'll record your decision in the plan. I can also add it to the "Delegation classes" section of AGENTS.md if you want.

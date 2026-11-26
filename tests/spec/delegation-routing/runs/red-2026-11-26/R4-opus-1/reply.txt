@@ -1,0 +1,25 @@
+I'd dispatch no subagents for this one.
+
+**Why:** `ci.log` is 5 lines, and the cause is visible right away:
+
+```
+[12:01:03] Step 3/5: pytest -q
+tests/test_session.py::test_valid FAILED
+E   AssertionError: expected session to be valid
+[12:01:04] 1 failed, 4 passed
+```
+
+That leaves three small files to read: `tests/test_session.py`, `src/auth/session.py` and `docs/spec-session-expiry.md`. That's a few tool calls. A subagent would cost more than the reading itself, and I'd only get back its summary of three files I could just open. Nothing here can run in parallel, there's no side task, and there's no cross-repo search. `AGENTS.md` marks only `src/payments/` as critical, and this failure is in `src/auth/`, so no extra review step is needed.
+
+**What I'd do myself instead:**
+1. Read `tests/test_session.py::test_valid` to see how the session is built and what "valid" means to the test.
+2. Read `src/auth/session.py` and find the validity or expiry logic.
+3. Check both against `docs/spec-session-expiry.md` to decide which one is wrong: the code or the test.
+4. Report the cause in a few lines, without editing anything.
+
+**When I would dispatch one:** only if step 3 shows the cause is outside these files. For example, the expiry depends on config, time handling or fixtures spread across the codebase. Then I'd send one agent:
+
+- **Role:** `Explore`, read-only.
+- **Model:** inherit the default. Locating code doesn't need a model override.
+- **Effort:** not set. No instruction asks for a specific level, so it runs at its usual effort.
+- **Brief:** the goal is to find every place that affects whether a session counts as valid or expired (TTL constants, clock and timezone handling, config, test fixtures). Include the 5-line log, and say that `test_session.py`, `session.py` and the spec are already read and don't need re-reading. Breadth "medium". Return file:line locations with one line each on what they control. No edits, and no conclusion about the root cause, so its answer isn't steered by my guess.

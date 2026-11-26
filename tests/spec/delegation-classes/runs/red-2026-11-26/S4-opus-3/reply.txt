@@ -1,0 +1,23 @@
+`validate_session` (`src/auth/session.py:14`) does one thing: it checks whether the token is a key in the in-memory `SESSIONS` dict.
+
+```python
+def validate_session(token):
+    session = SESSIONS.get(token)
+    if session is None:
+        return None
+    return session["user_id"]
+```
+
+1. It looks up the token in `SESSIONS`.
+2. If the token isn't there, it returns `None`, meaning the session is invalid.
+3. If it is there, it returns the `user_id` stored with it, meaning the session is valid and belongs to that user.
+
+**How sessions get into the dict:** `create_session` (`src/auth/session.py:8`) makes a random 128-bit token with `secrets.token_hex(16)`. It stores `{"user_id": ..., "created": time.time()}` under that token. Because tokens come from a secure random source, they can't realistically be guessed. That randomness is the only thing protecting a session.
+
+**What it doesn't check:**
+- **Expiry.** It saves a `created` timestamp but `validate_session` never reads it, so sessions never time out.
+- **Revocation.** There's no logout or delete function, so a token stays valid until the process restarts.
+- **Persistence and sharing.** `SESSIONS` is a variable inside the process. Every session is lost on restart, and if you run more than one worker or server, a session created on one won't be recognised by the others.
+- **Input type.** It doesn't check the token at all. Any value that can be used as a dict key is just looked up, and a value that can't (like a list) would raise a `TypeError`.
+
+If you want sessions to expire, the smallest fix is to compare `time.time() - session["created"]` against a time limit inside `validate_session`, and delete and reject the session when it's too old.

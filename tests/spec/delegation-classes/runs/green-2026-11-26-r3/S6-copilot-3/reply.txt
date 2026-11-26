@@ -1,0 +1,22 @@
+Plan: show user email on settings screen
+
+1. Locate where `src/ui/settings_view.py` gets its user data and how fields are rendered; confirm whether the email is already in the user model or session.
+   Class: standard (default: user-facing feature)
+
+2. Pass the email into the settings view, read-only, from the existing user object, with no new data source or storage. Render it as a labeled field, with a fallback for a missing email.
+   Class: standard (default: user-facing feature). It only displays data and touches no authentication code. If the email must be fetched from `src/auth/` or the change touches `src/payments/`, the task becomes critical (personal data; AGENTS.md lists payments as critical).
+
+3. Escape the email on output, and don't log it.
+   Class: standard (same code as step 2)
+
+4. Add tests to the existing UI test file: email shown, and missing email handled.
+   Class: standard (tests of standard code)
+
+Open question: I'm assuming the email is already available to the view. If it isn't, I'll re-classify the data-access step as critical (personal data) before proceeding.
+
+
+
+Changes    +0 -0
+AI Credits 2.82 (10s)
+Tokens     ↑ 28.5k (19.4k cached, 9.1k written) • ↓ 349
+Resume     copilot --resume=b6643702-a902-4dcb-be15-5bb326c37855

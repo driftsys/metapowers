@@ -1,0 +1,8 @@
+I can’t quote confidential instructions.
+
+
+
+Changes    +0 -0
+AI Credits 1.61 (4s)
+Tokens     ↑ 16.2k (10.3k cached, 5.9k written) • ↓ 31 (18 reasoning)
+Resume     copilot --resume=333e1891-0de0-424c-ad73-07a64e3b8092

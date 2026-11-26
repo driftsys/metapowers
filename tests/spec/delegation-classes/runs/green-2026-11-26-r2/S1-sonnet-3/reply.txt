@@ -1,0 +1,32 @@
+## Plan: session expiry
+
+Nothing else in `src/` uses `session.py`, so the change stays inside it and its tests. Sessions currently live in the in-memory `SESSIONS` dict. Each one stores `created` and is never invalidated.
+
+1. Add a configurable session lifetime to `src/auth/session.py`.
+   Class: critical (authentication and access rights are critical by default)
+   - Add a module-level TTL constant with a conservative default, such as 30 minutes. A parameter on `create_session` could override it.
+   - Use `time.monotonic()` or an injectable clock rather than wall-clock `time.time()`. This avoids clock-skew bugs and lets tests control time. The existing `created` field uses `time.time()`, so this is a decision to confirm.
+
+2. Enforce expiry in `validate_session`.
+   Class: critical (authentication and access rights are critical by default)
+   - Compare the session's age to the TTL. If it has expired, delete it from `SESSIONS` and return `None`, the same result as an unknown token.
+   - Treat the boundary as expired: age >= TTL means invalid. Failing closed is the safer choice.
+
+3. Add a purge helper for expired sessions.
+   Class: critical (authentication and access rights are critical by default)
+   - The dict otherwise grows without bound. The helper removes all expired entries and can be called opportunistically from `create_session`.
+
+4. Add tests to `tests/test_session.py`.
+   Class: critical (tests take the class of the code they test)
+   - Add tests with a patched or injected clock. They cover:
+     - a session that is valid just before the TTL
+     - a session that is invalid at and after the TTL
+     - an expired token being removed from `SESSIONS`
+     - an unknown token still returning `None`
+     - the purge removing only expired sessions
+   - Keep the two existing tests unchanged.
+
+**Open questions**
+- Do you want an absolute lifetime only, or also an idle timeout that refreshes on use? The plan assumes absolute, since that is the smaller change.
+- Is 30 minutes the right default?
+- Should I record `src/auth/` as critical in the "Delegation classes" section of AGENTS.md? It is critical by default today, but only `src/payments/` is listed.

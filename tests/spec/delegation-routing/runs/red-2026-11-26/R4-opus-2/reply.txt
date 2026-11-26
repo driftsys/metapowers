@@ -1,0 +1,26 @@
+I'd dispatch **no subagents** for this one.
+
+`ci.log` is only 5 lines, and it already names the failure:
+
+```
+tests/test_session.py::test_valid FAILED
+E   AssertionError: expected session to be valid
+1 failed, 4 passed → exit code 1
+```
+
+Finding the cause takes reading three small files: `tests/test_session.py`, `src/auth/session.py`, and probably `docs/spec-session-expiry.md`, since the spec likely defines what a "valid" session is. That's about three tool calls. A subagent would cost more in briefing and handoff than the work itself, and I'd only get its summary instead of the code. Nothing here can run in parallel either, because the work is one short chain.
+
+The `AGENTS.md` delegation classes don't change this. The only class it defines is `src/payments/` = critical, and this failure is in auth, so no stricter handling applies.
+
+**What I'd do instead, all myself:**
+1. Read the failing test to see what session it builds and what it expects.
+2. Read `src/auth/session.py` to find how it decides a session is valid.
+3. Check the expiry spec, to tell whether the code or the test is wrong. One common cause is an off-by-one or timezone mistake when comparing against the expiry time.
+4. Optionally rerun `pytest -q tests/test_session.py` to confirm the failure happens locally and isn't a flaky CI-only issue.
+5. Report the cause and point to the line responsible, without editing anything.
+
+**If you still want one dispatched**, the most I'd send is:
+- **Role:** `Explore`, a read-only agent, so it can't edit files.
+- **Model:** `haiku`, which is enough for a small, targeted read.
+- **Reasoning effort:** I'd leave it unset so the agent runs at its usual level. I only set effort when you or a project rule asks for a specific level.
+- **Brief:** The failure details, quoted from the log above. It should read the three files named above, without searching the wider repo. Its job is to explain why `test_valid` sees the session as invalid and to say whether the test, the code or the spec is at fault. It should return the cause with file and line references and a short explanation, and change nothing.

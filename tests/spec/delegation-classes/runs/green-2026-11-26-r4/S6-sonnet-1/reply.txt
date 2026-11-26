@@ -1,0 +1,14 @@
+**Plan: show the user email on the settings screen**
+
+1. Find where `src/ui/settings_view.py` gets the current user, and confirm the email is already available there. If it isn't, pass it in from the existing user or session object. Don't add a new data path.
+   Class: standard (provisional: screen that displays personal data, pending the privacy answer below)
+
+2. Render the email in the settings view as a read-only labelled field, following the existing layout and styling in that file. Cover the case where no email is set.
+   Class: standard (default: user-facing feature)
+
+3. Add tests to the existing UI test file for the settings view. They should check that the email is shown and that the empty case works.
+   Class: standard (tests of standard code)
+
+**Question for you:** does privacy apply to this email display? No spec says. For example, should the email be masked (`s***@gmail.com`), or shown only to the account owner after authentication? I've planned the task as standard until you answer. If privacy applies, the task becomes critical, because the default for code that stores, sends or shares personal data is critical.
+
+I haven't opened any files or checked whether the settings view already has access to the user's email. Step 1 covers that.

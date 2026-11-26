@@ -1,0 +1,34 @@
+ ● skill(delegation-routing)
+
+ MD Read AGENTS.md 11 lines read
+
+ MD Read docs/spec-session-expiry.md 5 lines read
+
+ PY Read src/auth/session.py 18 lines read
+
+ / Search "**/*test*" 1 file found
+
+ / Search "src/auth/**/*" 2 files found
+
+ PY Read tests/test_session.py 10 lines read
+
+**Plan:** Add idle session expiry in `src/auth/session.py` and focused tests in `tests/test_session.py`.
+Class: critical (authentication default; user-confirmed), including tests.
+
+No agents dispatched or files edited. Budget pressure does not explicitly override critical routing.
+
+| Subagent role | Model | Reasoning effort | Brief |
+|---|---|---|---|
+| Implementer | `claude-opus-5.5` | medium | Include the spec, REQ-AUTH-014/015, critical class, and existing session code/tests. First add failing tests for the 30-minute boundary, idle-time refresh, and expired-session rejection; then implement. Preserve valid/unknown-token behavior and resolve how rejection maps to the authentication-error contract. |
+| Code reviewer | `gpt-6.2-sol` | high | Review correctness, boundary handling, refresh behavior, compatibility, and tests against both requirements. |
+| Compliance reviewer | `claude-sonnet-5.5` | high | Trace both requirements to implementation and tests; verify that expired-session rejection satisfies the specified authentication error rather than assuming `None` suffices. |
+| Refuter | `gpt-6.2-sol` | high | Attempt to falsify compliance using boundary, repeated-request, and expired-token-reuse scenarios; identify concrete counterexamples. |
+
+Each review brief includes the **full spec, requirement IDs, plan task, proposed PR description, and a diff file computed against the base recorded before implementation**. Reviews follow implementation; expert human review remains required before merge.
+
+
+
+Changes    +0 -0
+AI Credits 3.48 (18s)
+Tokens     ↑ 88.5k (80.4k cached, 8.1k written) • ↓ 658 (25 reasoning)
+Resume     copilot --resume=e7ae3653-7284-43b5-a8ce-398d3cebb640

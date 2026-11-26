@@ -1,0 +1,29 @@
+Here's the plan. I haven't dispatched anything or edited any files.
+
+**Task:** Make `scripts/build.sh` also print the elapsed time.
+Class: light (given by the user; matches the default for build scripts)
+
+### Subagent 1: Implementer
+- **Model:** `sonnet` (light-class implementer)
+- **Effort:** low, because it's a local change that follows a common shell pattern. If the script has no clear place to start and stop a timer, I'd use medium, which is the most implementation work ever gets.
+- **Brief:**
+  - The requirement: print the elapsed time when `scripts/build.sh` finishes. There's no written spec and no requirement IDs.
+  - Class: light.
+  - Constraints: keep the script's current output and exit code. Make it work on macOS's default bash 3.2 and BSD tools, using `$SECONDS` or `date +%s` rather than GNU `date +%s%N`. Print the time on failure too, if the script's style allows it.
+  - There's no failing test, so the check is to run the script and see the elapsed-time line.
+  - Before it starts, it records the base commit so the reviewer can get a clean diff.
+
+### Subagent 2: Light code reviewer
+- **Model:** `sonnet` (light class). It can't be from the other model family because Claude Code only offers Claude models, but only critical tasks need that gap noted.
+- **Effort:** high (code review)
+- **Brief:**
+  - The requirement (same as above) and this plan task, including its class.
+  - A short change description.
+  - The diff, saved to a file and taken from the base commit the implementer recorded. It gets the diff with this context, not on its own.
+  - What to check: it works on bash 3.2 and macOS, existing output and exit codes stay the same, the time is printed or deliberately skipped when the build fails, and there's no `set -e` or trap conflict.
+
+### Not dispatched
+- No refuter, compliance review or expert review, since those are only for critical tasks.
+- No ops (Haiku) subagent. The change needs a decision about where and how to time the build, so it goes to an implementer.
+
+**My recommendation:** do this one myself instead of dispatching. It's about two or three tool calls (read, edit, run once). The project rule says to delegate only above roughly four, and the routing skill allows doing light work directly. The one light code review still applies either way. I'd only spawn the reviewer subagent if you want an independent read.

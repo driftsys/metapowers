@@ -1,0 +1,21 @@
+ ● skill(delegation-routing)
+
+ MD Read AGENTS.md 11 lines read
+
+ PY Read src/ui/settings_view.py 6 lines read
+
+Class: standard (user-specified; settings UI).
+
+| Role | Model | Reasoning effort | Brief |
+|---|---|---|---|
+| Implementer | `claude-sonnet-5.5` | medium | Add a dark-mode toggle in `src/ui/settings_view.py`. Include the task’s class, specification, requirement IDs, and a failing regression test; establish missing acceptance details from repository conventions without inventing requirements. Preserve existing settings behavior and add focused tests. |
+| Code reviewer | `gpt-6.2-sol` | high | Review correctness, regressions, and requirement coverage. Include the specification, requirements, plan task, proposed PR description, and a diff file against the base recorded before implementation. |
+
+No subagents dispatched and no files edited.
+
+
+
+Changes    +0 -0
+AI Credits 2.73 (13s)
+Tokens     ↑ 51.8k (44.0k cached, 7.7k written) • ↓ 356 (44 reasoning)
+Resume     copilot --resume=9505ae53-6b18-441e-b9c3-50a469f6b89e

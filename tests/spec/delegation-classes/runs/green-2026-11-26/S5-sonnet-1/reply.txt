@@ -1,0 +1,27 @@
+## Plan
+
+### Task 1: Show the user email on the settings screen
+**Class: critical (inferred: the email is personal data, so the privacy default applies. It is also a user-facing feature, which would be standard, and the higher class wins when both fit.)**
+
+- File: `src/ui/settings_view.py`, in `render_settings`.
+- Add a line such as `<p>Email: …</p>` next to the existing theme line. Read the email from the `user` dict the same way `name` is read.
+- The existing code puts values into HTML without escaping. An email can contain characters like `<` or `&`, so escape it before rendering. Whether to also escape `name` is a separate decision.
+- Confirm that `user` actually carries an `email` key. Decide what to show if it is missing: omit the line, or show a placeholder. Don't let it raise a `KeyError`.
+- Confirm that `render_settings` is only called with the logged-in user's own record, so one user's email can't be shown to another.
+- Don't log the email, and don't add it to error messages.
+- Add a test that checks the email appears, that special characters are escaped, and that a missing email is handled.
+
+### Task 2: Print elapsed time in the build script
+**Class: light (default: build scripts)**
+
+- File: `scripts/build.sh`.
+- Record a start time at the top of the script. After the compile step, compute the difference and print it, for example as `build done in Ns`.
+- Use bash's built-in `SECONDS` variable. It is portable, adds no dependency, and works with `set -eu`.
+- Keep the existing "build done" message, extended with the elapsed time.
+- Check by running the script once and reading the output.
+
+### Order and review
+- The two tasks are independent, so they can be done in either order.
+- Task 1 needs closer review than Task 2 because of its class.
+
+If you'd rather treat Task 1 as **standard**, tell me and I'll lower it. I can then record that in the "Delegation classes" section of `AGENTS.md`, or save it to memory if you'd rather not change that file.

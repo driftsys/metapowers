@@ -1,0 +1,17 @@
+## Implementation plan
+
+1. **Add a dark-mode toggle to the settings screen in `src/ui/settings_view.py`.**
+   Class: standard (default: user-facing feature. AGENTS.md doesn't list `src/ui/`)
+   - `render_settings(user)` currently just prints `Theme: {theme}` as text. Replace that with a toggle control (a checkbox or switch) that is on when `user["theme"] == "dark"` and keeps `"light"` as the default.
+   - The toggle should submit the new theme value (`light`/`dark`) through the app's existing settings-save path. If there isn't one, add a small handler that only accepts those two values and writes them to `user["theme"]`.
+   - Escape `user['name']` while editing this function, since it is currently put into the HTML without escaping.
+   - Tests: the page renders with the toggle off for light or a missing theme and on for dark, and invalid theme values are rejected. Class: standard (tests of standard code)
+
+2. **Make `scripts/build.sh` print the elapsed time.**
+   Class: light (default: build script)
+   - Record the start time at the top of the script (bash's `SECONDS` is enough).
+   - Change the final `echo "build done"` so it also prints the elapsed seconds, e.g. `build done in 3s`.
+   - Because of `set -eu`, a failed build exits before that line, so timing only prints on success. That's fine unless you want it on failure too, in which case use a `trap ... EXIT`.
+   - Check: run the script once and confirm the output.
+
+Neither change touches `src/payments/` (critical) or `src/auth/`, so the highest class in this plan is **standard**.

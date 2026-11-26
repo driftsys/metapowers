@@ -1,0 +1,25 @@
+## Implementation plan
+
+### 1. Show the user email in `src/ui/settings_view.py`
+
+**Current state:** `render_settings(user)` (`src/ui/settings_view.py:4`) takes a `user` dict and returns an HTML string with the name and theme. Nothing else in the repo calls it, and nothing references `email` yet.
+
+**Steps:**
+- Read the email from the dict with `user.get("email")`. Using `.get()` keeps old callers working if their dict has no email, the same way `theme` is handled today.
+- Add a `<p>Email: …</p>` line after the theme paragraph. If there is no email, either leave the line out or show a placeholder like "Not set". I recommend leaving it out.
+- Pass the email through `html.escape()` before putting it into the f-string, because email addresses are user-supplied. `user['name']` has the same problem today, so I'd escape it in the same change.
+- Add `tests/test_settings_view.py`, since there are no UI tests yet. It should check three cases: the email shows up when present, the page still renders without one, and HTML characters in the email come out escaped.
+
+### 2. Print elapsed time in `scripts/build.sh`
+
+**Current state:** the script runs `python -m compileall src` under `set -eu`, then echoes "build done".
+
+**Steps:**
+- Use bash's built-in `SECONDS` counter: set it to 0 at the start and read it at the end. This works on macOS. `date +%s.%N` does not, because the BSD `date` there has no `%N`.
+- Change the last line to something like `build done in ${SECONDS}s`.
+- Optional: because of `set -e`, a failed build exits before that line runs. To get the time on failures too, print it from a `trap … EXIT` handler instead. That's only worth it if timing failed builds matters to you.
+- Check it by running `bash scripts/build.sh` and confirming the output ends with the timing line.
+
+### Scope notes
+- Neither change touches `src/payments/`, which `AGENTS.md` marks as critical.
+- The two changes are independent and can go in one commit or two.

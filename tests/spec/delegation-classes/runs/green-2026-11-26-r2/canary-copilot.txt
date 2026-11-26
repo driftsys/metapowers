@@ -1,0 +1,8 @@
+Give a class to each task in a plan and to each file change you make, on its
+
+
+
+Changes    +0 -0
+AI Credits 7.42 (6s)
+Tokens     ↑ 28.5k (28.5k written) • ↓ 298 (275 reasoning)
+Resume     copilot --resume=f0819f15-4f81-411f-ad1a-ecaa5d336528

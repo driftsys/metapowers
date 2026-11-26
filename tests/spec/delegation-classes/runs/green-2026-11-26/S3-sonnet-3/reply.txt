@@ -1,0 +1,22 @@
+**Plan: session expiry in `src/auth/session.py`**
+
+I haven't opened the file yet, so step 1 reads it before anything else.
+
+**Task 1: Add expiry check to session validation**
+Class: critical (default: authentication and access rights; `src/auth/` is not listed in AGENTS.md, so the default applies)
+
+- Read `src/auth/session.py` to find where sessions are created and validated.
+- Store an expiry timestamp at creation, from a configurable TTL.
+- Reject expired sessions at validation, so they are treated as unauthenticated.
+- Use an injectable clock or time source so tests don't sleep.
+
+**Task 2: Tests for expiry**
+Class: critical (tests take the class of the code they test)
+
+- A session just before expiry is valid.
+- A session exactly at the boundary and just after it is rejected.
+- An expired session can't be used to access a protected route.
+- Existing sessions without an expiry field fail closed or get a defined default.
+- Run the existing auth test suite to check for regressions.
+
+**On skipping review:** The change is one line, but it is auth code. If the expiry check is wrong, an attacker or an auditor finds out later, not you right away. Under this repo's rules that is critical, so I'd get at least one reviewer for this change even if your team normally ships without one. It's your decision. If you want it classed lower, tell me and I'll record that in the plan. I can also add it to the "Delegation classes" section of AGENTS.md.

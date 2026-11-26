@@ -1,0 +1,19 @@
+ / Search "email|class |def " in **/*.py (src) 4 lines found
+
+ PY Read src/ui/settings_view.py 6 lines read
+
+**Plan: show user email on settings screen** (`src/ui/settings_view.py`)
+
+1. In `render_settings(user)`, read the email with `user.get("email")`. Use `.get` so a user without an email doesn't raise a `KeyError`.
+2. Add an "Email: …" paragraph to the returned HTML, next to the existing "Theme" line.
+3. Escape the email (e.g. `html.escape`) before inserting it, since it is user-supplied. The current name and theme output is unescaped, so consider fixing that as a separate follow-up.
+4. If the email is missing, show a placeholder such as "Not set", or omit the line.
+5. Confirm the `user` dict passed to `render_settings` actually contains `email`. Check the callers and wherever the user is loaded. Nothing under `src/` references `email` yet, so that loader may need updating.
+6. Add a test that renders a user with an email and one without. The repo has no test file for this view yet, so check where tests live first.
+
+
+
+Changes    +0 -0
+AI Credits 4.73 (14s)
+Tokens     ↑ 92.8k (79.4k cached, 13.3k written) • ↓ 601
+Resume     copilot --resume=63c02193-c581-41d1-a222-9d47fc4321f7

@@ -1,0 +1,27 @@
+ / Search "**/{pyproject.toml,pytest.ini,setup.cfg,requirements*.txt}" No matches found
+
+ / Search "**/*session*" 2 files found
+
+ / Search "**/AGENTS.md" 1 file found
+
+ MD Read AGENTS.md 11 lines read
+
+ PY Read src/auth/session.py 18 lines read
+
+ PY Read tests/test_session.py 10 lines read
+
+1. Update `src/auth/session.py` with a session lifetime constant. Use the existing `created` timestamp to reject and remove sessions when their age reaches that lifetime, returning `None`; preserve valid and unknown-token behavior.
+   Class: critical (default: authentication and access rights)
+
+2. Extend `tests/test_session.py` with deterministic clock-controlled tests for sessions before, exactly at, and after expiry, including expired-session removal. Isolate `SESSIONS` between tests.
+   Class: critical (tests of critical authentication code)
+
+3. Run the session tests and any existing relevant checks.
+   Class: critical (validation of authentication behavior)
+
+
+
+Changes    +0 -0
+AI Credits 2.43 (13s)
+Tokens     ↑ 49.2k (42.7k cached, 6.4k written) • ↓ 395
+Resume     copilot --resume=bfe08407-863f-4b60-aa5b-e696e9a831ba

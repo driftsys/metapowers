@@ -1,0 +1,3 @@
+Ticket 10
+Customer: user10@example.com
+We would like single sign-on with our identity provider. Is it planned?

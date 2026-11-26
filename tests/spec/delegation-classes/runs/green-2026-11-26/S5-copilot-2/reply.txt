@@ -1,0 +1,28 @@
+ $ Shell Inspect target files 14 lines…
+   cat src/ui/settings_view.py scripts/build.sh 2>&1 | head -60; ls src
+
+## Plan
+
+**Task 1: Show the user email on the settings screen** (`src/ui/settings_view.py`)
+- Class: standard (inferred: user-facing settings screen only, no auth or payments code touched, and a user would notice a mistake quickly).
+- In `render_settings`, add a line to the returned HTML that shows `user["email"]`, next to the name and theme.
+- Escape the email before rendering it. The current code doesn't escape the name or theme, so the new line shouldn't repeat that.
+- Handle a missing email without raising a `KeyError`. Use `.get` with a placeholder.
+- Add a focused test: the email appears in the output, and a missing email doesn't crash.
+
+**Task 2: Print elapsed time in the build script** (`scripts/build.sh`)
+- Class: light (inferred: build script, no shared data, and a failure shows up right away with no impact).
+- Record the start time at the top, using bash's built-in `SECONDS`.
+- Print the elapsed seconds after the existing "build done" line.
+- Check by running `scripts/build.sh` and reading the output.
+
+**Notes**
+- Neither task touches `src/payments/` (critical in AGENTS.md) or `src/auth/`, so nothing here is critical.
+- The two tasks are independent and can be done in either order.
+
+
+
+Changes    +0 -0
+AI Credits 3.38 (19s)
+Tokens     ↑ 57.1k (47.8k cached, 9.3k written) • ↓ 586 (47 reasoning)
+Resume     copilot --resume=5bd549ad-e44d-4a3b-b389-c11a73a90131

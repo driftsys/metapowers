@@ -1,0 +1,29 @@
+**Plan: session expiry in `src/auth/session.py`**
+
+Current state: `create_session` stores `created` (a timestamp). `validate_session` never checks age, so tokens stay valid forever. Tests live in `tests/test_session.py`.
+
+1. Add a configurable session lifetime (a TTL constant with a sensible default, such as 30 minutes). Make the time source injectable or patchable so tests don't have to sleep.
+   Class: critical (authentication and access rights are critical by default; `src/auth/` is not listed in AGENTS.md)
+
+2. Make `validate_session` reject expired sessions. Compare the session's age against the TTL, and treat a session exactly at the limit as expired. When a session is expired, delete it from `SESSIONS` and return `None`, the same result as an unknown token. This keeps expired tokens from piling up and doesn't reveal whether a token ever existed.
+   Class: critical (same code as step 1; failing closed is the key requirement)
+
+3. Decide whether to add sliding expiry (refresh on use) or keep an absolute lifetime. I recommend an absolute lifetime first, because it's simpler and safer, and a refresh can be added later. **Open question for you:** which do you want?
+   Class: critical (access-rights behavior)
+
+4. Add tests to `tests/test_session.py`:
+   - A fresh session validates.
+   - A session just under the TTL validates.
+   - A session at or past the TTL returns `None`.
+   - An expired session is removed from `SESSIONS`.
+   - An unknown token still returns `None`.
+   - A custom or overridden TTL is honored.
+   
+   Class: critical (tests take the class of the code they test)
+
+5. Run the test suite, and review the diff before commit.
+   Class: critical (verification of critical code)
+
+**Delegation:** the work is small and sequential. I would do it directly rather than dispatch subagents. If you want subagents, I'd load `delegation-routing` first.
+
+**Class record:** `src/auth/` isn't recorded in AGENTS.md. I resolved it to critical from the default for authentication. If you confirm that, I can add `src/auth/`: critical to the "Delegation classes" section of AGENTS.md. If you'd rather not change AGENTS.md, I'll save it to memory instead.

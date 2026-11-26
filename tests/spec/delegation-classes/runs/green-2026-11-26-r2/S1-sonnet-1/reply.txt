@@ -1,0 +1,29 @@
+**Plan: session expiry in `src/auth/session.py`**
+
+`session.py` currently stores `{"user_id", "created"}` in the in-memory `SESSIONS` dict. `validate_session` never checks age, so tokens live forever. `tests/test_session.py` already exists.
+
+1. Add a session lifetime setting to `src/auth/session.py`. Use a module constant such as `SESSION_TTL_SECONDS` with a conservative default. Optionally let `create_session` take an override.
+   Class: critical (default: authentication and access rights; AGENTS.md only lists `src/payments/`)
+
+2. Enforce expiry in `validate_session`. If `time.time() - created` is at or beyond the TTL, delete the entry from `SESSIONS` and return `None`, the same as an unknown token. Make the boundary explicit: expired at exactly TTL. Take the clock from one place, `time.time()`, so tests can patch it.
+   Class: critical (default: authentication and access rights)
+
+3. Add a cleanup path for stale entries, such as a `purge_expired()` helper, so `SESSIONS` doesn't grow without bound. This is optional. Call it from `create_session` or leave it for the caller.
+   Class: critical (same module, so it takes the highest class)
+
+4. Extend `tests/test_session.py` with a patched clock:
+   - a fresh session validates
+   - a session just under the TTL validates
+   - a session at or over the TTL returns `None` and is removed from `SESSIONS`
+   - an unknown token still returns `None`
+   - a custom TTL is honored, if step 1 adds an override
+   - `purge_expired` removes only the expired entries, if step 3 is included
+
+   Class: critical (tests take the class of the code they test)
+
+**Open questions for you:**
+- What TTL do you want? I'd suggest 24 hours absolute, and I'd skip sliding expiry unless you want it.
+- Should expiry be absolute from creation, or should activity extend it?
+- Should I record `src/auth/` as critical in the "Delegation classes" section of AGENTS.md? It currently resolves to critical only through the defaults.
+
+I haven't edited any files.

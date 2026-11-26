@@ -1,0 +1,23 @@
+I'd dispatch **one subagent**, or none. A standard-class task touching a single file doesn't justify a fan-out.
+
+**Subagent 1: implementer**
+- **Role:** Implement the dark-mode toggle in `src/ui/settings_view.py`.
+- **Model:** Sonnet. The task is routine UI work, so a larger model isn't needed.
+- **Reasoning effort:** medium.
+- **Brief:**
+  - **Goal:** Add a dark-mode toggle control to the settings screen in `src/ui/settings_view.py`.
+  - **Context to read first:** the existing settings view and how its other toggles or options are built, plus any theme or preference storage the app already has.
+  - **Constraints:**
+    - Match the file's existing widget, naming and comment style.
+    - Persist the setting the same way the other settings are persisted.
+    - Apply the theme through whatever mechanism the app already uses. Don't invent a new theming system.
+    - Keep the change scoped to the settings view, plus the minimum hook-up elsewhere.
+  - **Verification:** run the existing tests and add a small test for the toggle if the UI has test coverage. Run the app if that's feasible.
+  - **Report:** a short summary of the files changed, how the toggle is wired, and anything left unresolved, such as no existing theme mechanism.
+
+**What I wouldn't dispatch**
+- **Explorer:** the implementer can read one file and its neighbors itself.
+- **Planner:** the change is too small to need one.
+- **Separate reviewer:** I'd review the diff myself. I'd only add a reviewer, with fresh context and no anchoring on my read, if the diff touched shared theme code.
+
+If there's no existing theme mechanism, the task is bigger than "standard". I'd then re-plan before dispatching anything.

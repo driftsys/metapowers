@@ -1,0 +1,3 @@
+.github/instructions/delegation-basics.instructions.md
+.github/instructions/delegation-classes.instructions.md
+.github/skills/delegation-routing/SKILL.md

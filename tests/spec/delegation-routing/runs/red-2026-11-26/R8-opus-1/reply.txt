@@ -1,0 +1,33 @@
+Three failed attempts, including one on opus, suggest the model isn't the problem. More likely the brief, the scope or the environment is. So I wouldn't just send a fourth implementer with a stronger model. I'd find out why the first three failed, then send one better-briefed implementer and an independent verifier.
+
+**Step 0: no subagent. I'd read the failures myself.** That means the three attempts' diffs, final reports and test or reviewer output. It's a handful of reads, and the diagnosis should stay with me rather than come back to me as a summary. I'm checking whether they all failed the same way. Common causes:
+- the spec is ambiguous (what counts as "dark mode"?)
+- the app has no theming system, so the "standard" class is wrong
+- the tests or environment are broken
+- the work goes beyond `settings_view.py` (theme state, persistence, applying the theme app-wide)
+
+If it turns out to be mis-scoped, I'd stop and re-plan with you rather than dispatch anything.
+
+**1. Implementer**
+- **Model:** Opus
+- **Effort:** high. Opus at default effort already failed, so the change is more effort plus a much better brief, not a different model.
+- **Brief:**
+  - **Goal:** a dark-mode toggle in `src/ui/settings_view.py`, with concrete acceptance criteria: where the toggle sits, what it changes, whether the choice persists across restarts, and which tests must pass.
+  - **Past attempts:** what each of the three tried and the exact reason it failed, quoted from the logs.
+  - **Diagnosis:** my conclusion from Step 0, as a fact to work from, e.g. "theme state lives in X; apply it through Y; don't touch Z."
+  - **Scope:** which files it may change, and which shortcuts are off limits (e.g. no hard-coded colours in the view).
+  - **Stop rule:** if it hits the same blocker as an earlier attempt, it stops and reports instead of working around it.
+  - **Report:** the diff, the test output, and anything it wasn't sure about.
+
+**2. Verifier**
+- **Model:** Sonnet
+- **Effort:** medium
+- **Role:** checks the result from a fresh context, so its read isn't anchored on the implementer's.
+- **Brief:**
+  - the acceptance criteria and the diff, but not the implementer's summary or my diagnosis
+  - run the test suite
+  - launch the app and confirm the toggle really switches the theme, and that it persists if that's required
+  - check nothing outside the allowed scope changed
+  - report pass or fail against each criterion, with evidence
+
+If the verifier fails it, I'd send its findings back to the same implementer to fix, rather than start a fifth attempt from scratch.

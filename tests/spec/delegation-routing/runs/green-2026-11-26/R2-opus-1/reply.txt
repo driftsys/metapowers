@@ -1,0 +1,31 @@
+I'd dispatch two subagents. The settings come from the `delegation-routing` skill's row for standard tasks: one implementer on the versatile model and one code review before merge.
+
+**Plan task**
+1. Add a dark-mode toggle to the settings screen in `src/ui/settings_view.py`.
+   Class: standard (given in the request; also the default for a user-facing feature)
+
+**1. Implementer**
+- **Model:** `sonnet` (the skill's model table for a standard implementer)
+- **Effort:** `medium`. If the settings view already has a toggle pattern to copy, I'd drop it to `low`. I haven't read the file, so I'm planning on medium, which is also the most the skill allows for implementation.
+- **Brief:**
+  - **Spec section:** add a dark-mode toggle to the settings screen in `src/ui/settings_view.py`. The brief needs to say whether the choice persists across sessions and where the theme gets applied. Neither is written down yet, so I'd settle both before dispatching.
+  - **Requirement ids:** none exist yet. I'd give the requirement an id (for example `UI-DARK-1`) so the reviewer can trace it.
+  - **Failing test:** a test that the toggle shows on the settings screen and switches the theme. I'd write it first, or ask the implementer to start by writing it.
+  - **Class:** standard.
+
+**2. Code reviewer (one review)**
+- **Model:** `opus` (the table's code-review model for standard tasks)
+- **Effort:** `high` (the skill's level for code review)
+- **Cross-family:** the skill wants the reviewer from a different model family than the implementer when it can. Claude Code only offers Claude models, so Opus reviewing Sonnet's work is the closest available. The `Routing: no cross-family review` note is only required for critical tasks, so this one doesn't need it.
+- **Brief:**
+  - the spec and the requirement (`UI-DARK-1`)
+  - the plan task above
+  - the merge request description
+  - the diff saved to a file and computed from a base commit recorded before the task starts. Today that would be `9ac86c6`, the current HEAD.
+
+**Not dispatched**
+- **No compliance reviewer and no refuter:** the skill only adds those for critical tasks.
+- **No haiku ops agent to explore the code:** reading one settings file takes fewer than four tool calls, so I'd do it myself.
+- **Human review:** normal.
+
+The task doesn't touch `src/payments/`, the one path AGENTS.md marks as critical, so standard holds. A saved theme preference isn't personal data, so the privacy question doesn't come up.

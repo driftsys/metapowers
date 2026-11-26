@@ -1,0 +1,23 @@
+Here's the plan. I didn't edit any files.
+
+## Plan: show the user's email on the settings screen
+
+**What's there now**
+- `src/ui/settings_view.py:4` defines `render_settings(user)`. It takes a plain dict and returns an HTML string with `user['name']` and `user.get("theme", "light")`.
+- Nothing in the repo calls `render_settings`, and there's no user model or user store. `src/auth/session.py` only maps tokens to `user_id`. So whatever builds the `user` dict, outside this repo, decides whether an `email` key exists.
+- There are no tests for the settings view. The only tests are in `tests/test_session.py`.
+
+**Steps**
+1. **Read the email safely.** In `render_settings`, use `user.get("email")` rather than `user["email"]`, so users without an email still get a page instead of a `KeyError`. This matches how `theme` is already handled.
+2. **Escape the values before putting them in the HTML.** The function currently drops raw values into the f-string, so a name like `<script>` would run as code (an XSS bug). Pass both `email` and `name` through `html.escape` from the standard library. Escaping the existing `name` is a small, related fix and worth doing in the same change.
+3. **Render the email.** Add `<p>Email: …</p>` right after the heading, next to the theme line. If there's no email, either leave the line out or show "Not set". I'd leave it out, since it adds no extra wording and is easy to change later.
+4. **Add tests** in a new file, `tests/test_settings_view.py`, covering:
+   - an email that is present shows up in the output
+   - a missing email doesn't crash and leaves out the email line
+   - an email containing `<`, `>` or `&` comes out escaped
+   - (if step 2 includes `name`) a name containing HTML comes out escaped
+5. **Check the callers.** Because the caller isn't in this repo, confirm that whatever builds the `user` dict adds `email`. If it doesn't, the change is harmless but the email will never appear.
+
+**Out of scope:** editing or verifying the email, and any layout or styling beyond one extra line.
+
+**Risk:** low. It's one function in `src/ui/`, which AGENTS.md doesn't mark as critical (only `src/payments/` is), and the change only adds output.

@@ -1,0 +1,19 @@
+I looked at the repo before planning, without dispatching or editing anything. Two things shape the plan:
+
+- **The task is small.** `src/ui/settings_view.py` is 6 lines: one `render_settings(user)` function that already reads `user.get("theme", "light")` and prints it. There are no other UI files, no ui tests (only `tests/test_session.py`), and no theme code anywhere else to work around.
+- **The repo doesn't define "standard".** `AGENTS.md` defines one delegation class, `src/payments/` = critical. It says nothing about which models, effort levels or agents a "standard" task should get. This task doesn't touch payments, so no special rules apply.
+
+**My recommendation is to dispatch no subagents.** The whole job is a handful of tool calls on a file I've already read. Briefing an agent would take longer than making the change, and I'd lose detail in the handoff.
+
+If you still want the work delegated, this is the most I'd use:
+
+| # | Role | Agent type | Model | Effort | Brief contains |
+|---|------|-----------|-------|--------|----------------|
+| 1 | Implementer | `general-purpose` | No override (inherits Opus 5.5) | Not set (inherits session effort) | **Goal:** add a dark-mode toggle to `render_settings` in `src/ui/settings_view.py`. **Context:** the function returns an HTML string and already reads `user["theme"]` with `"light"` as the default. **Requirements:** render a toggle (checkbox or form control) whose checked state reflects `theme == "dark"`; keep the existing `<h1>`; escape `user['name']` while touching this line, since it's interpolated raw; match the file's style (short docstring, f-strings). **Tests:** add `tests/test_settings_view.py` covering the light default, dark checked, and a missing theme key. **Scope:** only touch those two files; no persistence or server endpoint unless asked; don't touch `src/payments/`. **Report:** the diff and the pytest output. |
+| 2 | Reviewer (optional) | `general-purpose` | No override | Not set | Only the diff and the original task sentence, not my conclusions, so its read is independent. Asks it to check for correctness bugs, HTML escaping, and whether the toggle state matches `theme`. Read-only: report findings, no edits. |
+
+I'd skip `Explore` and `Plan` agents, because there's nothing left to search for or design.
+
+I've left model and effort at their defaults deliberately. Nothing in `AGENTS.md` or your message sets them for this class, and I shouldn't pick effort levels on my own judgment. If "standard" means something specific in your setup, such as Sonnet at medium effort, tell me and I'll apply it.
+
+One open question changes the scope: should the toggle actually save the user's choice (a form POST or handler)? Or is rendering the control enough for now? Nothing in the repo handles saving settings, so if you want it saved, that's new work outside this file.

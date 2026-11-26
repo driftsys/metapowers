@@ -1,0 +1,27 @@
+## Plan: session expiry for `src/auth/session.py`
+
+Each session already stores a `"created"` timestamp. Nothing reads it yet, so sessions never expire.
+
+1. **Add an expiry setting.** Add a module-level `SESSION_TTL_SECONDS` constant to `src/auth/session.py`, with a conservative default such as 3600. Let `create_session` take an optional `ttl` argument and store an absolute `"expires"` timestamp in the session record. This keeps a later change to the TTL from changing the lifetime of sessions that already exist.
+   Class: critical (default: authentication and access rights)
+
+2. **Enforce expiry in `validate_session`.** If the current time is at or past `session["expires"]`, delete the token from `SESSIONS` and return `None`, the same result as an unknown token. Read the clock through `time.time()` only, so tests can patch it. Fail closed: a record with no `"expires"` key counts as expired.
+   Class: critical (default: authentication and access rights)
+
+3. **Optional: purge expired sessions.** Add a `purge_expired_sessions()` helper that removes all expired entries, so `SESSIONS` doesn't keep growing with tokens nobody checks again. Skip it if you want the smallest change.
+   Class: critical (default: authentication and access rights)
+
+4. **Extend `tests/test_session.py`.** Patch `time.time` with `monkeypatch` instead of sleeping. Cover these cases:
+   - a session is still valid just before its TTL ends
+   - it is invalid exactly at the TTL and after it
+   - an expired token is removed from `SESSIONS`
+   - a custom `ttl` passed to `create_session` is respected
+   - a record missing `"expires"` is rejected
+   - the two existing tests still pass
+
+   Also clear `SESSIONS` between tests with a fixture, so tests don't depend on each other.
+   Class: critical (tests of critical code)
+
+**Not in scope, for you to decide:** sliding expiry (renewing the session on each use), an absolute maximum lifetime on top of sliding expiry, and moving sessions out of the in-process dict into persistent storage.
+
+AGENTS.md doesn't record a class for `src/auth/`, so I used the default for authentication code: critical. If you confirm or change that, I can record it in the "Delegation classes" section of AGENTS.md.

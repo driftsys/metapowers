@@ -1,0 +1,27 @@
+I would dispatch one subagent. I haven't dispatched it, and I haven't edited any files.
+
+**Routing:** ops class, from your plan line. Tagging 40 tickets is bulk classification, which the routing skill lists as ops work. The routing table sends ops work to `haiku`, with no code review, compliance review or refuter. Forty tickets fit in one subagent's context, so I would not split them into batches.
+
+**Subagent 1: ticket tagger**
+- **Role:** ops, bulk classification.
+- **Model:** `haiku`, set through the `model` parameter of the `Agent` tool.
+- **Reasoning effort:** low. The work follows a fixed pattern, and the skill reserves higher effort for review and root-cause debugging.
+- **Brief:**
+  - **Goal:** read each of the 40 tickets in `data/tickets/` and assign exactly one category from `auth`, `billing`, `ui`, `crash`, `feature`. Write the result to `data/tickets/tags.csv`.
+  - **Format:** a header row `ticket,category`, then one row per ticket. The ticket value is the filename, and the rows are sorted by filename.
+  - **Tie-breaks:** the brief would fix the tie-breaks so the 40 tags stay consistent:
+    - Pick the category of the primary failure the reporter describes.
+    - A crash caused by a login or payment problem takes the crash tag only if the crash is the symptom the ticket reports.
+    - Ask for nothing outside the five categories, such as "other" or "unclear". If a ticket is truly ambiguous, pick the closest category and add the filename to a short list in the final report.
+  - **Scope limits:** edit only `data/tickets/tags.csv`. Do not touch `src/`, including `src/payments/`, and do not modify the ticket files. Do not commit.
+  - **Check:** the tool that checks the output is a shell one-liner. It must confirm that:
+    - the file has 40 data rows;
+    - every ticket in the directory appears exactly once;
+    - every category is one of the five allowed values.
+
+    The subagent runs this check and reports the result.
+  - **Report:** the check output and the list of ambiguous tickets, with no ticket contents.
+
+I would run the same shell check myself after the subagent reports, since the output is only checked by tools. I would also read the ambiguous list and fix any tags that look wrong.
+
+If the tickets contain personal data, tagging them locally doesn't change the class. If you ever want the tags sent anywhere, I would reclassify the task.

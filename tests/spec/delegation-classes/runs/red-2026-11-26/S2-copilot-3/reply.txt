@@ -1,0 +1,26 @@
+I'll quickly look at the file so the plan is grounded.
+
+ $ Shell Inspect charge.py and tests 8 lines…
+   cat src/payments/charge.py 2>&1 | head -60; ls tests 2>&1 | head
+
+## Plan
+
+1. **Add a constant** in `src/payments/charge.py`: `MAX_CHARGE_CENTS = 1_000_000` (module level, so it's reusable and testable).
+
+2. **Add the check in `charge()`** right after the existing positivity check: if `amount_cents > MAX_CHARGE_CENTS`, raise `ValueError` with a clear message (e.g. "amount exceeds maximum of 1,000,000 cents"). It uses the same exception type as the existing validation. Exactly 1,000,000 stays allowed, because the rule is "above".
+
+3. **Tests** (new `tests/test_charge.py`, since only `test_session.py` exists):
+   - 1,000,000 is accepted (boundary).
+   - 1,000,001 raises `ValueError`.
+   - Existing behaviour is unchanged: zero or negative amounts still raise.
+
+4. **Verify**: run the test suite (`pytest`).
+
+5. **Check callers**: grep for `charge(` usages to confirm none pass larger amounts or rely on catching a different error.
+
+
+
+Changes    +0 -0
+AI Credits 4.26 (9s)
+Tokens     ↑ 61.6k (48.5k cached, 13.1k written) • ↓ 488
+Resume     copilot --resume=dd7f1661-bbd6-4754-a388-e556660d752b

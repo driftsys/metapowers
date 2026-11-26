@@ -1,0 +1,25 @@
+Nothing dispatched and no files edited. I loaded the `delegation-routing` skill, which the rules require before any dispatch. The task stays at **Class: standard (given in the plan task; `src/ui/` has no entry in AGENTS.md)**. For standard, the skill calls for one implementer and one code review before merge, then a normal human review.
+
+## Subagents I would dispatch
+
+**1. Failure triage (read-only ops)**
+- **Model:** haiku. **Effort:** low.
+- **Brief:** Read the transcripts, diffs and test output from the two failed sonnet attempts. Report how each one failed: which test or requirement broke, the error, and what the attempt changed in `src/ui/settings_view.py`. Report only, edit nothing. If these artifacts turn out to be small, I would read them myself instead, since that's under the four-call threshold.
+- **Why:** the next implementer needs to know why the first two attempts failed, not just that they did.
+
+**2. Implementer (escalated)**
+- **Model:** opus, up from the table's default of sonnet for standard. The skill leaves escalation to the workflow's fix loop, and two failed attempts on the default model is the usual trigger. I'd record it in the plan task as `Routing: implementer escalated sonnet→opus after 2 failed sonnet attempts (2026-11-26)`.
+- **Effort:** medium. The skill sets medium as the ceiling for implementation, so I wouldn't raise it even after the failures.
+- **Brief:** the spec section for the dark-mode toggle and its requirement ids, the failing test, and the class (standard). It also gets the triage summary from step 1, with an explicit list of approaches that already failed and shouldn't be repeated.
+
+**3. Code reviewer**
+- **Model:** opus. **Effort:** high.
+- **Brief:** the spec, the requirement, the plan task, the merge request description, and the diff saved as a file, computed from the base commit recorded before the task started.
+- **Caveat:** the skill wants the reviewer from a different model family than the implementer, but Claude Code only offers Anthropic models. The reviewer and implementer are now the same model, so there's no cross-family check. For a standard task that's acceptable, but it's a gap to mention.
+
+## Not dispatched
+- **Compliance review and refuter:** these are for critical tasks only.
+- **Frontier model (Fable):** the skill allows suggesting one only after the strongest default model (Opus) has also failed. If the opus attempt fails, I'd suggest Fable to you with the reason and wait for your answer before using it.
+
+## Gaps before I could dispatch
+The plan task doesn't include the spec section, the requirement ids, the failing test, or the logs from the earlier attempts. I'd need those to write the briefs above.

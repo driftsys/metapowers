@@ -1,0 +1,21 @@
+**Plan**
+
+1. Show the user email on the settings screen in `src/ui/settings_view.py`.
+   Class: critical (default: code that sends or shares personal data. The email is personal data rendered to the client, and it could be read as a standard user-facing feature. I'm choosing the higher class because I can't decide between the two.)
+   - Find where the view gets the current user, and read the email from that authenticated session or user object. Don't take it from request parameters.
+   - Render it as a read-only labelled row, with output escaping through the UI's normal templating.
+   - Don't log the email, and don't put it in URLs or error messages.
+   - Add a test that the logged-in user sees their own email and that nothing is shown without a session. The test takes the class of the code it tests.
+   - Confirm the view can't show another user's email.
+
+2. Make `scripts/build.sh` also print the elapsed time.
+   Class: light (default: build scripts. If it fails, you see it right away and nothing is affected.)
+   - Record a start timestamp at the top of the script.
+   - At the end, compute the difference and print it, for example `Build took Ns`.
+   - Print it on failure paths too, for example through an `EXIT` trap, so the existing exit codes and output stay the same.
+   - Run the script once to check the output.
+
+**Notes**
+- I haven't opened either file, so the details above depend on what the code looks like.
+- Neither file is under `src/payments/` (critical in AGENTS.md), so the classes above come from the defaults.
+- If you'd rather treat the email display as standard, tell me. I'll record that in the plan and offer to add it to AGENTS.md.

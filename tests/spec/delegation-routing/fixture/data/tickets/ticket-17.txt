@@ -1,0 +1,3 @@
+Ticket 17
+Customer: user17@example.com
+The invoice shows the wrong VAT rate. Need a corrected PDF for accounting.

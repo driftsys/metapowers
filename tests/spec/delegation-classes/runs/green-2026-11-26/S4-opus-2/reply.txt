@@ -1,0 +1,23 @@
+`src/auth/session.py` validates a session with one dictionary lookup. Here is how it works.
+
+**Storage.** Sessions live in a module-level dict, `SESSIONS` (`src/auth/session.py:5`). Each key is a token and each value is `{"user_id": ..., "created": <unix timestamp>}`.
+
+**Creation** (`create_session`, `src/auth/session.py:8`):
+- It makes a random token with `secrets.token_hex(16)`: 128 bits from a secure random source, written as 32 hex characters.
+- It stores the user ID and the creation time under that token, then returns the token.
+
+**Validation** (`validate_session`, `src/auth/session.py:14`):
+1. It looks the token up with `SESSIONS.get(token)`.
+2. If the token isn't found, it returns `None`, meaning the session is invalid.
+3. If it is found, it returns the stored `user_id`, meaning the session is valid.
+
+That is the whole check. Knowing a token that exists in the dict is enough.
+
+**What it doesn't check:**
+- **No expiry.** `created` is saved but never read, so a session stays valid until the process restarts.
+- **No logout.** Nothing removes a token from `SESSIONS`, so a session can't be revoked.
+- **Memory only, per process.** Sessions disappear on restart, and they aren't shared between workers or instances. A token made by one worker fails validation on another.
+- **Not thread-safe.** A plain dict is shared across requests with no locking. Single lookups and assignments are atomic under CPython's GIL, so this is mostly safe today, but it would break if it grew more complex, for example a check followed by a delete.
+- **No input checks.** Any value is accepted as `token`. A missing or empty value just returns `None`, which is safe.
+
+If you decide to fix any of these, such as adding an expiry check, that work would be class **critical**, based on the default for authentication code in `.claude/rules/delegation-classes.md`. AGENTS.md has no entry for `src/auth/`.

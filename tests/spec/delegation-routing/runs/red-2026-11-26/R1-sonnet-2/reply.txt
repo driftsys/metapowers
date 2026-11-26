@@ -1,0 +1,50 @@
+I haven't dispatched anything and haven't edited any files. Here is the plan for this critical-class task. There are five subagents in three stages.
+
+**Stage 1: context (one agent)**
+
+1. **Spec and code scout**
+   - Agent type: Explore. Model: sonnet. Effort: medium.
+   - Brief:
+     - Read `docs/spec-session-expiry.md` and quote REQ-AUTH-014 and REQ-AUTH-015 verbatim, plus any ambiguities or unstated edge cases.
+     - Map `src/auth/session.py`: the public API, how sessions are created and validated, the time source and clock injection, and the callers.
+     - Find the existing tests, their conventions, and how requirement IDs are traced.
+     - Report findings only. No edits and no proposed design.
+
+**Stage 2: build (two agents in parallel, kept isolated from each other)**
+
+2. **Implementer**
+   - Agent type: general-purpose. Model: opus. Effort: high.
+   - Brief:
+     - The scout's report and the spec path.
+     - Scope: edit `src/auth/session.py` and nothing outside it unless the report shows a caller must change.
+     - Constraints: expired sessions fail closed, time comes from the injectable clock, and expiry is checked on every validation path. Cite REQ IDs in comments or docstrings, following the surrounding style.
+     - Run the test suite and report the results.
+
+3. **Independent test author**
+   - Agent type: general-purpose. Model: sonnet. Effort: high.
+   - Brief:
+     - Write tests from the spec and the scout's API map only. It does not see the implementation, so the tests aren't shaped by it.
+     - Cover boundaries (exactly at expiry, one tick before and after), clock skew, refresh or renewal if the spec mentions it, and invalid or missing timestamps.
+     - Tag each test with REQ-AUTH-014 or REQ-AUTH-015.
+     - Edit test files only.
+
+I would run the tests myself after stage 2. Failures go back to the implementer, not to the reviewers.
+
+**Stage 3: independent review (two agents in parallel)**
+
+4. **Correctness reviewer**
+   - Agent type: general-purpose. Model: fable. Effort: xhigh.
+   - Brief:
+     - Give it the diff and the spec path, not my conclusions or the implementer's summary.
+     - Check each requirement against the code, and check that the tests actually exercise it.
+     - Look for off-by-one errors, timezone or monotonic-clock mistakes, and paths that skip the expiry check.
+     - Report findings ranked by severity, each with a concrete failing scenario.
+
+5. **Security reviewer**
+   - Agent type: general-purpose, running the `security-review` skill. Model: opus. Effort: xhigh.
+   - Brief:
+     - Give it the same diff, scoped to session handling.
+     - Look for fail-open behavior, session fixation or reuse after expiry, a timing-based bypass, client-controlled expiry values, and secrets or tokens in logs.
+     - Report only confirmed or plausible issues.
+
+I put the strongest model on the correctness review because this is critical-class and that agent works without the implementer's framing. The scout is cheap because it only does retrieval. If a reviewer finds a real issue, I would send it to the implementer and re-run stage 3 on the new diff.

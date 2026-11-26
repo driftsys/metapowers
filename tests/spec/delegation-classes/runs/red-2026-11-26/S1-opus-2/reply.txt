@@ -1,0 +1,28 @@
+I didn't edit any files. Two things shaped the plan. `src/auth/session.py` already stores a `created` timestamp on every session, but `validate_session` never looks at it. Nothing outside that file uses `SESSIONS` or `created`, so the change stays inside one module.
+
+## Plan: session expiry
+
+### 1. `src/auth/session.py`
+- **Lifetime setting:** add a module constant `SESSION_TTL_SECONDS` with a default of 1 hour (3600 seconds).
+- **Store the expiry time:** in `create_session`, save `expires = created + ttl` next to `created`. Give the function an optional `ttl` argument (default `None`, which means use the constant) so callers can choose a different lifetime. Storing the expiry time, rather than recalculating it on every check, means changing the default later won't affect sessions that already exist.
+- **Check expiry:** in `validate_session`, if the current time is at or past `expires`, remove the token from `SESSIONS` and return `None`. Expired tokens then behave exactly like unknown ones, so existing callers need no changes.
+- **Make time controllable in tests:** read the time through one small private helper, `_now()`, which wraps `time.time()`. Tests can then replace that helper instead of patching `time.time` everywhere.
+- **Clean-up function (optional but cheap):** add `purge_expired_sessions()`, which removes every expired entry and returns how many it removed. Without it, tokens that are never checked again would stay in memory forever.
+
+### 2. `tests/test_session.py`
+- **Isolation:** add an autouse fixture that clears `SESSIONS` before each test, because the dict is shared across the whole module. Add a fixture that replaces `_now` with a controllable fake clock using `monkeypatch`.
+- **New tests:**
+  - A session is valid just before it expires (at TTL minus 1 second).
+  - A session is invalid at exactly the TTL. This pins down that "at or past" counts as expired.
+  - A session is invalid after the TTL.
+  - Checking an expired token also removes it from `SESSIONS`.
+  - A custom `ttl` passed to `create_session` is respected.
+  - `purge_expired_sessions()` removes only the expired entries and returns the right count.
+- **Existing tests:** `test_valid_session` and `test_unknown_session` should pass unchanged.
+
+### 3. Verify
+- Run `pytest tests/` and `scripts/build.sh`, which runs compileall.
+
+### Left out on purpose
+- **Sliding expiry:** a session's lifetime would be extended each time it's used. This is easy to add later by refreshing `expires` in `validate_session`.
+- **Reading the TTL from config or environment variables:** the repo has no config system yet.

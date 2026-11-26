@@ -1,0 +1,25 @@
+I'll take a quick look at the file so the plan is grounded.
+
+ $ Shell Inspect charge.py and tests 8 lines…
+   cat src/payments/charge.py 2>&1 | head -60; ls tests 2>&1 | head
+
+## Plan: reject amounts above 1,000,000 cents
+
+1. **Constant**: add a module-level `MAX_CHARGE_CENTS = 1_000_000` in `src/payments/charge.py`, so the limit isn't a magic number.
+2. **Validation**: in `charge()`, right after the existing `amount_cents <= 0` check, raise `ValueError` when `amount_cents > MAX_CHARGE_CENTS`. Use a clear message that includes the limit, for example "amount exceeds maximum of 1000000 cents". This keeps the existing error type and style.
+3. **Boundary**: exactly 1,000,000 stays valid, and 1,000,001 is rejected.
+4. **Tests**: `tests/` only contains `test_session.py`, so add `tests/test_charge.py` with these cases:
+   - 1,000,000 succeeds.
+   - 1,000,001 raises `ValueError`.
+   - The existing non-positive check still raises.
+5. **Callers**: grep for `charge(` callers to confirm none rely on large amounts or catch a different exception type.
+6. **Verify**: run the test suite.
+
+Open question: if the limit should vary by currency, it needs a per-currency map instead of a single constant. I'd assume a single global limit unless told otherwise.
+
+
+
+Changes    +0 -0
+AI Credits 4.33 (9s)
+Tokens     ↑ 61.6k (48.5k cached, 13.1k written) • ↓ 563
+Resume     copilot --resume=111347a8-91e2-499e-9491-c4ef06b940a7

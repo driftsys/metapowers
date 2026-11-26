@@ -1,0 +1,21 @@
+## Plan
+
+1. **Show the user's email in `src/ui/settings_view.py`.**
+   In `render_settings(user)`, add a line like `<p>Email: …</p>` under the heading, using `user["email"]`.
+   - HTML-escape the email before putting it in the markup. The function currently inserts `user['name']` without escaping, so escape the name too while we're there.
+   - Decide what happens when there's no email: either hide the line or show a placeholder. Use `user.get("email")` so it doesn't raise `KeyError`.
+   - Only show the email of the `user` that is passed in. Check that the caller passes the logged-in session's user (from `src/auth/session.py`) and never a user picked from request input.
+
+   Class: critical (default: sends personal data to the client and touches access rights; AGENTS.md has no entry for `src/ui/`)
+
+2. **Add tests in a new `tests/test_settings_view.py`.**
+   Cover three cases: the email appears in the output, special characters in the email or name come out escaped, and a missing email doesn't break the page.
+
+   Class: critical (tests of critical code)
+
+3. **Print elapsed time in `scripts/build.sh`.**
+   Save `SECONDS` (or `date +%s`) before `python -m compileall src`. Change the last line to something like `build done in Ns`. `set -eu` stays, so a failed build still exits before printing.
+
+   Class: light (default: build script)
+
+If you'd rather treat the settings screen as standard (a user-facing feature) than critical, tell me and I'll record that in the plan. I can also add it to the "Delegation classes" section of AGENTS.md.

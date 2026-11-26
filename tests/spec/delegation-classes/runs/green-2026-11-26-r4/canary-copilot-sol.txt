@@ -1,0 +1,8 @@
+Yes. The delegation-classes rule says to ask the user whether privacy applies and classify the task as **standard** until they answer.
+
+
+
+Changes    +0 -0
+AI Credits 1.62 (4s)
+Tokens     ↑ 16.2k (10.3k cached, 5.9k written) • ↓ 31
+Resume     copilot --resume=ef715450-f26f-4b9d-81db-ff048dd9cdf8

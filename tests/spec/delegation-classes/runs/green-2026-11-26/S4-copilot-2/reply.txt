@@ -1,0 +1,25 @@
+ $ Shell Read session.py 18 lines…
+   cat src/auth/session.py
+
+`validate_session(token)` in `src/auth/session.py` does this:
+
+1. It looks the token up in the in-memory `SESSIONS` dict.
+2. If the token isn't there, it returns `None`.
+3. If it is there, it returns the session's `user_id`.
+
+Sessions are created by `create_session`. It generates a random token with `secrets.token_hex(16)` and stores `user_id` and a `created` timestamp.
+
+The check has some gaps:
+- **No expiry:** `created` is stored but never checked, so a session stays valid forever.
+- **No logout or revocation:** there is no way to remove a session.
+- **Non-persistent storage:** `SESSIONS` is a process-local dict, so sessions are lost on restart and not shared across workers.
+- **Token comparison:** the dict lookup is not constant-time. This is low risk with random 128-bit tokens.
+
+I made no changes. If you want expiry added, say so. The class would be `Class: critical (inferred: authentication)`.
+
+
+
+Changes    +0 -0
+AI Credits 3.18 (17s)
+Tokens     ↑ 56.9k (47.7k cached, 9.2k written) • ↓ 407
+Resume     copilot --resume=88f087be-58fc-436f-8bdd-9c256a22fe5a

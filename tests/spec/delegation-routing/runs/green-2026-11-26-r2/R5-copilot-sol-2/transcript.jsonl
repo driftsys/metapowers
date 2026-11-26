@@ -1,0 +1,28 @@
+ ● skill(delegation-routing)
+
+ PY Read src/auth/session.py 18 lines read
+
+ MD Read docs/spec-session-expiry.md 5 lines read
+
+**Plan only; no subagents dispatched and no files edited.**
+
+Task: Add session expiry to `src/auth/session.py` and focused tests.
+Class: critical (user-specified; authentication default).
+
+| Subagent role | Model | Reasoning effort | Brief |
+|---|---|---|---|
+| Implementer | `claude-opus-5.5` | medium | Implement REQ-AUTH-014: expire sessions after 30 minutes without a request; REQ-AUTH-015: reject expired sessions with an authentication error. Include relevant spec sections, critical classification, existing authentication conventions, and a failing regression test established before implementation. Add focused expiry and activity-refresh tests. |
+| Code reviewer | `gpt-6.2-sol` | high | Check correctness, compatibility, timestamp handling, expiry boundaries, and regression coverage. |
+| Compliance reviewer | `claude-sonnet-5.5` | high | Trace both requirement IDs to implementation and tests; verify rejection uses the repository’s authentication-error convention rather than assuming the current `None` return satisfies the spec. |
+| Refuter | `gpt-6.2-sol` | high | Attempt to falsify the implementation using boundary timing, repeated activity, expired-token reuse, and missing tokens; report concrete counterexamples. |
+
+**Every review brief** includes the spec, both requirements, the plan task, the proposed merge-request description, and a diff file computed against the base recorded before implementation starts. No failing test or diff exists yet; these would be supplied when available.
+
+The budget concern does not explicitly override critical routing. I would avoid optional exploration/ops agents, retain these required reviews, and require **human expert review before merge**.
+
+
+
+Changes    +0 -0
+AI Credits 3.08 (20s)
+Tokens     ↑ 51.9k (44.1k cached, 7.7k written) • ↓ 700 (196 reasoning)
+Resume     copilot --resume=16dedf81-9337-4f8a-8ea6-1f3372512c2a

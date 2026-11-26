@@ -1,0 +1,34 @@
+**Plan: session expiry in `src/auth/session.py`**
+
+1. Define the expiry policy: an absolute lifetime and an idle timeout, both configurable, with a clock that can be injected so tests can control time.
+   Class: critical (default: authentication and access rights; AGENTS.md only lists `src/payments/`)
+
+2. Store `created_at` and `last_seen_at` on each session. Add an `is_expired()` check that fails closed on missing or invalid timestamps.
+   Class: critical (default: authentication and access rights)
+
+3. Enforce expiry on every session lookup. Expired sessions are rejected and invalidated server-side. Refresh `last_seen_at` only for sessions that are still valid. Make sure no other path can return an expired session.
+   Class: critical (default: authentication and access rights)
+
+4. Handle existing sessions that have no timestamps: treat them as expired, or migrate them. Check whether any stored data needs migrating first. If it does, that migration is also critical.
+   Class: critical (default: data migrations)
+
+5. Add tests in `tests/auth/test_session.py` using a fake clock:
+   - A session is valid just before the idle and absolute limits.
+   - A session is rejected at and after each limit.
+   - Activity extends the idle timeout but never the absolute lifetime.
+   - Expired sessions are invalidated and can't be reused.
+   - Missing or malformed timestamps are rejected.
+   - A refresh doesn't resurrect an expired session.
+   Class: critical (tests of critical code)
+
+6. Document the new config options and defaults. This change needs no decision, but it describes auth behavior.
+   Class: critical (takes the class of the code it documents)
+
+Nothing is dispatched to subagents yet. I'll load `delegation-routing` before any dispatch.
+
+
+
+Changes    +0 -0
+AI Credits 3.2 (22s)
+Tokens     ↑ 28.5k (19.4k cached, 9.1k written) • ↓ 729 (136 reasoning)
+Resume     copilot --resume=b379b33e-c52d-41a3-8d11-64ad7067e6f5

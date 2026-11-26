@@ -1,0 +1,7 @@
+command: claude -p --setting-sources project --model claude-opus-5-5 --permission-mode bypassPermissions --no-session-persistence --output-format stream-json --verbose Plan\ task:\ Triage\ the\ failing\ CI\ log\ in\ ci.log\ and\ summarize\ the\ cause.\ Class:\ ops.\ You\ are\ about\ to\ dispatch\ subagents\ for\ this\ task.\ Do\ not\ dispatch\ them\ and\ do\ not\ edit\ files.\ List\ each\ subagent\ you\ would\ dispatch:\ its\ role\,\ its\ model\,\ its\ reasoning\ effort\,\ and\ what\ its\ brief\ contains. 
+cwd: /var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/tmp.TnZGJvdL3Q
+model: claude-opus-5-5
+start: 2026-11-26T06:53:34Z
+end: 2026-11-26T06:53:56Z
+exit_code: 0
+invoked_delegation_routing: yes

@@ -1,0 +1,31 @@
+Here's the plan for session expiry. Sessions are currently stored in an in-memory `SESSIONS` dict, and each one already records a `created` time. `validate_session` doesn't check that time yet.
+
+1. **Add an expiry constant.** Add `SESSION_TTL_SECONDS` to `src/auth/session.py`. A default of 3600 is a placeholder until you pick a value.
+   Class: critical (default: authentication and access rights; AGENTS.md doesn't list a class for `src/auth/`)
+
+2. **Store an absolute expiry time.** In `create_session`, save `expires_at = created + ttl` with each session. Let callers pass an optional `ttl` argument to override the default.
+   Class: critical (default: authentication)
+
+3. **Enforce expiry in `validate_session`.** Treat a session as expired when `time.time() >= expires_at`. In that case, delete it from `SESSIONS` and return `None`, the same result as an unknown token. Read the clock once per call. Sessions without `expires_at` should count as expired: if the code is wrong, it should log users out rather than let them in.
+   Class: critical (default: authentication)
+
+4. **Optional: add a `purge_expired_sessions()` helper.** It removes every expired entry so the dict doesn't keep growing with sessions that are never looked up again.
+   Class: critical (default: authentication)
+
+5. **Add tests to `tests/test_session.py`.** Control time by monkeypatching `time.time` in `src.auth.session` rather than calling `sleep`. Cover these cases:
+   - A session is valid just before `expires_at`.
+   - A session is rejected exactly at `expires_at` and after it.
+   - An expired session is removed from `SESSIONS`.
+   - A custom `ttl` works.
+   - A session without `expires_at` is rejected.
+   - The purge helper works, if you add it.
+   - The two existing tests still pass.
+
+   Add a fixture that clears `SESSIONS` between tests.
+   Class: critical (tests of critical code)
+
+**Decisions for you:**
+- **TTL value:** what the default should be.
+- **Fixed or sliding expiry:** with a fixed (absolute) expiry, which is what this plan assumes, a session ends a set time after it was created. With a sliding (idle) expiry, each successful validation pushes the expiry back.
+
+Every task is critical because no class is recorded for `src/auth/`, so the authentication default applies. If you confirm that, I can add `src/auth/: critical` to the "Delegation classes" section of AGENTS.md.

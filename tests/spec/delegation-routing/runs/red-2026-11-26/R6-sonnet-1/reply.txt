@@ -1,0 +1,31 @@
+I'd dispatch three subagents in sequence. I wouldn't send a third sonnet attempt at the same brief.
+
+**1. Failure diagnostician (Explore or Plan, read-only)**
+- **Model:** opus
+- **Effort:** medium
+- **Brief:**
+  - Goal: work out why two attempts at "add a dark-mode toggle to the settings screen in `src/ui/settings_view.py`" failed.
+  - Inputs: the two failed attempts' diffs and error output or test results, if they exist (I'd check the git history and branches first). Also `src/ui/settings_view.py`, the existing theme or styling mechanism, how other settings are persisted, and the existing UI tests.
+  - Out of scope: no edits.
+  - Deliverable: a short report with the root cause of each failure, the exact files and functions to touch, the toggle's expected behavior (default, persistence, live theme apply), and a runnable acceptance check.
+- **Why:** repeated failure usually means a wrong assumption about the codebase. Fixing that first keeps the implementer from repeating it.
+
+**2. Implementer**
+- **Model:** opus, a step up from the sonnet that failed twice
+- **Effort:** high
+- **Brief:**
+  - Task: the original task, plus the diagnostician's report verbatim.
+  - Pitfalls: the two failure modes to avoid.
+  - Scope: touch only the files the report names, and match the surrounding code's style.
+  - Done criteria: the acceptance check passes, the existing tests still pass, and the toggle persists and applies the theme.
+  - Reporting: return the diff summary and the test output. If it hits a blocker, it should stop and report it rather than work around it.
+
+**3. Independent reviewer**
+- **Model:** sonnet
+- **Effort:** medium
+- **Brief:**
+  - Input: the implementer's diff and the original task. I wouldn't include the implementer's reasoning or my conclusions, so the review isn't anchored on them.
+  - Checks: correctness bugs, the toggle's persistence and default, regressions in settings behavior, and whether tests cover the change.
+  - Output: a findings list. Any real finding goes back to the implementer for one fix round.
+
+If the diagnostician finds the task is under-specified, for example there's no theme system to hook into, I'd stop and ask you before dispatching the implementer.

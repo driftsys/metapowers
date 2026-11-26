@@ -1,0 +1,40 @@
+I would dispatch three subagents in sequence. I would not retry the same implementer a fourth time, because three failures suggest the cause is something the briefs didn't capture.
+
+**1. Diagnostician (read-only)**
+- **Role:** work out why attempts 1–3 failed, and define what done looks like.
+- **Model:** sonnet, using the `Explore` agent type with the tools it already has. The work is reading and running tests, not hard reasoning.
+- **Effort:** unset, so the agent's default applies. I only set effort when you ask for a specific level.
+- **Brief:**
+  - The goal: a dark-mode toggle in `src/ui/settings_view.py`.
+  - The history: two sonnet attempts and one opus attempt failed.
+  - Inputs to read: `settings_view.py`, the existing theme or style mechanism, how other settings are persisted, and the tests and run commands.
+  - Evidence to check: leftover branches, stashes or diffs from earlier attempts, and the failing test output or errors.
+  - Deliverable: a root-cause report covering:
+    - the likely reason each attempt failed;
+    - hidden constraints, such as theme plumbing, settings persistence or the UI framework's event model;
+    - the exact files to touch;
+    - a concrete acceptance check, meaning the command and the behavior to verify.
+  - No edits. Report facts, not guesses, and mark anything unverified.
+
+**2. Implementer**
+- **Role:** implement the toggle using the diagnostician's findings.
+- **Model:** fable. Opus already failed, so escalating tier is the sensible next step.
+- **Effort:** high.
+- **Brief:**
+  - The task and the diagnostician's report, pasted in full.
+  - The list of approaches that already failed, so it avoids them.
+  - The scope: touch only the named files, match the surrounding code style, and add no unrelated refactors.
+  - The acceptance command, which it must run and quote the output of.
+  - Report what it ran, what passed, and anything it skipped. It must not claim success without that evidence.
+
+**3. Independent reviewer**
+- **Role:** verify the result without being anchored on the implementer's claims.
+- **Model:** opus.
+- **Effort:** medium.
+- **Brief:**
+  - The diff and the acceptance criteria only, not the implementer's summary.
+  - Re-run the tests or the app, and check that the toggle actually changes the theme and persists.
+  - Look for regressions in neighboring settings.
+  - Return a pass or fail verdict with evidence.
+
+If the reviewer fails it, I'd go back to the diagnostician with the new evidence. I would not just resend the same brief.

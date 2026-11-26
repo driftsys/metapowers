@@ -1,0 +1,20 @@
+I loaded `delegation-routing` and dispatched nothing. No files were edited.
+
+**Task:** add session expiry to `src/auth/session.py` (REQ-AUTH-014, REQ-AUTH-015).
+Class: critical (user-stated, and it matches the default for authentication and access rights).
+Routing: no cross-family review. Claude Code offers one model family, so the human expert should know about this gap.
+Diff base: record `a0d5b85` (current `main` HEAD) before the first dispatch.
+
+| # | Role | Model | Effort | Brief |
+|---|------|-------|--------|-------|
+| 1 | Test author | opus | medium | The spec section of `docs/spec-session-expiry.md` for REQ-AUTH-014 and REQ-AUTH-015, plus both requirement ids and the class (critical). It writes failing tests only and leaves production code alone. The tests take the class of the code they test. |
+| 2 | Implementer | opus | medium | The same spec section and requirement ids, the failing tests from step 1, and the class (critical). It edits `src/auth/session.py` until the tests pass. It stays at medium effort because that is the ceiling for implementation. |
+| 3 | Code reviewer | opus | high | The full spec, REQ-AUTH-014 and REQ-AUTH-015, the plan task, the merge request description, and the diff saved as a file from the recorded base. A diff alone is not enough. |
+| 4 | Compliance reviewer | sonnet | medium | The same package as step 3. It checks each requirement against the code and tests and reports any requirement left uncovered or only partly covered. The skill gives no effort for this role, so medium is my choice. I would raise it to high if you prefer. |
+| 5 | Refuter | opus | high | The same package as step 3. It tries to break the change: expiry boundaries, clock handling, refresh or renewal bypasses, and sessions that never expire. |
+
+- **Order:** steps 1 and 2 run in sequence. Steps 3, 4 and 5 can run in parallel once step 2 finishes. After that comes the human expert review.
+- **Optional ops work:** if I need to run the test suite, linter or `git diff` to produce the diff file, I would use haiku for that. Haiku never touches production code.
+- **Escalation:** if step 2 fails twice, the next attempt goes to the strongest implementer model the client offers. A frontier model (Fable) is only dispatched if you ask for one, or if I suggest it after the strongest default fails and you agree.
+- **Consult before planning:** this session runs on Sonnet 5.5, which is below the strongest model. If the spec leaves the design unclear, I would first consult an opus subagent, giving it the task, the class and the specific question. Either I follow its answer or I report the disagreement to you.
+- **Not recorded yet:** the skill says to write overrides into the plan task. None apply so far. The skill table gives no effort for the compliance reviewer, so tell me if you want a different one.

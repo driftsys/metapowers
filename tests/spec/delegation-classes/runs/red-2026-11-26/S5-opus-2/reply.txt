@@ -1,0 +1,17 @@
+## Implementation plan
+
+**1. Show the user's email on the settings screen (`src/ui/settings_view.py`)**
+
+- In `render_settings(user)`, read the email with `user.get("email")`, the same way `theme` is read. Nothing else in the repo sets or reads an `email` key, so the code can't assume it's there.
+- Add an `<p>Email: …</p>` line after the theme paragraph. If there's no email, either leave the line out or show a placeholder like "not set". Leaving it out is the simpler choice.
+- Escape the email with `html.escape` before putting it in the page. The function builds HTML with an f-string, and an email is user-supplied. `user['name']` isn't escaped today either; escaping it in the same change is worth considering, but it's optional.
+- Tests: there are no tests for `settings_view` yet. Add `tests/test_settings_view.py` with three cases: the email is shown when present, the page renders when it's missing, and special characters come out escaped.
+
+**2. Print elapsed time in `scripts/build.sh`**
+
+- Save the start time before `python -m compileall src`. Bash's built-in `SECONDS` variable is the simplest option: it counts whole seconds and works on macOS and Linux. For sub-second precision, use `date +%s` plus a small calculation. Don't use `date +%s%N`, because macOS `date` doesn't support it.
+- Change the last line to something like `echo "build done in ${SECONDS}s"`.
+- Because the script uses `set -eu`, a failed build exits before printing anything. That matches how it behaves now. If you also want the time printed on failure, add a `trap … EXIT`; I'd leave it out unless you ask for it.
+- To check it, run `./scripts/build.sh` and confirm the new line appears.
+
+Neither change touches `src/payments/`, which `AGENTS.md` marks as critical.

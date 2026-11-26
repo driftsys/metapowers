@@ -1,0 +1,3 @@
+Ticket 26
+Customer: user26@example.com
+User cannot log in after password reset. The reset email arrives but the new password is rejected.

@@ -1,0 +1,20 @@
+For a light task like this I'd rather not dispatch any subagent. The change is a few lines in one file. Reading it, editing it and running it myself takes three or four tool calls, which is less than writing a brief and checking the result. If the workflow requires a dispatch, I'd send just one:
+
+**Subagent 1: Implementer**
+- **Type:** `general-purpose` (it needs edit and Bash access; Explore and Plan are read-only)
+- **Model:** `haiku` (Haiku 5.5). Sonnet would also be fine, but the task needs no judgment.
+- **Effort:** `low`
+- **Brief:**
+  - **Goal:** make `scripts/build.sh` print the total elapsed time when it finishes.
+  - **Approach:** record the start time at the top of the script. Bash's built-in `$SECONDS` is enough and works with macOS's bash 3.2. Print something like `Build finished in Ns` at the end. Use a `trap ... EXIT` so the time also prints when the build fails, unless that clashes with traps already in the script.
+  - **Constraints:**
+    - Match the script's existing style (echo or printf, how it logs, its comment density).
+    - Don't change the exit code or any other output.
+    - No new dependencies, and no `date +%s%N` (BSD `date` doesn't support it).
+  - **Verify:** run `scripts/build.sh`, or a dry or fast path if a full build is slow. Confirm the elapsed-time line appears and the exit code is unchanged. If the build can be made to fail easily, check that path too.
+  - **Report back:** the diff, the command run, and the last few lines of output with the exit code.
+  - **Out of scope:** no commit and no other files.
+
+**Not dispatched:**
+- **Explore or planner:** the target file is already named, so there's nothing to search for or design.
+- **Reviewer:** I'd read the few-line diff and the run output myself. A separate review costs more than the change.

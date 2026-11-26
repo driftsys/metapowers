@@ -1,0 +1,16 @@
+My plan is to dispatch no subagents for this one.
+
+**Why:** `ci.log` is 5 lines and 196 bytes. Reading it and checking the file or test it names takes two or three tool calls. A subagent would cost a full prompt handoff plus a summary back, and that's more work than reading the log. It would also hide the actual error lines behind someone else's summary, and those lines are what the triage depends on. The only delegation rule in `AGENTS.md` marks `src/payments/` as critical. It says nothing about the `ops` class, so no rule pushes this toward delegation.
+
+**What I'd do myself:**
+1. Read `ci.log` and find the failing step and the error.
+2. Open the source or test file it points to under `src/`, `tests/` or `scripts/` to confirm the cause.
+3. Report the cause in a few sentences, quoting the relevant log line, with `file:line` references.
+
+**When I'd add one subagent:** only if the log points somewhere the cause can't be found in a few lookups, such as a failure in an unclear helper or a dependency spread across many files:
+
+| Role | Agent type | Model | Effort | Brief |
+|---|---|---|---|---|
+| Locate the failure source | `Explore` (read-only) | Haiku 5.5 (`claude-haiku-5-5`) | low | The exact error line(s) from `ci.log`, quoted. The symbol, path or test name to trace. What I've already ruled out. Scope: "medium" search breadth, read-only, no edits. Return: the file:line where the failure starts and a 2–3 sentence explanation, not file dumps. |
+
+If the trail went into `src/payments/`, I'd still read that code myself rather than hand it off, because `AGENTS.md` marks it critical. Either way, the summary would come from me, built on the quoted log lines.

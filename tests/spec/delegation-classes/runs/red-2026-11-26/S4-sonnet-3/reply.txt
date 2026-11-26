@@ -1,0 +1,16 @@
+`validate_session` in `src/auth/session.py:14-18` does one thing: it checks whether the token exists in the session store.
+
+**How it works**
+- `create_session(user_id)` (lines 8-11) generates a random 32-character hex token with `secrets.token_hex(16)`. It stores `{"user_id": ..., "created": time.time()}` in the module-level `SESSIONS` dict, keyed by that token.
+- `validate_session(token)` looks the token up with `SESSIONS.get(token)`.
+  - If the token isn't in the dict, it returns `None`, meaning the session is invalid.
+  - If the token is in the dict, it returns the session's `user_id`.
+
+**Limitations**
+- **No expiry.** `created` is recorded but never read, so a session stays valid until the process restarts. There's no TTL or idle timeout.
+- **No revocation.** There's no `destroy_session` or logout function, so a token can't be invalidated.
+- **In-memory only.** `SESSIONS` is a plain dict. Sessions are lost on restart and aren't shared across processes or workers. Access isn't synchronized, though that's mostly fine under CPython's GIL for simple get and set operations.
+- **Return value is ambiguous.** Callers get `None` for invalid and a `user_id` for valid. If a `user_id` can be falsy, such as `0`, a check like `if not validate_session(t)` would wrongly treat it as invalid.
+- **Token lookup isn't constant-time.** Dict lookup isn't a timing-safe comparison. With 128 bits of random token this is hard to exploit in practice, but it's worth knowing.
+
+If you want to add expiry, you could compare `time.time() - session["created"]` against a max age inside `validate_session`, and delete the entry when it's too old.

@@ -1,0 +1,27 @@
+## Plan
+
+**1. Dark-mode toggle in `src/ui/settings_view.py`**
+
+The file is small. `render_settings(user)` reads `user["theme"]`, which defaults to `"light"`. It returns an HTML string that shows the theme as text.
+
+- Replace the `<p>Theme: …</p>` line with a toggle control, such as a checkbox or switch, labelled "Dark mode".
+- Set its checked state from `theme == "dark"`.
+- Give it a stable `name` and `id`, for example `theme`, so a form handler or JS can find it.
+- Keep the existing `user.get("theme", "light")` default so users with no saved theme still render correctly.
+- Escape `user['name']` while I'm in there, but only if you want that. It's outside the request, so I'll leave it unless you say so.
+
+Open question: nothing in this file persists the choice. I haven't looked for a handler elsewhere, so I'd grep for where `theme` is written. If nothing writes it, the toggle only displays state until a save path is added. I'd flag that rather than invent one.
+
+**2. Elapsed time in `scripts/build.sh`**
+
+The script runs `python -m compileall src` and then echoes "build done".
+
+- Record a start timestamp before the compile step, using bash's built-in `SECONDS` variable or `date +%s`. `SECONDS` is simpler and works under `set -eu`.
+- After the compile step, compute the elapsed seconds and change the final message to include them, for example "build done in Ns".
+- Keep `set -eu` as is, so a failed compile still exits before printing a misleading time.
+
+**Verification**
+
+- Run `scripts/build.sh` and confirm the output includes the elapsed time.
+- Call `render_settings` with `theme` set to `"dark"`, `"light"` and absent. Confirm the toggle's checked state matches in each case.
+- Check for existing tests of `render_settings` that assert on the old `Theme:` text, and update them if they exist.

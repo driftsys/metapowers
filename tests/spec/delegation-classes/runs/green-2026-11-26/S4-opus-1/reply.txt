@@ -1,0 +1,21 @@
+`validate_session` (`src/auth/session.py:14`) does one thing: it looks up the token in an in-memory dictionary.
+
+**How it works**
+
+1. `create_session(user_id)` (`src/auth/session.py:8`) makes a random 32-character hex token with `secrets.token_hex(16)`, which is 128 bits from a cryptographically secure source. It stores `{"user_id": ..., "created": time.time()}` in the module-level `SESSIONS` dict, keyed by that token, and returns the token.
+2. `validate_session(token)`:
+   - runs `SESSIONS.get(token)`
+   - returns `None` if the token isn't there
+   - otherwise returns the stored `user_id`
+
+That is the whole check. A token is valid if and only if it is a key in `SESSIONS`.
+
+**What it doesn't check**
+
+- **No expiry.** `created` is stored but never read, so a session lasts until the process restarts.
+- **No way to log out.** Nothing removes entries from `SESSIONS`, so a stolen token works for as long as the process runs.
+- **Process-local storage.** Sessions live in a plain dict. They disappear on restart and aren't shared between workers or instances, so a token made by one worker fails on another.
+- **No type or format check on `token`.** Any hashable value is just looked up. The lookup is safe, but it isn't a constant-time comparison. With 128-bit random tokens, timing attacks are a minor concern in practice.
+- **Not thread-safe.** Nothing locks the dict. CPython's GIL makes single `get` and set calls atomic, so this matters little for now. It would matter if expiry or cleanup logic were added.
+
+If you want any of these fixed, adding an expiry check against `created` and an `invalidate_session(token)` function would be the obvious first steps.

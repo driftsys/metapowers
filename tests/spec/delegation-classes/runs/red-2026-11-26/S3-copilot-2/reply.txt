@@ -1,0 +1,29 @@
+I'll take a quick look at the file so the plan matches the actual code.
+
+ $ Shell Inspect session module and tests 23 lines…
+   cat src/auth/session.py; ls tests* test* 2>/dev/null | head
+
+**Plan: session expiry in `src/auth/session.py`**
+
+1. **Constant:** add a module-level TTL (e.g. `SESSION_TTL_SECONDS`, default 3600). It is the only new configuration.
+2. **Change in `validate_session`:** after the lookup, compare `time.time() - session["created"]` to the TTL.
+   - If the session is expired, delete it from `SESSIONS` and return `None`. This matches the existing "invalid" result.
+   - Deleting it also stops expired sessions piling up.
+   - This is slightly more than one line, because of the cleanup. Returning `None` alone would be the minimal version.
+3. **Tests in `tests/test_session.py`:** patch `time.time` so the tests don't sleep.
+   - A fresh session validates and returns the user id.
+   - A session just under the TTL still validates.
+   - A session at or past the TTL returns `None`.
+   - An expired session is removed from `SESSIONS`.
+4. **Verify:** run the existing tests and the new ones with `pytest tests/test_session.py`.
+
+**Notes**
+- **Review:** I'd still have someone glance at it, since this is auth code and a wrong boundary check could lock users out or leave sessions alive. It's a quick review, but it's your team's call.
+- **Boundary:** decide whether "expired" means `>=` or `>` the TTL, and pin that choice in a test.
+
+
+
+Changes    +0 -0
+AI Credits 4.38 (9s)
+Tokens     ↑ 61.7k (48.5k cached, 13.2k written) • ↓ 592
+Resume     copilot --resume=271b7926-24ac-4c86-a8fb-c2e90766339f

@@ -1,0 +1,29 @@
+I'll quickly look at the two files so the plan is grounded.
+
+ $ Shell Inspect target files 15 lines…
+   cat src/ui/settings_view.py scripts/build.sh 2>&1 | head -80; ls
+
+## Implementation plan
+
+**1. Dark-mode toggle: `src/ui/settings_view.py`**
+- `render_settings` already reads `user["theme"]` (default `"light"`) and displays it as text.
+- Add a toggle control (checkbox or switch) to the returned HTML, labelled "Dark mode".
+- Check it when `theme == "dark"`, and have it submit `"dark"` or `"light"` as the new theme.
+- Check how the user's theme is saved (likely nowhere yet). If there's no save path, add a small handler that updates `user["theme"]`, or leave it as a follow-up.
+- Check `tests/` for existing settings tests. Add a case for light and dark rendering (checked or not).
+- Check `README.md` and `AGENTS.md` for any conventions that apply.
+
+**2. Elapsed time: `scripts/build.sh`**
+- Record a start time at the top, using bash's built-in `SECONDS` or `date +%s`.
+- Change the final output to `build done in Ns`, computed from the elapsed seconds.
+- Keep `set -eu`. If the compile step fails, the script exits before printing anything, which is acceptable.
+- Verify by running `bash scripts/build.sh` and confirming the elapsed time appears.
+
+**Validation:** run the tests (if any) and the build script. Keep each change in its own commit.
+
+
+
+Changes    +0 -0
+AI Credits 8.63 (13s)
+Tokens     ↑ 61.7k (30.7k cached, 31.0k written) • ↓ 577
+Resume     copilot --resume=8d50e817-c20d-409b-9a04-8b47e6ddd136

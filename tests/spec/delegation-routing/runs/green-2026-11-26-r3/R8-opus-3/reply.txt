@@ -1,0 +1,46 @@
+Nothing gets dispatched yet. The routing skill has a stop rule that applies here: Opus is the strongest default model, and it has already failed this task. In that case I should suggest a frontier model (Fable) to you, give the reason, and wait for your answer. Fable would run only as the implementer, and only if you approve it.
+
+**Task:** Add a dark-mode toggle to the settings screen in `src/ui/settings_view.py`.
+Class: standard (from your plan task; it also matches the default for a user-facing feature). Three failed attempts don't raise the class.
+
+### Before you decide on Fable
+
+**1. Evidence collector**
+- **Model / effort:** haiku, low. This is read-only ops work.
+- **Brief:**
+  - The base commit recorded before the task started.
+  - Where the three attempts live (branches or worktrees).
+  - The job: for each attempt, collect the diff, the failing test output, and any reviewer notes. Read only and edit nothing. Return a short summary per attempt.
+- **Why:** three failures, the last on Opus, usually point to a problem in the task itself, not in the implementer. Examples are a spec that contradicts itself, a test that can't pass, or a missing theming hook. I'd do the root-cause analysis myself in the main loop from this evidence, since that analysis decides whether a stronger model would even help. I wouldn't hand it off.
+
+### After your answer
+
+**2. Implementer**
+- **Model / effort:**
+  - If you approve: Fable, medium.
+  - If you decline: Opus, medium, with a revised brief that fixes the cause found in step 1. A fourth run on the same brief would likely fail the same way.
+  - Medium is the ceiling for implementation either way.
+- **Brief:**
+  - The spec section and requirement ids for the dark-mode toggle.
+  - The failing test.
+  - Class: standard.
+  - A short note on why each earlier attempt failed (from step 1), including dead ends not to repeat.
+  - Scope: `src/ui/settings_view.py` and the theming or settings-persistence code it needs. No changes under `src/payments/`, which is critical per AGENTS.md. If the toggle turned out to need payment code, the task would become critical.
+
+**3. Code reviewer** (a standard task gets exactly one review)
+- **Model / effort:** opus, high.
+- **Brief:**
+  - The spec and the requirement.
+  - The plan task.
+  - The merge request description.
+  - The diff as a file, computed from the base recorded before the task started.
+  - A pointer to the earlier failure causes, so the reviewer checks that they were actually fixed.
+- **Note:** Claude Code offers only one model family, so the review can't come from a different family than the implementer. The skill requires recording that gap only for critical tasks, so this plan doesn't need it.
+
+**Not dispatched:**
+- No compliance review or refuter: the skill runs those only for critical tasks.
+- No multi-agent workflow.
+
+**What I need from you:**
+1. Do you approve Fable as the implementer?
+2. Where are the three failed attempts and their test output, so the evidence collector can find them?

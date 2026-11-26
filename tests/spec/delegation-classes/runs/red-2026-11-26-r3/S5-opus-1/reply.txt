@@ -1,0 +1,33 @@
+# Implementation plan
+
+Neither change touches `src/payments/`, which `AGENTS.md` marks as critical. So nothing here needs special review.
+
+## 1. Dark-mode toggle in `src/ui/settings_view.py`
+
+**Current state:** `render_settings(user)` returns an HTML string. It reads `user["theme"]` (default `"light"`) and only displays it. The repo has no request handler or route that saves settings.
+
+**Steps:**
+1. **Add the control.** Replace the read-only `<p>Theme: …</p>` with a small `<form>` containing a checkbox or switch named `theme`, with value `dark`. Mark it `checked` when `theme == "dark"`. Include a label and a submit button so it works without JavaScript.
+2. **Validate the theme value.** Accept only `"light"` and `"dark"`, and fall back to `"light"` for anything else. This keeps a bad stored value out of the markup.
+3. **Apply the theme to the page.** Add a `data-theme="{theme}"` attribute (or a `dark` class) on a wrapper element, so the current choice actually changes how the page looks.
+4. **Escape user data.** Wrap `user['name']` in `html.escape`. It's interpolated raw today, which is an XSS hole. Fix it while touching the function.
+5. **Saving the choice (out of scope unless wanted).** The form needs a handler that writes `user["theme"]`. No routing layer exists in this repo, so either point the form's `action` at an agreed endpoint or treat saving as a follow-up. This needs a decision from you.
+6. **Tests.** Add `tests/test_settings_view.py` covering:
+   - light renders unchecked
+   - dark renders checked with `data-theme="dark"`
+   - an invalid theme falls back to light
+   - a name containing `<script>` comes out escaped
+
+## 2. Elapsed time in `scripts/build.sh`
+
+**Current state:** under `set -eu` it runs `python -m compileall src` and then prints `build done`.
+
+**Steps:**
+1. **Time it with Bash's built-in `SECONDS`.** Record it at the top of the script and subtract at the end. Don't use `date +%s%N`, because macOS `date` doesn't support `%N`.
+2. **Print it.** Change the last line to something like `build done in 3s`. If the build can run longer than a minute, format it as minutes and seconds.
+3. **Decide what happens on failure.** With `set -e`, a failed compile exits before the final line runs. If you want the time printed on failure too, use a `trap … EXIT` that prints the time and the exit status. If not, the simple version is enough. I'd use the simple version unless failure timing matters to you.
+4. **Check it.** Run `bash scripts/build.sh` and confirm the time is printed and the exit code hasn't changed. Then run it with a deliberate syntax error under `src/` and confirm it still exits non-zero.
+
+## Open questions
+- Should saving the theme (step 1.5) be part of this change, and if so, which endpoint will receive it?
+- Should the build time also be printed when the build fails (step 2.3)?

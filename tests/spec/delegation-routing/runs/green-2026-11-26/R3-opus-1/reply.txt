@@ -1,0 +1,29 @@
+Class: light (set by you in the task). AGENTS.md doesn't list `scripts/`, and a build script defaults to light anyway.
+
+I'd dispatch two subagents:
+
+**1. Implementer**
+- **Model:** `sonnet`. The routing table assigns Sonnet as implementer for light tasks.
+- **Effort:** low. This is a small change inside one script and should follow the script's existing style.
+- **Brief:**
+  - The spec: "make `scripts/build.sh` also print the elapsed time." Since there's no written spec, this one-line statement stands in for it.
+  - Requirement ids: none exist. The brief will say so rather than make some up.
+  - Failing test: none exists. The brief will give an acceptance check instead: run `scripts/build.sh` and see a line with the elapsed time at the end.
+  - Class: light.
+  - Constraints: change only `scripts/build.sh`, keep its existing output, and use a timing method that works in macOS's bash 3.2 (`$SECONDS` or `date +%s`, not GNU-only `date` options).
+
+**2. Code reviewer (light review)**
+- **Model:** `sonnet`. The table assigns Sonnet as code reviewer for light tasks. Claude Code only offers Claude models, so a reviewer from a different model family isn't possible. Recording that gap is only required for critical tasks.
+- **Effort:** high, as the skill sets for code review.
+- **Brief:**
+  - The spec and requirement (the same one-line statement).
+  - The plan task with its `Class: light` line.
+  - A short change description written for the reviewer.
+  - The diff saved as a file, computed from base commit `d60c9ae`, which I'd record before the work starts.
+  - Questions to answer: is the elapsed time correct even when the script fails part-way? Does it keep any `set -e` behavior and the exit code? Does it break output that other tools read?
+
+**Not dispatched:**
+- No compliance reviewer or refuter. Light tasks need only one light code review before merge.
+- No ops subagent. The change needs a decision about how to time and report, so it goes to an implementer.
+
+The project rules say a task this small (well under four tool calls) is cheaper to do myself, and light work can be done without a subagent. So I'd do the change myself and dispatch only the reviewer, unless you want the implementer delegated too.

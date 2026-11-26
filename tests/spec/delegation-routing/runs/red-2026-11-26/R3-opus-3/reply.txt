@@ -1,0 +1,21 @@
+For a light task I'd dispatch one subagent. Honestly, I'd probably skip even that and make the edit myself, because the whole job is a 3-line change to a 4-line script.
+
+**Subagent 1: Implementer**
+- **Model:** Haiku. It's a mechanical shell edit and doesn't need a bigger model.
+- **Reasoning effort:** I'd leave it unset so the agent runs at its default. `AGENTS.md` doesn't say what effort "light" should get; its only class is `src/payments/: critical`. If your convention is that light means low, I'd set `low`.
+- **Brief:**
+  - **Goal:** make `scripts/build.sh` print how long the build took.
+  - **Current file, in full:** `#!/usr/bin/env bash` / `set -eu` / `python -m compileall src` / `echo "build done"`.
+  - **Change:** reset bash's built-in `SECONDS=0` near the top, then change the last line to something like `echo "build done in ${SECONDS}s"`.
+  - **Constraints:**
+    - Keep `set -eu`.
+    - It must run on macOS/BSD, so no `date +%s%N`.
+    - Add no dependencies.
+    - Touch only this file.
+    - Don't commit.
+  - **Check:** run `bash scripts/build.sh`, confirm it exits 0 and the last line shows the elapsed time.
+  - **Report back:** the diff and the script's output.
+
+**Not dispatched:**
+- **No reviewer.** The change is small enough that I'd check the diff and output myself.
+- **No explorer or planner.** I've already read the file and `AGENTS.md`, and the script isn't under the critical path.

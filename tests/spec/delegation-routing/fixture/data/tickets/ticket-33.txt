@@ -1,0 +1,3 @@
+Ticket 33
+Customer: user33@example.com
+Dark mode text is unreadable in the settings page. Gray on dark gray.

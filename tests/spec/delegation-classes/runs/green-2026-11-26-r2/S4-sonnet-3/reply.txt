@@ -1,0 +1,13 @@
+`src/auth/session.py` validates a session with a plain dictionary lookup, and nothing else.
+
+- **Storage:** `SESSIONS` is a module-level dict. It maps each token to `{"user_id": ..., "created": <timestamp>}`.
+- **Creation:** `create_session(user_id)` makes a random token with `secrets.token_hex(16)`. That is 128 bits from a cryptographically secure source. It stores the session record and returns the token.
+- **Validation:** `validate_session(token)` looks the token up with `SESSIONS.get(token)`. If the token isn't there, it returns `None`. If it is, it returns the session's `user_id`.
+
+**Gaps in the validation**
+- **No expiry:** `created` is stored but never checked, so a session stays valid until the process restarts.
+- **No revocation:** there is no logout or delete function, and nothing removes entries from `SESSIONS`.
+- **In-memory only:** sessions are lost on restart. They aren't shared across multiple workers or servers.
+- **Timing:** the dict lookup isn't constant-time. With 128-bit random tokens this is hard to exploit in practice.
+
+This is authentication code, which counts as critical under the project's delegation classes. If you want to change it, for example to add expiry or revocation, I'd treat that work as critical.

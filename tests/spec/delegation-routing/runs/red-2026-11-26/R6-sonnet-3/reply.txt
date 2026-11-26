@@ -1,0 +1,24 @@
+I would dispatch two subagents, one after the other. Before either, I'd read the two failed attempts myself (diffs, test output, `src/ui/settings_view.py` and its neighbours). That is a few tool calls, so it doesn't need an agent, and the implementer's brief depends on what I find.
+
+**1. Implementer**
+- **Role:** implements the dark-mode toggle in `src/ui/settings_view.py`. It is the only subagent that writes code.
+- **Model:** opus. Two sonnet attempts have already failed, so rerunning sonnet is unlikely to help.
+- **Reasoning effort:** high.
+- **Brief:**
+  - **Goal and scope:** add a dark-mode toggle to the settings screen, editing only `src/ui/settings_view.py` and any theme or settings module it genuinely needs. Say what is out of scope.
+  - **Acceptance criteria:** the toggle renders, flips the theme, and its state persists the way other settings do. These come from the task and the codebase's existing settings conventions.
+  - **Failure history:** what the two sonnet attempts did and exactly why each failed, taken from my diagnosis. This stops it repeating them.
+  - **Pointers:** the settings widgets or patterns to copy, the theme mechanism if one exists, and the test or run command that proves success.
+  - **Output:** a summary of what changed and the verification output, including any failing tests.
+
+**2. Reviewer**
+- **Role:** independent check of the implementer's diff, read-only.
+- **Model:** sonnet. It only needs to read a diff, and a different model from the implementer gives a less anchored read.
+- **Reasoning effort:** medium.
+- **Brief:**
+  - **What to review:** the diff and the original task statement, not my conclusions or the implementer's self-assessment.
+  - **What to check:** whether the toggle works end to end, whether it matches the surrounding code's conventions, and whether it hits the failure modes of the earlier attempts, which I'd list neutrally.
+  - **Verification:** run the tests or app command.
+  - **Output:** confirmed bugs only, each with file and line, plus a pass/fail verdict.
+
+If the reviewer finds real problems, I'd send them back to the same implementer via SendMessage instead of starting a fresh agent. If opus also fails, I'd stop and ask you, because that would point to an unclear requirement or an environment problem rather than a model problem.

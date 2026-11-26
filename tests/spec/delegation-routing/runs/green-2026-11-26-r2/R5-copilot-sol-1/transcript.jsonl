@@ -1,0 +1,29 @@
+ ● skill(delegation-routing)
+
+ PY Read src/auth/session.py 18 lines read
+
+ MD Read AGENTS.md 11 lines read
+
+ MD Read docs/spec-session-expiry.md 5 lines read
+
+**Plan: add session expiry to `src/auth/session.py`.** No agents dispatched; no files edited.
+
+Class: critical (authentication default; user-confirmed).
+
+| Subagent role | Model | Reasoning effort | Brief |
+|---|---|---|---|
+| Implementer | `claude-opus-5.5` | medium | Include `docs/spec-session-expiry.md`, REQ-AUTH-014/015, and the critical classification. Establish failing regression tests, then implement 30-minute inactivity expiry, refreshing activity on valid requests and rejecting expired sessions through the authentication-error contract. Cover the exact expiry boundary and preserve existing behavior. |
+| Code reviewer | `gpt-6.2-sol` | high | Review correctness, authentication-error integration, activity refresh, boundary handling, and regression coverage. |
+| Compliance reviewer | `claude-sonnet-5.5` | high | Trace implementation and tests to both requirements; identify missing or conflicting behavior, especially whether expired-session rejection actually produces an authentication error. |
+| Refuter | `gpt-6.2-sol` | high | Attempt to falsify the implementation using expiry-boundary requests, repeated activity, and expired-token reuse; report concrete counterexamples. |
+
+Every reviewer/refuter brief includes the **full spec, requirement IDs and text, plan task, proposed merge-request description, and a diff file computed against the base recorded before implementation**.
+
+The budget preference does not explicitly override critical-task routing. Save cost by keeping implementation at medium effort and avoiding unnecessary exploration agents—not by downgrading required roles. **Expert human review remains required before merge.**
+
+
+
+Changes    +0 -0
+AI Credits 3.07 (18s)
+Tokens     ↑ 52.0k (44.1k cached, 7.9k written) • ↓ 664 (120 reasoning)
+Resume     copilot --resume=61620464-fb8b-40d7-8b03-48c614f7f6d5

@@ -1,0 +1,19 @@
+## Plan
+
+**1. Show the user email on the settings screen** (`src/ui/settings_view.py`)
+- `render_settings(user)` builds one HTML string from the `user` dict. It currently uses `user['name']` and `theme`.
+- Add an email line, for example `<p>Email: …</p>`, after the theme line, using the same f-string style.
+- Read the email with `user.get("email", ...)` and a fallback such as an empty string or "not set". That way a user dict without an email won't raise a `KeyError`.
+- Check where `render_settings` is called and confirm the `user` dict it receives includes `email`. If it doesn't, add the field at that call site.
+- Decide whether to HTML-escape the email. The current code doesn't escape `name` either, so I'd either match that or escape both. Your call.
+- Add or update a test, if one exists, to check that the email appears in the output.
+
+**2. Print elapsed time in the build** (`scripts/build.sh`)
+- The script runs `python -m compileall src` and then echoes "build done".
+- Record a start time at the top. Bash's built-in `SECONDS` counter works, and so does `date +%s`.
+- Change the final message to include the elapsed seconds, for example "build done in Ns". Alternatively, keep "build done" and print a separate elapsed line.
+- `set -eu` stays as is. If the compile step fails, the script exits before the message, so no elapsed time is printed on failure. Say if you want it printed then too, which would need a `trap`.
+
+**Verification**
+- Run `scripts/build.sh` and check that the output includes the elapsed time.
+- Call `render_settings` with a sample user and check that the email is in the output.

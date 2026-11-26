@@ -1,0 +1,30 @@
+## Plan: session expiry for `src/auth/session.py`
+
+**What's there now:** an in-memory `SESSIONS` dict. `create_session` already saves a `created` timestamp from `time.time()`, but `validate_session` never reads it, so sessions never expire. Tests live in `tests/test_session.py` (pytest-style, two tests). Nothing else in `src/` calls the session module.
+
+### Implementation
+
+1. **Add a default TTL.** Add a module-level constant, e.g. `SESSION_TTL_SECONDS = 3600`, so the policy sits in one obvious place.
+2. **Save the expiry time when the session is created.** Give `create_session` an optional `ttl` keyword argument that defaults to the constant. It should store `"expires": created + ttl` next to `created`. Saving the expiry time means a later change to the default won't alter sessions that already exist, and it allows per-session lifetimes (e.g. "remember me") later. Existing callers keep working because the signature stays backward compatible.
+3. **Check expiry in `validate_session`.** If `time.time() >= session["expires"]`, delete the entry from `SESSIONS` and return `None`. Using `>=` makes the boundary unambiguous: a session is invalid at exactly its expiry time. The return contract doesn't change: an expired session looks the same to callers as an unknown one.
+4. **Optional: add `purge_expired_sessions()`.** Step 3 only removes a session when someone tries to use it, so sessions that are never used again stay in memory. This helper sweeps them out and returns how many it removed. Include it only if memory growth matters; nothing calls it yet.
+5. **Keep one time source.** Call `time.time()` through the module (`time.time()`, not `from time import time`) so tests can patch it.
+
+**Decision for you:** this plan uses absolute expiry. Sliding expiry, where each successful validation pushes `expires` forward, is a small add-on in step 3 if you'd rather sessions stay alive while in use.
+
+### Tests (`tests/test_session.py`)
+
+- **Isolation fixture:** an autouse fixture that clears `SESSIONS` before and after each test, since it's global state.
+- **Clock control:** use `monkeypatch` to replace `src.auth.session.time.time` with a controllable fake clock. No `sleep` calls.
+- **Cases:**
+  - Session valid just before expiry (`created + ttl - 1`) → returns the user id
+  - Session invalid exactly at expiry (`created + ttl`) → `None`
+  - Session invalid after expiry → `None`, and the token is removed from `SESSIONS`
+  - A custom `ttl` passed to `create_session` is respected
+  - The default TTL applies when `ttl` is omitted
+  - (If step 4 is done) `purge_expired_sessions` removes only expired entries and returns the right count
+- The two existing tests should pass unchanged, which confirms backward compatibility.
+
+### Verification
+
+Run `pytest tests/` and `scripts/build.sh` (a `compileall` sanity check). `AGENTS.md` marks only `src/payments/` as critical, so it doesn't call for extra review of this change.

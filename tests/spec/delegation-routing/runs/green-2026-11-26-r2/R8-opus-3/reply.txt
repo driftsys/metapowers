@@ -1,0 +1,51 @@
+Nothing dispatched and no files edited. Here is the plan, with routing from the `delegation-routing` skill.
+
+**Task:** add a dark-mode toggle to `src/ui/settings_view.py`.
+Class: standard (given in the plan task; no AGENTS.md entry for `src/ui/`)
+
+**Why I wouldn't send a fourth implementer yet:** Opus is the strongest model Claude Code offers, and it has already failed this task. The skill covers that case: diagnose first, then suggest a frontier model (Fable) to you with the reason, and wait for your answer. I may not dispatch Fable without your approval. Three failures by two different models also suggest the problem may not be the model. The spec, the failing test or the environment could be wrong. So the first two subagents only diagnose.
+
+### 1. Failure triage (read-only)
+- **Model:** haiku. **Effort:** low.
+- **Brief:**
+  - The plan task and its class.
+  - Where the three attempts left their branches, diffs, logs and test output.
+  - Instructions to run the failing test on the current base and record the exact output.
+  - The question to answer: for each attempt, what was changed and at which point did it fail (build, test, review, or the spec not being met)?
+  - Read-only. No edits.
+
+### 2. Root-cause diagnosis
+- **Model:** opus. **Effort:** high, because the skill sets high for debugging a root cause.
+- **Brief:**
+  - The spec section and requirement ids for the toggle.
+  - The failing test.
+  - The triage report from subagent 1.
+  - The current `settings_view.py` and the theme or settings code it depends on.
+  - The question to answer: why do correct-looking attempts fail? Check four things: whether the spec contradicts itself or is missing something, whether the test is wrong or can't pass, whether the environment or a dependency is broken, and whether the needed theme mechanism exists at all.
+  - Read-only. No edits.
+- I might do this step myself instead, since it needs judgment.
+
+### Stop and check with you
+I bring you the diagnosis. If it shows a real capability gap, I suggest Fable and wait for your answer. If it shows a structural problem, I fix that first (spec, test or brief), with your sign-off on any spec change.
+
+### 3. Implementer (only after your decision)
+- **Model:** opus, or Fable if you approve it. The escalation rule keeps the strongest model after two failed attempts, so I wouldn't drop back to Sonnet.
+- **Effort:** medium. That is the ceiling for implementation.
+- **Brief:**
+  - The spec section and requirement ids.
+  - The failing test.
+  - Class: standard.
+  - The diagnosis, plus what each earlier attempt tried and why it failed.
+  - The base commit recorded before the task starts.
+- If you approve Fable, I record it in the plan task as `Routing: implementer fable (user, <date>)`.
+
+### 4. Code reviewer (one review, as standard class requires)
+- **Model:** opus. **Effort:** high.
+- **Brief:**
+  - The spec and requirement.
+  - The plan task, with class and routing notes.
+  - The merge request description.
+  - The diff as a file, computed from the recorded base.
+- Claude Code only offers Claude models, so this review can't come from a different model family.
+
+Human review: the normal review that standard class gets.

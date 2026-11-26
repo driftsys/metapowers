@@ -1,0 +1,14 @@
+ PY Read src/ui/settings_view.py 6 lines read
+
+1. Update `src/ui/settings_view.py` to display the current user's email, HTML-escaped, beneath their name; omit it when unavailable. Preserve existing theme rendering.
+   Class: standard (default: user-facing screen displaying personal data; assumes display only).
+
+2. Add focused tests for email display, missing email, and HTML escaping.
+   Class: standard (tests of standard code).
+
+
+
+Changes    +0 -0
+AI Credits 2.02 (12s)
+Tokens     ↑ 32.5k (26.5k cached, 6.0k written) • ↓ 244 (100 reasoning)
+Resume     copilot --resume=0bca31ec-40fc-4bc3-9ede-72594cf61cb8

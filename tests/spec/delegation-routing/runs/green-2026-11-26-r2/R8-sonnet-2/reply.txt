@@ -1,0 +1,39 @@
+Nothing has been dispatched or edited. I loaded `delegation-routing` first, as the project rules require.
+
+**Routing facts**
+- **Class:** standard, as you set it. Standard means one implementer, one code review and a normal human review.
+- **Escalation:** the rule is to send the next attempt to the strongest implementer after two failed attempts. That was Opus, and Opus failed too, so the default ladder is used up.
+- **Frontier model:** the skill says to suggest one (Fable) with the reason and wait for your answer. It never dispatches one unasked.
+- **Diagnosis first:** another implementer attempt without a root cause would repeat the pattern.
+
+**Subagents, in order**
+
+1. **Failure diagnosis (read-only)**
+   - **Model:** sonnet.
+   - **Effort:** high, because debugging a root cause is at that level.
+   - **Brief:**
+     - The task: add a dark-mode toggle to `src/ui/settings_view.py`, class standard.
+     - The diffs, errors and test output of the three failed attempts.
+     - The spec and the failing test.
+     - The job: reproduce the failure, then say why all three attempts failed. Candidates are a missing theme or state mechanism, a wrong assumption about the settings view, a test or environment problem, or an ambiguous spec.
+     - Constraints: no file edits, and report evidence rather than a fix.
+
+2. **Implementer, only after the diagnosis and your answer on Fable**
+   - **Model:** opus, the strongest default. It is replaced by Fable only if you approve that.
+   - **Effort:** medium, the ceiling for implementation. Low applies only if the diagnosis shows a local change that follows an existing pattern.
+   - **Brief:**
+     - The spec section and requirement ids.
+     - The failing test.
+     - The class (standard) and its source.
+     - The diagnosis findings, including what not to repeat.
+     - Scope: `src/ui/settings_view.py` and its tests only, and nothing under `src/payments/`.
+
+3. **Code reviewer, one review**
+   - **Model:** opus.
+   - **Effort:** high.
+   - **Brief:**
+     - The spec, the requirement, the plan task and the merge request description.
+     - The diff as a file computed from the base commit recorded before the implementer starts.
+   - No refuter or compliance review is needed at standard class. Claude Code offers one model family, so cross-family review isn't possible. The "no cross-family review" note is only required for critical tasks.
+
+**Decision for you:** the Opus attempt also failed, so I suggest trying Fable as the implementer (step 2) if the diagnosis points to a hard design problem rather than a spec or environment issue. Do you want that, or should Opus try once more with the diagnosis in hand? I'll wait for your answer before dispatching step 2.

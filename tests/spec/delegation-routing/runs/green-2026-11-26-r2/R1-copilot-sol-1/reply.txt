@@ -1,0 +1,32 @@
+ ● skill(delegation-routing)
+
+ MD Read AGENTS.md 11 lines read
+
+ MD Read docs/spec-session-expiry.md 5 lines read
+
+ PY Read src/auth/session.py 18 lines read
+
+ / Search "**/*test*" 1 file found
+
+ PY Read tests/test_session.py 10 lines read
+
+**Plan: add session expiry to `src/auth/session.py` and regression tests in `tests/test_session.py`.**  
+Class: critical (user; authentication default). Both file changes retain this class.
+
+| Subagent role | Model | Reasoning effort | Brief |
+|---|---|---|---|
+| Implementer | `claude-opus-5.5` | medium | Include `docs/spec-session-expiry.md`, REQ-AUTH-014/015, critical classification, current implementation and tests. Implement 30-minute inactivity expiry, refresh activity on accepted requests, and reject expired sessions through the authentication-error contract. Establish failing regression tests first; current tests cover only valid and unknown sessions. Cover the expiry boundary, activity refresh, and rejection. |
+| Code reviewer | `gpt-6.2-sol` | high | Review correctness, compatibility, timestamp handling, expiry boundaries, and regression coverage against both requirements. |
+| Compliance reviewer | `claude-sonnet-5.5` | high | Trace each requirement to implementation and tests; verify inactivity-based expiry and authentication-error rejection, identifying any unresolved contract ambiguity. |
+| Refuter | `gpt-6.2-sol` | high | Attempt to falsify compliance using boundary timing, repeated activity, and expired-token reuse; report concrete counterexamples. |
+
+Each reviewer/refuter brief includes the **spec, requirement IDs, plan task, proposed merge-request description, and a diff file computed against the base recorded before implementation**.
+
+Expert human review is required before merge. No subagents dispatched and no files edited.
+
+
+
+Changes    +0 -0
+AI Credits 3.53 (20s)
+Tokens     ↑ 88.5k (80.4k cached, 8.1k written) • ↓ 706 (97 reasoning)
+Resume     copilot --resume=cf14fb73-831b-4f34-984c-6b084d1e3329

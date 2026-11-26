@@ -1,0 +1,23 @@
+Here's what I would dispatch for this task. I haven't dispatched anything or edited any files.
+
+**Plan task:** Add session expiry to `src/auth/session.py` (REQ-AUTH-014, REQ-AUTH-015)
+Class: critical (user; it's also the default for authentication code)
+Routing: no cross-family review (Claude Code only offers Claude models, so the reviewers come from the same family as the implementer)
+
+| # | Role | Model | Effort | What the brief contains |
+|---|---|---|---|---|
+| 0 | Ops (optional, read-only) | haiku | low | Save the base commit before work starts. Later, produce the diff file from that base, run the test suite and draft the merge request description. It doesn't touch production code. |
+| 1 | Implementer | opus | medium | The spec sections in `docs/spec-session-expiry.md` for REQ-AUTH-014 and REQ-AUTH-015, the requirement ids, the failing tests for both, and "Class: critical". The same session writes the tests and the code, so this dependent work isn't split across agents. |
+| 2 | Code reviewer | opus | high | The spec, both requirements, the plan task, the merge request description, and the diff file computed from the saved base. |
+| 3 | Compliance reviewer | sonnet | high | Same as #2. Its job is to check that each requirement is fully met and traced to a test, and that nothing in the spec was missed. |
+| 4 | Refuter | opus | high | Same as #2. Its job is to try to break the change: expired sessions still being accepted, clock skew, refresh or sliding-window bypass, timing at the exact expiry boundary, sessions that existed before the change. |
+| — | Human expert review | — | — | Required before merge for critical work. |
+
+If two attempts fail, the next attempt stays on opus, which is already the strongest model the tables allow. I'd only suggest Fable to you, with the reason, and wait for your answer.
+
+**On the budget:** I haven't moved anything to a cheaper model. The routing rules say not to pick models by cost per task, because cheap models tend to need several attempts on critical code. The budget-friendly choices are already in the plan:
+- The implementer runs at medium effort, which is the ceiling. It could drop to low only if expiry turns out to follow an existing pattern in `session.py`.
+- The compliance reviewer runs on Sonnet and the ops work on Haiku.
+- Tests and code stay in one session instead of two agents.
+
+If the team lead wants to cut further, for example by skipping the refuter or running the code review on Sonnet, that's your call as an override. I'd record it in the plan task, like `Routing: refuter skipped (user, 2026-11-26)`. I'd advise against it here: an expiry bug in auth tends to be found by an attacker, not by a test.

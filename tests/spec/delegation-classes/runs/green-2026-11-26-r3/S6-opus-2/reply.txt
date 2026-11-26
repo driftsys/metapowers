@@ -1,0 +1,17 @@
+## Plan: show the user's email on the settings screen
+
+`render_settings(user)` in `src/ui/settings_view.py` builds the HTML from the `user` dict with an f-string. Nothing in the repo fills in an `email` key on that dict, and the view has no tests yet.
+
+1. **Confirm where the email comes from.** Check that whatever calls `render_settings` puts `email` in the `user` dict. If it doesn't, have the caller add it from the user record. Don't look it up inside the view.
+   Class: critical (default: code that stores, sends or shares personal data)
+
+2. **Render the email in `render_settings`.** Add a line like `<p>Email: …</p>` under the heading. Use `user.get("email")` and leave the line out when there's no email, the same way `theme` falls back today. HTML-escape the value with `html.escape`. Escape `user['name']` too: it goes into the page unescaped right now, which is an XSS bug sitting next to this change.
+   Class: critical (default: code that sends personal data to the client; the UI path has no AGENTS.md entry, and "user-facing feature" would make it standard, so I took the higher class)
+
+3. **Only show the email to its owner.** Check that the settings page is only served to the logged-in user, for their own record. That means the session from `validate_session` decides which `user` gets passed in, so nobody can see someone else's email by changing an ID.
+   Class: critical (default: authentication and access rights)
+
+4. **Add tests in a new `tests/test_settings_view.py`.** Cover three cases: the email appears when it's set, the line is left out when it's missing, and a value with HTML characters (for example `<script>`) comes out escaped. Do the same escape test for the name.
+   Class: critical (tests of critical code)
+
+Every task in this plan is critical because the change puts personal data in the page. If you'd rather treat `src/ui/` as standard, tell me and I'll record that decision in the plan and offer to add it to the "Delegation classes" section of AGENTS.md.

@@ -1,0 +1,38 @@
+# Plan: session expiry
+
+**Context:** `src/auth/session.py` keeps sessions in an in-memory dict, `SESSIONS`. Each entry stores `user_id` and `created` (from `time.time()`). `validate_session` never checks age, so sessions live forever. Only `tests/test_session.py` uses this module, and `src/auth/` is not marked critical in `AGENTS.md`.
+
+## Design decisions
+
+- **Expiry model:** use a fixed lifetime from creation. The `created` timestamp is already stored, so no sliding-window or "last seen" bookkeeping is needed. Sliding expiry can come later if you want it.
+- **Configuration:** add a module-level constant `SESSION_TTL_SECONDS` with a sensible default, such as 3600. `create_session` could also take an optional `ttl` argument, but only add that if you need per-session lifetimes.
+- **Clock:** call `time.time()` through the module, so tests can patch `src.auth.session.time.time` instead of sleeping.
+- **Boundary:** a session is expired once `now - created >= TTL`.
+
+## Implementation steps
+
+1. Add `SESSION_TTL_SECONDS` to `session.py`.
+2. In `validate_session`, after the lookup, compare `time.time() - session["created"]` against the TTL.
+3. If the session is expired, delete it from `SESSIONS` and return `None`. This is the same result as for an unknown token, so callers don't need to change.
+4. Optional: add a small `purge_expired()` helper that sweeps `SESSIONS`. Without it, expired sessions that are never validated again stay in memory. Call it from `create_session` or leave it for a follow-up.
+
+## Tests (`tests/test_session.py`)
+
+Keep the two existing tests. Add the following, with `time.time` patched via `monkeypatch`:
+
+- A session just under the TTL still validates.
+- A session at exactly the TTL is expired and returns `None`.
+- A session past the TTL returns `None`.
+- An expired session is removed from `SESSIONS` after validation.
+- A session created later is unaffected when an earlier one expires. This checks that expiry is per token.
+- If `purge_expired()` is added, one test confirms it removes only the expired entries.
+- Add a fixture that clears `SESSIONS` between tests, since the dict is global state.
+
+## Verification
+
+Run `pytest tests/test_session.py`, then the full suite, to confirm nothing else depends on sessions never expiring. The grep found no other callers.
+
+## Open questions
+
+- What TTL do you want, and should it be configurable through the environment?
+- Do you want sliding expiry (refreshing on each validation) instead of a fixed lifetime?

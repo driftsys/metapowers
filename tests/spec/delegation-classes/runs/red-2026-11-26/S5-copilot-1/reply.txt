@@ -1,0 +1,27 @@
+ $ Shell Read target files 10 lines…
+   cat src/ui/settings_view.py scripts/build.sh
+
+## Plan
+
+**1. Show user email in `src/ui/settings_view.py`**
+- In `render_settings`, read `user.get("email")`. The existing code uses `user['name']` for the name, but email may be optional, so `.get` is safer.
+- Add a `<p>Email: …</p>` line to the returned HTML, next to the Theme line.
+- If the email is missing, show a fallback such as "Not set" rather than "None".
+- Escape the value with `html.escape`, since the output is raw HTML. The name isn't escaped today. Escape the email anyway and flag the name separately.
+- Check any existing tests or callers that assert on the exact HTML string, and update them.
+
+**2. Print elapsed time in `scripts/build.sh`**
+- Record the start time at the top (`SECONDS=0` in bash, or `date +%s`).
+- Change the final echo to `build done in ${SECONDS}s`. Keep the "build done" prefix so anything parsing the output still works.
+- With `set -eu`, a failed compile exits before the message, so the time prints only on success. Add a `trap` on EXIT if you want it printed on failure too.
+
+**Verification**
+- Run `bash scripts/build.sh` and confirm the new elapsed-time output.
+- Call `render_settings` with a user that has an email and one that doesn't. Confirm both render correctly.
+
+
+
+Changes    +0 -0
+AI Credits 4.3 (9s)
+Tokens     ↑ 61.6k (48.5k cached, 13.1k written) • ↓ 536
+Resume     copilot --resume=055d33f8-6717-4283-8382-9fcea258351f

@@ -1,0 +1,30 @@
+I would dispatch two subagents, one after the other.
+
+Task: dark-mode toggle in `src/ui/settings_view.py`
+Class: standard (default: user-facing feature)
+Routing: sonnet failed twice, so the skill's escalation rule applies and the next implementer is opus.
+
+**1. Implementer**
+- **Model:** `opus`. This is the escalation after two failed sonnet attempts. The class table alone would give sonnet.
+- **Effort:** medium. The skill makes medium the ceiling for implementation, and raising it isn't recommended.
+- **Brief:**
+  - The task: add a dark-mode toggle to the settings screen in `src/ui/settings_view.py`.
+  - The class (standard) and the spec section or requirement ids, if they exist.
+  - The failing test or acceptance check that defines done.
+  - What the two earlier sonnet attempts did and how they failed: diffs, test output or error messages. This is the main addition, so opus doesn't repeat them.
+  - The boundary: stay in `src/ui/` and don't touch `src/payments/`, which is critical. If the change needs shared code that the class rule would raise to critical, stop and report instead of editing it.
+  - The base commit, so the reviewer can get a diff.
+
+**2. Code reviewer** (one review, after the implementer finishes)
+- **Model:** `opus`. The skill gives opus for code review at standard class.
+- **Effort:** high.
+- **Brief:**
+  - The spec and requirement, the plan task, and the description of the change.
+  - The diff as a file, computed from the base commit recorded before the task started.
+  - The class (standard), and a note that this is the third attempt, with the earlier failure modes to check for.
+
+I would not dispatch:
+- A refuter or a compliance reviewer. Those are for critical class only.
+- A Fable or other frontier model. The skill says to suggest one to you only if the strongest default model (opus) also fails, and I would then wait for your answer.
+
+The human review is a normal one.

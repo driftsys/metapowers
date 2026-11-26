@@ -1,0 +1,31 @@
+For a **standard** task, the `delegation-routing` skill calls for two subagents: an implementer and one code reviewer. No compliance reviewer, refuter or expert human review is needed.
+
+**Task:** Add a dark-mode toggle to the settings screen in `src/ui/settings_view.py`.
+Class: standard (as you stated; it also matches the default for a user-facing feature)
+Base: `9ac86c6` (I'd record this before dispatch so the reviewer gets an exact diff)
+
+### 1. Implementer
+- **Model:** `sonnet`, the versatile model the skill assigns to standard implementers.
+- **Effort:** `low` if `settings_view.py` already has toggles to copy; `medium` if it doesn't. I haven't opened the file yet. Implementation never goes above medium.
+- **Brief:**
+  - **Spec section:** a dark-mode toggle on the settings screen. It covers the default state, whether the choice persists, and whether it applies right away.
+  - **Requirement IDs:** for example `UI-DM-1` (toggle shown), `UI-DM-2` (theme switches), `UI-DM-3` (preference persists).
+  - **Failing test:** written by me (or in its brief) before dispatch, for example in `tests/test_settings_view.py`.
+    Class: standard (tests of standard code)
+  - **Class:** standard, plus the instruction to change only `src/ui/` and its tests.
+
+### 2. Code reviewer
+- **Model:** `opus`. The skill uses Opus for standard reviews. Claude Code only offers Claude models, so a reviewer from a different model family isn't possible. Using a different model from the implementer is the closest substitute.
+- **Effort:** `high`, the level the skill sets for code review.
+- **Brief:**
+  - The spec section and requirement IDs above
+  - The plan task text, including its `Class: standard` line
+  - The merge request description
+  - The diff as a file, computed from `9ac86c6` to the implementer's result, not pasted inline
+
+### Not dispatched
+- **Ops subagent (Haiku):** the work is one file plus its test, so looking around takes fewer than about four tool calls. I'd do it myself.
+- **Compliance reviewer, refuter, frontier model:** standard class doesn't call for them, and you haven't asked for a frontier model.
+- **Escalation:** if the implementer fails twice, the third attempt goes to `opus`.
+
+The skill also expects a spec and a failing test before the implementer starts. Since neither exists yet, I'd write both before dispatching.

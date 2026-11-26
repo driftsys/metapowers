@@ -1,0 +1,12 @@
+schema: 1
+name: delegation-policies
+description: Delegation policies — when to delegate to a subagent, the class of each planned task (critical, standard, light, ops), and the models, reviews and reasoning effort each class gets per client
+license: MIT
+items:
+  rules:
+  - delegation-basics
+  - delegation-classes
+  skills:
+  - delegation-routing
+metadata:
+  version: 0.1.0

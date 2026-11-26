@@ -1,0 +1,19 @@
+`validate_session` (`src/auth/session.py:14`) is a lookup in a dictionary held in memory:
+
+1. **Storage.** Sessions live in the module-level dict `SESSIONS` (`session.py:5`). The key is the token and the value is `{"user_id": ..., "created": <timestamp>}`.
+2. **Creation.** `create_session(user_id)` (`session.py:8`) makes a random 128-bit token with `secrets.token_hex(16)`, so 32 hex characters. It stores the user ID and the current time under that token and returns the token.
+3. **Validation.** `validate_session(token)`:
+   - looks the token up with `SESSIONS.get(token)`;
+   - returns `None` if the token isn't there;
+   - otherwise returns the session's `user_id`.
+
+That lookup is the only check. A token is valid exactly when it is a key in `SESSIONS`.
+
+**What it doesn't do:**
+
+- **No expiry.** `created` is stored but never read, so a session stays valid forever.
+- **No way to end a session.** Nothing removes entries from `SESSIONS`, so there's no logout or revocation, and the dict grows without limit.
+- **Lost on restart and not shared.** Because the dict lives in the process's memory, every session disappears when the process restarts. If the service runs more than one worker or instance, each has its own sessions, so a token created by one fails on the others.
+- **No type check on the token.** If it isn't a string, the lookup just misses. If it's an unhashable type such as a list, `.get` raises `TypeError` instead of returning `None`.
+
+The token itself is generated safely. The validation is minimal, though, and missing expiry is the most important gap for authentication code.

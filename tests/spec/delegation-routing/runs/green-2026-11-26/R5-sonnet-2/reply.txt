@@ -1,0 +1,45 @@
+Class is critical, so I'm not lowering the routing for budget. This is the plan, with nothing dispatched and no files edited.
+
+**Task:** add session expiry to `src/auth/session.py`
+Class: critical (user-stated; authentication default). Tests for it are critical too.
+Routing: no cross-family review (Claude Code offers one model family).
+
+**Before dispatch:** I record the git base commit (`dac5145`) so the reviewers get a diff computed from it. I also write the failing tests for REQ-AUTH-014 and REQ-AUTH-015 first, because the implementer's brief needs them.
+
+**1. Implementer**
+- Model: opus
+- Effort: medium (low only if `session.py` already has a clear pattern for time-based checks)
+- Brief:
+  - the relevant section of `docs/spec-session-expiry.md`
+  - REQ-AUTH-014 and REQ-AUTH-015
+  - the failing tests
+  - "Class: critical (user-stated; authentication)"
+  - scope limited to `src/auth/session.py` and its tests
+
+After it finishes, I produce the diff file against the recorded base and write the merge request description. Three reviewers then run in parallel on that diff.
+
+**2. Code reviewer**
+- Model: opus
+- Effort: high
+- Brief: the spec, REQ-AUTH-014 and REQ-AUTH-015, this plan task, the merge request description, and the diff file. It looks for correctness bugs in expiry logic, such as clock handling, boundary conditions, and sessions that never expire.
+
+**3. Refuter**
+- Model: opus
+- Effort: high
+- Brief: the same inputs as the code reviewer. Its job is to try to break the implementation, for example with expired-but-accepted sessions, off-by-one at the deadline, or a refresh that extends a session beyond the limit. It reports only what it can demonstrate.
+
+**4. Compliance reviewer**
+- Model: sonnet
+- Effort: high. The effort table has no compliance row, so I applied the review row. It is a Sonnet run, so the cost is small.
+- Brief: the spec, the two requirement ids, the plan task, the merge request description, and the diff file. It checks each requirement clause against the code and the tests, and flags anything unmet or untested.
+
+**Not dispatched**
+- No ops/Haiku agent. Nothing here is a mechanical sweep.
+- No consult of a stronger model. The class is settled and the spec supplies the design. I would add one only if the spec leaves the design unclear.
+- No frontier model. You haven't asked for one.
+
+**Escalation:** if the implementer fails twice, the next attempt also uses opus, which is already the strongest default. I would then suggest a frontier model and wait for your answer.
+
+**Human step:** expert review is still required before merge.
+
+**Where the budget can be cut:** the routing skill makes your request override its defaults, so you or the team lead would need to say so explicitly. The cheapest cuts are medium effort on the reviews, or a Sonnet code reviewer in place of Opus. I'd record the cut in the plan, for example `Routing: refuter skipped (user, 2026-11-26)`. I would not make either cut on my own for authentication code.

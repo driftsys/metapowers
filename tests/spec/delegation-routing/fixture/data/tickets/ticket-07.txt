@@ -1,0 +1,3 @@
+Ticket 07
+Customer: user7@example.com
+Subscription renewed although I cancelled last week. Please reverse the charge.

@@ -1,0 +1,5 @@
+[12:01:03] Step 3/5: pytest -q
+tests/test_session.py::test_valid FAILED
+E   AssertionError: expected session to be valid
+[12:01:04] 1 failed, 4 passed
+[12:01:04] Error: process exited with code 1

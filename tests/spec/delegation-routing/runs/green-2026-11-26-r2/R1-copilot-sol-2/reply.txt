@@ -1,0 +1,26 @@
+ ● skill(delegation-routing)
+
+ PY Read src/auth/session.py 18 lines read
+
+ MD Read docs/spec-session-expiry.md 5 lines read
+
+Plan: add session expiry to `src/auth/session.py`.
+Class: critical (user; authentication default).
+
+| Subagent role | Model | Reasoning effort | Brief |
+|---|---|---|---|
+| Implementer | `claude-opus-5.5` | medium | Implement `docs/spec-session-expiry.md`, REQ-AUTH-014/015: expire sessions after 30 minutes without a request and reject expired sessions with an authentication error. Include the critical classification, existing authentication conventions, and failing regression tests covering expiry, activity-based renewal, and rejection. |
+| Code reviewer | `gpt-6.2-sol` | high | Review correctness, compatibility, timestamp updates, expiry boundaries, and test coverage against both requirements. |
+| Compliance reviewer | `claude-sonnet-5.5` | high | Trace both requirements to implementation and tests; verify idle expiry and authentication-error behavior satisfy the specification. |
+| Refuter | `gpt-6.2-sol` | high | Attempt to falsify compliance using boundary timing, repeated activity, and expired-session reuse; identify concrete counterexamples. |
+
+Every reviewer/refuter receives the **spec, requirement IDs, plan task, proposed PR description, and a diff file computed against the base recorded before implementation**. Failing tests have not yet been established; their actual failures must accompany the implementer brief.
+
+Expert human review is required before merge. No subagents dispatched and no files edited.
+
+
+
+Changes    +0 -0
+AI Credits 2.93 (16s)
+Tokens     ↑ 51.8k (44.1k cached, 7.7k written) • ↓ 561 (111 reasoning)
+Resume     copilot --resume=ec9c80a2-3947-4e7c-b4be-8685c709bef3

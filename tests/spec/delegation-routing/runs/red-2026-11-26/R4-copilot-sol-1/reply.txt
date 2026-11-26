@@ -1,0 +1,14 @@
+ ● Read ci.log L1:180 (5 lines read)
+
+**Subagents: none.** This log needs only direct inspection; role, model, reasoning effort, and brief are not applicable.
+
+`pytest -q` exited with code 1 because `tests/test_session.py::test_valid` failed: “expected session to be valid.” Four tests passed. The log does not reveal why session validation failed.
+
+No agents dispatched or files edited.
+
+
+
+Changes    +0 -0
+AI Credits 1.7 (10s)
+Tokens     ↑ 30.1k (25.2k cached, 4.8k written) • ↓ 244 (98 reasoning)
+Resume     copilot --resume=d1b71391-f043-46fd-8c56-86fe91de883d

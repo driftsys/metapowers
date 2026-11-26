@@ -1,0 +1,17 @@
+ ● skill(delegation-routing)
+
+Class: standard (user-specified).
+
+| Subagent role | Model | Reasoning effort | Brief |
+|---|---|---|---|
+| Implementer, third attempt | `claude-opus-5.5` | medium | Add the dark-mode toggle in `src/ui/settings_view.py`. Include the spec section, requirement IDs, failing test/reproduction, both failed attempts and their outcomes, and the standard classification. Follow existing UI/theme patterns and verify the behavior. |
+| Code reviewer, after implementation | `gpt-6.2-sol` | high | Include the spec, requirement, plan task, proposed PR description, and a diff file against the base recorded before implementation. Review correctness, regressions, and requirement coverage. |
+
+Two failed Sonnet attempts trigger escalation to the strongest implementer, **Opus**, rather than another Sonnet attempt. Missing spec/test artifacts must be identified, not invented. No subagents dispatched or files edited.
+
+
+
+Changes    +0 -0
+AI Credits 2.43 (11s)
+Tokens     ↑ 33.8k (26.3k cached, 7.4k written) • ↓ 304 (83 reasoning)
+Resume     copilot --resume=ea9c6ab7-8006-4780-b00b-3aa061b35b19

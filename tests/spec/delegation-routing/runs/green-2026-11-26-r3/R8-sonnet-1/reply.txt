@@ -1,0 +1,45 @@
+I would dispatch two subagents now and hold a third until you answer a question. I haven't dispatched anything or edited any files.
+
+**Task:** dark-mode toggle in `src/ui/settings_view.py`
+Class: standard (default: user-facing feature)
+Routing: three failed attempts (sonnet ×2, opus ×1), so no fourth implementer until the root cause is known.
+
+**Open question for you:** does the settings screen display personal data, and does any spec say whether privacy applies? The rules say to ask and plan as standard until you answer. If it does, the class may change.
+
+### 1. Root-cause debugger (dispatch now)
+- **Model:** opus. The session runs on sonnet, and the strongest default model should settle why the task keeps failing.
+- **Effort:** high (debugging a root cause).
+- **Mode:** read-only. It edits no files.
+- **Brief:**
+  - The task, its class, and the spec or requirement for the toggle.
+  - The three failed attempts: diffs, test output and failure reasons.
+  - The question: why did these fail? Is it a spec gap, a hidden dependency such as theme or state plumbing, or a flaw in the test or environment?
+  - Deliverable: a root cause backed by a reproduction, and a concrete design for the fix.
+
+### 2. Failure-record collector (optional, dispatch now, runs before #1 if the records aren't at hand)
+- **Model:** haiku (ops).
+- **Effort:** low.
+- **Brief:**
+  - Read-only: gather the three attempts' diffs, logs and test output from git and the session records into one file in the scratchpad.
+  - No analysis.
+
+### 3. Implementer (held)
+- **Not dispatched yet.** Sonnet and opus have both failed, so the skill says to suggest a frontier model (Fable) to you with the reason and wait for your answer.
+- **Suggestion:** Fable, because the strongest default model failed and the debugger's result may not settle it.
+- **If you decline:**
+  - **Model:** opus, with the debugger's design in the brief.
+  - **Effort:** medium, the ceiling for implementation. Use low only if the debugger shows it's a local change that follows an existing pattern.
+- **Brief:**
+  - The spec section and requirement ids, the failing test, and the class (standard).
+  - The root-cause report and the debugger's design.
+  - The known failure modes from the three earlier attempts, so they aren't repeated.
+
+### 4. Code reviewer (after the implementer)
+- **Model:** opus.
+- **Effort:** high.
+- **Reviews:** one code review, as standard requires.
+- **Brief:**
+  - The spec, the requirement, the plan task, and the merge request description.
+  - The diff as a file computed from the base commit recorded before the task started. The diff alone is not enough.
+
+No refuter or compliance review is needed, because those are critical-class roles. The task doesn't touch `src/payments/`.

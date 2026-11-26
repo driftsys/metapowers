@@ -1,0 +1,27 @@
+Here's the plan. I haven't edited any files.
+
+## Plan: session expiry for `src/auth/session.py`
+
+**What's there now:** `create_session` saves `{"user_id", "created"}` in the module-level `SESSIONS` dict. `validate_session` returns the `user_id` and never checks how old the session is. Nothing else in `src/` calls this module. The only tests are in `tests/test_session.py`.
+
+### Implementation
+1. **Set a default lifetime.** Add a module constant such as `SESSION_TTL_SECONDS = 3600`.
+2. **Store an expiry time at creation.** Give `create_session` an optional `ttl` argument that falls back to the constant, and store `"expires": created + ttl` next to `"created"`. Storing the absolute expiry time means a later change to the default won't affect sessions that already exist.
+3. **Check expiry in `validate_session`.** If `time.time() >= session["expires"]`, delete the token from `SESSIONS` and return `None`. Otherwise behave as before. Return the same `None` as for an unknown token, so callers can't tell an expired token from an invalid one.
+4. **Use `time.monotonic()`?** Keep `time.time()`. `created` is already wall-clock time, and sessions may later be stored somewhere that outlives the process.
+5. **Optional cleanup:** add `purge_expired()` to sweep stale entries so `SESSIONS` doesn't grow forever. Leave it out if you want a minimal change.
+
+### Tests (add to `tests/test_session.py`)
+Replace the clock with pytest's `monkeypatch` on `src.auth.session.time.time` rather than sleeping. Clear `SESSIONS` before each test with an autouse fixture so tests don't leak state into each other.
+
+- A token still validates just before the TTL runs out.
+- A token returns `None` exactly at the TTL and after it.
+- An expired token is removed from `SESSIONS`.
+- A custom `ttl` passed to `create_session` is honoured.
+- If added, `purge_expired()` removes only expired entries.
+- The two existing tests (valid token, unknown token) still pass unchanged.
+
+### Verify
+Run `pytest tests/` and `scripts/build.sh`.
+
+**Out of scope unless you want it:** sliding expiry (pushing the expiry back each time the session is used), an explicit logout or revoke function, and making the TTL configurable through settings or environment variables.

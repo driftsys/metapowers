@@ -1,0 +1,10 @@
+**No subagents.** This standard, single-file task is best handled directly: inspect `src/ui/settings_view.py` and existing theme patterns, add the toggle using existing persistence, and run focused checks.
+
+**Role, model, reasoning effort, brief:** not applicable. No agents dispatched or files edited.
+
+
+
+Changes    +0 -0
+AI Credits 1.52 (9s)
+Tokens     ↑ 15.0k (10.3k cached, 4.7k written) • ↓ 243 (175 reasoning)
+Resume     copilot --resume=d717780d-e387-4d68-9b3f-d6e64edec9a6

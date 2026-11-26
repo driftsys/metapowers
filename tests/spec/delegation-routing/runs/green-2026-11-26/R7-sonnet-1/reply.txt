@@ -1,0 +1,32 @@
+I would dispatch one subagent and nothing else.
+
+Class: ops (set by you in the task). The work is bulk mechanical classification, and the output is a data file that tools can check. It touches nothing in `src/payments/`.
+
+**Subagent 1: ticket tagger**
+- **Role:** Ops model doing bulk classification, which is the "tagging across many records" case in the routing skill.
+- **Model:** `haiku`, from the ops column of the model table.
+- **Reasoning effort:** low. Each ticket gets one label from a fixed set, and the effort table puts pattern-following work at low.
+- **Why one agent:** 40 short tickets fit in one context, so there are no batches. The work is also above the four-tool-call threshold, so delegating is cheaper than doing it inline.
+
+**Brief contents**
+1. **Goal:** Read every file in `data/tickets/`. Give each ticket exactly one category from `auth`, `billing`, `ui`, `crash`, `feature`. Write `data/tickets/tags.csv`.
+2. **CSV format:** Header `ticket,category`. One row per ticket, with the ticket's filename as its id. Sort rows by id.
+3. **Tie-break rules:**
+   - A crash caused by a specific area takes `crash`.
+   - A login or permission problem takes `auth`.
+   - A charge, invoice or refund problem takes `billing`.
+   - A visual or layout problem takes `ui`.
+   - A request for new behavior takes `feature`.
+   - If a ticket is truly ambiguous, pick the closest category and list the ticket id in the report. Don't invent a sixth category.
+4. **Scope limits:** Edit only `tags.csv`. Don't modify the tickets or any other file, and don't touch `src/`. Don't copy ticket text or personal data into the CSV or the report. Report only ids and categories.
+5. **Verification:** After writing, run a shell check and paste its output. The check confirms that:
+   - There are exactly 40 data rows.
+   - Every category is in the allowed set.
+   - Every filename in `data/tickets/` appears once, with no duplicates or missing ids.
+6. **Report:** Return the check output, the count per category, and the ambiguous ids.
+
+**Routing notes**
+- Reviews: none. For ops, tools check the output, and the validation script is that check. I would also run it myself once the agent reports back.
+- Cross-family review: not applicable, because no reviewer runs.
+- Escalation: if the check fails twice, the next attempt goes to the strongest implementer model, `opus`. Only a failed check would trigger that.
+- Spend: this is one routine subagent, not a fan-out, so it doesn't need your approval.

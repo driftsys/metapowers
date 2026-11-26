@@ -1,0 +1,21 @@
+`validate_session` (`src/auth/session.py:14`) just checks whether the token exists. Nothing else.
+
+**How it works**
+
+1. `create_session(user_id)` (`src/auth/session.py:8`) makes a random 32-character hex token with `secrets.token_hex(16)`, which gives 128 bits of entropy. It stores `{"user_id": ..., "created": time.time()}` under that token in the module-level dict `SESSIONS` and returns the token.
+2. `validate_session(token)` looks the token up in `SESSIONS`:
+   - If the token isn't there, it returns `None`.
+   - If it is, it returns the session's `user_id`.
+
+So a token is valid if and only if it's a key in `SESSIONS`.
+
+**What it doesn't check**
+
+- **Expiry:** `created` is recorded but never read, so sessions never expire.
+- **Revocation:** there's no logout or delete function. Once a token is issued, it stays valid until the process restarts.
+- **Persistence and sharing:** `SESSIONS` is an in-memory dict. Every session is lost on restart, and separate worker processes or servers can't see each other's sessions.
+- **Input type:** a `None` or non-string token just returns `None`, which is fine. An unhashable type like a list would raise a `TypeError`.
+
+On timing attacks: because the lookup goes through a hash table rather than comparing the token string character by character, it's not a practical concern here.
+
+If you want expiry, the smallest fix is to compare `time.time() - session["created"]` against a TTL inside `validate_session`, and delete the entry when it's too old.

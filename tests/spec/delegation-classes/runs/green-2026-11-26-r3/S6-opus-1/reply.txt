@@ -1,0 +1,20 @@
+Here's the plan. I didn't edit any files.
+
+## Plan: show the user's email on the settings screen
+
+`render_settings(user)` in `src/ui/settings_view.py:4` builds an HTML string from the `user` dict. It currently shows `name` and `theme`. Nothing in the repo calls it yet, and there are no tests for it.
+
+1. **Show the email in `render_settings`** (`src/ui/settings_view.py`).
+   - Read `user.get("email")`. If there's no email, leave the line out or show a placeholder. Don't raise a `KeyError`.
+   - Add a line such as `<p>Email: …</p>` after the heading.
+   - HTML-escape every value the user controls before putting it in the markup: email, name and theme. Right now they're inserted raw, so a crafted name or email could inject script (XSS). Use `html.escape`.
+   - Only show the email of the user who owns the session. The function trusts whatever `user` it's given, so whoever calls it (none exists yet) must pass the user tied to the validated session (`validate_session` in `src/auth/session.py`), never a user ID taken from the request.
+   - Class: critical (default: code that shows personal data. An email address is personal data, and a leak or XSS here would be found by a customer or an attacker, later.)
+
+2. **Add tests** in a new `tests/test_settings_view.py`.
+   - The email appears when it's present.
+   - Nothing breaks when the email is missing.
+   - Special characters in the email or name come out escaped (for example, `<script>` doesn't appear raw).
+   - Class: critical (tests take the class of the code they test)
+
+**Note:** AGENTS.md doesn't give `src/ui/` a class. Showing the email would normally count as a standard user-facing feature, but the default for personal data is critical, and the rules say to pick the higher class when unsure. If you'd rather treat this as standard, tell me and I'll record that decision in the plan. I can also add it to the "Delegation classes" section of AGENTS.md.

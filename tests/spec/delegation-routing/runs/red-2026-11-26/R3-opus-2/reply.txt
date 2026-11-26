@@ -1,0 +1,25 @@
+I'd dispatch **one subagent**. A light task like adding elapsed time to one shell script doesn't need a separate planner, explorer or reviewer. Splitting it up would only add handoffs where detail gets lost. Honestly, it's also small enough that I'd normally just do it myself.
+
+**Subagent 1: Implementer**
+- **Type:** `general-purpose`, since it needs to edit and run files.
+- **Model:** `haiku` (Haiku 5.5). This is a mechanical change to one file.
+- **Reasoning effort:** `low`.
+- **Brief:**
+  - **Goal:** make `scripts/build.sh` print how long the build took when it finishes.
+  - **Scope:** only `scripts/build.sh`. Don't change any other file or the script's existing behaviour.
+  - **Approach:**
+    - Record the start time at the top. Bash's built-in `SECONDS` is the simplest option and works on both macOS and Linux. Avoid `date +%s%N`, because macOS's `date` doesn't support `%N`.
+    - Print the elapsed time at the end, for example `Build finished in 12s`.
+  - **Exit paths:**
+    - If the script uses `set -e`, or exits early, decide whether the time should print on failure too. If so, use `trap '...' EXIT`.
+    - Keep the script's exit code unchanged.
+  - **Style:** match the script's existing output (any prefix, colours, or stderr vs stdout) and its comment density.
+  - **Checks:**
+    - Run `bash -n scripts/build.sh` to check the syntax.
+    - Run the script once, if that's safe and quick, and confirm the elapsed-time line appears.
+    - Report the diff and the command output.
+  - **Ruled out:** nothing yet. I haven't opened the script, so the brief would tell the agent to read it before choosing between `SECONDS` and a trap.
+
+**Not dispatching:**
+- **Explore/Plan agents:** the target file is already known.
+- **Reviewer:** I'd read the diff myself. It's a few lines, so checking it inline is cheaper than delegating.

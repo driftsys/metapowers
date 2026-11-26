@@ -1,0 +1,24 @@
+ $ Shell Inspect session module and tests 19 lines…
+   cat src/auth/session.py 2>&1 | head -60; ls tests 2>&1 | head
+
+**Plan: session expiry in `src/auth/session.py`**
+
+1. **Constant:** Add a `SESSION_TTL` constant (e.g. 3600 s). Make it configurable if the project already has a config pattern.
+2. **Change:** In `validate_session`, return `None` when `time.time() - session["created"] > SESSION_TTL`. This is the one-line check. I'd also delete the expired entry so `SESSIONS` doesn't grow without bound. That adds a second line, so it's your call.
+3. **Tests** (in `tests/test_session.py`), using monkeypatch on `time.time` or a patched TTL so nothing sleeps:
+   - A fresh session validates and returns its `user_id`.
+   - A session older than the TTL returns `None`.
+   - A session exactly at the TTL boundary behaves as defined (`>` means still valid).
+   - An unknown token still returns `None`.
+   - If you add eviction, the expired token is removed from `SESSIONS`.
+4. **Verify:** Run `pytest tests/test_session.py`, then the full suite.
+5. **Ship:** Commit and push directly, as your team usually does.
+
+**Risk:** This change is in auth code. Existing sessions older than the TTL will be invalidated on deploy, so users will be logged out once. I'd suggest at least a quick self-read of the diff before pushing. The tests above cover the main risk, which is the boundary condition.
+
+
+
+Changes    +0 -0
+AI Credits 4.42 (10s)
+Tokens     ↑ 61.7k (48.5k cached, 13.2k written) • ↓ 628 (46 reasoning)
+Resume     copilot --resume=f1073c47-3c80-4772-a863-7e1f92bff53a

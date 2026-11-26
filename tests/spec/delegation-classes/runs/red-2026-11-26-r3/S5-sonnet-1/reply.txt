@@ -1,0 +1,21 @@
+## Plan
+
+### 1. Dark-mode toggle in `src/ui/settings_view.py`
+The file is small. `render_settings(user)` reads `user.get("theme", "light")` and returns an HTML string that shows "Theme: <theme>" as plain text.
+
+1. Replace the static "Theme: …" line with a toggle control, such as a checkbox or switch labeled "Dark mode". Its checked state is `theme == "dark"`.
+2. Have the toggle submit or post the opposite value (`dark` or `light`). Reuse the existing `theme` key on the `user` dict, so no new data field is needed.
+3. Find where `user["theme"]` is persisted and applied. This file only renders, so the handler that saves the new value probably lives elsewhere. I haven't looked for it yet. If none exists, I'll add a minimal one and flag it as a decision for you.
+4. Add a test that `render_settings` shows the toggle checked for `theme="dark"` and unchecked for light or missing. The repo has no tests that I know of, so I'd check for a test setup first.
+
+### 2. Elapsed time in `scripts/build.sh`
+The script currently runs `python -m compileall src` and then echoes "build done".
+
+1. Record a start timestamp before the compile step. Bash's built-in `SECONDS` counter is the simplest option and works on macOS and Linux with no extra dependencies.
+2. After the compile step, change the final message to include the elapsed seconds, for example "build done in Ns".
+3. Because of `set -eu`, a failed compile exits before the message prints. I'd keep that behavior, since printing a time after a failure isn't needed.
+4. Verify by running `scripts/build.sh` once and checking that the output looks right.
+
+### Open questions
+- Where is the theme saved and applied (the handler and CSS)?
+- Is whole-second precision enough for the build time? If you want sub-second, the plan changes slightly.

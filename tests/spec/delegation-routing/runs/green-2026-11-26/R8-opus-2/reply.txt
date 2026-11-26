@@ -1,0 +1,37 @@
+Class: standard (stated in the plan task; `src/ui/` has no entry in AGENTS.md, and the default for a user-facing feature is also standard)
+
+**What the three failures change.** Opus is the strongest default model this client has, and it has already failed. The routing skill says I should now suggest a frontier model to you, explain why, and wait for your answer. So I would not start a fourth implementation attempt yet. A fourth blind attempt is also unlikely to work while we don't know why the first three failed. I would first send out two read-only subagents to find out.
+
+### Before any new attempt
+
+1. **Ops triage (reads the failed attempts)**
+   - Model: haiku. Effort: low.
+   - Brief: the plan task and its class, and pointers to the three failed attempts (branches, diffs, test output, implementer reports). It must not edit anything. It returns a factual summary of each attempt: what was changed, which test or check failed, the error text, and where the attempts failed in the same way.
+
+2. **Root-cause debugger**
+   - Model: opus. Effort: high (the effort set for root-cause debugging).
+   - Brief: the spec section and requirement IDs for the dark-mode toggle, the failing test, `src/ui/settings_view.py`, and the triage summary from step 1. It is read-only. The question: why does each attempt fail? Is the cause in the code, or in the task itself (an unclear spec, a broken or wrong test, a theming system that's missing, a dependency outside the settings screen)? It returns the root cause and the change it recommends.
+
+If the debugger finds that the task is the problem (spec, test, or a missing prerequisite), I'd fix that and bring it back to you. In that case a stronger model isn't the answer.
+
+### Your decision: frontier model or not
+
+If the debugger shows the code itself is hard to get right, I'd suggest a **Fable** implementer, because the strongest default model has already failed. I'd wait for your answer before dispatching it.
+
+### After your answer
+
+3. **Implementer (4th attempt)**
+   - Model: fable if you approve it, otherwise opus again, with the root-cause findings added to its brief.
+   - Effort: medium. That's the cap for implementation, and raising it costs more without better results.
+   - Brief: the spec section, the requirement IDs, the failing test, `Class: standard`, the debugger's root cause and recommended approach, and a short list of what the earlier attempts did and why each one failed, so it doesn't repeat them.
+
+4. **Code reviewer (one review, as the standard class requires)**
+   - Model: opus. Effort: high.
+   - Brief: the spec, the requirement, the plan task, the merge request description, and the diff saved to a file, computed from the base commit recorded before the task started.
+   - Claude Code only offers the Claude models, so the review can't come from a different model family. That's acceptable for a standard task. The skill only asks me to write `Routing: no cross-family review` on critical tasks.
+
+After that, the change gets a normal human review.
+
+The plan task would record: `Routing: escalation to frontier model proposed after 3 failed attempts (2× sonnet, 1× opus); awaiting user (2026-11-26)`.
+
+Do you want me to go ahead with steps 1 and 2 now?

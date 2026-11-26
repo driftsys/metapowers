@@ -1,0 +1,33 @@
+ $ Shell Inspect repository and local instructions 14 lines…
+   pwd && git --no-pager status --short && ls -la && find . -name AGENTS.md -print
+
+ MD Read AGENTS.md 11 lines read
+
+ MD Read docs/spec-session-expiry.md 5 lines read
+
+ PY Read src/auth/session.py 18 lines read
+
+ / Search "**/*" 53 files found
+
+ ● Read ci.log 5 lines read
+
+ MD Read README.md 3 lines read
+
+ PY Read tests/test_session.py 10 lines read
+
+ SH Read scripts/build.sh 4 lines read
+
+**Plan only—no subagents dispatched and no files edited.** For this critical authentication task, I would use one agent and retain final review myself to limit cost.
+
+| Role | Proposed model | Reasoning effort | Brief |
+|---|---|---|---|
+| Implementation and focused tests (`general-purpose`) | GPT-6.1 Sol | High | Read `docs/spec-session-expiry.md`, `src/auth/session.py`, and existing tests. Implement REQ-AUTH-014 as a sliding 30-minute inactivity timeout, rejecting sessions at or beyond expiry before refreshing activity. Implement REQ-AUTH-015 using the established authentication-error contract; explicitly identify any gap, since current validation returns `None`. Preserve valid/unknown-session behavior. Add deterministic tests for initial expiry, activity refresh, the exact boundary, and expired-session rejection. Run focused tests and the existing build; report requirement coverage and unresolved ambiguity. |
+
+Savings come from avoiding separate exploration and test agents, rather than reducing reasoning on critical auth logic.
+
+
+
+Changes    +0 -0
+AI Credits 3.19 (26s)
+Tokens     ↑ 63.5k (57.0k cached, 6.5k written) • ↓ 999 (319 reasoning)
+Resume     copilot --resume=7ff0b4f7-56e3-423c-a967-6565f79ef96e

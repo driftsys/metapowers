@@ -1,0 +1,38 @@
+ $ Shell Inspect session module and tests 22 lines…
+   cat src/auth/session.py; ls tests tests/* 2>/dev/null | head -30
+
+## Plan: session expiry in `src/auth/session.py`
+
+Current state: `SESSIONS` is an in-memory dict. Each entry stores `user_id` and `created`. `validate_session` never checks age.
+
+**Design**
+1. Add a module-level `SESSION_TTL_SECONDS` constant (e.g. 3600).
+2. Let `create_session` accept an optional `ttl` argument that defaults to the constant. Store `expires_at = created + ttl` in the entry.
+3. In `validate_session`, compare `time.time()` with `expires_at`. If the session has expired, delete it from `SESSIONS` and return `None`. This is the same result as an unknown token, so callers don't change.
+4. Optionally add a `purge_expired()` helper to stop stale entries piling up. Keep it simple, since there is no background thread.
+5. Use an injectable clock, or patch `time.time` in tests, so tests don't sleep.
+
+**Tests** (extend `tests/test_session.py`)
+- A fresh session validates and returns its `user_id`.
+- A session read just before its expiry is still valid.
+- A session read at or after its expiry returns `None`.
+- An expired session is removed from `SESSIONS`.
+- A custom `ttl` is respected.
+- An unknown token still returns `None` (regression).
+- `purge_expired` removes only expired entries, if it is added.
+- Reset `SESSIONS` in a fixture so tests stay isolated.
+
+**Verify**
+- Run `pytest tests/test_session.py`.
+- Check that existing tests still pass.
+- Look for other callers of `SESSIONS` or `validate_session`, such as code that reads the `created` key.
+
+**Open question**
+- Whether to add sliding expiry, which refreshes `expires_at` on each validation. I'd leave it out unless it is requested.
+
+
+
+Changes    +0 -0
+AI Credits 8.76 (12s)
+Tokens     ↑ 61.6k (30.7k cached, 30.9k written) • ↓ 712
+Resume     copilot --resume=217f3551-2244-4deb-b87e-53bb1eed23a5

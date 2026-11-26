@@ -1,0 +1,4 @@
+"When a task displays personal data and no spec says whether privacy applies,
+ask the user, and plan the task as standard until the user answers."
+
+In the rule file, this sentence is wrapped across two lines. The line that starts with "When a task displays personal data" is `- When a task displays personal data and no spec says whether privacy applies,`. The next line is `  ask the user, and plan the task as standard until the user answers.`

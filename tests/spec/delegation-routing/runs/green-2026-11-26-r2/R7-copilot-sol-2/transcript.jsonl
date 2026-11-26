@@ -1,0 +1,19 @@
+ ● skill(delegation-routing)
+
+**One subagent; no reviewers or batch fan-out.**
+
+Class: ops (user-specified).
+
+- **Role:** Bulk ticket classification.
+- **Model:** `gpt-6-luna`.
+- **Reasoning effort:** low.
+- **Brief:** Read all 40 tickets in `data/tickets/`. Assign exactly one category per ticket: `auth`, `billing`, `ui`, `crash`, or `feature`, based on its primary issue. Write `data/tickets/tags.csv`, preserving ticket identifiers and any established CSV convention. Change no other files. Validate with Python’s `csv` module that all 40 input tickets appear exactly once, with no duplicates, omissions, extra tickets, or invalid categories.
+
+No subagents dispatched and no files edited.
+
+
+
+Changes    +0 -0
+AI Credits 2.42 (9s)
+Tokens     ↑ 33.8k (26.4k cached, 7.4k written) • ↓ 294 (111 reasoning)
+Resume     copilot --resume=76217dcf-e51a-42ad-9f12-db3a61a149e1

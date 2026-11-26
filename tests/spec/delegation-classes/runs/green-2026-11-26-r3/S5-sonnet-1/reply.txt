@@ -1,0 +1,21 @@
+## Plan
+
+1. Add a dark-mode toggle to the settings screen in `src/ui/settings_view.py`.
+   Class: standard (default: user-facing feature)
+   - Read the file first to see how existing settings controls are built, read and saved.
+   - Add a toggle control labelled "Dark mode" that follows those conventions.
+   - Load its initial state from the stored preference.
+   - On change, save the preference and apply the theme through the app's existing theming mechanism. If none exists, flag that before building one.
+   - Check that the change touches nothing under `src/payments/`. If it did, the task would become critical.
+
+2. Add tests for the toggle (default state, toggling, persistence).
+   Class: standard (tests of standard code)
+
+3. Make `scripts/build.sh` print the elapsed time.
+   Class: light (default: build script)
+   - Record a start timestamp at the top of the script.
+   - At the end, compute the difference and print it, for example `Build finished in Ns`.
+   - Make sure the elapsed time is also printed when the build fails. A `trap ... EXIT` would do this without changing the script's exit code.
+   - Verify by running the script once.
+
+The two changes are independent, so they can be done in either order. I haven't opened either file, so the details above assume ordinary structure. I'll adjust once I've read them.

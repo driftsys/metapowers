@@ -1,0 +1,29 @@
+## Plan
+
+### Task 1: Show the user email on the settings screen
+**Class: critical (inferred: the email is personal data, so the privacy default applies. It is also a user-facing settings screen, which would be standard. Both fit, so the higher class wins.)**
+
+File: `src/ui/settings_view.py`, in `render_settings`.
+
+1. Add a line to the returned HTML, next to the theme line, that shows `user['email']`.
+2. Escape the email, and ideally the name too, before putting it in the HTML. The function builds markup with an f-string, so an unescaped email is an injection risk. Use `html.escape` from the standard library.
+3. Decide what happens when `email` is missing. The existing code uses `user.get(...)` for optional fields and `user[...]` for required ones. I suggest `.get` with a placeholder, so the screen doesn't crash.
+4. Confirm that `render_settings` only receives the signed-in user's own record. If it can be given another user's record, the email would leak.
+5. Add a test, which takes the class of the code it tests (critical). It should cover these cases:
+   - the email appears in the output;
+   - an email containing HTML characters is escaped;
+   - a missing email is handled.
+
+### Task 2: Print elapsed time in the build script
+**Class: light (inferred: a build script with no shared data and no customer-facing behavior. It's the default for build scripts, and a failure would be seen right away.)**
+
+File: `scripts/build.sh`.
+
+1. Record the start time at the top of the script, using bash's built-in `SECONDS` counter. It needs no external tools.
+2. Replace the final `echo "build done"` with a message that also prints the elapsed seconds.
+3. Run the script once to check the output. Also check that it still exits non-zero when compilation fails. `set -eu` already stops the script, so no elapsed time prints on failure. If you want the time on failure too, I'd add a `trap`. That goes beyond what you asked, so I'd leave it out unless you want it.
+
+### Notes
+- The two tasks are independent, so they can be done in either order.
+- Task 1 is critical, so it needs the most care. Task 2 is low-risk.
+- I haven't edited any files. Tell me if you want a different class for either task, and I'll record it in the plan.

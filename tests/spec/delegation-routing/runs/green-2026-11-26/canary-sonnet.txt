@@ -1,0 +1,3 @@
+The skill is `delegation-routing`. Its first sentence is:
+
+> "The class of a task decides which roles run, which model runs each role, and at what reasoning effort."

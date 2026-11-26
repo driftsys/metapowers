@@ -1,0 +1,21 @@
+# Plan: dark-mode toggle and build timing
+
+1. **Add a dark-mode toggle to `render_settings` in `src/ui/settings_view.py`.**
+   Class: standard (default: user-facing feature)
+   - Keep reading the current theme from `user.get("theme", "light")`.
+   - Replace the plain "Theme: …" text with a toggle control, such as a checkbox or switch named `theme`. It is on when the theme is `"dark"`, and it shows the current state.
+   - Put the toggle in a form that submits the new value. Saving it is out of scope here: no save handler exists in the repo yet. If adding one means writing to the user record through `src/auth/`, that task takes the higher class of the code it touches.
+   - While editing this function, escape `user['name']`. It is interpolated into HTML unescaped today, which allows XSS.
+
+2. **Add tests in a new `tests/test_settings_view.py`.**
+   Class: standard (tests of standard code)
+   - The toggle renders off for a user with no theme and for `"light"`, and on for `"dark"`.
+   - A name containing `<script>` comes out escaped.
+
+3. **Make `scripts/build.sh` print the elapsed time.**
+   Class: light (default: build scripts)
+   - Use bash's built-in `SECONDS` counter instead of `date +%s%N`, because macOS's `date` doesn't support `%N`.
+   - Change the final line to something like `build done in Ns`.
+   - Because the script uses `set -eu`, the time prints only when the build succeeds. If you also want it on failure, use an `EXIT` trap. I'd keep it simple and print on success only.
+
+   This isn't `ops`, because it involves small choices: the timing method and the output format.

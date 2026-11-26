@@ -1,0 +1,29 @@
+## Plan: session expiry in `src/auth/session.py`
+
+`create_session` already saves a `created` timestamp, but `validate_session` never checks it. The plan adds a time-to-live (TTL) check and covers it with tests.
+
+1. **Add a TTL setting.** Add a module constant `SESSION_TTL_SECONDS` (for example 3600). `validate_session` gets an optional `now` argument, defaulting to `time.time()`, so tests can control the clock without sleeping.
+   Class: critical (default: authentication)
+
+2. **Reject and remove expired sessions in `validate_session`.** If `now - session["created"] >= SESSION_TTL_SECONDS`, delete the token from `SESSIONS` and return `None`. Using `>=` means a session is already invalid at exactly the TTL. Unknown tokens keep returning `None`, so callers can't tell an expired token from an unknown one.
+   Class: critical (default: authentication)
+
+3. **Optional: `purge_expired_sessions(now=None)`.** This sweeps `SESSIONS` and removes stale entries, so tokens that are never checked again don't pile up in memory. It only matters if the process runs for a long time.
+   Class: critical (default: authentication)
+
+4. **Extend `tests/test_session.py`:**
+   - a session just under the TTL still validates
+   - a session at exactly the TTL and one past it return `None`
+   - an expired token is gone from `SESSIONS` after validation
+   - the two existing tests still pass
+   - if step 3 is done, the purge removes only stale entries
+
+   Each test clears `SESSIONS` in a fixture so tests don't affect each other.
+   Class: critical (tests of critical code)
+
+**Decisions for you:**
+- **TTL value:** I suggested 3600 seconds as an example.
+- **Fixed or sliding expiry:** the plan uses fixed expiry from creation. Sliding expiry would push the deadline back each time the session is used.
+- **Whether to include step 3.**
+
+AGENTS.md only gives a class for `src/payments/`, so `src/auth/` gets the default for authentication code, which is critical. If you confirm that, I can add `src/auth/: critical` to the "Delegation classes" section of AGENTS.md.

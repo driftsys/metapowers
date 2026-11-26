@@ -1,0 +1,20 @@
+**Plan**
+
+1. Show the user email on the settings screen in `src/ui/settings_view.py`.
+   - Read how the view gets the current user, then add a read-only email line to the settings layout using that existing user object.
+   - Don't add new storage, logging or API calls for the email.
+   - Check that the view shows only the signed-in user's own email, and that the email doesn't end up in logs or error messages.
+   - Add or update a view test to cover the email display.
+
+   Class: critical (default: code that stores, sends or shares personal data. The email is personal data, and the settings view is user-facing, which would default to standard. I couldn't decide between the two, so I chose the higher class.)
+
+2. Make `scripts/build.sh` print the elapsed time.
+   - Record a start time at the top of the script and compute the difference at the end.
+   - Print one line such as "Build took Ns".
+   - Make sure the line is also printed when the build exits early with an error, if the script already has a failure path.
+
+   Class: light (default: build scripts)
+
+**Order:** The two changes are independent, so they can be done in either order. I'd do the build script first because it's quick, then the settings view.
+
+**Open question:** Should the email be shown in full or partly masked? I'd show it in full, since the user is looking at their own account. Tell me if you want it masked. The class stays critical either way.

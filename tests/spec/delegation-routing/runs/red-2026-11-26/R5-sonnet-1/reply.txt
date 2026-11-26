@@ -1,0 +1,28 @@
+I'd dispatch two subagents and do the rest myself. This is a critical-class change, so I'd cut cost by using fewer agents, not by using a weaker reviewer.
+
+**1. Implementer**
+- **Model:** Sonnet. This is a well-specified change in one module, and Sonnet is enough for it.
+- **Effort:** I'd leave it at the default. My instructions say to override effort only when you ask for a specific level. If you want it pinned lower to save budget, tell me the level.
+- **Brief:**
+  - **Goal:** add session expiry to `src/auth/session.py`, implementing REQ-AUTH-014 and REQ-AUTH-015 exactly as `docs/spec-session-expiry.md` words them.
+  - **Reading:** read the spec in full first, then `session.py` and its existing tests.
+  - **Tests:** add tests that cite each requirement ID. They should cover the boundary (exactly at expiry, one tick either side), expired-session rejection, and any refresh or renewal behavior the spec defines.
+  - **Fail-closed:** an unparseable timestamp or a missing expiry must reject the session, not accept it.
+  - **Scope:** don't touch files outside `session.py` and its tests, and don't change public signatures unless the spec requires it.
+  - **Report:** list what changed, which requirement each change satisfies, the test command, and the test results. Flag any spec ambiguity instead of guessing.
+
+**2. Independent reviewer**
+- **Model:** Opus. The class is critical and this is an auth path, so this is the one place I'd spend more.
+- **Effort:** default, for the same reason as above.
+- **Brief:**
+  - **Input:** the diff and the spec path only. I would not include the implementer's summary or my own view, so the review isn't anchored on them.
+  - **Task:** check each requirement against the code and tests, and flag any requirement not covered.
+  - **Hunt for:** clock and timezone handling, off-by-one at the expiry boundary, expiry bypass through refresh or reuse, races, behavior on bad input, and tests that pass without testing the requirement.
+  - **Report:** findings ranked by severity, each with the file and line and a concrete failing scenario. Read-only, no edits.
+
+**Done inline, with no agent:**
+- Reading the spec and locating callers. This is a few tool calls.
+- Running the test suite and the final diff check.
+- Applying any reviewer fixes, which would go back to the implementer only if they are large.
+
+**Not dispatched:** an explorer (not worth the cost here), and a separate security reviewer, since the Opus reviewer covers that. If you want a second review, I'd add it only after the first one finds something.

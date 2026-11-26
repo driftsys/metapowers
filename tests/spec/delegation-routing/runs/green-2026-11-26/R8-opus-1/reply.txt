@@ -1,0 +1,42 @@
+The task is standard class, and the strongest model the routing table allows for it (Opus) has already failed. So the routing skill says not to dispatch a fourth implementer on my own. I need to suggest a frontier model (Fable) and wait for your answer. Until then, only read-only work goes out.
+
+**Task:** Add a dark-mode toggle to the settings screen in `src/ui/settings_view.py`.
+Class: standard (user-stated; also the default for a user-facing feature)
+Routing: frontier implementer suggested after 3 failed attempts (2× Sonnet, 1× Opus), waiting for the user's answer.
+
+### 1. Failure triage (read-only), dispatch now
+- **Model:** Haiku
+- **Effort:** low
+- **Brief:**
+  - The task and its class.
+  - Where to find the diffs, test output and logs from the three failed attempts.
+  - The base commit recorded before the task started.
+  - What I need back, for each attempt: what it changed, which test or check failed, and the exact error.
+  - Whether the three attempts failed at the same point. If they did, the problem is likely in the spec, the test or the environment rather than the model.
+  - No edits allowed.
+
+Three failures across two model families often mean a broken failing test, a vague spec, or a hidden dependency such as theming infrastructure that doesn't exist yet. I'll read the triage before choosing the next step. If the cause is structural, I'll fix the spec or test first rather than escalating the model.
+
+### 2. Implementer, after your answer
+- **Model:** Fable if you approve it. Otherwise Opus again, but only with a brief that changes based on the triage.
+- **Effort:** medium. That's the ceiling for implementation; higher effort costs more without better results.
+- **Brief:**
+  - The spec section for the dark-mode toggle and its requirement ids.
+  - The failing test.
+  - Class: standard.
+  - The triage summary: what each earlier attempt tried and exactly where it failed, so it doesn't repeat those approaches.
+  - Scope limited to `src/ui/settings_view.py` and whatever the toggle needs to work.
+
+### 3. Code reviewer, after the implementer finishes
+- **Model:** Opus. The table's choice for standard review. Claude Code offers only one model family, so the reviewer can't be from a different family than the implementer.
+- **Effort:** high
+- **Brief:**
+  - The spec and the requirement ids.
+  - The plan task (with its class and routing lines).
+  - The merge request description.
+  - The diff as a file computed from the base recorded before the task started. The full diff, not only the last attempt's changes.
+  - Also check that no leftovers from the failed attempts remain in the tree.
+
+Standard class needs one code review before merge, then a normal human review. It doesn't need a refuter or a compliance review.
+
+**Decision for you:** should the next implementer attempt use Fable (frontier), or Opus again with a revised brief?

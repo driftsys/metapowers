@@ -1,0 +1,18 @@
+ ● skill(delegation-routing)
+
+Plan: add a dark-mode toggle in `src/ui/settings_view.py`.
+Class: standard (user-specified).
+
+| Subagent role | Model | Reasoning effort | Brief |
+|---|---|---|---|
+| Implementer | `claude-opus-5.5` | medium | Implement the toggle using existing UI/theme patterns; preserve unrelated behavior and add focused tests. Include the spec section, requirement IDs, failing test, and standard class, plus evidence from both failed Sonnet attempts. Escalate to Opus because two attempts failed. |
+| Code reviewer, after implementation | `gpt-6.2-sol` | high | Review correctness, regressions, and requirement/test coverage. Include the spec, requirement, plan task, merge-request description, and a diff file computed against the base recorded before implementation. |
+
+Missing brief artifacts must be identified, not invented. No subagents dispatched and no files edited.
+
+
+
+Changes    +0 -0
+AI Credits 2.47 (11s)
+Tokens     ↑ 33.8k (26.3k cached, 7.4k written) • ↓ 348 (133 reasoning)
+Resume     copilot --resume=6c3e9844-b35f-40f6-bc5f-43576b9a6439

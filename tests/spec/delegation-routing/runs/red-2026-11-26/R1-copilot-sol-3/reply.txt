@@ -1,0 +1,32 @@
+ $ Shell Inspect repository and working tree 13 lines…
+   pwd && git --no-pager status --short && ls -la
+
+ MD Read AGENTS.md 11 lines read
+
+ / Search "**/*" 53 files found
+
+ MD Read docs/spec-session-expiry.md 5 lines read
+
+ PY Read src/auth/session.py 18 lines read
+
+ MD Read README.md 3 lines read
+
+ PY Read tests/test_session.py 10 lines read
+
+ SH Read scripts/build.sh 4 lines read
+
+**No subagents dispatched; no files edited.** For this critical task, I would use two sequential subagents:
+
+| Role | Model | Reasoning effort | Brief |
+|---|---|---|---|
+| Implementer (`general-purpose`) | Runtime-selected default; no override | Runtime default | Read repository instructions and `docs/spec-session-expiry.md`. Implement REQ-AUTH-014/015 in `src/auth/session.py`: sliding 30-minute inactivity expiry, rejection at the expiry boundary, and no revival of expired sessions. Resolve how “authentication error” maps to the existing `None` rejection contract. Add deterministic tests for inactivity, activity extending expiry, boundary rejection, and unchanged unknown-token behavior. Run focused tests and `scripts/build.sh`; avoid unrelated changes. |
+| Independent reviewer (`code-review`) | Runtime-selected default; no override | Runtime default | After implementation, review the diff against both requirements. Check timestamp initialization/refresh, exact expiry boundary, rejection semantics, expired-session revival, compatibility, and test gaps. Report actionable correctness findings; do not edit files. |
+
+Exact model and effort values are not exposed here; I would leave runtime preferences intact rather than invent them.
+
+
+
+Changes    +0 -0
+AI Credits 2.96 (21s)
+Tokens     ↑ 63.3k (57.0k cached, 6.3k written) • ↓ 802 (141 reasoning)
+Resume     copilot --resume=286ea3b7-86da-4d8f-8ece-5b35bc268f7d

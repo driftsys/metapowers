@@ -1,0 +1,3 @@
+Ticket 09
+Customer: user9@example.com
+Crash on startup after updating to version 4.2. Reinstalling did not help.

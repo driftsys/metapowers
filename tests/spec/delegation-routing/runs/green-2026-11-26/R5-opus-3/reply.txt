@@ -1,0 +1,27 @@
+Nothing was dispatched and no files were edited. This plan follows the `delegation-routing` skill.
+
+**Task:** Add session expiry to `src/auth/session.py` (spec `docs/spec-session-expiry.md`, REQ-AUTH-014 and REQ-AUTH-015)
+Class: critical (you stated it, and authentication code defaults to critical. AGENTS.md doesn't list a class for `src/auth/`.)
+Routing: no cross-family review. Claude Code only offers Claude models, so the human expert should know the reviewers come from the same model family as the implementer.
+
+Before dispatching, I'd record the base commit (`dac5145` or whatever HEAD is then) and write the failing tests for REQ-AUTH-014 and REQ-AUTH-015 myself. That's only a few tool calls, so a subagent isn't worth it.
+
+## Subagents
+
+| # | Role | Model | Effort | Brief contains |
+|---|------|-------|--------|----------------|
+| 1 | Implementer | Opus | medium | The spec sections for REQ-AUTH-014 and REQ-AUTH-015, the requirement IDs, the failing tests and the command to run them, and the class (critical). The scope is limited to `src/auth/session.py` and its tests. It does the whole change in one session rather than splitting it. |
+| 2 | Code reviewer | Opus | high | The full spec, both requirements, this plan task, the merge request description, and the diff saved as a file, computed from the recorded base commit. It looks for correctness bugs. |
+| 3 | Compliance reviewer | Sonnet | high | The same material as the code reviewer. It checks that each requirement is met by the code and covered by a test, and flags any gap or any behaviour the spec doesn't call for. |
+| 4 | Refuter | Opus | high | The same material. Its job is to break the change: expired sessions still being accepted, clock and timezone edge cases, mixing up sliding and absolute timeouts, sessions renewed after expiry, the exact moment of expiry, concurrent renewal. |
+
+Reviewers 2–4 run in parallel once the implementer finishes. After them, a human expert reviews before merge. If the implementer fails twice, the rules say to escalate to the strongest model, but it's already on Opus. So I'd ask you before trying a frontier model.
+
+## On the budget
+I haven't moved any critical role to a cheaper model. The routing table is built for critical work, and the skill specifically warns against picking the cheapest model per task: cheaper models need more attempts to produce working code. This plan still saves money where it can without that risk:
+- **Effort caps:** the implementer stays at medium, and only the reviewers run at high.
+- **No frontier models.**
+- **Haiku for side work:** test runs and drafting the merge request description, if those get delegated at all.
+- **One implementer session,** with no fan-out beyond the three required reviews.
+
+If the team lead wants deeper cuts, it's your call. For example, the compliance review could be folded into the code review, or the refuter could run on Sonnet. I'd record that in the task as `Routing: <change> (user, 2026-11-26)` and make sure the human expert reviewer knows about the gap.

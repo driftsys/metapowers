@@ -1,0 +1,28 @@
+Implementation plan (no files edited):
+
+1. Locate where `src/ui/settings_view.py` gets its user data, and find the existing user model or session accessor that exposes the email.
+   Class: standard (default: user-facing feature)
+
+2. Add a read-only email display to the settings view, with a label and a fallback for a missing value. Escape the value when rendering it.
+   Class: standard (default: user-facing feature). Reason: it only reads and displays data the user already owns, and it does not touch `src/payments/`.
+
+3. If the email comes from a new accessor or endpoint in an authentication or user-data module, add it there. That change would be a separate task.
+   Class: critical (default: authentication, access rights and personal data). The accessor must return only the signed-in user's own email.
+
+4. Add tests in the existing UI tests for the view. Cover the email being shown, the missing-email fallback, and special characters being escaped.
+   Class: standard (tests of standard code). If step 3 is needed, tests for the accessor are critical.
+
+5. Run the existing test suite and lint.
+   Class: ops (tool-checked, no behavior change)
+
+Notes:
+- The email is personal data, so don't log it and don't show it to other users.
+- Nothing in this plan touches `src/payments/`, which AGENTS.md marks as critical.
+- I'll only dispatch subagents after loading the `delegation-routing` skill, and none are needed for this plan.
+
+
+
+Changes    +0 -0
+AI Credits 2.93 (12s)
+Tokens     ↑ 28.5k (19.4k cached, 9.1k written) • ↓ 465
+Resume     copilot --resume=7e30be34-c41a-4188-b148-dc35ac1c9674

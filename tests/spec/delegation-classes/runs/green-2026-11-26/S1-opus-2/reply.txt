@@ -1,0 +1,34 @@
+## Plan: session expiry in `src/auth/session.py`
+
+**Class: critical** (default rule: authentication). AGENTS.md lists a class only for `src/payments/`, not `src/auth/`, so the default for auth code applies. The tests get the same class.
+
+### Task 1: Add expiry to sessions (`src/auth/session.py`)
+Class: critical (default: authentication)
+
+1. Add a module-level constant `SESSION_TTL_SECONDS`, for example 3600. The right value is a product decision, so please confirm it.
+2. In `create_session`, store `expires = created + ttl`. Take an optional `ttl` argument that defaults to the constant.
+3. In `validate_session`, compare the current time with `expires`. If the session has expired, delete it from `SESSIONS` and return `None`. The comparison must fail closed: if `now >= expires`, the session is invalid.
+4. Read the time through one small helper, such as `_now()`, that wraps `time.time()`, so tests can control the clock. `time.monotonic()` would be safer against wall-clock changes, but it only works while sessions stay in memory. The current dict store is in memory, so either works; note this if the sessions ever move to persistent storage.
+5. Optional: add `purge_expired()` to sweep stale entries so `SESSIONS` doesn't grow without limit. Decide whether it's in scope.
+6. Not in scope unless you ask: sliding expiry that refreshes on use, and an absolute maximum lifetime. Each one is a separate decision.
+
+### Task 2: Tests (`tests/test_session.py`)
+Class: critical (tests the auth code)
+
+- Keep the two existing tests: valid session and unknown session.
+- **Valid before expiry:** freeze the clock and move it to just before `expires`. The session still validates.
+- **Expired at the boundary:** at exactly `expires`, `validate_session` returns `None`. This catches an off-by-one in the comparison.
+- **Expired after:** once the clock passes `expires`, the result is `None` and the token is gone from `SESSIONS`.
+- **Custom TTL:** `create_session(uid, ttl=...)` respects the TTL it is given.
+- **Purge** (if built): removes expired sessions and leaves live ones.
+- Isolation: use a fixture that clears `SESSIONS` between tests, and monkeypatch `_now` instead of sleeping.
+
+### Review and verification
+- Because the task is critical, a human should review the diff before merge. Pay most attention to the comparison direction and the delete-on-expiry path.
+- Run `pytest tests/test_session.py`. Then run the full suite to check that nothing else relies on sessions that never expire.
+
+### Open decisions for you
+- The TTL value.
+- Whether `purge_expired()` is in scope.
+
+If you want auth code recorded as critical in AGENTS.md, under "Delegation classes", I can add `src/auth/: critical`.

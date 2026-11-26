@@ -1,0 +1,43 @@
+**Task: add a dark-mode toggle to the settings screen in `src/ui/settings_view.py`**
+Class: standard (default: user-facing feature; `src/ui/` isn't listed in AGENTS.md). If the toggle's preference were stored per user, I'd ask whether privacy applies.
+Routing: implementer escalated from sonnet to opus after two failed sonnet attempts (the table's default for standard is sonnet).
+
+I would dispatch three subagents, one after the other, because each depends on the previous one's output.
+
+**1. Root-cause diagnostician**
+- Model: opus
+- Effort: high, since debugging a root cause is high effort.
+- Brief:
+  - The task and its class.
+  - The two failed attempts' diffs and failure output, saved to files in the scratchpad.
+  - The spec for the toggle and the failing test, if one exists.
+  - The question: why did both attempts fail?
+  - Constraints: read-only, no edits, and report the cause plus the constraints a third attempt must respect.
+  - Whether the cause is the code, the spec or the test setup.
+- Why this comes first: two failures on a "simple" task point to a structural cause, such as a missing theme mechanism or a wrong assumption about the view. A third blind attempt would likely fail the same way.
+
+**2. Implementer**
+- Model: opus
+- Effort: medium, which is the ceiling for implementation.
+- Brief:
+  - The spec section and requirement ids.
+  - The failing test.
+  - The class (standard).
+  - The diagnostician's findings.
+  - The scope: only `src/ui/settings_view.py` and the tests of the toggle.
+  - An instruction not to touch `src/payments/` or authentication code.
+  - The base commit, recorded before the task starts (currently `7a355c5`).
+- Effort would drop to low only if the diagnosis shows the change follows an existing pattern in the code.
+
+**3. Code reviewer**
+- Model: opus
+- Effort: high
+- Brief:
+  - The spec, the requirement and the plan task.
+  - The merge request description.
+  - The diff as a file, computed from the recorded base commit.
+- A standard task gets one code review. A refuter and a compliance review aren't needed. Claude Code offers only one model family, so the review isn't cross-family. That gap matters only for critical tasks.
+
+I would not dispatch a sonnet agent to reproduce the failure. That would take about four tool calls or fewer, so the diagnostician does it inline.
+
+If opus also fails, the skill says to suggest a frontier model to you with the reason and wait for your answer. I won't dispatch one on my own.

@@ -1,0 +1,29 @@
+**Class:** light (build script, no AGENTS.md entry, so the default applies). `scripts/build.sh` is not under `src/payments/`.
+
+**Subagents I would dispatch: one**
+
+1. **Light code reviewer**
+   - **Model:** `sonnet`. The light column of the table gives sonnet for code review.
+   - **Effort:** high. Review work is always high.
+   - **Brief:**
+     - The task: make `scripts/build.sh` print the elapsed time.
+     - The class (light) and a request for one light review.
+     - The diff as a file, computed from the base commit recorded before the edit (`d60c9ae`).
+     - The plan task text, which stands in for the spec and requirement because none exists.
+     - What to check: the timing is correct, the script's existing output and exit codes are unchanged, and the timing still prints when the build fails, if that matters.
+
+**Subagents I would not dispatch**
+
+- **Implementer:** the skill says I may do light work myself, and the delegation-basics rule says to delegate only above about four tool calls. This change is read the script, edit it, run it. That is under four calls, so a fresh subagent would cost more than doing it inline. If I did delegate it, it would be `sonnet` at low effort, because the change follows a pattern in the code. Its brief would hold the task, the class and the path.
+- **Refuter and compliance review:** these apply only to critical work.
+- **Ops subagent:** nothing here is read-only sweeping or bulk mechanical work.
+- **Frontier model:** nobody asked for one.
+
+**Plan lines to record**
+```
+1. Make scripts/build.sh print elapsed time.
+   Class: light (default: build script)
+   Routing: implementer inline; one light review by sonnet, high effort
+```
+
+The skill's critical-only line `Routing: no cross-family review` does not apply.

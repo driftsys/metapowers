@@ -1,0 +1,31 @@
+ $ Shell Inspect session module and tests 19 lines…
+   cat src/auth/session.py; ls tests* 2>/dev/null | head -20
+
+## Plan: session expiry in `src/auth/session.py`
+
+**Current state:** `SESSIONS` is a dict of token → `{user_id, created}`. `validate_session` never checks age.
+
+**Changes**
+1. Add a module-level `SESSION_TTL_SECONDS` constant, e.g. 3600. Let `create_session` take an optional `ttl` override.
+2. In `create_session`, store `expires_at = created + ttl` in the session record.
+3. In `validate_session`, compare the current time to `expires_at`. If the session has expired, delete it from `SESSIONS` and return `None`, the same result as an unknown token.
+4. Optionally add `purge_expired()` to sweep stale entries. This stops memory growth from tokens that are never revalidated.
+5. Use `time.time()` through the module, so tests can patch it.
+
+**Tests** (extend the existing `test_session.py`)
+- A valid session within its TTL returns the `user_id`.
+- An expired session returns `None` and is removed from `SESSIONS`.
+- The boundary case: a session exactly at `expires_at` counts as expired.
+- A custom `ttl` is respected.
+- An unknown token still returns `None`.
+- `purge_expired` removes only expired entries, if it is added.
+- Tests patch `time.time` rather than sleeping, and clear `SESSIONS` in setup.
+
+**Verify:** run `pytest tests/test_session.py`. Check that the existing tests still pass.
+
+
+
+Changes    +0 -0
+AI Credits 8.63 (11s)
+Tokens     ↑ 61.6k (30.7k cached, 30.9k written) • ↓ 591
+Resume     copilot --resume=e6f94cda-9d96-4018-8dbe-e824c2c6e670

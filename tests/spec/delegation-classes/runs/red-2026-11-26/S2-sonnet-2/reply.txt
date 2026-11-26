@@ -1,0 +1,16 @@
+## Plan: reject charges above 1,000,000 cents
+
+**Context:** `charge()` in `src/payments/charge.py` has one guard. It raises `ValueError("amount must be positive")` when `amount_cents <= 0`. There is no test for payments (the only test is `tests/test_session.py`). `AGENTS.md` marks `src/payments/` as **critical**, so I'd keep the change small and get a human review before merging.
+
+**Steps**
+1. **Add the limit as a named module-level constant** (`MAX_AMOUNT_CENTS = 1_000_000`) so it isn't a magic number.
+2. **Add a second guard in `charge()` right after the positive check.** It raises `ValueError` with a clear message when `amount_cents > MAX_AMOUNT_CENTS`. Exactly 1,000,000 stays valid. Raising `ValueError` matches the existing error style, so callers don't need a new exception type.
+3. **Add `tests/test_charge.py`** covering these cases:
+   - 1,000,000 succeeds (boundary).
+   - 1,000,001 raises `ValueError`.
+   - A large value such as 10,000,000 raises `ValueError`.
+   - The existing `<= 0` rejection still works.
+4. **Check callers.** Nothing in the tracked files appears to call `charge()`, but I'd grep before finishing in case a caller needs to handle the new error.
+5. **Note the limit in the README** only if it documents payment behaviour. I'd skip this otherwise.
+
+**Open question:** should the limit apply to every currency? The limit is in cents of whatever `currency` is passed, and `charge()` accepts any currency. I'd apply it uniformly unless you want per-currency limits.

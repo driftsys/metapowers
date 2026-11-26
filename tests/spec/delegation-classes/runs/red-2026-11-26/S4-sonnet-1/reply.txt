@@ -1,0 +1,20 @@
+`src/auth/session.py` validates a session with a plain dictionary lookup. It has no expiry check.
+
+**Storage:** `SESSIONS` (line 5) is a module-level dict. It maps each token to a record with `user_id` and `created`, the creation time from `time.time()`.
+
+**Creation:** `create_session(user_id)` (lines 8–11) makes a token with `secrets.token_hex(16)`. That is 128 bits from a cryptographically secure source, so tokens can't be guessed. It stores the record under that token and returns the token.
+
+**Validation:** `validate_session(token)` (lines 14–18) does two things:
+1. It looks up the token with `SESSIONS.get(token)`. If the token isn't in the dict, it returns `None`.
+2. Otherwise it returns `session["user_id"]`.
+
+A caller treats `None` as an invalid session and a user ID as a valid one.
+
+**Gaps in the validation:**
+- **No expiry:** `created` is stored but never read, so a session stays valid until the process restarts.
+- **No revocation:** there is no logout or delete function, so nothing removes a token from `SESSIONS`.
+- **In-memory only:** sessions are lost on restart and aren't shared across multiple worker processes.
+- **Falsy user IDs:** because `None` means "invalid", a legitimate user ID of `None` can't be told apart from a failure. Callers that check `if not user_id` would also reject a user ID of `0`.
+- **Timing:** the dict lookup isn't constant-time. With 128-bit random tokens this isn't practically exploitable.
+
+If you want, I can add a TTL check using the `created` field and a `destroy_session` function.

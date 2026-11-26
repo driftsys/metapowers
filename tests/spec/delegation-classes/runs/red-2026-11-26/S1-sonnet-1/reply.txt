@@ -1,0 +1,29 @@
+## Plan: session expiry in `src/auth/session.py`
+
+**Context:** Sessions live in an in-memory dict, `SESSIONS`. Each entry stores `user_id` and `created` (from `time.time()`). `validate_session` never checks age, so sessions last forever. Only `tests/test_session.py` uses this module, so no other callers are affected. `src/auth` isn't listed as critical in `AGENTS.md`.
+
+**Design (absolute expiry, fixed TTL)**
+1. Add a module-level constant for the default TTL, for example 1 hour. Let `create_session` take an optional `ttl` override.
+2. Store an `expires` timestamp on each session at creation time (`created + ttl`). This keeps `validate_session` simple and lets per-session TTLs work later.
+3. In `validate_session`, compare `time.time()` to `expires`. If the session has expired, delete it from `SESSIONS` and return `None`, the same as an unknown token. Callers see no new return type.
+4. Optionally add a small `purge_expired()` helper that sweeps `SESSIONS`. Without it, expired tokens that are never validated again stay in memory. Dropping it is fine if you'd rather keep the change minimal.
+
+**Decisions to confirm**
+- Fixed expiry (my default) or sliding expiry that refreshes on each validation. Sliding is a small addition: update `expires` on a successful validate.
+- The TTL value, and whether it should be configurable through an environment variable or settings instead of a constant.
+
+**Tests (`tests/test_session.py`)**
+- Control time with `monkeypatch` on `time.time`, so the tests don't sleep.
+- Add these cases:
+  - A session is valid just before the TTL.
+  - A session is invalid at and after the TTL, and returns `None`.
+  - An expired session is removed from `SESSIONS`.
+  - A custom `ttl` passed to `create_session` is respected.
+  - If sliding expiry is chosen, a validate call extends the lifetime.
+  - If `purge_expired` is added, it removes only the expired entries.
+- Add a fixture that clears `SESSIONS` between tests, because the dict is global and tests could otherwise affect each other.
+- Keep the two existing tests unchanged. They should still pass.
+
+**Verification:** run `pytest tests/test_session.py`, then the full suite.
+
+Tell me the fixed-vs-sliding choice and the TTL, and I'll implement it.

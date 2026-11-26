@@ -1,0 +1,25 @@
+**Implementation plan**
+
+1. Add a dark-mode toggle to the settings screen in `src/ui/settings_view.py`.
+   - Add a toggle control to the settings view.
+   - Persist the choice in the existing user-settings storage.
+   - Apply the theme on load and when the toggle changes.
+   - Add tests for the toggle's default state, its persistence, and the theme switch.
+   Class: standard (default: user-facing feature; `src/ui/` isn't listed in AGENTS.md, and the settings UI holds no payment or auth logic)
+
+2. Make `scripts/build.sh` print the elapsed time.
+   - Record the start time at the top of the script.
+   - Print the elapsed seconds at the end, including on failure, for example with an exit trap.
+   - Leave the existing build steps and exit codes unchanged.
+   Class: light (default: build script)
+
+Notes:
+- Neither change touches `src/payments/` (critical). If the settings toggle ends up sharing storage or code with payments or auth, I'll raise it to critical.
+- I haven't edited any files. Before dispatching any subagents, I'd load the `delegation-routing` skill.
+
+
+
+Changes    +0 -0
+AI Credits 2.86 (12s)
+Tokens     ↑ 28.5k (19.4k cached, 9.1k written) • ↓ 383
+Resume     copilot --resume=fa57fa82-bcef-4cd9-8eae-a52b57a40800

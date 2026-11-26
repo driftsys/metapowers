@@ -1,0 +1,31 @@
+## Plan: session expiry in `src/auth/session.py`
+
+**Class: critical (default: authentication).** AGENTS.md only records `src/payments/`, so the "security, privacy, authentication and access rights" default applies.
+
+**Task 1: Add expiry to `validate_session`**
+Class: critical (default: authentication)
+- Add a module-level TTL constant, e.g. `SESSION_TTL_SECONDS`, with a default to confirm with you. Compare against the `created` timestamp that `create_session` already stores.
+- In `validate_session`, treat a session as expired when `now - created >= TTL`. Return `None`, as for an unknown token, and delete the entry from `SESSIONS` so expired tokens don't pile up.
+- Use `time.time()` through the module, so tests can patch it. Don't use `sleep` in tests.
+- Open decision: a fixed lifetime from creation (matches the current data) or a sliding idle timeout. The plan assumes a fixed lifetime. A sliding timeout would also need a `last_seen` field updated on each validation.
+
+**Task 2: Tests in `tests/test_session.py`**
+Class: critical (class of the code under test)
+- Keep the two existing tests passing.
+- Add a test that a session just inside the TTL is still valid.
+- Add a test that a session exactly at the TTL is rejected, to pin the boundary.
+- Add a test that a session past the TTL returns `None`.
+- Add a test that an expired token is removed from `SESSIONS`, and stays rejected on a second call.
+- Add a test that a session created after another one expired is unaffected.
+- Control time by monkeypatching `time.time` in `src.auth.session`.
+
+**Review and rollout**
+- Because this is critical, a human should review the diff before merge. Any subagent that works on it should be dispatched under the critical class.
+- Run `pytest tests/test_session.py`.
+- Existing sessions in `SESSIONS` all have `created`, so no migration is needed. The store is in-memory, so a restart already clears it.
+
+**Questions for you**
+1. What TTL should the default be?
+2. Is a fixed lifetime enough, or do you want a sliding idle timeout?
+
+You haven't confirmed the class. If you want a different one, tell me and I can record it in the "Delegation classes" section of AGENTS.md. For example, I could add `src/auth/: critical`.

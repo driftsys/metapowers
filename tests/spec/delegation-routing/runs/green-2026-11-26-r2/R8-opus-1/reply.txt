@@ -1,0 +1,37 @@
+The rules route this task to a different plan than "dispatch a fourth implementer." The `delegation-routing` skill says that once the strongest default model has failed, I should diagnose why, suggest a frontier model to you, and wait for your answer. So I'd dispatch in two stages, with a stop for your decision between them.
+
+## Stage 1: Diagnose before any new attempt
+
+**1. Failure triage (read-only ops)**
+- **Model:** haiku
+- **Effort:** low
+- **Brief:** Collect what the three failed attempts left behind: their diffs from the recorded base commit, the test and run output, and any reviewer notes. Report one specific thing: where each attempt failed (same test, same error, or same misunderstanding of the spec?). It must not edit any files. Name the tools that produced each output.
+- **Class:** standard (plan task class; read-only work doesn't change it)
+
+**2. Root-cause debugger**
+- **Model:** opus (the strongest default model)
+- **Effort:** high (the skill's setting for debugging a root cause)
+- **Brief:** The spec section and requirement IDs for the dark-mode toggle, the plan task, the failing test, and the triage report. The question to answer: why would a competent implementer fail here? For example, a theme or state mechanism missing from `src/ui/settings_view.py` or what it depends on, a spec that contradicts itself, a test that can't pass, or an environment problem. It should return a diagnosis with evidence, not a fix.
+- **Class:** standard (from the plan)
+
+Three failures across two models point to a problem in the task itself (spec, test or environment) more than in model strength. The rules also say a long or unfamiliar task isn't a reason to escalate on its own. So the diagnosis comes before any model choice.
+
+## Decision point: you choose
+
+I would not dispatch an implementer yet. Following the skill, I'd give you the diagnosis and suggest **Fable** (a frontier model) for attempt 4, with the reason: opus is the strongest default model and it has already failed. Then I'd wait for your answer. I won't dispatch a frontier model unless you ask for it.
+
+## Stage 2: After your answer
+
+**3. Implementer (attempt 4)**
+- **Model:** fable if you approve it. Otherwise opus, for a second opus attempt that has the diagnosis this time. If the diagnosis finds a broken spec or test, that gets fixed first, and the implementer might go back to sonnet.
+- **Effort:** medium, the ceiling for implementation. Higher effort costs more without better results.
+- **Brief:** The spec section, requirement IDs, failing test, Class: standard, the root-cause diagnosis, and a short note on how each earlier attempt failed so it doesn't repeat them.
+- **Routing line in the plan:** `Routing: implementer escalated to <model> after 3 failed attempts (user, 2026-11-26)`
+
+**4. Code reviewer (one review, as the standard class requires)**
+- **Model:** opus
+- **Effort:** high
+- **Brief:** The spec, the requirement, the plan task, the merge request description, and the diff as a file computed from the base recorded before the task started.
+- **Note:** The skill prefers a reviewer from the other model family, but Claude Code only offers Claude models. That gap only has to be recorded for critical tasks, so this standard task doesn't need it.
+
+No compliance review or refuter: those apply only to critical tasks. Normal human review before merge.

@@ -1,0 +1,34 @@
+ $ Shell Inspect repository status and top-level files 12 lines…
+   pwd && git status --short && ls -a
+
+ MD Read AGENTS.md 11 lines read
+
+ MD Read docs/spec-session-expiry.md 5 lines read
+
+ PY Read src/auth/session.py 18 lines read
+
+ / Search "**/AGENTS.md" 1 file found
+
+ MD Read README.md 3 lines read
+
+ / Search "docs/**/*" 1 file found
+
+ / Search "tests/**/*" 1 file found
+
+ PY Read tests/test_session.py 10 lines read
+
+**Proposed dispatch plan only—no agents dispatched or files edited.** Keep critical-task scrutiny; reduce spend by limiting delegation to two focused agents, without separate exploration.
+
+| Role | Proposed model | Reasoning effort | Brief |
+|---|---|---|---|
+| Implementer (`general-purpose`) | `gpt-5.3-codex` | High | Implement REQ-AUTH-014/015 in `src/auth/session.py`: sliding 30-minute inactivity expiry, rejection at the expiry boundary, and no revival of expired sessions. Preserve existing authentication conventions (`None` currently indicates rejection). Add deterministic clock-controlled tests covering expiry, activity refresh, and existing behavior; run focused checks. |
+| Independent reviewer (`code-review`) | `gpt-5.3-codex` | High | Review the resulting diff against both requirements. Check boundary timing, refresh ordering, expired-token reuse, authentication-error handling, and regression coverage. Report actionable correctness issues only. |
+
+Run the reviewer after implementation so it receives the actual diff and check results.
+
+
+
+Changes    +0 -0
+AI Credits 3.01 (25s)
+Tokens     ↑ 77.1k (71.6k cached, 5.5k written) • ↓ 915 (305 reasoning)
+Resume     copilot --resume=22f1b100-8120-487b-bca6-47fd1eebc634

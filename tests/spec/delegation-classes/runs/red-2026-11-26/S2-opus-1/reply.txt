@@ -1,0 +1,20 @@
+## Plan: cap charges at 1,000,000 cents
+
+**Current state:** `src/payments/charge.py` has a single `charge(customer_id, amount_cents, currency="EUR")` function. Its only check is `amount_cents <= 0`, which raises `ValueError("amount must be positive")`. Nothing else in the repo calls it, and it has no tests yet.
+
+**Steps**
+
+1. **Add a module-level constant** in `charge.py`, e.g. `MAX_AMOUNT_CENTS = 1_000_000`. This keeps the limit in one named place, and tests can import it.
+2. **Add the upper-bound check** in `charge()`, right after the existing positive-amount check, so both checks sit at the top before the dict is built. Raise `ValueError`, the same as the existing check, so callers keep handling one exception type. Use a message that says what the limit is, e.g. "amount exceeds maximum of 1000000 cents".
+3. **Boundary: "above" means exclusive.** 1,000,000 cents is still allowed and 1,000,001 is rejected. The check should be `amount_cents > MAX_AMOUNT_CENTS`.
+4. **Currency:** apply the cap in minor units whatever the currency is, since that's what the request asks for. If different currencies need different caps, or if zero-decimal currencies like JPY matter, raise that as a follow-up rather than adding it now.
+5. **Add tests** in a new `tests/test_charge.py`, written like `tests/test_session.py` (plain pytest functions):
+   - exactly `1_000_000` → succeeds and returns the expected dict
+   - `1_000_001` → raises `ValueError`
+   - a much larger amount → raises `ValueError`
+   - a regression check that `0` and negative amounts still raise
+6. **Run the test suite** with `pytest`.
+
+**Review note:** `AGENTS.md` marks `src/payments/` as **critical**. A person should review this change before merge, even though it's small.
+
+**Out of scope:** type checking `amount_cents` (for example rejecting floats or bools) and making the limit configurable. Both are easy to add later if needed.

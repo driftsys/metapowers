@@ -1,0 +1,24 @@
+**Task:** make `scripts/build.sh` also print the elapsed time.
+Class: light (default: build scripts; AGENTS.md has no entry for `scripts/`, and the script is outside `src/payments/`)
+
+**Subagents I would dispatch: one.**
+
+1. **Light code reviewer**
+   - **Model:** sonnet (light column, code review).
+   - **Reasoning effort:** high (the effort table sets high for any review).
+   - **Dispatch:** after the change is made and I have run `scripts/build.sh` myself. The light class still requires one review, even for inline work.
+   - **Brief:**
+     - The task statement: "make `scripts/build.sh` also print the elapsed time". It is also the spec and the requirement, since no spec file or requirement id exists.
+     - The plan task, including `Class: light (default: build scripts)`.
+     - A short merge request description: what changed and why, and that the build's existing output and exit status must stay the same.
+     - The diff as a file, computed from the base commit I record before editing. I would write it to the scratchpad, not paste it.
+     - The review questions:
+       - Does the timing work on macOS bash? Check for non-portable `date +%s%N`, and prefer `SECONDS` or `date +%s`.
+       - Does the script still exit with the build's status if the build fails?
+       - Is the elapsed time printed on failure paths too, if that is wanted?
+
+**Subagents I would not dispatch:**
+- **Implementer:** the table says sonnet at low effort, since this is a local change that follows a pattern. But the change is a read, an edit and a run, which is under the roughly four tool calls where a subagent pays off. I would do it inline, as the skill allows for light work.
+- **Refuter, compliance reviewer, ops/haiku:** not required for light. There is no cross-family review gap to record, because that note applies only to critical tasks.
+
+I haven't dispatched anything or edited any files.

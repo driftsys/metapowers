@@ -1,0 +1,10 @@
+None. This light task needs no subagents, so no roles, models, reasoning settings, or briefs apply. I would directly inspect `scripts/build.sh`, add elapsed-time output consistent with its shell conventions, and validate it.
+
+No subagents dispatched or files edited.
+
+
+
+Changes    +0 -0
+AI Credits 1.43 (6s)
+Tokens     ↑ 15.0k (10.3k cached, 4.7k written) • ↓ 157 (97 reasoning)
+Resume     copilot --resume=111134ae-2ef2-47fb-9226-c6bd2902161b

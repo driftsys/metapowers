@@ -1,0 +1,26 @@
+I didn't edit anything. Here's the plan.
+
+## What's there now
+
+- `src/ui/settings_view.py:4`: `render_settings(user)` takes a plain `user` dict and returns an HTML string. It shows `user['name']` (required) and `user.get("theme", "light")`.
+- `email` isn't used anywhere in the repo, and nothing calls `render_settings`, so I can't see what shape the `user` dict has. `src/auth/session.py` only stores `user_id`.
+- No tests cover the settings view.
+
+## Steps
+
+1. **Read the email from the dict.** Add `email = user.get("email")` next to `theme`. Use `.get()` rather than `user['email']` so a dict without an email doesn't raise `KeyError`. The existing code already does this for theme.
+
+2. **Escape it before putting it in the HTML.** An email is user-supplied text, so pass it through `html.escape` from the standard library before it goes into the f-string. Otherwise a value like `"<script>…"@x.com` gets injected into the page. `user['name']` is inserted unescaped today too. I'd escape it in the same change, but that can be its own small change if you want to keep this one narrow.
+
+3. **Add the markup.** Put a `<p>Email: {email}</p>` line after the heading, matching the existing `<p>Theme: …</p>` style. If there's no email, either leave the line out or show a placeholder like "Not set". I'd leave it out, since the current output is minimal.
+
+4. **Add tests** in a new `tests/test_settings_view.py`, following `tests/test_session.py`:
+   - When an email is present, it appears in the output.
+   - When there's no email, nothing breaks and no empty or "None" email line appears.
+   - HTML characters in the email come out escaped.
+
+5. **Check where the data comes from.** Since nothing calls `render_settings` yet, make sure whatever code eventually builds the `user` dict includes `email`. That's outside this file. Keep in mind that `render_settings` is just a function that returns HTML, so it doesn't control who sees the page. Whoever wires it up should only render it for the logged-in user's own account.
+
+## Scope and risk
+
+This touches one file plus a new test file. It doesn't go near `src/payments/`, which `AGENTS.md` marks as critical. Risk is low.

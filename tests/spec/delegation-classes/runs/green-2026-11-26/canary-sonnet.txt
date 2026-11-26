@@ -1,0 +1,1 @@
+Before you write a plan or change files, give each task a class and write it in

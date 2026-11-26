@@ -1,0 +1,42 @@
+I've loaded `delegation-routing`. Class is standard, from the task: `src/ui/settings_view.py` is a user-facing feature and not under `src/payments/`. I'd dispatch three subagents, one after another. Nothing is dispatched and no files are edited.
+
+Two Sonnet attempts have already failed, so the table's Sonnet implementer is the wrong starting point. I'd move the implementer to Opus, which is the strongest default model. I wouldn't suggest a frontier model, because Opus hasn't failed yet. I also wouldn't consult a deep-thinking model first. The class is given and the routing is clear.
+
+Plan task:
+```
+Add a dark-mode toggle to the settings screen in src/ui/settings_view.py.
+Class: standard (given by the user)
+Routing: implementer escalated sonnet → opus after two failed sonnet attempts (user report, 2026-11-26)
+```
+
+1. **Failure diagnoser**
+   - **Model and effort:** opus, high (debugging a root cause).
+   - **Mode:** read-only, with no edits. It's separate from the implementer so the implementer starts from a diagnosis and doesn't repeat the earlier mistakes.
+   - **Brief:**
+     - The task text and its class.
+     - The diffs or branches of the two failed attempts, plus any test output or errors from them.
+     - The files to read: `src/ui/settings_view.py`, how the other settings are rendered and persisted, and any existing theme or style code.
+     - The question: why did both attempts fail, what is the correct approach, and what are the pitfalls?
+     - The output: a short root-cause note and a recommended approach, with no code changes.
+
+2. **Implementer**
+   - **Model and effort:** opus, medium (the ceiling for implementation). I'd drop to low only if the diagnoser finds a plain pattern to copy.
+   - **Brief:**
+     - The task, its class (standard) and the spec or requirement text for the toggle.
+     - The failing test, if one exists. If there isn't one, it writes the test first.
+     - The diagnoser's root-cause note and recommended approach.
+     - The scope: change only the settings UI and its tests, and don't touch `src/payments/` or auth.
+     - The base commit, recorded before it starts (`d475d0f`), so the review diff can be computed from it.
+
+3. **Code reviewer**
+   - **Model and effort:** opus, high (one code review for standard).
+   - **Brief:**
+     - The spec and requirement, the plan task, and the merge request description.
+     - The diff as a file, computed from the recorded base. A diff alone isn't enough.
+     - The task's class (standard).
+     - The focus: whether the toggle works and persists, whether it follows the surrounding code, and whether the tests cover the real behavior.
+   - There's no refuter or compliance review at this class. Code review plus the normal human review is the full set. No cross-family review note is needed, since that's only for critical tasks.
+
+**Fix loop:** if the review finds problems, I'd send them back to the same Opus implementer. If Opus also fails, I'd stop and suggest a frontier model to you, with the reason, and wait for your answer.
+
+**Open question for you:** does the toggle store the preference per user on the server? If so, that's personal data, and no spec says whether privacy applies. I'd keep the task standard and ask you before the implementer starts.

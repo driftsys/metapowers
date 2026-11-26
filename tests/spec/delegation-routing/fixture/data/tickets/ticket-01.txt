@@ -1,0 +1,3 @@
+Ticket 01
+Customer: user1@example.com
+Two-factor code is never delivered by SMS. Login blocked since Monday.

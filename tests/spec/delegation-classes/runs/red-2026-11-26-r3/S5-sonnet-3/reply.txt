@@ -1,0 +1,25 @@
+## Implementation plan
+
+### 1. Dark-mode toggle in `src/ui/settings_view.py`
+`render_settings(user)` already reads `user.get("theme", "light")` and prints it as text. The plan builds on that.
+
+1. Replace the plain `Theme: …` paragraph with a toggle control, such as a checkbox or switch labelled "Dark mode". It is checked when `theme == "dark"`.
+2. Have the toggle submit the opposite value (`dark` or `light`). Persisting it is a separate step (see below).
+3. Keep the `"light"` default, so users with no saved theme behave as they do now.
+4. Escape or validate the `theme` value before it goes into the HTML. Only `"light"` and `"dark"` should be accepted, and anything else should fall back to `"light"`.
+
+**Open question:** nothing in the two files I read saves the setting. I'd check where user preferences are stored and add the save handler there. I'd also check whether the rest of the UI reads `theme`. If it doesn't, the toggle will show but won't change anything on screen.
+
+**Verification:** render with `{"theme": "dark"}`, `{"theme": "light"}` and no theme. Check that the toggle state matches each case. If a test file for this view exists, add those three cases to it.
+
+### 2. Elapsed time in `scripts/build.sh`
+The script is currently `compileall` followed by `echo "build done"`.
+
+1. Record a start time at the top, after `set -eu`. Bash's built-in `SECONDS` counter is enough and needs no external commands, so it works the same on macOS and Linux.
+2. Change the final message to include the elapsed seconds, for example `build done in Ns`.
+3. Optionally, use `trap … EXIT` so the time also prints when the build fails. That adds a bit more than the request asks for, so I'd skip it unless you want it.
+
+**Verification:** run `scripts/build.sh` and check that the output ends with the elapsed time and that the exit code is unchanged.
+
+### Order and scope
+The two changes are independent, so they can be done in either order. I'd make them as two separate commits.

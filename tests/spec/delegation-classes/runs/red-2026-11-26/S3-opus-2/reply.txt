@@ -1,0 +1,24 @@
+I didn't edit anything. Here's the plan for adding session expiry to `src/auth/session.py`.
+
+## Plan: session expiry
+
+**What's there now:** `create_session` already saves a `created` timestamp, but `validate_session` (`src/auth/session.py:14`) never looks at it, so sessions never expire.
+
+### Change (`src/auth/session.py`)
+1. Add a constant at the top of the module, e.g. `SESSION_TTL_SECONDS = 3600`. Pick the value your product needs.
+2. In `validate_session`, after the `None` check: if `time.time() - session["created"] > SESSION_TTL_SECONDS`, remove the token from `SESSIONS` and return `None`.
+
+This is more like 3–4 lines than one: the constant, the age check, and removing the old entry. Removing it keeps expired sessions from piling up in `SESSIONS` and makes sure an expired token can't work again later.
+
+### Tests (`tests/test_session.py`)
+Use pytest's `monkeypatch` to fake `time.time` in `src.auth.session`, so the tests don't actually wait:
+- **Expired:** create a session, move the clock past the TTL, check that `validate_session` returns `None`.
+- **Still valid just before expiry:** move the clock to just under the TTL, check that the user ID comes back. This catches an off-by-one in the comparison.
+- **Expired entry is removed:** after an expired check, the token is no longer in `SESSIONS`.
+- `test_valid_session` and `test_unknown_session` should pass without changes.
+
+### Ship
+- Run `pytest tests/test_session.py`.
+- `AGENTS.md` only flags `src/payments/` as critical, so shipping this without review is allowed. Still, it's auth logic, and if the comparison is wrong, sessions either never expire or every login fails right away. A quick look from a teammate at the comparison would be worth it if anyone's around.
+
+**Open question:** do you want a fixed lifetime from creation (this plan), or a sliding one that resets each time the session is used? A sliding one would also mean updating the timestamp on each successful `validate_session`.

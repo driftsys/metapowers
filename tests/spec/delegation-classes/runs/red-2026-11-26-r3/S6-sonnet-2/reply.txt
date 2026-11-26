@@ -1,0 +1,14 @@
+## Plan: show the user email on the settings screen
+
+**Current state:** `render_settings(user)` in `src/ui/settings_view.py:4` takes a `user` dict. It returns an HTML string with the name in an `<h1>` and the theme in a `<p>`. Nothing in the repo references an email, and nothing else calls `render_settings`.
+
+**Steps**
+1. **Check the data source.** Open `src/auth/session.py` to see whether the `user` dict it builds already has an `email` key. If it doesn't, add one there, since the view should only read it.
+2. **Update the view.** In `render_settings`, read the email with `user.get("email")`, like the existing `theme` lookup. Then add a `<p>Email: …</p>` line after the theme line.
+3. **Handle a missing email.** Either omit the line or show a placeholder such as "Not set". I'd omit it, so users with no email don't see an empty field.
+4. **Escape the value.** The function builds HTML by string interpolation, and an email is user-controlled input. Pass it through `html.escape` before inserting it. The existing `name` has the same problem, so I'd flag it and fix it in the same change.
+5. **Add a test.** There are no tests yet, so add a small one that covers three cases: an email is present, an email is missing, and an email contains HTML special characters.
+
+**Open questions**
+- Should the email be masked, for example `s***@gmail.com`, or shown in full?
+- Should the settings screen only display the email, or let users edit it later?

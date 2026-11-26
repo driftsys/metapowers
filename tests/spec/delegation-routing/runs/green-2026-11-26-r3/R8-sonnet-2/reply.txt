@@ -1,0 +1,45 @@
+Nothing is dispatched yet. The skill says that when the strongest default model (Opus) has also failed a task, I should suggest a frontier model to you and wait for your answer. Because of that, the plan has a gate.
+
+**Task:** dark-mode toggle in `src/ui/settings_view.py`
+Class: standard (user-assigned). If the fix touches `src/payments/`, the task becomes critical.
+Routing: Opus already failed here, so a frontier model is suggested to the user and I'm waiting for the answer.
+
+**Gate: ask you before any implementer runs.** Sonnet failed twice and Opus once, so another default-model attempt is unlikely to work unless we first learn why they failed. I'd suggest either a frontier model (Fable or Astra) for the implementer, or a root-cause diagnosis first. I recommend the diagnosis first, because three failures at different capability levels point to a shared cause, such as a bad spec, a flaky test, or a hidden dependency. Frontier models are used only if you ask for one.
+
+**Subagents I would dispatch, in order:**
+
+1. **Root-cause diagnostician**
+   - Model: opus
+   - Effort: high (debugging a root cause)
+   - Role: read-only. It writes no code and edits no files.
+   - Brief:
+     - The task and its class (standard).
+     - The spec or requirement for the toggle.
+     - The diffs and failure output from all three failed attempts, as files.
+     - The failing test, if one exists.
+     - The question: why did all three attempts fail, and what must be true for the fourth to succeed?
+   - Expected output: a root cause and a concrete spec for the implementer.
+
+2. **Implementer, attempt 4**
+   - Model: sonnet, the standard-class default. It becomes opus or a frontier model only if you approve one.
+   - Effort: low if the diagnosis shows a local pattern-following change, otherwise medium (never above medium).
+   - Brief:
+     - The spec section and requirement ids.
+     - The failing test.
+     - The class (standard).
+     - The diagnostician's root cause and the constraints it found.
+   - It is dispatched only after the diagnosis and your go-ahead.
+
+3. **Code reviewer**
+   - Model: opus
+   - Effort: high
+   - Role: one code review, as required for standard.
+   - Brief:
+     - The spec, the requirement and the plan task.
+     - The merge request description.
+     - The diff as a file, computed from the base commit recorded before the attempt started.
+   - A normal human review follows.
+
+I would not dispatch a refuter or a compliance review, because those are critical-class only. I would not dispatch an ops (haiku) agent, because no mechanical sweep is needed.
+
+Do you want the diagnosis first, or a frontier-model implementer straight away?

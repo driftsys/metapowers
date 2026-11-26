@@ -1,0 +1,35 @@
+For a standard task, the routing skill calls for two subagents: one implementer and one code reviewer.
+
+**Plan task**
+1. Add a dark-mode toggle to the settings screen in `src/ui/settings_view.py`.
+   Class: standard (user's request; it also matches the default for user-facing features)
+
+**Subagent 1: Implementer**
+- **Model:** `sonnet`. Standard implementation goes to the mid-range model, not the strongest one.
+- **Effort:** `medium`. If `settings_view.py` already has a toggle this one can copy, I'd drop it to `low`. Medium is the most implementation ever gets.
+- **Brief:**
+  - The spec section for the dark-mode toggle, including where it sits on the screen, what it defaults to, whether the choice is saved, and how it's applied to the theme.
+  - The requirement ids it covers.
+  - The failing test it must make pass, in the UI tests for the settings view.
+  - The class: standard.
+
+**Subagent 2: Code reviewer**
+- **Model:** `opus`. Standard code review uses the stronger model.
+- **Effort:** `high`, the level for review work.
+- **Brief:**
+  - The spec and the requirement ids.
+  - Plan task 1 as written above.
+  - The merge request description.
+  - The diff, saved as a file and computed from a base commit I record before the task starts (currently `9ac86c6`).
+- **Note:** Claude Code only offers one model family, so the review can't come from a different family. That rule only has to be written down for critical tasks, so this one doesn't need it.
+
+**What I wouldn't dispatch**
+- **No compliance reviewer and no refuter.** Only critical tasks get those.
+- **No exploration or ops subagent.** Reading `settings_view.py` and how it handles themes takes only a few tool calls, so I'd do that myself.
+- **No frontier model.** You didn't ask for one.
+
+**Before dispatching, two things to sort out:**
+- **The briefs need a spec section, requirement ids and a failing test.** I haven't checked whether the repo has them. If it doesn't, I'd write them into the plan first so both briefs have them.
+- **The class stays standard.** If the toggle saves the preference through code in `src/payments/` or the authentication code, the task would move up to critical.
+
+**Human review:** a normal review before merge.

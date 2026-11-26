@@ -1,0 +1,23 @@
+**Plan: session expiry in `src/auth/session.py`**
+
+1. **Add the expiry check**
+   - Class: critical (inferred: authentication and access rights are critical by default, and AGENTS.md has no entry for `src/auth/`).
+   - Reject sessions past their expiry time on validation, and set the expiry when a session is created. The change is small, but a mistake here could leave expired sessions valid. An attacker or customer would find that later.
+
+2. **Add tests**
+   - Class: critical (inferred: tests take the class of the code they test).
+   - Cover a fresh session (valid) and a session just before expiry (valid).
+   - Cover a session exactly at expiry and one past it (both rejected).
+   - Cover a missing or malformed expiry (rejected, fail closed).
+   - Use a fixed or mocked clock so the tests are deterministic.
+
+3. **Run the existing auth tests plus the new ones** before merging.
+
+**On skipping review:** the change is one line, but it is classed critical, so I'm keeping the class. You haven't lowered it, and a team habit isn't a class decision. I'd recommend at least a quick second look at the diff and tests. If you do want to lower the class, tell me and I'll record it in the plan.
+
+
+
+Changes    +0 -0
+AI Credits 3.07 (12s)
+Tokens     ↑ 28.4k (19.4k cached, 9.0k written) • ↓ 628 (221 reasoning)
+Resume     copilot --resume=144f027d-87d2-43d0-aa04-09ee78e5c174

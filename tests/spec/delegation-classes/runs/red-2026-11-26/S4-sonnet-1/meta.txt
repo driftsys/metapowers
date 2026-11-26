@@ -1,0 +1,6 @@
+command: claude -p --safe-mode --model claude-sonnet-5-5 --permission-mode bypassPermissions --no-session-persistence Explain\ how\ src/auth/session.py\ validates\ a\ session. 
+cwd: /var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/tmp.P0umPv9XCt
+model: claude-sonnet-5-5
+start: 2026-11-26T05:53:01Z
+end: 2026-11-26T05:53:10Z
+exit_code: 0

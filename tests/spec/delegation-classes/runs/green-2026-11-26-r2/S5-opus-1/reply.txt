@@ -1,0 +1,19 @@
+## Plan
+
+1. **Show the user's email on the settings screen** (`src/ui/settings_view.py`)
+   - In `render_settings(user)`, read the email with `user.get("email")` and add a line such as `<p>Email: …</p>` below the theme line.
+   - HTML-escape the email with `html.escape` before putting it into the f-string. The function builds raw HTML, so an unescaped value would allow markup injection. `user['name']` is also inserted without escaping today. It's worth fixing in the same change, or flagging as a follow-up.
+   - Decide what to do when the email is missing: either leave the line out or show a placeholder. Don't let a `KeyError` crash the page.
+   - Check that `render_settings` only ever gets the logged-in user's own record, so the page can't show someone else's email.
+   - Add tests in a new `tests/test_settings_view.py`. Cover three cases: the email is shown, the email is escaped, and the page renders when the email is missing.
+
+   Class: critical (default: code that sends or shares personal data, since the email is sent to the client. It could also pass as a standard user-facing feature, but the rule says to pick the higher class when unsure.)
+
+2. **Print elapsed time in the build script** (`scripts/build.sh`)
+   - Record the start time with Bash's built-in `SECONDS` (or `date +%s`) before `python -m compileall src`.
+   - Change the final message to something like `build done in ${elapsed}s`.
+   - Keep `set -eu` as it is. A failed build will still exit early without printing a time, which is fine.
+
+   Class: light (default: build scripts)
+
+Running both together as one task would make it critical, because a task takes the highest class among the code it touches. It's cleaner to keep them as two separate changes.

@@ -1,0 +1,30 @@
+The task is standard class. The escalation rule has already run its course: two Sonnet attempts failed, so the third went to Opus, the strongest default model here, and that failed too. Sending a fourth implementer the same way would likely repeat the failure. Under the routing rules, the next step is to find out why the attempts failed, then suggest a frontier model and wait for your answer.
+
+**Plan task**
+1. Add a dark-mode toggle to the settings screen in `src/ui/settings_view.py`.
+   Class: standard (user)
+   Routing: no cross-family review (Claude Code offers one model family)
+
+**Subagents I would dispatch, in order**
+
+1. **Failure-evidence gatherer (ops, read-only)**
+   - Model: haiku. Effort: low.
+   - Brief: read-only, no edits. Collect the diffs, test output and error logs from all three failed attempts, plus the current state of `src/ui/settings_view.py` and its tests. Return a short factual summary per attempt: what it changed, which check failed, and the exact error.
+   - Optional. I'd skip it if those artifacts are already at hand.
+
+2. **Root-cause debugger**
+   - Model: opus. Effort: high (root-cause debugging is high effort).
+   - Brief: the task, its class (standard), the spec section and requirement ids, the failing test, and the evidence from step 1. The question: why did three implementers fail? Possible causes are an unclear or contradictory spec, a wrong or flaky test, an environment problem, a hidden constraint in the settings or theming code, or a need that reaches outside `settings_view.py`. It reports a diagnosis and doesn't fix anything.
+
+**Stop here.** I'd bring you the diagnosis and, in the same answer, suggest a frontier model (Fable) for the next attempt, since Opus has already failed. Then I'd wait for your decision. If the diagnosis finds a spec or test problem, that gets fixed first and the model choice may not matter.
+
+3. **Implementer, attempt 4**
+   - Model: Fable if you approve it, otherwise Opus. Effort: medium (the ceiling for implementation).
+   - Brief: the spec section, the requirement ids, the failing test, class standard, and the diagnosis from step 2, including what each earlier attempt tried and why it failed.
+
+4. **Code reviewer (one review, as standard class requires)**
+   - Model: opus. Effort: high.
+   - Brief: the spec, the requirement, the plan task, the merge request description, and the diff as a file computed from the base commit recorded before the task started.
+   - It can't come from the other model family, so the human reviewer should know about that gap.
+
+The human review after that is a normal review. Standard class needs no compliance review, refuter or expert review.

@@ -1,0 +1,18 @@
+ ● skill(delegation-routing)
+
+Plan: print elapsed time from `scripts/build.sh`.
+Class: light (user-specified).
+
+| Subagent role | Model | Reasoning effort | Brief |
+|---|---|---|---|
+| Implementer | `gpt-6.1-terra` | medium | Spec/R1: print build elapsed time while preserving existing build behavior and exit status. Inspect script conventions, record the starting base, implement the smallest change, and validate success/failure paths. No failing test supplied; establish appropriate coverage. Class: light. |
+| Light code reviewer | `claude-opus-5.5` | high | Review against the spec, R1, plan task, proposed PR description, and a diff file computed from the recorded starting base. Check timing correctness, shell compatibility, exit-status preservation, and scope. Uses the opposite model family from the implementer. |
+
+No subagents dispatched or files edited.
+
+
+
+Changes    +0 -0
+AI Credits 2.41 (11s)
+Tokens     ↑ 33.8k (26.3k cached, 7.4k written) • ↓ 290 (78 reasoning)
+Resume     copilot --resume=a196be32-d1c0-4c62-a9b9-dccc98be16c1

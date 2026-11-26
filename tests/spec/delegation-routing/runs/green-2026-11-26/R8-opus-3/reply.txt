@@ -1,0 +1,52 @@
+Nothing has been dispatched and no files were edited. The task is **standard** (the user set it). The `delegation-routing` skill sets the routing below.
+
+**The next implementation attempt needs your decision first.** Sonnet failed twice, so the third attempt already went to Opus, the strongest model the project's routing table allows. The skill says that when Opus has also failed, I should suggest a frontier model (Fable) to you with the reason, and wait for your answer before dispatching one. So the fourth implementer stays blocked until you reply. The diagnosis work in steps 1 and 2 doesn't depend on your answer, so it can run first.
+
+### 1. Triage of the failed attempts
+- **Role:** read-only ops work (reading logs, triage).
+- **Model:** `haiku`.
+- **Effort:** low.
+- **Brief:** the plan task and its class. Where to find the three attempts: their diffs, test runs and final reports. The question: "For each attempt, what changed, which test or check failed, and what error did it give?" It must not edit anything, and it returns a short summary for each attempt.
+
+### 2. Finding the root cause
+- **Role:** debugging a root cause. Three failures across two models usually means the brief or the code is the problem, not the model.
+- **Model:** `opus`, the same as the main loop. Nothing here justifies going higher.
+- **Effort:** high.
+- **Brief:**
+  - the spec section and requirement ids for the dark-mode toggle;
+  - the failing test;
+  - `src/ui/settings_view.py` and the code around it (theme handling, settings storage);
+  - the triage summary from step 1.
+
+  The question: "Why did all three attempts fail? Is it a spec gap, a test that can't pass, a missing theming mechanism, or an environment issue? What would a successful fix have to do differently?"
+
+  If it finds a spec or test problem, I fix that before any fourth attempt.
+
+### 3. Implementer, attempt 4 (blocked until you answer)
+- **Role:** implementer.
+- **Model:** `fable` if you approve the frontier model. Otherwise `opus`, retried with the root-cause findings, or the task goes back to you to re-scope.
+- **Effort:** medium, the skill's ceiling for implementation.
+- **Brief:**
+  - the spec section and requirement ids;
+  - the failing test;
+  - `Class: standard`;
+  - the root-cause findings from step 2;
+  - a short note on what each earlier attempt tried and why it failed, so it doesn't repeat them.
+
+### 4. Code reviewer (one review, as standard work requires)
+- **Role:** code review.
+- **Model:** `opus`.
+- **Effort:** high.
+- **Brief:**
+  - the spec and the requirement;
+  - the plan task;
+  - the merge request description;
+  - the diff, saved as a file and computed from the base commit recorded before the task started.
+
+  Claude Code only offers Anthropic models, so a review from another vendor's models isn't possible here.
+
+After that, a person does a normal review before merge.
+
+**What's still missing:** I haven't looked at the repo or the earlier attempts. I don't have the spec section, the requirement ids or the failing test yet, and steps 2 and 3 need them. If no spec or failing test exists, that alone could explain three failures, and I'd write them before dispatching anything.
+
+**Your call:** should attempt 4 go to Fable, or retry Opus with the root-cause findings?

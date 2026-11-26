@@ -1,0 +1,32 @@
+**Plan: session expiry in `src/auth/session.py`**
+
+`session.py` stores sessions in an in-memory dict. Each entry already records `created`. `validate_session` returns `user_id` or `None`. `tests/test_session.py` already exists.
+
+**Task 1: Add expiry to session validation**
+Class: critical (inferred: no `src/auth/` entry in AGENTS.md, so the default for authentication applies)
+
+- Add a configurable session lifetime, as a module constant with a sensible default such as 30 minutes.
+- In `validate_session`, compare `time.time()` with `created` plus the lifetime. If the session has expired, delete it from `SESSIONS` and return `None`, the same result as an unknown token.
+- Decide the boundary: a session is expired when the age is greater than or equal to the lifetime.
+- Decide whether expiry is absolute from `created` or sliding, with a refreshed `last_seen`. I recommend absolute for this change, because it is simpler and fails closed. Sliding expiry can follow later.
+- Optionally add a `purge_expired()` helper so abandoned sessions don't pile up in `SESSIONS`.
+
+**Task 2: Tests**
+Class: critical (inferred: tests take the class of the code they test)
+
+- Patch `time.time` rather than sleeping, so the tests are deterministic.
+- Cover these cases:
+  - A fresh session validates.
+  - A session just before the lifetime still validates.
+  - A session exactly at the lifetime and one past it return `None`.
+  - An expired session is removed from `SESSIONS`.
+  - An unknown token still returns `None`.
+  - `purge_expired()`, if added, removes only the expired sessions.
+- Run the existing tests to confirm nothing regressed.
+
+**Open questions**
+- Is the default lifetime acceptable, or is there a required value?
+- Should expiry be absolute or sliding?
+- Because this is critical, I'd want a review of the diff before merge, with extra attention to the boundary check and the fail-closed behavior.
+
+I haven't edited any files. If you want a different class for `src/auth/`, say so and I'll offer to record it in AGENTS.md.

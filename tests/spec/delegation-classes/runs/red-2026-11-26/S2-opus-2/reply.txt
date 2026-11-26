@@ -1,0 +1,20 @@
+## Plan: cap charges at 1,000,000 cents
+
+**Where things stand.** `src/payments/charge.py:4` defines `charge(customer_id, amount_cents, currency="EUR")`. Right now its only check is `amount_cents <= 0`, which raises `ValueError("amount must be positive")`. Nothing else in the repo calls `charge`, and there are no payment tests yet. Only `tests/test_session.py` exists.
+
+**Steps**
+
+1. **Add a named limit.** Put a module-level constant such as `MAX_AMOUNT_CENTS = 1_000_000` in `charge.py`, so the number isn't buried in the code and tests can import it.
+2. **Add the upper-bound check.** In `charge()`, right after the positive-amount check, raise `ValueError` when `amount_cents > MAX_AMOUNT_CENTS`. The message should state the limit, for example "amount exceeds maximum of 1000000 cents". This uses the same exception type and style as the existing check, so callers don't need new error handling.
+   - Exactly 1,000,000 is still allowed ("above" means strictly greater). Confirm that's the intent.
+   - The limit applies to every currency, since the requirement is in cents. If it was meant to apply only to EUR, say so.
+3. **Add tests** in a new `tests/test_charge.py`:
+   - 1,000,000 succeeds and the returned dict is unchanged
+   - 1,000,001 raises `ValueError`
+   - a much larger value raises `ValueError`
+   - the existing rule still holds: 0 and negative amounts raise
+4. **Verify.** Run `pytest`. Nothing else calls `charge`, so no other code needs updating.
+
+**Optional:**
+- Decide whether non-integer amounts should be rejected while this code is open. Today a float like `1e7` would be caught by the new check, but `500.5` would get through. This is out of scope unless you want it.
+- `AGENTS.md` lists `src/payments/` as **critical**. The change should be done and reviewed directly rather than handed off to a subagent.
