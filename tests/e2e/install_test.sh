@@ -19,6 +19,7 @@ BUNDLE_PATH="$METAPOWERS_ROOT/skills/metapowers.bundle.yaml"
 # The metapowers bundle no longer requires gardenpowers, so the tests of the
 # gardenpowers items install that bundle directly.
 GARDEN_BUNDLE_PATH="$METAPOWERS_ROOT/skills/gardenpowers.bundle.yaml"
+DELEGATION_BUNDLE_PATH="$METAPOWERS_ROOT/skills/delegation-policies.bundle.yaml"
 
 # Per-test fixture: a brand-new temp directory acting as a consumer project.
 # `setup` and `teardown` are bash_unit lifecycle hooks invoked for every test.
@@ -112,4 +113,93 @@ test_plugin_install_does_not_block_items() {
     upskill add "$BUNDLE_PATH" --project --quiet
     assert "[ -f .claude/rules/scope-discipline.md ]" \
         "rule install must succeed regardless of plugin install outcome"
+}
+
+# ── delegation-policies bundle ────────────────────────────────────────────────
+
+# Install the delegation-policies bundle without touching the real user
+# configuration: HOME points at a temp directory, and stub client CLIs that
+# exit 1 come first on PATH. The bundle declares no plugins, so no stub should
+# run.
+dp_install() {
+    local isolation cli
+    isolation="$(mktemp -d)"
+    mkdir -p "$isolation/bin" "$isolation/home"
+    for cli in claude copilot code opencode; do
+        printf '#!/bin/sh\nexit 1\n' >"$isolation/bin/$cli"
+        chmod +x "$isolation/bin/$cli"
+    done
+    HOME="$isolation/home" PATH="$isolation/bin:$PATH" \
+        upskill add "$DELEGATION_BUNDLE_PATH" --project --quiet
+    rm -rf "$isolation"
+}
+
+dp_lock_items() {
+    python3 -c '
+import json
+lock = json.load(open(".upskill-lock.json"))
+print("\n".join(sorted(i["kind"] + ":" + i["name"] for i in lock["items"])))
+'
+}
+
+dp_lock_bundles() {
+    python3 -c '
+import json
+lock = json.load(open(".upskill-lock.json"))
+print("\n".join(sorted(b["name"] for b in lock["bundles"])))
+'
+}
+
+dp_files_under() {
+    find "$@" -type f | LC_ALL=C sort
+}
+
+test_delegation_policies_installs_exactly_its_items() {
+    dp_install
+    assert_equals "rule:delegation-basics
+rule:delegation-classes
+skill:delegation-routing" "$(dp_lock_items)" \
+        "the bundle must install exactly two rules and one skill"
+    assert_equals "delegation-policies" "$(dp_lock_bundles)" \
+        "delegation-policies must be the only bundle recorded in the lockfile"
+    assert_equals ".claude/rules/delegation-basics.md
+.claude/rules/delegation-classes.md
+.claude/skills/delegation-routing/SKILL.md" "$(dp_files_under .claude)" \
+        "the bundle must write exactly these Claude Code files"
+    assert_equals ".github/instructions/delegation-basics.instructions.md
+.github/instructions/delegation-classes.instructions.md
+.github/skills/delegation-routing/SKILL.md" "$(dp_files_under .github)" \
+        "the bundle must write exactly these Copilot files"
+    assert_equals ".agents/rules/delegation-basics/RULE.md
+.agents/rules/delegation-classes/RULE.md
+.agents/skills/delegation-routing/SKILL.md" "$(dp_files_under .agents)" \
+        "the bundle must write exactly these opencode files"
+}
+
+test_delegation_routing_skill_keeps_only_the_client_model_table() {
+    dp_install
+    local claude_skill=.claude/skills/delegation-routing/SKILL.md
+    local copilot_skill=.github/skills/delegation-routing/SKILL.md
+    assert "grep -qF 'Claude Code offers one model family' $claude_skill" \
+        "the Claude Code skill must keep the Claude block"
+    assert "! grep -qF 'gpt-*-sol' $claude_skill" \
+        "the Claude Code skill must not hold the Copilot or Codex tables"
+    assert "! grep -qF 'Codex offers one model family' $claude_skill" \
+        "the Claude Code skill must not hold the Codex block"
+    assert "! grep -qF '@client' $claude_skill" \
+        "the Claude Code skill must not keep a client delimiter"
+    assert "grep -qF 'gpt-*-sol' $copilot_skill" \
+        "the Copilot skill must keep the Copilot table"
+    assert "! grep -qF 'Claude Code offers one model family' $copilot_skill" \
+        "the Copilot skill must not hold the Claude-only text"
+    assert "! grep -qF 'Codex offers one model family' $copilot_skill" \
+        "the Copilot skill must not hold the Codex block"
+    assert "! grep -qF '@client' $copilot_skill" \
+        "the Copilot skill must not keep a client delimiter"
+}
+
+test_model_routing_rule_is_gone() {
+    # The rule was renamed to delegation-basics.
+    assert "[ ! -e \"$METAPOWERS_ROOT/skills/model-routing\" ]" \
+        "skills/model-routing must not exist after the rename to delegation-basics"
 }
