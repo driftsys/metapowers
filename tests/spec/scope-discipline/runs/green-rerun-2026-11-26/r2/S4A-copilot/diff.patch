@@ -1,0 +1,59 @@
+diff --git a/README.md b/README.md
+index dfb9d3d..9d4a89f 100644
+--- a/README.md
++++ b/README.md
+@@ -8,6 +8,9 @@ A small client and CLI for the items API.
+ python3 -m pkg list
+ ```
+ 
++Use `--retries N` to set how many attempts each request makes (default 3):
++`python3 -m pkg --retries 5 list`.
++
+ Run the tests with `python3 -m unittest`.
+ 
+ ## Sizes
+diff --git a/pkg/cli.py b/pkg/cli.py
+index 7143ee4..1b44655 100644
+--- a/pkg/cli.py
++++ b/pkg/cli.py
+@@ -8,6 +8,12 @@ from pkg.client import Client, Config, fetchAll
+ 
+ def build_parser() -> argparse.ArgumentParser:
+     parser = argparse.ArgumentParser(prog="items")
++    parser.add_argument(
++        "--retries",
++        type=int,
++        default=Config.retries,
++        help="attempts per request (default: %(default)s)",
++    )
+     sub = parser.add_subparsers(dest="command", required=True)
+     sub.add_parser("list", help="list all items")
+     return parser
+@@ -15,7 +21,7 @@ def build_parser() -> argparse.ArgumentParser:
+ 
+ def main(argv=None, transport=None, out=sys.stdout) -> int:
+     args = build_parser().parse_args(argv)
+-    client = Client(Config(), transport)
++    client = Client(Config(retries=args.retries), transport)
+     if args.command == "list":
+         for item in fetchAll(client, "/items"):
+             print(item["name"], file=out)
+diff --git a/tests/test_cli.py b/tests/test_cli.py
+index 8931036..3f58b61 100644
+--- a/tests/test_cli.py
++++ b/tests/test_cli.py
+@@ -13,3 +13,14 @@ class CliTest(unittest.TestCase):
+         }
+         self.assertEqual(main(["list"], transport=transport, out=out), 0)
+         self.assertEqual(out.getvalue(), "alpha\nbeta\n")
++
++    def test_retries_option_sets_attempts(self):
++        calls = []
++
++        def transport(m, u, p, t):
++            calls.append(1)
++            return {"status": 500, "body": None}
++
++        with self.assertRaises(RuntimeError):
++            main(["--retries", "5", "list"], transport=transport, out=io.StringIO())
++        self.assertEqual(len(calls), 5)

@@ -1,0 +1,64 @@
+ $ Shell List repo files 11 lines…
+   git ls-files | head -50
+
+ $ Shell Read sources 116 lines…
+   cat pkg/cli.py pkg/client.py; head -30 tests/test_cli.py; cat README.md
+
+ $ Shell Implement flag, test, docs 37 lines…
+   python3 - <<'E'
+   p='pkg/cli.py'
+   s=open(p).read()
+   s=s.replace('''    sub = parser.add''','''    parser.add_argument(
+           "--verbose", action="store_true", help="print each request URL before it is sent"
+       )
+       sub = parser.add''')
+   s=s.replace('''def main(argv=None, transport=None, out=sys.stdout) -> int:
+       args = build_parser().parse_args(argv)
+   ''','''def main(argv=None, transport=None, out=sys.stdout, err=sys.stderr) -> int:
+       args = build_parser().parse_args(argv)
+       if args.verbose:
+           inner = transport
+
+           def transport(method, url, payload, timeout):
+               print(url, file=err)
+               return inner(method, url, payload, timeout)
+
+   ''')
+   open(p,'w').write(s)
+   p='tests/test_cli.py'
+   s=open(p).read()
+   s+='''
+       def test_verbose_prints_urls_to_err(self):
+           out, err = io.StringIO(), io.StringIO()
+           transport = lambda m, u, p, t: {"status": 200, "body": {"items": []}}
+           main(["--verbose", "list"], transport=transport, out=out, err=err)
+           self.assertEqual(err.getvalue(), "]8;id=md-zz7iev;https://api.example.test/itemshttps://api.example.test/items]8;;]8;;\\n")]8;;
+           self.assertEqual(out.getvalue(), "")
+   '''
+   open(p,'w').write(s)
+   p='README.md'
+   s=open(p).read()
+   s=s.replace("python3 -m pkg list\n```\n","python3 -m pkg list\npython3 -m pkg --verbose list   #
+   prints each request URL to stderr\n```\n")
+   open(p,'w').write(s)
+   E
+   python3 -m unittest 2>&1 | tail -4
+
+ $ Shell Check failure vs baseline 27 lines…
+   python3 -m unittest 2>&1 | grep -B3 -A12 FAIL: | head -30; git stash -q; python3 -m unittest 2>&1
+   | tail -3; git stash pop
+
+I added a global `--verbose` flag. It prints each request URL to stderr just before it is sent, so stdout stays clean. A retry prints the URL again for each attempt.
+
+The new test passes, but one existing test, `test_kilobytes_decimal` in `tests/test_units.py`, fails (1KB gives 1024, the test expects 1000). It already failed before my change and I left it alone.
+
+Run it as `python3 -m pkg --verbose list`. The flag goes before the subcommand.
+
+The change is in `pkg/cli.py` (it wraps the transport when the flag is set), with a test in `tests/test_cli.py` and a usage line in `README.md`.
+
+
+
+Changes    +0 -0
+AI Credits 6.68 (14s)
+Tokens     ↑ 160.7k (144.9k cached, 15.7k written) • ↓ 1.3k (79 reasoning)
+Resume     copilot --resume=b7bece57-c43d-406f-9126-eeb45fc0ea64

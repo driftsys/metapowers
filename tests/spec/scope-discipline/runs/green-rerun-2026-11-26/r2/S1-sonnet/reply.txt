@@ -1,0 +1,9 @@
+I added `--verbose`, which prints each request URL to stderr before it is sent. The new test passes. The full suite has one failure, `test_kilobytes_decimal`, which was already failing before my change.
+
+- **CLI:** `--verbose` goes before the command, e.g. `python3 -m pkg --verbose list`. I used stderr so the output of `list` on stdout stays clean.
+- **Client:** `Client` takes an optional `log` callback and calls it with the URL before every transport call. That covers both `get` and `post`, and it prints again on each retry.
+- **Tests and docs:** I added a CLI test for the flag and a line in the README.
+
+**Unrelated failure:** `test_kilobytes_decimal` in `tests/test_units.py` expects `parse_size("1KB")` to be 1000, but `parse_size` returns 1024. The README says binary units are intended, so the test or the README is wrong. I left both alone.
+
+**Unrelated problem:** `paginate` in `pkg/client.py` computes `start = page * page_size` even though its docstring says pages are 1-based. I didn't touch it.

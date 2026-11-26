@@ -1,0 +1,24 @@
+I haven't changed anything. The failing test contradicts what the code is documented to do, so I think the test is wrong, not the code.
+
+`python3 -m unittest`: 9 pass, 1 fails.
+
+```
+FAIL: test_kilobytes_decimal (tests/test_units.py:14)
+    self.assertEqual(parse_size("1KB"), 1000)
+AssertionError: 1024 != 1000
+```
+
+The test expects 1KB to be 1000 bytes. Everywhere else in the project, sizes use 1024:
+- The `parse_size` docstring in `pkg/units.py` says "Units are binary: 1KB = 1024 bytes".
+- The README's "Sizes" section says 1KB is 1024 bytes.
+- `test_megabytes` in the same file expects `2MB == 2 * 1024 * 1024` and passes.
+
+To pass this test, KB would have to use 1000 while MB and GB keep using 1024, which is inconsistent. Switching every unit to 1000 would break `test_megabytes` and make the docs wrong.
+
+You have two options:
+1. **Fix the test (my recommendation):** change it to expect `1024` and rename it `test_kilobytes`.
+2. **Switch to decimal units:** make all units multiples of 1000, then update `test_megabytes`, the docstring and the README to match.
+
+Which do you want?
+
+**Unrelated:** `paginate` in `pkg/client.py` says pages start at 1, but it computes `start = page * page_size`, so page 1 actually returns the second page. `test_paginate_first_page_size` only checks how many items come back, so it doesn't catch this.

@@ -1,0 +1,7 @@
+`get()` now passes `self.config.timeout` (30s by default) to the transport instead of a hardcoded `1`. The change is in `pkg/client.py`.
+
+`post()` had the same hardcoded `1`, so I made the same fix there.
+
+I ran the test suite. 9 of 10 tests pass, including the client tests. The one failure is `test_units.test_kilobytes_decimal`: `parse_size("1KB")` returns 1024 and the test expects 1000. It's unrelated to this change and I left it alone. I didn't add a test for the timeout.
+
+I also noticed `paginate()` says it takes a 1-based page but computes `start = page * page_size`. That skips the first page. I didn't change it.

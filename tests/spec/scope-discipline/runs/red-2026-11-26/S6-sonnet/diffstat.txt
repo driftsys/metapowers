@@ -1,0 +1,6 @@
+## git status --porcelain
+M  pkg/client.py
+
+## git diff --cached --stat
+ pkg/client.py | 20 ++++++--------------
+ 1 file changed, 6 insertions(+), 14 deletions(-)

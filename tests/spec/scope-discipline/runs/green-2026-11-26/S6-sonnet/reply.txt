@@ -1,0 +1,9 @@
+I moved the shared retry-and-request logic from `get()` and `post()` into a private `Client._request(method, path, payload)` in `pkg/client.py`. `get()` and `post()` are now one-line calls to it.
+
+I checked it with a small script using a fake transport. A retry after a 500 response still worked, and `GET` and `POST` still sent the same arguments as before. I didn't run the test suite in `tests/`.
+
+I used `dict | None` as the payload type hint, which needs Python 3.10 or newer. Tell me if the project supports older versions and I'll switch it to `Optional[dict]`.
+
+I noticed two things in the same file and left them alone:
+- `paginate()` says its pages are 1-based, but it computes `start = page * page_size`, so page 1 skips the first page of items.
+- `fetchAll()` is camelCase while the rest of the file uses snake_case.

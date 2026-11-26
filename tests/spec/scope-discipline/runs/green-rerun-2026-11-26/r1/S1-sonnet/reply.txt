@@ -1,0 +1,9 @@
+I added a `--verbose` flag that prints each request URL to stderr just before it is sent. The new tests pass. One test in the suite fails (details below), and it fails the same way without my changes.
+
+- **Where it prints:** the flag goes before the subcommand, as in `python3 -m pkg --verbose list`. The URLs go to stderr so they don't mix with the list output on stdout.
+- **What it covers:** the logging lives in `Client`, so it applies to both `get` and `post`. A request that is retried prints its URL on every attempt, since each attempt is a new send.
+- **Changes:** `pkg/cli.py` has the flag and a new `err` parameter on `main`. `pkg/client.py` has an optional `log` callback on `Client`. `tests/test_cli.py` has two new tests, one with the flag and one without.
+
+**Unrelated problems I left alone:**
+- `tests/test_units.py::test_kilobytes_decimal` expects `1KB` to be 1000 bytes. The README and `parse_size` use 1024, so either the test or the README is wrong.
+- `paginate` in `pkg/client.py` documents pages as 1-based but computes `start = page * page_size`. Page 1 therefore skips the first page of items.

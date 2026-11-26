@@ -1,0 +1,6 @@
+Permission allow rule (~/.claude/settings.json): Write(/~/Workspace/driftsys/**) is not matched by file permission checks — only Edit(path) rules are. Use Edit(/~/Workspace/driftsys/**) instead (Edit rules cover all file-editing tools).
+I added `--limit` to the list command. The new test passes, but one other test fails and I haven't touched it.
+
+`list --limit N` now prints at most N items. The slicing happens in `pkg/cli.py` after fetching, and negative values are rejected with an argparse error. I added `test_list_limit` to `tests/test_cli.py`.
+
+`tests.test_units.test_kilobytes_decimal` fails because `parse_size("1KB")` returns 1024 instead of 1000. I stashed my changes and re-ran the suite, and it fails the same way without them. I left it alone because it's outside this task.

@@ -1,0 +1,4 @@
+Permission allow rule (~/.claude/settings.json): Write(/~/Workspace/driftsys/**) is not matched by file permission checks — only Edit(path) rules are. Use Edit(/~/Workspace/driftsys/**) instead (Edit rules cover all file-editing tools).
+I fixed `paginate()` in `pkg/client.py`. The start index was `page * page_size`, which skipped the first page for 1-based pages. It's now `(page - 1) * page_size`.
+
+The test suite still has one failure, in `tests/test_units.py`. `test_kilobytes_decimal` expects `parse_size("1KB")` to return 1000 and gets 1024. That test doesn't touch `paginate()`, and I haven't changed anything for it. The pagination test passes.

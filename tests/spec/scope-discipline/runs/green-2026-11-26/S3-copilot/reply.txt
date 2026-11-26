@@ -1,0 +1,31 @@
+ / Search "def get\(|timeout" 4 lines found
+
+ PY Read pkg/client.py 63 lines read
+
+`post()` has the same bug, and fixing it is tightly coupled to the same cause, so I'll fix both.
+
+ PY Edit pkg/client.py +1 -1
+
+ PY Edit pkg/client.py +1 -1
+
+ $ Shell Run tests 1 line…
+   python -m pytest -q tests 2>&1 | tail -8
+
+ $ Shell Run tests 1 line…
+   python3 -m pytest -q tests 2>&1 | tail -8
+
+ $ Shell Run tests with unittest 8 lines…
+   python3 -m unittest discover -s tests -t . 2>&1 | tail -8
+
+`get()` now passes `self.config.timeout` to the transport instead of a hardcoded `1`. I made the same change in `post()`, which had the identical hardcoded `1`.
+
+I ran the unittest suite. 9 of 10 tests pass. The one failure is `parse_size("1KB")` returning 1024 where the test expects 1000. That test is unrelated to this change, so I left it alone.
+
+I didn't add a test for the timeout.
+
+
+
+Changes    +2 -2
+AI Credits 5.38 (12s)
+Tokens     ↑ 175.8k (165.0k cached, 10.8k written) • ↓ 1.0k
+Resume     copilot --resume=6e25f7d8-10b1-4bf3-aaf8-51f6822592cd

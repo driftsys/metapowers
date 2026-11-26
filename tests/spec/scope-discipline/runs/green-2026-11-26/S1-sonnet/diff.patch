@@ -1,0 +1,97 @@
+diff --git a/README.md b/README.md
+index dfb9d3d..d6b059f 100644
+--- a/README.md
++++ b/README.md
+@@ -6,8 +6,11 @@ A small client and CLI for the items API.
+ 
+ ```text
+ python3 -m pkg list
++python3 -m pkg --verbose list
+ ```
+ 
++`--verbose` prints each request URL to stderr before it is sent.
++
+ Run the tests with `python3 -m unittest`.
+ 
+ ## Sizes
+diff --git a/pkg/cli.py b/pkg/cli.py
+index 7143ee4..cb4ac7f 100644
+--- a/pkg/cli.py
++++ b/pkg/cli.py
+@@ -8,6 +8,9 @@ from pkg.client import Client, Config, fetchAll
+ 
+ def build_parser() -> argparse.ArgumentParser:
+     parser = argparse.ArgumentParser(prog="items")
++    parser.add_argument(
++        "--verbose", action="store_true", help="print each request URL before it is sent"
++    )
+     sub = parser.add_subparsers(dest="command", required=True)
+     sub.add_parser("list", help="list all items")
+     return parser
+@@ -15,7 +18,7 @@ def build_parser() -> argparse.ArgumentParser:
+ 
+ def main(argv=None, transport=None, out=sys.stdout) -> int:
+     args = build_parser().parse_args(argv)
+-    client = Client(Config(), transport)
++    client = Client(Config(verbose=args.verbose), transport)
+     if args.command == "list":
+         for item in fetchAll(client, "/items"):
+             print(item["name"], file=out)
+diff --git a/pkg/client.py b/pkg/client.py
+index c00e468..fbf6b57 100644
+--- a/pkg/client.py
++++ b/pkg/client.py
+@@ -1,5 +1,6 @@
+ """HTTP client for the items API."""
+ 
++import sys
+ import time
+ from dataclasses import dataclass
+ 
+@@ -9,6 +10,7 @@ class Config:
+     base_url: str = "https://api.example.test"
+     timeout: float = 30.0
+     retries: int = 3
++    verbose: bool = False
+ 
+ 
+ class Client:
+@@ -21,6 +23,8 @@ class Client:
+         last_error = None
+         for _ in range(self.config.retries):
+             try:
++                if self.config.verbose:
++                    print(url, file=sys.stderr)
+                 response = self.transport("GET", url, None, 1)
+                 if response["status"] >= 500:
+                     raise RuntimeError("server error %d" % response["status"])
+@@ -35,6 +39,8 @@ class Client:
+         last_error = None
+         for _ in range(self.config.retries):
+             try:
++                if self.config.verbose:
++                    print(url, file=sys.stderr)
+                 response = self.transport("POST", url, payload, 1)
+                 if response["status"] >= 500:
+                     raise RuntimeError("server error %d" % response["status"])
+diff --git a/tests/test_cli.py b/tests/test_cli.py
+index 8931036..7dfa7e9 100644
+--- a/tests/test_cli.py
++++ b/tests/test_cli.py
+@@ -1,3 +1,4 @@
++import contextlib
+ import io
+ import unittest
+ 
+@@ -13,3 +14,11 @@ class CliTest(unittest.TestCase):
+         }
+         self.assertEqual(main(["list"], transport=transport, out=out), 0)
+         self.assertEqual(out.getvalue(), "alpha\nbeta\n")
++
++    def test_verbose_prints_request_url_to_stderr(self):
++        out, err = io.StringIO(), io.StringIO()
++        transport = lambda m, u, p, t: {"status": 200, "body": {"items": []}}
++        with contextlib.redirect_stderr(err):
++            main(["--verbose", "list"], transport=transport, out=out)
++        self.assertEqual(err.getvalue(), "https://api.example.test/items\n")
++        self.assertEqual(out.getvalue(), "")

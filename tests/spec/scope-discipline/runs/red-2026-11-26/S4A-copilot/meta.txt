@@ -1,0 +1,6 @@
+command: copilot -p Make\ retries\ configurable. --no-custom-instructions --allow-all-tools 
+cwd: /var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/tmp.9DmR7sG9bP
+model: default (observed in session events: claude-sonnet-5.5)
+start: 2026-11-26T03:52:39Z
+end: 2026-11-26T03:52:54Z
+exit_code: 0

@@ -1,0 +1,6 @@
+Permission allow rule (~/.claude/settings.json): Write(/~/Workspace/driftsys/**) is not matched by file permission checks — only Edit(path) rules are. Use Edit(/~/Workspace/driftsys/**) instead (Edit rules cover all file-editing tools).
+I moved the duplicated retry loop in `pkg/client.py` into a private `Client._request(method, path, payload)` helper. `get()` and `post()` are now one-line wrappers around it. Behavior is meant to be unchanged: the URL building, the retry on 5xx, the `time.sleep(0)` and the final re-raise are all as before. I haven't run any tests or the code.
+
+The helper's `dict | None` annotation needs Python 3.10 or newer. If you support older versions, use `Optional[dict]` instead.
+
+I left the other functions alone, including `paginate`, which treats `page` as 0-based even though its docstring says 1-based.

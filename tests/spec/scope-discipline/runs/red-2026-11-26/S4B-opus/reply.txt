@@ -1,0 +1,10 @@
+Permission allow rule (~/.claude/settings.json): Write(/~/Workspace/driftsys/**) is not matched by file permission checks — only Edit(path) rules are. Use Edit(/~/Workspace/driftsys/**) instead (Edit rules cover all file-editing tools).
+I added `--limit N` to the `list` command, so `python3 -m pkg list --limit 10` prints at most 10 items. It only accepts whole numbers of 1 or more; `0`, negative numbers or non-numbers give a normal usage error.
+
+- **`pkg/cli.py`:** the new option and a small check that rejects anything below 1. Leaving `--limit` off still lists everything.
+- **`tests/test_cli.py`:** two new tests, one that the limit cuts the list short and one that `0` is rejected. Both pass.
+- **`README.md`:** an example of the new option.
+
+The full test suite has one failure, and it was already failing before my change: `test_kilobytes_decimal` in `tests/test_units.py` expects `parse_size("1KB")` to be 1000, but it returns 1024. The README says 1KB is 1024 bytes, so the test looks wrong rather than the code. I left it alone because it's not part of this task.
+
+The limit is applied after all items are fetched, so it shortens the output but doesn't reduce the API calls. I haven't committed anything.

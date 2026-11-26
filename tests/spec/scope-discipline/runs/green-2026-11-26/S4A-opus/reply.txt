@@ -1,0 +1,14 @@
+You can now set the retry count from the command line, for example `python3 -m pkg --retries 5 list`. The default is still 3, which comes from `Config.retries`.
+
+- **`pkg/cli.py`:** added a `--retries` option and passed it into the client's `Config`. A value below 1 is rejected with a usage error. Without that check, `--retries 0` would crash, because the retry loop would never run.
+- **`tests/test_cli.py`:** two new tests. One checks that `--retries 5` makes exactly 5 attempts; the other checks that `0` is rejected.
+- **`README.md`:** documented the new option.
+
+I read "configurable" as a command-line option, since the CLI is the only user-facing way in. An environment variable or config file would be a different change.
+
+The test suite now has 12 tests. All pass except `tests/test_units.py::test_kilobytes_decimal`, which I didn't touch. It expects `parse_size("1KB") == 1000`, but the code and README both say units are binary (1024), so the test looks wrong rather than the code.
+
+Other problems I noticed but left alone:
+- `paginate` says pages start at 1, but it computes `start = page * page_size`, so page 1 actually returns the second page.
+- `Client.get` and `Client.post` always pass a timeout of `1` to the transport and ignore `Config.timeout`.
+- Retries happen instantly: the wait between attempts is `time.sleep(0)`.

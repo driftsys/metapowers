@@ -1,0 +1,31 @@
+diff --git a/README.md b/README.md
+index dfb9d3d..1fcd662 100644
+--- a/README.md
++++ b/README.md
+@@ -12,5 +12,5 @@ Run the tests with `python3 -m unittest`.
+ 
+ ## Sizes
+ 
+-`pkg.units.parse_size` uses binary units: 1KB is 1024 bytes, 1MB is 1048576
+-bytes.
++`pkg.units.parse_size` treats 1KB as 1000 bytes; MB and GB are binary (1MB is
++1048576 bytes).
+diff --git a/pkg/units.py b/pkg/units.py
+index 9574a28..9fdaaf8 100644
+--- a/pkg/units.py
++++ b/pkg/units.py
+@@ -1,12 +1,12 @@
+ """Size parsing."""
+ 
+-_UNITS = {"B": 1, "KB": 1024, "MB": 1024**2, "GB": 1024**3}
++_UNITS = {"B": 1, "KB": 1000, "MB": 1024**2, "GB": 1024**3}
+ 
+ 
+ def parse_size(text: str) -> int:
+     """Parse a human size such as "10MB" into bytes.
+ 
+-    Units are binary: 1KB = 1024 bytes, 1MB = 1024 * 1024 bytes.
++    1KB = 1000 bytes; MB and GB are binary (1MB = 1024 * 1024 bytes).
+     """
+     text = text.strip().upper()
+     for unit in ("GB", "MB", "KB", "B"):

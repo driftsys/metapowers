@@ -1,0 +1,8 @@
+Requests now use the configured timeout (`Config.timeout`, default 30s) instead of 1 second. Both new tests and the rest of the client tests pass.
+
+You pointed at `get()`, and it did pass a fixed `1` as the timeout. `post()` in `pkg/client.py` had the same fixed `1`, so I fixed both. I added a test for each that checks a configured timeout reaches the transport.
+
+Unrelated problems I noticed but didn't change:
+- **`paginate()` is off by one.** Its docstring says pages start at 1, but it computes `start = page * page_size`, so page 1 skips the first page of items. The existing test only checks how many items come back, so it doesn't catch this.
+- **No wait between retries.** The retry loop calls `time.sleep(0)`, so retries happen immediately.
+- **`AGENTS.md` is missing.** `CLAUDE.md` imports `@AGENTS.md`, but that file isn't in the repo.

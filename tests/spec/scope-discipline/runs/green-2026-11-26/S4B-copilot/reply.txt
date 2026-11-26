@@ -1,0 +1,35 @@
+ / Search "list" 5 files found
+
+ PY Read pkg/cli.py 22 lines read
+
+ / Search "list" (pkg/client.py, README.md) 3 lines found
+
+ PY Read tests/test_cli.py 15 lines read
+
+ PY Read pkg/client.py 63 lines read
+
+ MD Read README.md 16 lines read
+
+ PY Edit pkg/cli.py +11 -1
+
+ PY Edit tests/test_cli.py +9
+
+ PY Edit pkg/cli.py +4 -1
+
+ MD Edit README.md +1 -1
+
+ $ Shell Run CLI tests 5 lines…
+   python3 -m unittest tests.test_cli 2>&1 | tail -5
+
+I added `--limit N` to `list` in `pkg/cli.py`, and the CLI tests pass.
+
+- **Behavior:** the full item list is still fetched, then cut to the first N items on the client side. Without the option, all items print as before.
+- **Validation:** a negative N is rejected with an argparse error.
+- **Tests and docs:** I added a `--limit` test in `tests/test_cli.py` and updated the usage line in `README.md`.
+
+
+
+Changes    +25 -3
+AI Credits 6.77 (18s)
+Tokens     ↑ 179.2k (166.7k cached, 12.4k written) • ↓ 2.0k (67 reasoning)
+Resume     copilot --resume=9b3b8efb-239a-4563-be36-c63b4a98df52

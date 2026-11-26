@@ -1,0 +1,86 @@
+diff --git a/README.md b/README.md
+index dfb9d3d..3ccecba 100644
+--- a/README.md
++++ b/README.md
+@@ -6,6 +6,7 @@ A small client and CLI for the items API.
+ 
+ ```text
+ python3 -m pkg list
++python3 -m pkg list --limit 10
+ ```
+ 
+ Run the tests with `python3 -m unittest`.
+diff --git a/pkg/cli.py b/pkg/cli.py
+index 7143ee4..5d0ce75 100644
+--- a/pkg/cli.py
++++ b/pkg/cli.py
+@@ -9,14 +9,23 @@ from pkg.client import Client, Config, fetchAll
+ def build_parser() -> argparse.ArgumentParser:
+     parser = argparse.ArgumentParser(prog="items")
+     sub = parser.add_subparsers(dest="command", required=True)
+-    sub.add_parser("list", help="list all items")
++    list_parser = sub.add_parser("list", help="list all items")
++    list_parser.add_argument(
++        "--limit", type=int, default=None, help="print at most N items"
++    )
+     return parser
+ 
+ 
+ def main(argv=None, transport=None, out=sys.stdout) -> int:
+-    args = build_parser().parse_args(argv)
++    parser = build_parser()
++    args = parser.parse_args(argv)
++    if args.command == "list" and args.limit is not None and args.limit < 0:
++        parser.error("--limit must be a non-negative integer")
+     client = Client(Config(), transport)
+     if args.command == "list":
+-        for item in fetchAll(client, "/items"):
++        items = fetchAll(client, "/items")
++        if args.limit is not None:
++            items = items[: args.limit]
++        for item in items:
+             print(item["name"], file=out)
+     return 0
+diff --git a/tests/test_cli.py b/tests/test_cli.py
+index 8931036..4bdb2ca 100644
+--- a/tests/test_cli.py
++++ b/tests/test_cli.py
+@@ -1,3 +1,4 @@
++import contextlib
+ import io
+ import unittest
+ 
+@@ -13,3 +14,33 @@ class CliTest(unittest.TestCase):
+         }
+         self.assertEqual(main(["list"], transport=transport, out=out), 0)
+         self.assertEqual(out.getvalue(), "alpha\nbeta\n")
++
++    def _transport(self, m, u, p, t):
++        return {
++            "status": 200,
++            "body": {"items": [{"name": "alpha"}, {"name": "beta"}, {"name": "gamma"}]},
++        }
++
++    def test_list_limit_truncates(self):
++        out = io.StringIO()
++        self.assertEqual(
++            main(["list", "--limit", "2"], transport=self._transport, out=out), 0
++        )
++        self.assertEqual(out.getvalue(), "alpha\nbeta\n")
++
++    def test_list_limit_zero_prints_nothing(self):
++        out = io.StringIO()
++        self.assertEqual(
++            main(["list", "--limit", "0"], transport=self._transport, out=out), 0
++        )
++        self.assertEqual(out.getvalue(), "")
++
++    def test_list_limit_larger_than_items(self):
++        out = io.StringIO()
++        main(["list", "--limit", "10"], transport=self._transport, out=out)
++        self.assertEqual(out.getvalue(), "alpha\nbeta\ngamma\n")
++
++    def test_list_limit_rejects_negative(self):
++        with contextlib.redirect_stderr(io.StringIO()):
++            with self.assertRaises(SystemExit):
++                main(["list", "--limit", "-1"], transport=self._transport)

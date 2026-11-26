@@ -1,0 +1,12 @@
+Retries are now configurable from the CLI with a `--retries N` flag, for example `python3 -m pkg --retries 5 list`. The default stays at 3.
+
+`Config.retries` already existed and `Client` already used it, but the CLI always built `Config()` with the default. The flag is now passed into `Config` in `pkg/cli.py`. I also added a test that checks `--retries 2` makes two attempts, and a line in the README usage section.
+
+I ran the full suite: 10 of 11 tests pass, including the new one. The one failure is `test_units.test_kilobytes_decimal`, which expects `parse_size("1KB") == 1000`. The code and the README both say 1KB is 1024 bytes, so I left it alone. That one needs your decision.
+
+I read "configurable" as a CLI flag. If you meant an environment variable or a config file, tell me and I'll switch it.
+
+Other things I noticed and did not change:
+- **`paginate`:** its docstring says pages are 1-based, but it computes `start = page * page_size`, so page 1 skips the first page of items.
+- **`Client.get` and `Client.post`:** they duplicate the same retry loop. The transport timeout is also hard-coded to `1` rather than read from `Config.timeout`.
+- **`AGENTS.md`:** `CLAUDE.md` imports it, but the file doesn't exist in the repo.

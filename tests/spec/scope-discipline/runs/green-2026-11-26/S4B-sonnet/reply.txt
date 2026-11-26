@@ -1,0 +1,9 @@
+`list` now takes `--limit N` and prints at most N items. The new test passes. The full suite still has one failure, `test_kilobytes_decimal`, which fails the same way without my change.
+
+- **Where it's applied:** The limit is applied client-side, after `fetchAll`, in `pkg/cli.py`. I did not change the API request.
+- **Edge cases:** A zero or negative `--limit` prints nothing. Without the flag, the output is unchanged.
+- **Other edits:** I added a CLI test for `--limit 1` and put `[--limit N]` in the README usage line.
+
+Problems I found and did not change:
+- **Units test:** `test_kilobytes_decimal` expects `parse_size("1KB") == 1000`, but the code returns 1024. The README says binary units are intended, so the test may be the wrong side.
+- **`paginate` bug:** `pkg/client.py` treats `page` as 0-based although its docstring says 1-based, so page 1 skips the first page of items.

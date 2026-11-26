@@ -1,0 +1,48 @@
+diff --git a/pkg/cli.py b/pkg/cli.py
+index 7143ee4..a778966 100644
+--- a/pkg/cli.py
++++ b/pkg/cli.py
+@@ -8,15 +8,28 @@ from pkg.client import Client, Config, fetchAll
+ 
+ def build_parser() -> argparse.ArgumentParser:
+     parser = argparse.ArgumentParser(prog="items")
++    parser.add_argument(
++        "--verbose", action="store_true", help="print each request URL before it is sent"
++    )
+     sub = parser.add_subparsers(dest="command", required=True)
+     sub.add_parser("list", help="list all items")
+     return parser
+ 
+ 
+-def main(argv=None, transport=None, out=sys.stdout) -> int:
++def main(argv=None, transport=None, out=sys.stdout, err=sys.stderr) -> int:
+     args = build_parser().parse_args(argv)
++    if args.verbose:
++        transport = _verbose(transport, err)
+     client = Client(Config(), transport)
+     if args.command == "list":
+         for item in fetchAll(client, "/items"):
+             print(item["name"], file=out)
+     return 0
++
++
++def _verbose(transport, err):
++    def wrapped(method, url, payload, timeout):
++        print(method, url, file=err)
++        return transport(method, url, payload, timeout)
++
++    return wrapped
+diff --git a/tests/test_cli.py b/tests/test_cli.py
+index 8931036..cc70714 100644
+--- a/tests/test_cli.py
++++ b/tests/test_cli.py
+@@ -13,3 +13,9 @@ class CliTest(unittest.TestCase):
+         }
+         self.assertEqual(main(["list"], transport=transport, out=out), 0)
+         self.assertEqual(out.getvalue(), "alpha\nbeta\n")
++
++    def test_verbose_prints_request_url(self):
++        out, err = io.StringIO(), io.StringIO()
++        transport = lambda m, u, p, t: {"status": 200, "body": {"items": []}}
++        main(["--verbose", "list"], transport=transport, out=out, err=err)
++        self.assertEqual(err.getvalue(), "GET https://api.example.test/items\n")

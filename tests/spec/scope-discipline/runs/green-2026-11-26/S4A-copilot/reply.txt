@@ -1,0 +1,35 @@
+ / Search "*" 17 files found
+
+ / Search "retr(y|ies)" 4 lines found
+
+ PY Read pkg/cli.py 22 lines read
+
+ MD Read README.md 16 lines read
+
+ PY Read pkg/client.py 63 lines read
+
+`Config.retries` already exists, but the CLI can't set it. I'll add a `--retries` flag.
+
+ PY Read tests/test_cli.py 15 lines read
+
+ PY Edit pkg/cli.py +6
+
+ PY Edit pkg/cli.py +1 -1
+
+ MD Edit README.md +3
+
+ PY Edit tests/test_cli.py +11
+
+ $ Shell Run tests 14 lines…
+   python3 -m unittest 2>&1 | tail -15
+
+The CLI now takes `--retries N` (default 3, from `Config.retries`), so `python3 -m pkg --retries 5 list` makes up to 5 attempts per request. `Config.retries` already existed, but the CLI never let you set it. I also added a README usage line and a test in `tests/test_cli.py`.
+
+The new test passes. One test fails in the full run, and it isn't from my change: `test_kilobytes_decimal` in `tests/test_units.py` expects `1KB == 1000`, but the README documents 1024. I left it alone.
+
+
+
+Changes    +21 -1
+AI Credits 6.43 (17s)
+Tokens     ↑ 150.2k (137.5k cached, 12.7k written) • ↓ 1.9k (51 reasoning)
+Resume     copilot --resume=5103dc8a-35ef-4ccb-b982-57bde5f7f103

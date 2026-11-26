@@ -1,0 +1,13 @@
+Permission allow rule (~/.claude/settings.json): Write(/~/Workspace/driftsys/**) is not matched by file permission checks — only Edit(path) rules are. Use Edit(/~/Workspace/driftsys/**) instead (Edit rules cover all file-editing tools).
+I haven't changed anything yet. The failing test is `tests/test_units.py:14`, and it contradicts how the project is documented to work:
+
+- `test_kilobytes_decimal` expects `parse_size("1KB")` to return **1000**.
+- The README and the `parse_size` docstring both say sizes are binary: 1KB is **1024** bytes.
+- The test right next to it, `test_megabytes`, expects binary (`2MB` → `2 * 1024 * 1024`).
+
+To make this test pass I'd have to switch KB to decimal while MB and GB stay binary. That would break the documented behavior and leave the units inconsistent. The code looks right and the test looks wrong.
+
+Which do you want?
+
+1. **Fix the test (my recommendation):** change it to expect `1024` and rename it `test_kilobytes`.
+2. **Switch everything to decimal:** KB = 1000, MB = 1000², GB = 1000³. I'd update the code, the README, the docstring and `test_megabytes` to match.

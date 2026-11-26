@@ -1,0 +1,7 @@
+command: env COPILOT_HOME=/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/tmp.YDLouC4aOA.chome copilot -p Make\ retries\ configurable. --allow-all-tools 
+cwd: /var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/tmp.YDLouC4aOA
+model: default (see session events)
+copilot_home: /var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/tmp.YDLouC4aOA.chome (session events under it)
+start: 2026-11-26T04:06:53Z
+end: 2026-11-26T04:07:16Z
+exit_code: 0

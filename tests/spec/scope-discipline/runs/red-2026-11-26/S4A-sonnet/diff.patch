@@ -1,0 +1,67 @@
+diff --git a/README.md b/README.md
+index dfb9d3d..617e48f 100644
+--- a/README.md
++++ b/README.md
+@@ -5,7 +5,7 @@ A small client and CLI for the items API.
+ ## Usage
+ 
+ ```text
+-python3 -m pkg list
++python3 -m pkg [--retries N] list
+ ```
+ 
+ Run the tests with `python3 -m unittest`.
+diff --git a/pkg/cli.py b/pkg/cli.py
+index 7143ee4..914c8c3 100644
+--- a/pkg/cli.py
++++ b/pkg/cli.py
+@@ -6,8 +6,21 @@ import sys
+ from pkg.client import Client, Config, fetchAll
+ 
+ 
++def positive_int(value: str) -> int:
++    number = int(value)
++    if number < 1:
++        raise argparse.ArgumentTypeError("must be at least 1")
++    return number
++
++
+ def build_parser() -> argparse.ArgumentParser:
+     parser = argparse.ArgumentParser(prog="items")
++    parser.add_argument(
++        "--retries",
++        type=positive_int,
++        default=Config().retries,
++        help="attempts per request (default: %(default)s)",
++    )
+     sub = parser.add_subparsers(dest="command", required=True)
+     sub.add_parser("list", help="list all items")
+     return parser
+@@ -15,7 +28,7 @@ def build_parser() -> argparse.ArgumentParser:
+ 
+ def main(argv=None, transport=None, out=sys.stdout) -> int:
+     args = build_parser().parse_args(argv)
+-    client = Client(Config(), transport)
++    client = Client(Config(retries=args.retries), transport)
+     if args.command == "list":
+         for item in fetchAll(client, "/items"):
+             print(item["name"], file=out)
+diff --git a/tests/test_cli.py b/tests/test_cli.py
+index 8931036..c09b42b 100644
+--- a/tests/test_cli.py
++++ b/tests/test_cli.py
+@@ -13,3 +13,14 @@ class CliTest(unittest.TestCase):
+         }
+         self.assertEqual(main(["list"], transport=transport, out=out), 0)
+         self.assertEqual(out.getvalue(), "alpha\nbeta\n")
++
++    def test_retries_flag(self):
++        calls = []
++
++        def transport(m, u, p, t):
++            calls.append(1)
++            return {"status": 500, "body": None}
++
++        with self.assertRaises(RuntimeError):
++            main(["--retries", "5", "list"], transport=transport, out=io.StringIO())
++        self.assertEqual(len(calls), 5)

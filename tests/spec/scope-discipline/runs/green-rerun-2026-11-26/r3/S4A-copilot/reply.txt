@@ -1,0 +1,42 @@
+ / Search "retr(y|ies)" 4 lines found
+
+ $ Shell List repo and read AGENTS.md 14 lines…
+   ls -a; cat AGENTS.md | head -50
+
+ PY Read pkg/client.py 63 lines read
+
+ $ Shell Read docs and tests 65 lines…
+   cat README.md CLAUDE.md; ls pkg tests; cat tests/test_client.py
+
+ $ Shell Read CLI and its tests 42 lines…
+   cat pkg/cli.py pkg/__main__.py; cat tests/test_cli.py
+
+`Config.retries` already exists, but the CLI can't set it. I'll add a `--retries` option.
+
+ PY Edit pkg/cli.py +6
+
+ PY Edit tests/test_cli.py +11
+
+ MD Edit README.md +3
+
+ PY Edit pkg/cli.py +1 -1
+
+ $ Shell Run tests 8 lines…
+   python3 -m unittest 2>&1 | tail -8
+
+I added a `--retries N` option to the CLI, for example `python3 -m pkg --retries 5 list`. The default is still 3. `Config.retries` already existed, but the CLI never let you set it. I took "configurable" to mean exposing it there. The README mentions the new option, and I added a test that `--retries 5` makes five attempts.
+
+Running `python3 -m unittest` gives 11 tests with 1 failure, in `tests/test_units.py`. It expects `parse_size("1KB")` to be 1000, but the code returns 1024. The README says 1KB is 1024 bytes, so the test looks wrong. I left it alone.
+
+I also noticed two other problems and didn't change them:
+- `paginate` in `pkg/client.py` treats pages as 0-based, but its docstring says 1-based.
+- A non-5xx failure from the transport isn't retried, only `RuntimeError`.
+
+Other readings of "configurable" would be an environment variable or a config file, or retry delay and backoff. Say if you meant one of those.
+
+
+
+Changes    +21 -1
+AI Credits 7 (19s)
+Tokens     ↑ 183.0k (169.9k cached, 13.1k written) • ↓ 2.0k (80 reasoning)
+Resume     copilot --resume=2aed59b5-1b44-49f4-92b4-063a18444cf1

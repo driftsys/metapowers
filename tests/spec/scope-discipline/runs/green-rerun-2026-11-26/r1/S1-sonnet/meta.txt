@@ -1,0 +1,6 @@
+command: claude -p --setting-sources project --model claude-sonnet-5-5 --permission-mode bypassPermissions --no-session-persistence Add\ a\ \`--verbose\`\ flag\ to\ the\ CLI\ that\ prints\ each\ request\ URL\ before\ it\ is\ sent. 
+cwd: /var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/tmp.sGjZgiLHww
+model: claude-sonnet-5-5
+start: 2026-11-26T04:05:37Z
+end: 2026-11-26T04:05:58Z
+exit_code: 0

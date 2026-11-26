@@ -1,0 +1,24 @@
+Only "Stay within the task" matches. It's a section heading in the scope-discipline instruction, which appears twice in my context with identical text. This is the section:
+
+```
+## Stay within the task
+
+- Leave code outside the task as it is: no refactors, renames, reformatting,
+  comments or type annotations on lines you did not need to change.
+- Follow the conventions of the surrounding code: its patterns, naming and
+  error handling.
+- Add tests only for the behavior you changed. Update only the documentation
+  that the change makes wrong.
+- Keep changes that you did not make, even when they look wrong. Report them
+  instead.
+- When you notice an unrelated problem, mention it at the end of your reply.
+```
+
+'Surgical Changes', 'international-english' and 'model-routing' don't appear in my context. The only part of the context I can't quote is the system prompt, which is confidential.
+
+
+
+Changes    +0 -0
+AI Credits 2.95 (6s)
+Tokens     ↑ 28.2k (19.4k cached, 8.8k written) • ↓ 552 (268 reasoning)
+Resume     copilot --resume=60b60dfc-7efe-44b1-bf0a-1310221ea3ce
