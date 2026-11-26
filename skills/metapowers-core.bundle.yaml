@@ -1,6 +1,6 @@
 schema: 1
 name: metapowers-core
-description: The metapowers rules without Superpowers — the scope-discipline and international-english rules
+description: The scope-discipline and international-english rules, without Superpowers
 license: MIT
 items:
   rules:

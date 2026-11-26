@@ -19,7 +19,7 @@ BUNDLE_PATH="$METAPOWERS_ROOT/skills/metapowers.bundle.yaml"
 # The metapowers bundle no longer requires gardenpowers, so the tests of the
 # gardenpowers items install that bundle directly.
 GARDEN_BUNDLE_PATH="$METAPOWERS_ROOT/skills/gardenpowers.bundle.yaml"
-
+# The metapowers-core bundle holds the rules alone, with no Superpowers dependency.
 CORE_BUNDLE_PATH="$METAPOWERS_ROOT/skills/metapowers-core.bundle.yaml"
 
 # Per-test fixture: a brand-new temp directory acting as a consumer project.
@@ -90,6 +90,13 @@ test_baseline_installs_both_rules() {
         "expected scope-discipline from the metapowers baseline"
     assert "[ -f .claude/rules/international-english.md ]" \
         "expected international-english from the metapowers baseline"
+    assert_equals "international-english.md scope-discipline.md" \
+        "$(ls .claude/rules | tr '\n' ' ' | sed 's/ $//')" \
+        "the metapowers baseline must install exactly scope-discipline and international-english for Claude"
+    assert "[ -f .github/instructions/international-english.instructions.md ]" \
+        "expected Copilot international-english output from the metapowers baseline"
+    assert "[ -f .agents/rules/international-english/RULE.md ]" \
+        "expected opencode international-english output from the metapowers baseline"
 }
 
 test_core_bundle_installs_both_rules() {
@@ -98,6 +105,16 @@ test_core_bundle_installs_both_rules() {
         "expected scope-discipline from metapowers-core"
     assert "[ -f .claude/rules/international-english.md ]" \
         "expected international-english from metapowers-core"
+    assert_equals "international-english.md scope-discipline.md" \
+        "$(ls .claude/rules | tr '\n' ' ' | sed 's/ $//')" \
+        "metapowers-core must install exactly scope-discipline and international-english for Claude"
+    assert "[ -f .github/instructions/international-english.instructions.md ]" \
+        "expected Copilot international-english output from metapowers-core"
+    assert "[ -f .agents/rules/international-english/RULE.md ]" \
+        "expected opencode international-english output from metapowers-core"
+    # metapowers-core must stand alone: no other bundle may be recorded.
+    assert "! grep -q '\"name\": \"superpowers\"' .upskill-lock.json" \
+        "metapowers-core must not pull in the superpowers bundle"
 }
 
 test_rule_body_preserves_content() {
@@ -118,9 +135,12 @@ test_lockfile_records_rule() {
 test_lockfile_records_bundle_resolution() {
     upskill add "$BUNDLE_PATH" --project --quiet
     # Transitively-resolved bundle (`requires: superpowers`) must appear too —
-    # this verifies the bundle dependency walk worked.
+    # this verifies the bundle dependency walk worked. The same walk must record
+    # metapowers-core (`requires: metapowers-core`) as a dependency of metapowers.
     assert "grep -q 'superpowers' .upskill-lock.json" \
         "expected superpowers bundle to be recorded in the lockfile after transitive resolution"
+    assert "grep -q '\"name\": \"metapowers-core\"' .upskill-lock.json" \
+        "expected metapowers-core bundle to be recorded in the lockfile after transitive resolution"
 }
 
 test_plugin_install_does_not_block_items() {

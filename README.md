@@ -35,6 +35,8 @@ upskill add driftsys/metapowers
 upskill add driftsys/metapowers metapowers
 ```
 
+The `metapowers-core` bundle installs the rules without Superpowers.
+
 See the [upskill documentation](https://driftsys.github.io/upskill/) for more commands.
 
 ## upskill plugins
