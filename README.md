@@ -35,6 +35,10 @@ upskill add driftsys/metapowers
 upskill add driftsys/metapowers metapowers
 ```
 
+The metapowers baseline requires Superpowers and the `metapowers-core` and
+`delegation-policies` bundles. The `metapowers-core` bundle installs the
+scope-discipline and international-english rules alone, without Superpowers.
+
 See the [upskill documentation](https://driftsys.github.io/upskill/) for more commands.
 
 ## upskill plugins

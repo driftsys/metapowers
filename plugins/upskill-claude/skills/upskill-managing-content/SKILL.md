@@ -1,0 +1,436 @@
+---
+name: upskill-managing-content
+description: Use when working in an upskill-consumer repo and needing to add, modify, vendor, audit, or remove installed content (rules, skills, agents, bundles). Trigger when `upskill lint` or `upskill doctor` reports issues. Trigger when adding a third-party bundle or updating one from upstream. Trigger when generated per-client files (e.g., `.claude/`, `.github/skills/`) look stale or wrong. Do NOT trigger for actual authoring decisions — hand off to upskill-prompt-distilling, upskill-writing-rules, writing-skills, or upskill-writing-subagents. Do NOT trigger for cosmetic typo fixes in skill bodies; raw edits to source registry files plus `upskill lint` are sufficient.
+---
+
+upskill manages the lifecycle of installable agent content. It does not make
+authoring decisions for you. This skill covers operations: add, update, remove,
+list, doctor, lint, fmt, new, pack. For authoring decisions (where does this go,
+how do I write it), hand off to `upskill-prompt-distilling` and the writing-*
+skills.
+
+## Two sides of the workflow
+
+upskill files live in two places. The commands you reach for depend on which
+side you are on.
+
+- **Source registry** — the repo where SSOT content is authored. Holds a
+  `skills/` directory with item subfolders (`skills/<name>/SKILL.md`, `RULE.md`,
+  `AGENT.md`, `COMMAND.md`, `HOOK.md`) and bundle manifests
+  (`skills/<name>.bundle.yaml`). The layout is documented in
+  [Conventions](https://driftsys.github.io/upskill/conventions.html). Author
+  commands: `new`, `fmt`, `lint`, `pack`.
+- **Consumer project** — a downstream repo that installs from one or more source
+  registries. Holds generated per-client output under `.claude/`, `.github/`,
+  `.opencode/`, etc., plus a `.upskill-lock.json` recording what is installed.
+  Consumer commands: `add`, `update`, `remove`, `list`, `doctor`.
+
+`upskill lint` refuses to run inside a consumer project, and `upskill add`
+infers consumer scope from the current directory. Knowing which side you are on
+tells you which command surface is even available.
+
+## The Iron Law
+
+GO THROUGH UPSKILL FOR LIFECYCLE OPERATIONS. HAND OFF TO writing-* SKILLS FOR
+AUTHORING DECISIONS.
+
+This Iron Law is a routing law, not a discipline law (no "NO X WITHOUT Y FIRST"
+shape like the other meta-skills), because `upskill-managing-content` governs
+which tool to reach for, not whether to pressure-test content before shipping
+it.
+
+The boundary is sharp. upskill handles fetching, frontmatter canonicalization,
+per-client generation, validation, and lockfile tracking. It does not decide
+whether a piece of content should be a rule, skill, or agent — that is
+`upskill-prompt-distilling`'s job. Mixing these concerns is the most common
+usage error.
+
+## When to use upskill vs raw edits
+
+| Operation                                              | Use upskill    | Raw edits OK                                                                                                                                                                         |
+| ------------------------------------------------------ | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Authoring a new item in a source registry              | Yes (`new`)    | No                                                                                                                                                                                   |
+| Adding installable content to a consumer project       | Yes (`add`)    | No                                                                                                                                                                                   |
+| Updating installed content from its source             | Yes (`update`) | No                                                                                                                                                                                   |
+| Removing installed content                             | Yes (`remove`) | No                                                                                                                                                                                   |
+| Fixing a typo in a source SSOT body                    | Optional       | Yes, then `upskill lint`                                                                                                                                                             |
+| Editing frontmatter in source SSOT                     | Yes (`fmt`)    | No — manual edits break canonicalization                                                                                                                                             |
+| Auditing installed content for drift                   | Yes (`doctor`) | No                                                                                                                                                                                   |
+| Hand-editing a generated `.claude/` or `.github/` file | Never          | No — `update` keeps the edit, with a note when nothing else of the item would change and otherwise with a skip and exit code 1, until `update --force` replaces the edit (see below) |
+
+When in doubt, use upskill. Raw edits are a sharp tool — only reach for them on
+content you authored and understand, and always lint after.
+
+## Common workflows
+
+### Authoring a new skill in a source registry
+
+1. Run `upskill-prompt-distilling` first to confirm the content belongs in a
+   skill (not a rule, agent, or MCP tool).
+2. Hand off to `superpowers:writing-skills` to draft the SKILL.md.
+3. From inside the registry's `skills/` directory, run
+   `upskill new skill <name>`. This scaffolds `skills/<name>/SKILL.md` with the
+   right shape.
+4. Edit the SKILL.md body to match your draft.
+5. Run `upskill fmt` to canonicalize frontmatter and run dprint over the body.
+6. Run `upskill lint` (or `upskill lint --strict` for CI) to catch schema or
+   structural errors.
+7. Commit the SSOT. Consumer projects pick up the change at next
+   `upskill update`.
+
+### Adding installable content to a consumer project
+
+1. Identify the source: either an org repo (e.g. `driftsys/skills`), a full
+   https URL (any git host), or a local path (`./local-source`).
+2. From the consumer project root, run `upskill add <source>` to install every
+   item in the source, or `upskill add <source> item-a item-b` to install a
+   named subset.
+3. Verify with `upskill list` — the new items appear with their hashes and their
+   generated per-client output paths.
+4. Commit the changed `.upskill-lock.json` and the generated per-client files
+   your repo policy says to commit.
+
+### Updating installed content
+
+1. Run `upskill update` to refresh everything, or `upskill update item-a` to
+   refresh one item. The command always re-fetches the source.
+2. Use `upskill update --dry-run` first if you want a preview. It prints one
+   block per source, planned against the files on disk, without writing. A later
+   block does not include the effect of applying an earlier source. In a
+   terminal, `upskill update` prints the same blocks and asks `Apply? [y/N/q]`
+   for each source that would change something.
+3. Review the diff. Pay attention to:
+   - Changed `description` fields — these affect skill activation behavior and
+     may need eval before accepting.
+   - Removed items — confirm no downstream content depends on them.
+   - New items pulled in via bundle expansion.
+
+### Session notice of available updates
+
+`upskill update --notice` is made for a session-start hook. It prints one line
+for each scope that has updates, for example
+`upskill: 2 updates available (project). Run "upskill update".`. It prints a
+given set of updates once (with `--repeat`, at every run until `upskill update`
+runs), contacts the sources at most once in 24 hours, never fetches or installs,
+and exits 0 in every case after argument parsing. The repeat ends for an item
+when an applied `update` reports the item as updated, up to date, completed
+after an interruption, or removed; a dry run, an `update` that stops with an
+error, and a modified item that `update` skips do not end it. When nothing is
+new it prints nothing.
+
+To set it up, install the `upskill` plugin from the `driftsys/metapowers`
+marketplace: `claude plugin marketplace add driftsys/metapowers`, then
+`claude plugin install upskill@metapowers`. For Copilot CLI run
+`copilot plugin marketplace add driftsys/metapowers`, then
+`copilot plugin install upskill@metapowers`. Claude Code shows the line to the
+user and gives it to the agent; Copilot CLI gives it to the agent with a request
+to tell the user at the start of the first reply, and does not display it, so
+the user sees it only when the agent follows the request. The Copilot plugin
+calls `upskill update --notice --repeat`, so the line is given to the agent at
+every session start until `upskill update` runs. A hand-written hook that prints
+the plain line does not work: Claude Code does not display it and Copilot CLI
+ignores it. The plugin needs an `upskill` binary on `PATH` that has
+`update --notice`; the Copilot plugin also needs `update --notice --repeat`.
+Without such a binary the hook prints nothing.
+
+When you receive the line:
+
+1. Tell the user that updates are available (in Copilot CLI they may not have
+   seen the line).
+2. Preview with `upskill update --check` (no fetch) or
+   `upskill update --dry-run` (fetches, writes nothing).
+3. When the user asks for the update, run the command that the line names:
+   `upskill update`, or `upskill update --global` for the global scope. Follow
+   "Updating installed content" above.
+
+In Claude Code the line is not printed again for the same set of updates, also
+when the user does not update. In Copilot CLI the line is given to the agent at
+every session start until `upskill update` runs. The repeat ends for an item
+when an applied `update` reports the item as updated, up to date, completed
+after an interruption, or removed; a dry run, an `update` that stops with an
+error, and a modified item that `update` skips do not end it.
+
+### Vendoring a third-party bundle (e.g., superpowers)
+
+upskill has no separate `vendor` command; vendoring is just `add` from the
+upstream source. The vendoring discipline lives in what you record alongside the
+install.
+
+1. Confirm the upstream license is compatible with your repo's licensing policy.
+2. Run `upskill add <upstream-spec>` to fetch the bundle into the consumer
+   project.
+3. Add a `NOTICE` file at the consumer-project root with full attribution to the
+   upstream author and the license text. Most upstream licenses require this.
+4. Commit the lockfile, the generated per-client output, and the NOTICE.
+
+### Removing installed content
+
+1. Run `upskill remove <item-name>` (or `upskill remove --source <label>` to
+   remove every item installed from one source — use the label shown in
+   `upskill list` or the lockfile).
+2. `remove` deletes only the files recorded for the item with their recorded
+   hash (a copy with CRLF line endings in place of LF also counts). It keeps
+   each recorded file that you edited, prints `kept modified file: <path>`, and
+   still drops the item from the lockfile. To delete edited files as well, run
+   the command with `--force`.
+3. Verify with `upskill list` that the item is gone and `upskill doctor` that
+   nothing else depended on it.
+4. Commit the changed lockfile and the deleted per-client files. For each kept
+   modified file, decide whether to keep it or delete it by hand.
+
+### Auditing for drift or misrouted content
+
+1. Run `upskill doctor`. It verifies the installed state matches the lockfile
+   (per-client files present, hashes consistent, no orphans).
+2. For each finding, decide whether the drift is in the consumer project
+   (someone hand-edited generated output → re-run `upskill update --force`) or
+   in the source registry (an item changed shape upstream → review and
+   `upskill update`).
+3. If `doctor` surfaces a content-shape concern (vague description, oversized
+   rule), the fix lives in the source registry — hand off to
+   `upskill-prompt-distilling`'s audit section there.
+
+## Interpreting upskill output
+
+### `upskill lint`
+
+Validates SSOT files in a source registry against the format spec. Refuses to
+run in a consumer project (detected by `.upskill-lock.json`). Default mode emits
+warnings and exits 0 unless an error rule fires; `--strict` promotes warnings to
+errors for CI use.
+
+Common findings:
+
+- Missing `name:` / `description:` in frontmatter
+- `metadata.version` not quoted (YAML float coercion risk)
+- Invalid directory layout (entry file not in its own folder, etc.)
+- Bundle `items:` list references a name not present in the registry
+- Inline directive syntax errors (unbalanced `<!-- @client:X -->` blocks)
+
+### `upskill fmt`
+
+Canonicalizes frontmatter and runs dprint over the body. Idempotent. Always safe
+to run; CI should fail if `fmt` changes anything.
+
+### `upskill doctor`
+
+Verifies the installed state against `.upskill-lock.json`. Without a scope flag
+it checks both scopes (project, then global); `--project` or `--global` limits
+it to one. Pure consistency check — no judgment on content shape. Common
+findings:
+
+- Generated per-client file missing (→ run `update`; in a terminal the block of
+  its source shows the item as `update ... 1 file` and asks `Apply? [y/N/q]`) or
+  hash-changed (someone hand-edited it → `update --force` replaces the edit;
+  without `--force`, `update` keeps the edit: with a `kept modified file` note
+  when nothing else of the item would change (see below), otherwise it skips the
+  item and exits 1)
+- Lockfile references an item whose source is no longer reachable
+- Orphan per-client files not recorded in the lockfile (a previous install or
+  hand-creation that needs reconciling)
+- Plugin recorded as installed but missing from the client (uninstalled
+  out-of-band → `update` reinstalls it for a source without a kind restriction,
+  also in a terminal run for a source whose preview changes nothing; a source
+  under a kind restriction skips the plugin and MCP steps and this repair; for
+  such a source, and when no recorded item comes from the source of the plugin's
+  bundle, `doctor` names the `upskill add` command to run instead)
+- Plugin skipped at install time because the client CLI was not on PATH, or
+  opencode was below version 2 or gave no version (informational warning —
+  install the CLI, or opencode 2 or later, then run `update --yes`)
+
+Exits 0 when clean. Exits 1 when drift is found in either scope (missing
+outputs, modified files, unreadable files, stale hashes, orphan entries, missing
+plugins, MCP servers that are not registered, interrupted items: an `add` or
+`update` that did not complete, which running the same command again completes,
+or `earlier_layout` files: global-scope files at the earlier Copilot paths under
+`.github/`, which `update --global` moves). Skipped plugins are warnings only
+and do not affect the exit code. An item that both lockfiles record gets a note,
+which does not affect the exit code.
+
+Each client and kind has a support level, which `doctor` prints in the section
+`Support levels:` and `doctor --json` holds under `support`:
+
+- `supported` — the smoke test passed on a recorded client version and date. It
+  records one smoke run on that version; it does not promise that other client
+  versions work, and the level does not depend on the installed client version.
+- `experimental` — implemented; the smoke test is missing, failing or older than
+  the client.
+- `unsupported` — not implemented or known not to work. No client flag exists
+  for it (`--codex` is rejected).
+
+Currently Claude Code and Copilot CLI (rule, skill, agent) are `supported`,
+OpenCode is `experimental` and Codex is `unsupported`. The table changes with
+each smoke run; read it in `upskill doctor` or in
+[Support levels](https://driftsys.github.io/upskill/support-levels.html) rather
+than from this skill.
+
+## Conventions to remember
+
+### Source side vs consumer side
+
+- **Source registry**: holds `skills/<name>/SKILL.md`, `RULE.md`, `AGENT.md`,
+  `COMMAND.md`, `HOOK.md`, and `skills/<name>.bundle.yaml`. Author here; commit
+  here.
+- **Consumer project**: holds generated `.claude/`, `.github/`, `.opencode/`
+  content plus `.upskill-lock.json`. Generated files are produced by
+  `upskill add` / `upskill update`. **Never hand-edit generated files** —
+  `upskill update` then keeps the edit. When all of these hold, it prints
+  `kept modified file: <path>`, and the note does not change the exit code (0
+  when no other item is skipped): a source hash is recorded for the item and the
+  source hash of the item equals it (an item with no recorded hash is skipped),
+  the item has no interrupted operation (`pending` record), the item has no
+  recorded file that the new version no longer contains, its lockfile entry
+  would not change in any field other than its file records, `required_by` and
+  `commit` (for example its `clients`), and no other file of the item would be
+  written or deleted. Otherwise it skips the item and exits 1 (exit 0 when the
+  skip is in a source with changes that the answer did not apply, or under
+  `--dry-run`): a terminal run shows a `skip` line in the block of the source,
+  and a run with `--yes` or without a terminal prints
+  `skipped <kind> <name>: <path> was modified or is not managed by upskill`.
+  `upskill update --force` replaces the edit. A file that upskill did not write,
+  at a destination where it differs from the generated bytes, makes `update`
+  skip the item unless `--force` is given. In a terminal without `--yes`,
+  `upskill update` prints one block per source and asks `Apply? [y/N/q]` only
+  for a source that would change something; the `kept modified file` note and a
+  `skip` line are not changes. An interrupted item (an `add` or `update` that
+  did not complete) is shown as a `complete` line, and `update` asks and
+  completes it on `y`. `upskill add` skips an item in the same way when a
+  destination was edited or was not written by upskill (`add --force` replaces
+  it). For an item with a `files` record in a `schema: 2` lockfile,
+  `upskill doctor` reports each edited file as modified and exits 1. For a
+  `schema: 1` lockfile or an item with an empty `files` record, `doctor` only
+  checks that the entry files exist.
+
+### Scope
+
+`--project` uses the current directory; `--global` uses `$HOME`. Without a flag:
+
+- `add` uses the project scope inside a git repository and stops with exit 2
+  outside one, asking for `--project` or `--global`.
+- `update`, `remove` and `remove-mcp` use the project scope inside a git
+  repository and the global scope outside one.
+- `list`, `doctor`, `update --check` and `update --notice` report both scopes.
+  In the home directory they report the global scope only.
+
+The project scope is refused with exit 2 when the current directory is the home
+directory; pass `--global`. `add`, `update`, `remove` and `remove-mcp` print
+`scope: <scope> (<root>)` to stderr unless `--quiet` is set. A global install
+writes Copilot content under `$HOME/.copilot/`.
+
+### `.upskill-lock.json`
+
+The state of truth for what is installed in a consumer project. Records each
+item's source, ref, hash, and generated file paths. Edit only via `upskill add`,
+`update`, and `remove`. Commit it. Default location is the consumer project
+root; with `--global`, it moves to `$HOME/`.
+
+### Cross-platform portability
+
+upskill uses file copies, not symlinks, so generated content works on Windows.
+Generated copies are regenerated at `add`/`update` time. Don't rely on inode
+identity or hard links between source and generated.
+
+### Org-specific access control
+
+Some orgs gate skill installation through a classification or allow-list
+mechanism (an MCP-served registry, a private GitLab group, an org-internal
+upskill registry). If `upskill add` refuses to fetch from a particular source,
+check whether the source is part of your org's allow-list before suspecting a
+bug. The mechanism is org-specific; this skill does not assume one exists.
+
+## Handoff matrix
+
+| Situation                                              | Hand off to                                              |
+| ------------------------------------------------------ | -------------------------------------------------------- |
+| Newcomer to the framework needing orientation          | `upskill-prompt-design`                                  |
+| Deciding where new content belongs                     | `upskill-prompt-distilling`                              |
+| Authoring a new rule                                   | `upskill-writing-rules`                                  |
+| Authoring a new skill                                  | `superpowers:writing-skills`                             |
+| Authoring a new subagent / agent                       | `upskill-writing-subagents`                              |
+| Setting up RED-GREEN-REFACTOR for any authored content | `upskill-evaluating-prompts`                             |
+| Authoring a new MCP server                             | the MCP server repo's authoring process (out of scope)   |
+| Adding to a RAG corpus                                 | the corpus's MCP tool's authoring process (out of scope) |
+| Routing decision on existing content showing drift     | `upskill-prompt-distilling` audit section                |
+
+## Red flags — STOP
+
+- About to hand-edit a generated `.claude/`, `.github/`, or `.opencode/` file →
+  don't. Edit the source registry and run `upskill update` in the consumer
+  project.
+- About to skip `upskill lint` in a source registry because "it's just a small
+  change" → don't. Lint is cheap and catches frontmatter corruption before
+  commit.
+- About to commit generated artifacts because "the next person won't have
+  upskill installed" → that is the right reason to commit them, but it is also
+  the reason `update` is mandatory after any source change. Drift between SSOT
+  and generated output is the dominant failure mode: `doctor` reports it only
+  for `local:` sources; for other sources, run `update --check` (no fetch) or
+  `update --dry-run` (fetches).
+- About to vendor a bundle without a NOTICE file → MIT and similar licenses
+  require attribution. Don't ship without it.
+- About to write a skill body explaining HOW upskill works (every flag, every
+  exit code) — that belongs in `upskill --help` and the upskill user guide, not
+  in a skill. Skills explain _workflows and decisions_, not CLI invocations.
+
+## Honest caveats
+
+This skill is v0.2.0 and tracks upskill's current command surface (`add`,
+`remove`, `remove-mcp`, `update`, `list`, `doctor`, `search`, `index`, `lint`,
+`fmt`, `new`). As upskill evolves, this skill needs maintenance — specifically,
+it should NOT enumerate every CLI flag (that's `upskill --help`'s job). It
+should remain at the workflow and decision-boundary level, which is more stable.
+
+This skill has not yet been through its own RED-GREEN-REFACTOR cycle. Before
+declaring it ready, run a battery of real upskill-operation scenarios (author a
+new skill, add a bundle, update from upstream, audit, hand-edit a generated
+file) past a subagent without the skill, then with, and measure whether the
+agent makes correct workflow decisions in both cases.
+
+## You Are Done When
+
+- The lifecycle operation completed successfully (`add`, `update`, `remove`,
+  etc.)
+- `upskill doctor` reports clean state (exit 0)
+- Generated per-client files are committed alongside `.upskill-lock.json`
+- No hand-edited generated files remain
+
+## Bundle plugin output and project rules
+
+`upskill pack <bundle>... --source <source> --out <dir>` builds Claude Code and
+Copilot CLI plugin directories from the current registry. Several bundle names
+can be given in one run; `--all` builds every bundle of the registry. With no
+client flag it writes both; `--claude` and `--copilot` select clients. It reads
+no lockfile and does not install or publish the output. With `--catalog <root>`,
+it writes `.claude-plugin/marketplace.json` and
+`.github/plugin/marketplace.json` below that root for the selected clients. A
+non-empty client directory needs `--force`, which replaces it; the new content
+is written in full before any client directory changes. Plugin output remains
+experimental until a smoke test with a hosted git marketplace passes in both
+clients. The local-marketplace smoke test of 2026-11-19 ran the earlier
+`commands/init.md` layout; the current layout has not passed a smoke test yet.
+
+The plugin carries skills, agents, command items as user-only skills, MCP
+servers (`.mcp.json`) and LSP servers (`.lsp.json` for Claude Code, `lsp.json`
+for Copilot CLI) of the bundle closure. The bundle's `lsps` map declares LSP
+servers. The plugin also carries the context hooks of hook items as static JSON
+files and entries that print them, plus command hook scripts and entries that
+set `UPSKILL_CLIENT` and run them. The plugin does not install the server
+binary; `add` and `update` do not configure LSP servers. They report their count
+in the same stderr skip line as command and hook items, unless `--quiet` or a
+kind restriction applies. The user calls a command as `/<plugin>:<name>`. When
+rules of the closure target the client, init is written at
+`skills/init/SKILL.md`; call it as `/<plugin>:init` in an interactive session.
+It runs `add --kind rule --project` for that client. `add --kind` is repeatable
+for `rule`, `skill` and `agent`; it skips plugin and MCP steps. Bundle lockfile
+entries record the selected `kinds`. `update` uses their union only when every
+root bundle of the source (a bundle that you named in `add`, not one that
+another bundle's `requires` pulled in) has recorded kinds; one unrestricted root
+bundle leaves that source unrestricted, and an unrestricted dependency bundle
+does not. Every entry of that source whose kind is outside the restriction stays
+unchanged; reinstall it explicitly to update it.
+
+The embedded notice hook calls `update --notice`. Runs sharing a cache use
+`notice.lock`: a lock younger than 60 seconds makes another run exit silently. A
+session in another repository may therefore get no notice until its next session
+start. Concurrent reclamation of an expired lock can still duplicate a notice.
+This lock does not protect install, update or removal.

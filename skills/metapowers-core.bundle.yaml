@@ -1,0 +1,10 @@
+schema: 1
+name: metapowers-core
+description: The scope-discipline and international-english rules, without Superpowers
+license: MIT
+items:
+  rules:
+  - scope-discipline
+  - international-english
+metadata:
+  version: 0.2.4
