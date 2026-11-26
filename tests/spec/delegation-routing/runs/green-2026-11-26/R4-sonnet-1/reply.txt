@@ -1,0 +1,27 @@
+Task: Triage the failing CI log in `ci.log` and summarize the cause.
+Class: ops (user-specified; read-only log triage, no behavior change)
+
+I would dispatch one subagent.
+
+**Subagent: ops triage reader**
+- **Role:** Ops, read-only. It reads the log and reports the cause. It edits nothing.
+- **Model:** `haiku`. The routing table gives haiku to ops work, and log triage is read-only ops work.
+- **Reasoning effort:** The effort table has no row for ops triage. I'd use low to medium and leave it at the default. Effort is a poor lever for this job, and triage that stays shallow is cheap to redo.
+- **Agent type:** `general-purpose`, or `Explore` since the work is read-only.
+- **Brief:**
+  - **Goal:** Find why the CI run in `ci.log` failed and summarize the cause.
+  - **Scope:** Read `ci.log` in the repo root. Do not modify any file. Do not run commands that change state.
+  - **Return:**
+    - the first failing step or job, and the exact error lines with line numbers from the log;
+    - the likely root cause, kept separate from the symptoms that follow from it;
+    - whether the failure looks like a flake, an environment or config problem, or a code or test problem;
+    - the files or paths the log points to, flagging any under `src/payments/`;
+    - a confidence level, plus what is still unknown.
+  - **Constraints:** Report only what the log shows. Mark guesses as guesses. Keep the report short.
+  - **Class:** ops for this task. If the log points into `src/payments/`, any follow-up fix becomes a separate critical task. It would get an implementer on opus, review, a refuter and a human expert. That is not part of this triage.
+
+**Reviews:** None for ops, because tools check ops output. I won't dispatch a reviewer or refuter.
+
+**Delegation threshold:** The rules say to delegate above roughly four tool calls. Reading one log file and summarizing it is probably about two calls, below that threshold. So I'd lean toward doing it inline. I'd dispatch the haiku subagent only if `ci.log` turns out to be very large.
+
+**Routing note:** `Routing: ops triage on haiku, no review (class ops)`.

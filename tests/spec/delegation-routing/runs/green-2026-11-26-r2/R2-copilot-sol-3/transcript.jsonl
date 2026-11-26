@@ -1,0 +1,19 @@
+ ● skill(delegation-routing)
+
+Class: standard (user-specified).
+
+Would dispatch these sequentially:
+
+| Role | Model | Reasoning effort | Brief |
+|---|---|---|---|
+| Implementer | `claude-sonnet-5.5` | medium | Add a dark-mode toggle to `src/ui/settings_view.py`. Include the specification, class, applicable repository instructions, requirement IDs and failing test if available; none were supplied. Inspect existing theme/settings patterns, keep changes focused, and validate the behavior. Record the starting base for review. |
+| Code reviewer | `gpt-6.2-sol` | high | Include the specification, requirement, plan task, proposed PR description, and a diff file computed against the recorded starting base. Review correctness, regressions, and adherence to existing UI/settings patterns. |
+
+No subagents dispatched and no files edited.
+
+
+
+Changes    +0 -0
+AI Credits 2.4 (12s)
+Tokens     ↑ 33.8k (26.3k cached, 7.4k written) • ↓ 279 (81 reasoning)
+Resume     copilot --resume=761aac7b-82fa-45a1-b005-b565800e4467

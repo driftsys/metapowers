@@ -1,0 +1,30 @@
+Here is the dispatch plan. I haven't dispatched anything or edited any files.
+
+**Task:** Add a dark-mode toggle to the settings screen in `src/ui/settings_view.py`.
+Class: standard (set by you; it's also the default for a user-facing feature, and the path is outside `src/payments/`)
+Routing: one implementer, one code review, no refuter, no compliance review (standard class, per `delegation-routing`)
+
+**1. Implementer**
+- Model: `sonnet`
+- Effort: medium. A toggle needs a decision on where the preference is stored and how it is applied, so it isn't a pure copy of an existing pattern. I'd drop to low only if the code already has a nearly identical toggle to copy.
+- Brief:
+  - The task and its class: `Class: standard (user: standard)`.
+  - The spec section and requirement ids for the toggle. No spec is in the repo, so I'd write the acceptance criteria into the brief: the toggle appears on the settings screen, its state persists, and the theme applies.
+  - A failing test that describes the toggle's behavior, written first.
+  - A scope limit: touch `src/ui/settings_view.py` and the theme or preferences code it needs. If the change would reach `src/payments/` or authentication, stop and report back, because that code is critical class.
+  - A request to report the files it changed.
+
+**2. Code reviewer**
+- Model: `opus`. This is the table's standard-class reviewer. Claude Code offers only one model family, so there's no cross-family review.
+- Effort: high
+- Brief:
+  - The spec and requirement ids, the plan task, and the merge request description.
+  - The diff as a file, computed from the base commit I record before the implementer starts. Today that is `9ac86c6`.
+  - A request for correctness findings only.
+
+**Not dispatched**
+- **Refuter and compliance review:** the standard class doesn't call for them.
+- **Ops (haiku):** I'd read `settings_view.py` and run the tests inline, which is under the roughly four tool calls where a subagent pays off.
+- **Escalation:** if the implementer fails twice, the next attempt goes to `opus`.
+
+**Open point:** a dark-mode preference is not personal data by itself. If you want it stored server-side per user account, tell me. That could raise the class, and I'd ask you before planning around it.

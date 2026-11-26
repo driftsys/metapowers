@@ -1,0 +1,38 @@
+Class: standard (stated by the user for this task)
+
+I'd dispatch three subagents, and the implementer waits on a decision from you.
+
+**1. Root-cause diagnostician**
+- **Model and effort:** opus, high. The skill sets high effort for debugging a root cause. This runs before any new implementation attempt because three attempts have failed.
+- **Brief:**
+  - The task: a dark-mode toggle on the settings screen in `src/ui/settings_view.py`, class standard.
+  - The diffs and failure output from all three failed attempts, including the two sonnet attempts and the opus attempt.
+  - The question: what do the attempts have in common, and which assumption in the task or code is wrong?
+  - A falsifying experiment to run against that answer.
+  - The scope: read-only, no file edits, report findings only.
+
+**2. Implementer (held, not dispatched yet)**
+- **Why it's held:** the skill says to escalate to the strongest default model after two failed attempts. That model, opus, has now failed too, so the skill says to suggest a frontier model to you with the reason and wait for your answer.
+- **Suggestion to you:** Fable, because sonnet failed twice and opus failed once on this task.
+- **If you accept Fable:** Fable at medium effort. Medium is the ceiling for implementation.
+- **If you decline:** opus at medium effort, with the diagnostician's root cause in the brief.
+- **Brief:**
+  - The spec section and requirement ids.
+  - The failing test.
+  - The class (standard).
+  - The root-cause report from agent 1.
+  - A note on what the failed attempts got wrong.
+
+**3. Code reviewer**
+- **Model and effort:** opus, high. One review, as the skill sets for standard. It runs after the implementer finishes.
+- **Brief:**
+  - The spec and the requirement.
+  - The plan task.
+  - The merge request description.
+  - The diff as a file, computed from the base commit recorded before the task started.
+
+I'd write these routing lines in the plan task:
+- `Class: standard (user)`
+- `Routing: escalation exhausted (sonnet x2, opus x1), frontier model suggested to user, awaiting answer`
+
+**Question for you:** should I use Fable for the next implementation attempt? Meanwhile, I'd start the diagnostician.

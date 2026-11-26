@@ -1,0 +1,24 @@
+Here's the dispatch plan. I loaded the `delegation-routing` skill and haven't dispatched anything or edited any files.
+
+**Task:** Add session expiry to `src/auth/session.py` (REQ-AUTH-014, REQ-AUTH-015)
+Class: critical (as you gave it; it's also the default for authentication)
+Routing: no cross-family review (Claude Code only offers the Claude family, so the human expert should know the reviewer and refuter share the implementer's model family)
+Base: record `a0d5b85` as the base commit before work starts. All diffs are computed from it.
+
+### Subagents, in order
+
+| # | Role | Model | Effort | Brief contains |
+|---|------|-------|--------|----------------|
+| 1 | **Test author** | opus | medium | The sections of `docs/spec-session-expiry.md` that cover REQ-AUTH-014 and REQ-AUTH-015, both requirement IDs, and the class (critical). The job is to write failing tests that pin down expiry behaviour. It writes only tests and confirms they fail for the right reason. |
+| 2 | **Implementer** | opus | medium | The same spec sections, REQ-AUTH-014 and REQ-AUTH-015, the failing tests from step 1 (paths and the failure output), and the class. Scope is `src/auth/session.py`. Medium is the ceiling for implementation. |
+| 3 | **Code reviewer** | opus | high | The full spec, both requirements, this plan task, the merge request description, and the diff from `a0d5b85` saved to a file. It looks for correctness and security defects. |
+| 4 | **Compliance reviewer** | sonnet | high | The same inputs as the code reviewer. It checks each clause of REQ-AUTH-014 and REQ-AUTH-015 against the diff and tests, and reports any clause that is missing, partial or contradicted. |
+| 5 | **Refuter** | opus | high | The same inputs as the code reviewer. It tries to show the change is wrong, for example that sessions outlive their expiry, or that clock skew, refresh or boundary conditions break it. It answers with concrete failing cases or a reasoned "could not refute". |
+
+Steps 3–5 are independent, so they would run in parallel once step 2 is done.
+
+### Notes
+- **Why tests come first:** the skill requires the implementer's brief to include a failing test. Tests take the class of the code they test, so the test author is also opus.
+- **Merge request description:** I'd write it inline. It could go to an ops subagent (haiku, low effort), but that isn't worth a separate subagent here.
+- **Escalation:** opus is already the strongest default model, so the "two failed attempts" rule changes nothing. If the implementation fails twice, I'd suggest a frontier model (Fable) and wait for your answer rather than dispatching it.
+- **Human:** expert review before merge. That's required for critical work and isn't delegated.

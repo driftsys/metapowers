@@ -1,0 +1,16 @@
+ ● skill(delegation-routing)
+
+Class: ops (user-specified).
+
+| Role | Model | Reasoning effort | Brief |
+|---|---|---|---|
+| Read-only CI log triager | `gpt-6-luna` | low | Read `ci.log`; identify the failing step and first actionable error; distinguish the primary failure from cascading errors. Summarize the cause with line references and supporting excerpts, noting uncertainty. Do not edit files or dispatch further agents. |
+
+No reviewers required for ops. No subagents dispatched or files edited.
+
+
+
+Changes    +0 -0
+AI Credits 2.29 (9s)
+Tokens     ↑ 33.7k (26.3k cached, 7.4k written) • ↓ 175 (42 reasoning)
+Resume     copilot --resume=09ff6ca9-d396-413a-9af9-11b99e661786

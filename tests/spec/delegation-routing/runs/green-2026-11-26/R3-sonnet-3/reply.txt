@@ -1,0 +1,18 @@
+Class: light (build script, no AGENTS.md entry for the path, so the default applies). Routing is from the `delegation-routing` skill.
+
+| # | Role | Model | Effort | Brief |
+|---|------|-------|--------|-------|
+| 1 | Implementer | `sonnet` | low | The task is "make `scripts/build.sh` also print the elapsed time", with class light (default: build script). It names the file and says the change is local and should follow the script's existing style. It asks for a start timestamp at the top and an elapsed-time line at the end, and for the existing output and exit status to stay unchanged. It also says to run the script once to confirm it works. No spec section, requirement ids or failing test exist, so the brief says so. |
+| 2 | Code reviewer (one light review) | `sonnet` | high | The plan task, its class and the lack of a spec or requirement ids. It also gets the merge request description and the diff as a file in the scratchpad. The diff is computed against base `d60c9ae`, which I would record before the implementer starts. The reviewer is asked whether the timing is correct, whether the exit code is preserved, and whether the `bash` and `sh` syntax is portable. |
+
+- **No refuter, compliance review or ops subagent.** Those apply only to critical work, or to read-only and bulk mechanical work.
+- **No cross-family review.** Claude Code offers one model family. The skill only requires the `Routing: no cross-family review` note on critical tasks, so I would not add it here.
+- **Implementer probably inline.** This is a few lines, under the roughly four tool calls where a subagent pays off. The skill lets me do light work myself. I would likely implement it inline and still dispatch the reviewer (#2), because the review requirement applies to inline work too.
+- **Human review:** normal.
+
+Plan entry:
+
+```
+Class: light (default: build script; scripts/ not in AGENTS.md)
+Routing: implementer sonnet/low (or inline); one light code review sonnet/high
+```

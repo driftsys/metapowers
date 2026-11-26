@@ -1,0 +1,34 @@
+I'd dispatch two subagents, plus one optional one. The task stays **standard**: no AGENTS.md entry covers `src/ui/`, and the default for a user-facing feature is standard. The routing rule says that after two failed attempts, the next attempt goes to the strongest implementer model. So the implementer moves from Sonnet to Opus, and the plan task records that:
+
+```
+Class: standard (default: user-facing feature)
+Routing: implementer escalated sonnet → opus after 2 failed attempts (delegation-routing, 2026-11-26)
+```
+
+### 1. Implementer (third attempt)
+- **Model:** `opus`, escalated from the usual Sonnet for standard work.
+- **Effort:** medium. Medium is the most an implementer gets, even after the escalation.
+- **Brief:**
+  - The spec section for the dark-mode toggle and its requirement ids.
+  - The failing test that defines done, such as one checking that the toggle renders, changes the theme and keeps the setting.
+  - The class: standard.
+  - The target file, `src/ui/settings_view.py`.
+  - A short summary of how the two Sonnet attempts failed: what each one tried, which tests or checks failed, and the error output. That way it doesn't repeat the same approach.
+  - The git base recorded before the task started, so the reviewer can get a clean diff.
+
+### 2. Code reviewer (one review, as standard work requires)
+- **Model:** `opus`. The table gives standard code review to Opus. Claude Code offers only one model family, so the reviewer can't come from a different family than the implementer.
+- **Effort:** high.
+- **Brief:**
+  - The spec and the requirement.
+  - The plan task, with its class and routing lines.
+  - The merge request description.
+  - The diff, saved to a file and computed from the recorded base.
+  - Also the failure notes from the earlier attempts, so it checks that this attempt doesn't have the same defects. This is my addition; the skill doesn't require it.
+
+### 3. Optional: failure triage (only if the earlier attempts' logs are long)
+- **Model:** `haiku`, the ops model. It reads only and doesn't touch production code.
+- **Effort:** low.
+- **Brief:** the logs, transcripts and test output from the two failed attempts, with one question: "What did each attempt change, and what exactly failed?" Its summary goes into the implementer's brief. If the failure output is short, I'd skip this agent and summarise it myself.
+
+**If the Opus attempt also fails:** I wouldn't escalate on my own. The skill allows a frontier model like Fable only when you ask for one. Once the strongest default model has failed, I'd suggest Fable to you with the reason and wait for your answer.

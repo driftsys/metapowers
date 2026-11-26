@@ -1,0 +1,38 @@
+I'd dispatch three subagents in sequence. I'd change the approach rather than retry the same way a fourth time. Nothing has been dispatched and no files have been edited.
+
+I'd leave reasoning effort at each agent's default for all three. I only override it when you explicitly ask for a level.
+
+**1. Failure diagnostician (read-only)**
+- **Agent type:** `Plan`, so it can't edit files.
+- **Model:** opus.
+- **Effort:** default.
+- **Brief:**
+  - **Goal:** work out why three attempts at the dark-mode toggle in `src/ui/settings_view.py` failed (two sonnet, one opus). It should produce a root cause and a concrete implementation plan, and write no code.
+  - **What to read:** `src/ui/settings_view.py`, how theming and settings are currently stored and applied, the existing tests for the UI, and the build and test commands.
+  - **Prior failures:** the failure output from each earlier attempt, if I have it, or any leftover branches and diffs. If I have neither, it checks `git log` and `git status` for traces.
+  - **Output:** the likely root cause, such as a missing theme hook, a settings persistence gap, a test fixture problem or an ambiguous requirement. It also lists the exact files to touch, the acceptance checks, and any open questions for you.
+  - **Scope:** it must not guess at fixes, and it flags anything it couldn't verify.
+
+**2. Implementer**
+- **Agent type:** `general-purpose`.
+- **Model:** fable.
+- **Effort:** default.
+- **Why fable:** sonnet and opus have already failed, so I'd go one tier up rather than repeat them.
+- **Brief:**
+  - The diagnostician's root cause and plan, plus the original task.
+  - The three earlier attempts failed, with the reasons and what to avoid.
+  - Scope limited to the toggle in `src/ui/settings_view.py` and the minimum supporting changes.
+  - Match the surrounding code's style, add or update tests, and run them.
+  - It reports what it ran and the results truthfully, including any failures. No commits.
+
+**3. Independent reviewer**
+- **Agent type:** `general-purpose`, used through the `code-review` skill.
+- **Model:** opus.
+- **Effort:** default.
+- **Brief:**
+  - Review the diff only, and don't hand over the implementer's conclusions, so the review isn't anchored on them.
+  - Check correctness, that the toggle persists and applies, edge cases, and that the tests are meaningful.
+  - Run the tests itself.
+  - Report verified findings only.
+
+If the reviewer finds real problems, I'd send them back to the implementer through `SendMessage` so it keeps its context. If the diagnostician finds the requirement is ambiguous, I'd ask you before implementing.

@@ -1,0 +1,40 @@
+No subagents were dispatched and no files were edited. The only call I made was loading `delegation-routing`.
+
+```markdown
+1. Add a dark-mode toggle to the settings screen in `src/ui/settings_view.py`.
+   Class: standard (default: user-facing feature; AGENTS.md records a class only for `src/payments/`)
+   Routing: implementer sonnet, review opus; no refuter, compliance review or cross-family note (those apply to critical only)
+```
+
+## Subagents I would dispatch
+
+**1. Implementer**
+- **Model:** sonnet
+- **Effort:** low if `settings_view.py` already has a toggle or setting row to copy. Otherwise medium, the ceiling for implementation.
+- **Brief:**
+  - The task and its class (standard).
+  - The file to change, `src/ui/settings_view.py`.
+  - The spec for the toggle, which I'd write first: label, default value, and where the preference is stored.
+  - An instruction to follow the existing setting-row pattern in that file.
+  - An instruction to add or extend tests for the toggle, which take the class of the code they test (standard).
+  - The test command to run.
+  - A constraint to stay out of `src/payments/` and any auth code.
+  - A request to return the diff and the test results.
+
+**2. Code reviewer**
+- **Model:** opus
+- **Effort:** high
+- **Brief:**
+  - The spec and requirement, the plan task, and a merge-request-style description.
+  - The diff as a file, computed from the base commit I record before the implementer starts (currently `9ac86c6`).
+  - A request for correctness bugs, pattern mismatches and missing tests.
+  - A warning that it should not get the diff alone.
+
+I would run one review only. Standard class calls for one code review and normal human review.
+
+## Not dispatched
+- **Refuter, compliance review and ops agent:** these are not needed for a standard task.
+- **Exploration subagent:** reading one file is under the roughly four-tool-call threshold, so I'd do it inline.
+
+## Open question
+The class stays standard only if the preference is a UI-level setting, such as client-side or an existing settings store. If it is persisted to user accounts, that touches authentication or personal data, and the task would become critical. In that case the implementer would be opus, with a code review, a compliance review (sonnet) and a refuter, plus a `Routing: no cross-family review` line. Which of these is it?

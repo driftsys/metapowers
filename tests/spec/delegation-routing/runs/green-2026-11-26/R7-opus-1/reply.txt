@@ -1,0 +1,25 @@
+I'd dispatch **one subagent**, with no reviewers.
+
+**Ops tagger**
+- **Role:** ops model doing bulk mechanical work (tagging records).
+- **Model:** `haiku`, which the routing table sets for the Ops role in every class.
+- **Reasoning effort:** low. Each ticket gets the same rule, so this is the "follows a pattern" case, not open-ended implementation.
+- **What the brief contains:**
+  1. **Task:** read every ticket file in `data/tickets/` (40 expected) and give each exactly one category: `auth`, `billing`, `ui`, `crash` or `feature`.
+  2. **Category definitions,** with a rule for tickets that fit more than one:
+     - `crash`: a hang, crash or error trace. This wins over the other categories.
+     - `auth`: login, sessions, passwords, access rights.
+     - `billing`: payments, invoices, charges, refunds.
+     - `ui`: display, layout or settings-screen problems with no crash.
+     - `feature`: a request for new behaviour, not a defect.
+  3. **Output:** write `data/tickets/tags.csv` with the header `ticket_id,category`, one row per ticket, sorted by ticket ID. Write no other files and leave the tickets unchanged.
+  4. **Tool check** (required because ops output gets no review): a short script it must run and pass before reporting. The script checks that the row count equals the number of ticket files, that every ticket ID appears exactly once, that there are no extra IDs, and that every category is in the allowed set.
+  5. **Class line:** `Class: ops (user)`, with a note that no code or behaviour changes.
+  6. **Report back:** the script's output, the count per category, and any tickets it found ambiguous with a one-line reason each. I'd spot-check those myself.
+
+**Not dispatched, and why:**
+- **No code reviewer, refuter or compliance reviewer.** The routing skill says ops work is "checked by tools", and the validation script is that tool.
+- **No batching.** 40 tickets should fit in one subagent's context. I'd split them only if the ticket files turn out to be large.
+- **No implementer model.** Nothing here touches production code. The tickets may mention payments, but the `src/payments/` critical class applies to that code path, not to labelling ticket text.
+
+**One flag on the class:** the class rules say ops is for changes that "need no decision", and choosing a category for each ticket is a small judgement call. The routing skill, though, names classification and tagging as ops-model work, and you set the class to ops, so I've kept it. If these tags feed something people rely on, like routing or reporting, tell me and I'll raise it to light. That adds a Sonnet tagger and one Sonnet light review.

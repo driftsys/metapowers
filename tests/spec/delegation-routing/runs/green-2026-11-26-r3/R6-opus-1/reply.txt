@@ -1,0 +1,43 @@
+Two Sonnet attempts have already failed, so I'd stop retrying Sonnet and move the implementer up to Opus. That's the strongest model Claude Code offers, and it hasn't tried this task yet. I wouldn't suggest a frontier model unless Opus fails too.
+
+**Plan task**
+Add a dark-mode toggle to `src/ui/settings_view.py`.
+Class: standard (you set it; it also matches the default for a user-facing feature)
+Routing: implementer escalated sonnet → opus after 2 failed Sonnet attempts (2026-11-26)
+
+Before dispatching, I'd record the base commit, `16c6bcc`, so the review diff has a fixed starting point.
+
+### 1. Failure triage (ops)
+- **Model:** haiku
+- **Effort:** low
+- **Role:** read-only. It reads the two failed attempts and reports why each one failed. It does not edit any code.
+- **Brief:**
+  - Where the two failed attempts are (branches, diffs or transcripts) and their test or error output.
+  - The question: "For each attempt, what failed (test, error, missed requirement) and what is the likely cause?"
+  - The output: a short summary with file and line references.
+- **Note:** I'd skip this subagent and read the attempts myself if that takes about four tool calls or fewer.
+
+### 2. Implementer
+- **Model:** opus (escalated from sonnet, the usual model for standard work, after the two failures)
+- **Effort:** medium. That's the ceiling for implementation; more effort costs more without a better result.
+- **Brief:**
+  - The spec section for the dark-mode toggle and its requirement ids.
+  - The failing test that defines done. If none exists yet, it writes one first.
+  - Class: standard.
+  - The triage summary: what the two attempts tried and why each failed, so it doesn't repeat them.
+  - Scope: limited to `src/ui/settings_view.py` and the code it needs to touch, such as the theme and preference storage. Nothing in `src/payments/` (critical).
+  - The base commit, `16c6bcc`.
+
+### 3. Code reviewer
+- **Model:** opus. The rules call for a reviewer from the other model family, but Claude Code offers only Claude models, so the reviewer is from the same family as the implementer.
+- **Effort:** high
+- **Role:** the one code review that standard class requires before merge. A normal human review follows. No compliance review or refuter, since those are only for critical work.
+- **Brief:**
+  - The spec and the requirement ids.
+  - The plan task, including its class and routing lines.
+  - The merge request description.
+  - The diff, saved as a file computed from `16c6bcc`.
+  - The triage summary, so it checks that the earlier failure causes are actually fixed.
+
+### If Opus also fails
+I'd stop and suggest a frontier model to you, with the reason, and wait for your answer before dispatching it.

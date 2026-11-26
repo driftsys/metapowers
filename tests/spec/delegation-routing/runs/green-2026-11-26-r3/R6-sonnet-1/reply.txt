@@ -1,0 +1,30 @@
+I'd dispatch two subagents, one after the other. I haven't dispatched anything or edited any files.
+
+**Task class:** standard. This is a user-facing feature in `src/ui/`, outside the critical `src/payments/` path, and a theme toggle shows no personal data. I'd write this in the plan as `Class: standard (default: user-facing feature)`.
+
+**1. Implementer**
+- **Model:** `opus`. The routing table starts standard work on sonnet, but sonnet has already failed twice, so I'm moving this task up a model. This is an escalation and not a frontier suggestion, because sonnet isn't the strongest default model.
+- **Reasoning effort:** medium, which is the ceiling for implementation.
+- **Brief:**
+  - The spec section and requirement ids for the dark-mode toggle.
+  - The failing test, if one exists. If none exists, the implementer writes one first.
+  - The task's class (standard) and the file in scope, `src/ui/settings_view.py`.
+  - A short summary of why each sonnet attempt failed. I'd collect this before dispatch, from the diffs or logs of the two attempts.
+  - An instruction to find the root cause of those failures before writing code, so it doesn't repeat them.
+  - A scope limit: no changes under `src/payments/`.
+- **Plan note:** `Routing: implementer escalated sonnet→opus after 2 failed attempts (fix loop)`.
+
+**2. Code reviewer** (one review, as the standard class requires)
+- **Model:** `opus`.
+- **Reasoning effort:** high.
+- **Brief:**
+  - The spec, the requirement, and the plan task.
+  - The merge request description.
+  - The diff as a file, computed from the base commit recorded before the task started (`a7ce326`, unless it moves).
+  - A request to check correctness against the requirement, including how the toggle's state persists and applies.
+- **Cross-family note:** Claude Code offers only one model family, so the cross-family reviewer isn't possible. The skill requires the "no cross-family review" note only for critical tasks, so I'd skip it here.
+
+I'd skip these roles:
+- **Refuter and compliance review:** only critical tasks get them.
+- **Ops (haiku) subagent:** the work is a single feature, and a subagent's fresh context would cost more than it saves.
+- **Consult and frontier model:** neither is needed. The class is clear, and the strongest default model hasn't failed yet. If opus also fails, I'd suggest a frontier model to you with the reason and wait for your answer.

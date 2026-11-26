@@ -1,0 +1,52 @@
+Nothing has been dispatched and no files have been edited. `src/auth/session.py` isn't listed in AGENTS.md. Authentication defaults to critical, and you set the class as critical, so the class is **critical**. The routing below comes from the `delegation-routing` skill.
+
+**Plan task**
+1. Add session expiry to `src/auth/session.py` (REQ-AUTH-014, REQ-AUTH-015).
+   Class: critical (user-specified; default: authentication)
+   Routing: no cross-family review
+   Routing: base commit recorded before start (currently `a0d5b85`)
+
+**Subagents**
+
+1. **Implementer**
+   - Model: `opus`. Effort: `medium`.
+   - Brief:
+     - The task's class (critical).
+     - The relevant section of `docs/spec-session-expiry.md`.
+     - REQ-AUTH-014 and REQ-AUTH-015.
+     - The failing tests for both requirements. If none exist, this agent writes them first from the spec and confirms they fail. Tests take the class of the code they test, so they are critical too.
+   - It owns the tests and the code in one session, because this is one dependent chain.
+   - Medium is the ceiling for implementation, so I wouldn't go higher.
+
+2. **Code reviewer**
+   - Model: `opus`. Effort: `high`.
+   - Brief:
+     - The spec.
+     - REQ-AUTH-014 and REQ-AUTH-015.
+     - The plan task.
+     - The merge request description.
+     - The diff as a file, computed from the recorded base.
+   - It does not get only the diff.
+
+3. **Compliance reviewer**
+   - Model: `sonnet`. Effort: `high`.
+   - Brief: the same as the code reviewer's. It checks that each requirement is met and that nothing outside the spec was added.
+   - The skill sets no effort for this role. I'm treating it as a review, so `high`.
+
+4. **Refuter**
+   - Model: `opus`. Effort: `high`.
+   - Brief: the same as the code reviewer's. It tries to break the change, for example with:
+     - clock edge cases;
+     - expiry-boundary off-by-ones;
+     - sessions that outlive their expiry;
+     - refresh and renewal paths that bypass expiry.
+   - The reviewers can run in parallel once the diff exists.
+
+**Not dispatched**
+- **Ops (haiku):** nothing in this task is read-only triage or bulk mechanical work. I could use one for the diff file or a test run, but those are under four tool calls, so I'd do them inline.
+- **Gardening (sonnet):** only needed if the spec or docs have to change.
+
+**Conditions and notes**
+- **Consult:** this session runs on Sonnet, below the strongest model. If the spec leaves the expiry design unclear, I'd consult an `opus` subagent with the task, the class and the question before planning.
+- **Escalation:** after two failed implementer attempts, I'd retry with the strongest model, which is already `opus`. I would then suggest a frontier model to you and wait for your answer.
+- **Review gap:** Claude Code offers one model family, so the reviewers aren't cross-family. The human expert review is still required, and the plan task records the gap for them.

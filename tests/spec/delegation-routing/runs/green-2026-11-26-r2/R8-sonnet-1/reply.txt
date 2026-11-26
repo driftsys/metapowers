@@ -1,0 +1,52 @@
+I haven't dispatched anything and haven't edited any files. After loading `delegation-routing`, this is what I would dispatch for the dark-mode toggle task in `src/ui/settings_view.py`.
+
+```
+Task: add a dark-mode toggle to the settings screen in src/ui/settings_view.py
+Class: standard (user's decision)
+Routing: escalation already spent. Two sonnet attempts and one opus attempt failed.
+Routing: no implementer dispatched until the user answers the frontier-model question below.
+```
+
+**Dispatch now, before any new implementation attempt**
+
+1. **Failure reproducer**
+   - **Model and effort:** sonnet, low effort. This is bounded read-only work, so it needs no strong model.
+   - **Brief:**
+     - The task and the toggle's expected behavior.
+     - The three failed attempts: branches or diffs, plus their failure output.
+     - The order of work: reproduce the failure on the current base commit (`f36a86e`), then report the exact command, the output and the files involved.
+     - A prohibition on diagnosing the cause and on editing files.
+
+2. **Root-cause diagnosis and design consult**
+   - **Model and effort:** opus, high effort. Debugging a root cause is high effort. The session runs on Sonnet, which is below the strongest default model, and the cause of three failures is the kind of question that rule is for.
+   - **Brief:**
+     - The task, the class (standard) and the reproducer's report.
+     - The three attempt diffs and the spec or requirement text.
+     - The question: why did three attempts from two models fail? Is the cause an unclear spec, a hidden dependency such as theme or state plumbing or a missing test, or a wrong class? What is a design that would work?
+     - A prohibition on editing files.
+     - A request for a short answer: the root cause, a recommended design and any open questions.
+
+**Not dispatched yet**
+
+3. **Implementer**
+   - **Model and effort:** opus, medium effort. Medium is the ceiling for implementation.
+   - **Brief:**
+     - The spec section and requirement ids.
+     - The failing test.
+     - The class (standard).
+     - The diagnosis's design.
+   - **Condition:** the user has answered the frontier-model question below. Opus has already failed once, so the escalation rule is spent.
+
+4. **Code reviewer**
+   - **Model and effort:** opus, high effort. Standard work gets one code review.
+   - **Brief:**
+     - The spec, the requirement, the plan task and the merge request description.
+     - The diff as a file computed from the base I record before the implementer starts.
+   - **Cross-family review:** none is available, since Claude Code offers one family. The "no cross-family review" note is only required for critical tasks.
+   - **Human review:** normal.
+
+**Question for you: should I use a frontier model?**
+
+The strongest default model has failed this task. My leading diagnosis is that the cause is probably in the spec or the surrounding code rather than in the model, so I'd run the diagnosis first. If it shows the task really needs more reasoning than opus can give, would you want a frontier model (Fable) for the implementation? I won't dispatch one unless you say yes.
+
+**Class check:** if the toggle persists its setting through code in `src/payments/` or through auth or personal-data storage, the task becomes critical. In that case it would need the compliance review and a refuter as well.

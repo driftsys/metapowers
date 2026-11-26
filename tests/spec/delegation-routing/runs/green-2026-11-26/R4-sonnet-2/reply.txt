@@ -1,0 +1,31 @@
+**Plan task:** Triage the failing CI log in `ci.log` and summarize the cause.
+Class: ops (user-assigned for this task)
+
+I'm treating the class as a user decision and recording it in the plan. Reading a log and summarizing it is read-only ops work. The log may contain `src/payments/` paths. That doesn't raise the class, because I'm not changing that code.
+
+**Subagents I would dispatch: one**
+
+| Field | Value |
+| --- | --- |
+| Role | Ops, read-only log triage |
+| Agent type | `general-purpose` |
+| Model | `haiku`, from the Ops row of the Models table. This is the table's setting for ops work. The general delegation rule suggests Sonnet for bounded mechanical work, but the routing skill is the more specific rule when a class applies. |
+| Reasoning effort | None set. The effort table has no row for ops, and the Agent tool's `effort` parameter may only be set when you ask for it. The agent runs at its default effort. |
+| Run mode | Foreground, since my next step depends on its summary |
+
+**Brief contents**
+- **Goal:** find why CI failed in `ci.log` and report the root cause. Don't fix anything.
+- **Constraints:** read-only. No file edits, no git writes, no re-running CI.
+- **Scope:** read `ci.log` in full, or in sections if it is large. Locate the first real failure, not the later cascade errors. Name the failing job, step, test or command, and quote the key error lines with line numbers.
+- **Separate:** root cause, secondary or cascading failures, and noise such as warnings and retries.
+- **Flags:** whether the failure looks like a code defect, a flaky test, an environment or dependency problem, or a config problem.
+- **Output:** a summary under about 200 words, with the cause stated first, then evidence with `ci.log:<line>` references and a confidence level. If the cause is unclear, it should list what is missing instead of guessing.
+- **Class line:** ops, user-assigned. It reports findings only, and any resulting change would be planned separately with its own class.
+
+**Not dispatched**
+- **Code reviewer, refuter, compliance review:** the ops class has no reviews because nothing is merged.
+- **Implementer:** no code changes are in scope. If the triage points to a fix, it becomes a new task. That task would take the class of its code, which is critical if it touches `src/payments/`.
+
+**Routing notes**
+- **Consult in doubt:** not triggered. The class is settled, so I won't consult a stronger model.
+- **Overrides:** none.

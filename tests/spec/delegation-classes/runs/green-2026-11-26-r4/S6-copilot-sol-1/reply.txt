@@ -1,0 +1,21 @@
+ PY Read src/ui/settings_view.py 6 lines read
+
+ MD Read AGENTS.md 11 lines read
+
+ / Search "**/AGENTS.md" 1 file found
+
+ / Search "**/*settings*" 2 files found
+
+1. In `src/ui/settings_view.py`, display the current user's email below their name, HTML-escaped, preserving the theme display.
+   Class: standard (default: screen displaying personal data).
+2. Add focused tests for email display, HTML escaping, and unchanged theme behavior.
+   Class: standard (tests of standard code).
+
+Privacy assumption: the email is visible only to its owner; confirm this requirement before implementation. No files changed.
+
+
+
+Changes    +0 -0
+AI Credits 2.27 (10s)
+Tokens     ↑ 49.0k (42.8k cached, 6.2k written) • ↓ 281 (20 reasoning)
+Resume     copilot --resume=2febe9e5-531e-43c4-b59f-0e2f88c17fd7

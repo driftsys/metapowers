@@ -1,0 +1,16 @@
+ ● skill(delegation-routing)
+
+Class: standard (user-specified). Two failed Sonnet attempts trigger escalation, not a class change.
+
+1. **Implementer — `claude-opus-5.5`, medium effort.** Brief: add a dark-mode toggle in `src/ui/settings_view.py`; include the spec section, requirement IDs, failing test, and standard class. Include both failed attempts and their failure evidence; preserve existing settings behavior and follow established UI/theme patterns. Explicitly identify any missing spec or test artifacts.
+
+2. **Code reviewer — `gpt-6.2-sol`, high effort**, after implementation. Brief: include the spec, requirement, plan task, merge-request description, and a diff file computed against the base recorded before implementation. Review correctness, requirement coverage, regressions, and focused tests.
+
+No compliance reviewer or refuter is required for standard work. No agents dispatched or files edited.
+
+
+
+Changes    +0 -0
+AI Credits 2.43 (11s)
+Tokens     ↑ 33.8k (26.3k cached, 7.4k written) • ↓ 304 (98 reasoning)
+Resume     copilot --resume=2ddc890d-d00b-427b-99a2-03d80c37c3d6

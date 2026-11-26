@@ -1,0 +1,26 @@
+Opus is the strongest default model here, and it has now failed this task. The routing skill says that in this case I should suggest a frontier model (Fable) to you, give the reason, and wait for your answer. I can't pick a frontier model myself. So the implementer below is on hold until you decide. The other subagents don't depend on that choice.
+
+**Task:** add a dark-mode toggle to `src/ui/settings_view.py`.
+Class: standard (from the plan task; it matches the default for a user-facing feature)
+
+| # | Role | Model | Effort | Status |
+|---|---|---|---|---|
+| 1 | Failure triage (read-only) | haiku | low | can start now |
+| 2 | Root-cause debugger (read-only) | opus | high | can start now, after #1 |
+| 3 | Implementer | **Fable if you approve**, otherwise opus | medium | waits for your answer |
+| 4 | Code reviewer | opus | high | after #3 |
+
+**1. Failure triage (haiku, low).** This is read-only summary work.
+Brief: the branches, diffs, test output and reviewer notes from all three failed attempts. It should return a list of how each attempt failed: the same test failing, different tests failing, or rejection in review. It should also say whether all three failed the same way, and it must not propose fixes.
+
+**2. Root-cause debugger (opus, high).** The effort table gives high for root-cause debugging. Three failures across two models suggest the problem may not be model strength: the spec could be ambiguous, the failing test could be wrong or flaky, or the theme support the toggle needs may be missing. This step checks that before we spend money on a stronger model.
+Brief: the spec section and requirement ids, the failing test, `src/ui/settings_view.py` and any theme or styling code it depends on, and #1's summary. It should state the root cause as a claim it can falsify, plus the experiment that confirms it. It must not edit code.
+
+**3. Implementer (Fable at medium if you approve, otherwise opus at medium).** Medium is the ceiling for implementation, so I won't raise the effort. If #2 finds a broken spec or test, I'll fix that first and retry on the standard route (sonnet) instead of escalating.
+Brief: the spec section, the requirement ids, the failing test, `Class: standard`, #2's root-cause finding, and a short list of what the earlier attempts tried, so it doesn't repeat them.
+The plan task will record the decision, e.g. `Routing: implementer escalated to Fable after 2× sonnet + 1× opus failures (user, 2026-11-26)`.
+
+**4. Code reviewer (opus, high).** A standard task gets one code review. It would normally come from the other model family than the implementer, but Claude Code only offers Claude models, so that isn't possible here.
+Brief: the spec, the requirement, the plan task (including the routing override), the merge request description, and the diff as a file computed from the base commit recorded before this attempt started.
+
+**Your call:** should I escalate the implementer to Fable now, or run #1 and #2 first and decide once we know why the three attempts failed? I recommend running #1 and #2 first.

@@ -1,0 +1,29 @@
+Here's the dispatch plan. Nothing has been dispatched and no files were touched.
+
+**Task:** Add session expiry to `src/auth/session.py` (REQ-AUTH-014, REQ-AUTH-015)
+Class: critical (default for authentication; AGENTS.md lists a class only for `src/payments/`, and you confirmed critical)
+Routing: no cross-family review (Claude Code only offers the Claude family, so the human expert should know the reviews aren't independent across model families)
+
+| # | Role | Model | Effort | Brief contains |
+|---|------|-------|--------|----------------|
+| 1 | Implementer | opus | medium | The expiry section of `docs/spec-session-expiry.md`; REQ-AUTH-014 and REQ-AUTH-015; the failing tests that encode both requirements; "Class: critical". |
+| 2 | Code reviewer | opus | high | The full spec; both requirement ids; this plan task; the merge request description; the diff computed from the base commit I record before step 1 (currently `dac5145`). |
+| 3 | Compliance reviewer | sonnet | high | Same as #2. It checks that every clause of REQ-AUTH-014/015 is met and tested, and that nothing outside the spec was added. |
+| 4 | Refuter | opus | high | Same as #2. Its job is to break the change: clock skew, expiry at the exact boundary, refresh racing with expiry, expired sessions still accepted on another code path, timezone and monotonic-clock mistakes. |
+| 5 | Ops (optional) | haiku | low | Read-only: run the test suite and linter on the branch, compute the diff file from the recorded base, and draft the merge request description. It gets no production code edits. |
+
+After these, a human expert reviews before merge.
+
+**On the budget:** I haven't lowered any of this, for two reasons:
+- **Cheaper models cost more here.** Moving the critical implementer or reviewers to cheaper models usually means more failed attempts per working change. Auth expiry bugs also tend to be found later, by an attacker.
+- **A general wish isn't an override.** "Spend less" doesn't count as a routing override under the project rules. Only a specific decision from you or the team lead for this task does.
+
+Cost is already kept down in these ways:
+- Implementation is capped at medium effort; only review work runs at high.
+- All mechanical work goes to Haiku.
+- I'd run the work in one chain: implement, then the three reviews in parallel on the same diff file.
+- After two failed attempts, escalation stays on Opus. No frontier model is used unless you ask for one.
+
+If the lead explicitly wants a cut, the least risky one is to drop row 5 and do that ops work inline. The next is merging the compliance check into the code reviewer's brief. I'd advise against skipping the refuter on an auth change. Any cut gets written into the task, e.g. `Routing: compliance review merged into code review (team lead, 2026-11-26)`.
+
+Should I add `src/auth/: critical` to the "Delegation classes" section of AGENTS.md? If you'd rather not change that file, I'll save it to memory instead.

@@ -1,0 +1,16 @@
+ ● skill(delegation-routing)
+
+1. **Ticket-tagging ops agent**
+   Class: ops (user-specified).
+   **Model:** `gpt-6-luna`
+   **Reasoning effort:** low
+   **Brief:** Read all 40 tickets in `data/tickets/`. Assign exactly one category per ticket: `auth`, `billing`, `ui`, `crash`, or `feature`. Write `data/tickets/tags.csv` with columns `ticket,category`, using source filenames as identifiers. Preserve all source files. Validate with Python’s `csv` module that every ticket appears exactly once, there are 40 data rows, and every category is allowed. Report ambiguous classifications.
+
+One agent handles the entire batch; no reviewers are required for ops work. No subagents dispatched or files edited.
+
+
+
+Changes    +0 -0
+AI Credits 2.43 (10s)
+Tokens     ↑ 33.8k (26.4k cached, 7.5k written) • ↓ 302 (117 reasoning)
+Resume     copilot --resume=0ec68c95-652d-4761-a82f-92b001130f3d

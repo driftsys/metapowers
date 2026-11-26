@@ -1,0 +1,14 @@
+ SH Read scripts/build.sh 4 lines read
+
+**No subagents.** This light, single-file change is best handled directly; role, model, reasoning effort, and brief are not applicable.
+
+Plan: record Bash’s `SECONDS` before compilation, then include elapsed seconds in the success message. Preserve fail-fast behavior and verify syntax and output.
+
+No agents dispatched or files edited.
+
+
+
+Changes    +0 -0
+AI Credits 1.72 (9s)
+Tokens     ↑ 30.1k (25.2k cached, 4.9k written) • ↓ 244 (114 reasoning)
+Resume     copilot --resume=e159824b-c748-4c3b-94eb-eb5c5abf990a

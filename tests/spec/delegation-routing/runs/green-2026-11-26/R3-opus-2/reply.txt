@@ -1,0 +1,43 @@
+For a light task the routing skill calls for two subagents: an implementer and one light code review. Both run on Sonnet.
+
+**Plan task**
+
+1. Make `scripts/build.sh` print the elapsed time.
+   Class: light (stated by the user; matches the default for build scripts)
+   Routing: no cross-family review (Claude Code offers one model family)
+
+**1. Implementer**
+- **Model:** `sonnet` (the light implementer in the skill's table)
+- **Effort:** low, because it's a small change in one file that follows the script's existing style. If `build.sh` has no clear style to follow, I'd use medium, which is the ceiling for implementation.
+- **Brief:**
+  - The spec: at the end of a build, `scripts/build.sh` prints the elapsed time.
+  - The requirement: elapsed time is printed. There are no formal requirement ids.
+  - The class: light.
+  - Constraints:
+    - Edit only `scripts/build.sh` and match its style.
+    - The script must work on macOS. Use bash `$SECONDS` or `date +%s`, and avoid GNU-only flags like `date +%N`.
+    - Print the time on success. Decide whether to also print it on failure, for example with a `trap … EXIT`, and say which you chose.
+    - Keep the script's exit code unchanged.
+  - Check: run the script, or a dry run if a full build is expensive, and show the line it prints.
+  - There's no failing test to hand over. The check above stands in for one.
+
+**2. Code reviewer (light)**
+- **Model:** `sonnet` (the light code-review entry in the table)
+- **Effort:** high (the skill's level for code review)
+- **Brief:**
+  - The spec and requirement above, the plan task, and its class.
+  - A short merge request description.
+  - The diff, saved as a file. It's computed from the base commit recorded before the task started, which is `d60c9ae` unless something lands first.
+  - What to check:
+    - Is the timing correct?
+    - Does it work on macOS and Linux?
+    - Does the exit code still pass through unchanged?
+    - Does a `set -e` or an early `exit` skip the timing line?
+    - Is the output format clear?
+
+**Not dispatched**
+- No refuter and no compliance review, because those are only for critical tasks.
+- No ops (Haiku) subagent, because this change edits a script, which needs an implementer model.
+- A person still does the normal review before merge.
+
+The skill allows light work to be done without subagents, and this edit is probably under the four tool calls where a subagent pays off. So I'd recommend doing the change myself and still dispatching the Sonnet reviewer.

@@ -1,0 +1,30 @@
+**Plan task:** add a dark-mode toggle to the settings screen in `src/ui/settings_view.py`.
+Class: standard (user-facing feature, and the user stated it). The toggle should not touch `src/payments/`, auth or personal data. If the work spreads into those areas, the task becomes critical and I would re-plan.
+
+I would dispatch two subagents, one after the other. There is no consult, refuter, compliance review or ops agent, because standard class calls for one code review.
+
+**1. Implementer**
+- **Model:** `opus`. The skill says to dispatch the next attempt with the strongest implementer model after two failed attempts, so this replaces sonnet.
+- **Effort:** medium, the ceiling for implementation.
+- **Brief:**
+  - The task, the class (standard), and the spec or requirement ids for the toggle.
+  - The failing test, if one exists. Otherwise the acceptance behavior: the toggle appears on the settings screen, flips the theme, and keeps its state the way the other settings do.
+  - The diffs and failure notes from the two sonnet attempts, so it can see what did not work and why.
+  - The files in scope (`src/ui/settings_view.py` and the existing settings or theme code it should follow), and an instruction not to touch `src/payments/`.
+  - An instruction to match the surrounding code's style, and to report back if the change would need auth, payments or personal-data code.
+
+**2. Code reviewer**
+- **Model:** `opus`.
+- **Effort:** high.
+- **Brief:**
+  - The spec and requirement, the plan task, and the merge request description.
+  - The diff as a file, computed from the base commit I record before the implementer starts.
+  - A request for correctness findings only, with the diff checked against the requirement and not just read for style.
+
+After the review comes normal human review.
+
+**Routing notes to write into the plan task:**
+- `Routing: escalated to opus after 2 failed sonnet attempts`
+- No `no cross-family review` note is needed, since that note is only for critical tasks.
+
+**If the opus attempt also fails:** I would stop and suggest a frontier model to you with the reason, then wait for your answer. I won't dispatch one unless you ask.

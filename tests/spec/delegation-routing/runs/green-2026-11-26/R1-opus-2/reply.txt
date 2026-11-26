@@ -1,0 +1,60 @@
+Nothing has been dispatched and no files were changed. The routing below comes from the `delegation-routing` skill, applied to a **critical** task.
+
+**Before any dispatch:** I'd record the base commit (`a0d5b85`). I'd also read `docs/spec-session-expiry.md` myself so I can quote the right sections of REQ-AUTH-014 and REQ-AUTH-015 in each brief.
+
+## Subagents
+
+**1. Test author: Opus, medium effort**
+- **Why:** the implementer's brief has to include a failing test, and tests take the class of the code they test, so this is critical work.
+- **Brief:**
+  - The spec sections for REQ-AUTH-014 and REQ-AUTH-015.
+  - The requirement IDs.
+  - The target file, `src/auth/session.py`.
+  - `Class: critical`.
+  - The task: write tests that fail until expiry is in place, one or more per requirement, each tagged with its requirement ID. Confirm they fail against the current code.
+
+**2. Implementer: Opus, medium effort**
+- **Why:** critical work goes to the strongest model, and medium is the ceiling for implementation.
+- **Brief:**
+  - The spec sections.
+  - REQ-AUTH-014 and REQ-AUTH-015.
+  - The failing tests from step 1.
+  - `Class: critical`.
+  - The scope: limited to `src/auth/session.py` and the new tests.
+  - When done: the tests pass, the existing suite still passes, and it writes a merge request description that maps each change to a requirement.
+- Steps 1 and 2 could be one Opus session, since they form one dependent chain. I'd keep them separate so the test is fixed before any implementation exists.
+
+**3. Code reviewer: Opus, high effort**
+- **Brief:**
+  - The full spec.
+  - Both requirements.
+  - The plan task.
+  - The merge request description.
+  - The diff, saved to a file in the scratchpad and computed from `a0d5b85`.
+- **Focus:** correctness and security of the expiry logic, including:
+  - Clock and timezone handling
+  - Off-by-one errors at the expiry boundary
+  - Whether the expiry check runs on every access path
+  - Session fixation or replay after expiry
+  - Server-side invalidation
+
+**4. Compliance reviewer: Sonnet, high effort**
+- **Brief:** the same five items as the code reviewer.
+- **Task:** check that each requirement is fully implemented and tested, and flag anything in the diff that the spec doesn't cover. Return a table of requirement → code → test with a pass or fail for each row.
+
+**5. Refuter: Opus, high effort**
+- **Brief:** the same five items as the code reviewer.
+- **Task:** try to prove the change wrong. Build concrete cases where an expired session is still accepted, or a valid one is rejected, and run them as tests where it can.
+
+Steps 3, 4 and 5 are independent of each other, so I'd launch them together in parallel.
+
+## Recorded in the plan task
+
+```
+Class: critical (AGENTS.md has no entry for src/auth/; default: authentication)
+Routing: no cross-family review
+```
+
+- **Cross-family gap:** Claude Code only offers Claude models, so the reviewer and refuter can't come from a different model family than the implementer. The `Routing` line flags this for the human expert.
+- **After merge review:** a human expert still has to review the change.
+- **If it fails:** after two failed attempts, the next one already uses the strongest default model. If that fails too, I'd suggest a frontier model to you and wait for your answer.

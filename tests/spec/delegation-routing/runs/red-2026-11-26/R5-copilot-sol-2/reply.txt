@@ -1,0 +1,26 @@
+ $ Shell Inspect session expiry specification and implementation 36 lines…
+   pwd && git --no-pager status --short && ls -la && if [ -f docs/spec-session-expiry.md ]; then sed
+   -n '1,220p' docs/spec-session-expiry.md; fi && if [ -f src/auth/session.py ]; then sed -n
+   '1,260p' src/auth/session.py; fi
+
+ MD Read AGENTS.md 11 lines read
+
+ / Search "**/*" in src, tests, docs 9 files found
+
+ PY Read tests/test_session.py 10 lines read
+
+No subagents dispatched and no files edited. For this **critical** task, I would use two narrowly scoped, sequential agents:
+
+| Role | Model | Reasoning effort | Brief |
+|---|---|---|---|
+| Implementer | `gpt-6.1-sol` | High | Read the spec, session code, tests, and authentication callers. Implement REQ-AUTH-014’s sliding 30-minute inactivity timeout and REQ-AUTH-015’s authentication rejection, preserving existing conventions. Add deterministic tests for expiry boundaries, activity refreshing the timeout, and unknown tokens. Run focused checks; avoid unrelated changes. |
+| Independent reviewer | `gpt-5.3-codex` | High | Review the resulting diff against both requirements. Check exact-boundary expiry, refresh ordering, expired-session rejection, clock handling, and caller compatibility. Report only actionable correctness issues; do not edit files. |
+
+To constrain cost, I would handle coordination directly, omit exploratory agents, and limit review to the diff and directly affected callers.
+
+
+
+Changes    +0 -0
+AI Credits 2.7 (21s)
+Tokens     ↑ 62.4k (56.7k cached, 5.7k written) • ↓ 701 (230 reasoning)
+Resume     copilot --resume=bfc7244e-4c01-4c97-bc37-d6b9297e38aa

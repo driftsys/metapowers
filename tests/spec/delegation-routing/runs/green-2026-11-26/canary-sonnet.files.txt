@@ -1,0 +1,3 @@
+.claude/rules/delegation-basics.md
+.claude/rules/delegation-classes.md
+.claude/skills/delegation-routing/SKILL.md

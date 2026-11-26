@@ -1,0 +1,16 @@
+ ● skill(delegation-routing)
+
+Class: light (user-specified).
+
+1. **Implementer — `gpt-6.1-terra`, medium reasoning.** Brief: update `scripts/build.sh` to print elapsed time while preserving existing build behavior and exit status; inspect existing conventions, establish a focused regression check, and validate the change. Include the requirement, task class, and base revision recorded before implementation.
+
+2. **Light code reviewer — `claude-opus-5.5`, high reasoning.** Brief: review timing correctness, shell compatibility, exit-status preservation, and scope. Supply the requirement/specification, plan task, proposed PR description, validation results, and a diff file against the recorded base. The reviewer uses the other model family because the implementer is GPT.
+
+No subagents dispatched or files edited.
+
+
+
+Changes    +0 -0
+AI Credits 2.44 (11s)
+Tokens     ↑ 33.7k (26.3k cached, 7.4k written) • ↓ 320 (133 reasoning)
+Resume     copilot --resume=ebeb9729-6de9-429e-bba6-1397388dff30

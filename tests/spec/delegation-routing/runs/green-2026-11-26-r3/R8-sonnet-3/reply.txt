@@ -1,0 +1,43 @@
+I have not dispatched anything and have not edited any files. The routing skill says that once the strongest default model (opus) has failed a task, I suggest a frontier model to you and wait for your answer. So the plan has two stages. Only the first stage runs now.
+
+**Stage 1: diagnose (read-only, no code changes)**
+
+1. **Failure reproducer**
+   - Model: sonnet. Effort: low.
+   - Brief:
+     - The task: a dark-mode toggle in `src/ui/settings_view.py`, class standard.
+     - The three failed attempts: their diffs, their final reports and any test output.
+     - What to do: re-run the failing checks on each attempt and report the exact failure for each. Say whether the three failures share a cause.
+     - A constraint: change no files, and return commands and output, not opinions.
+
+2. **Root-cause consult**
+   - Model: opus. Effort: high (debugging a root cause).
+   - The session runs on sonnet, which is below the strongest model, and the routing is in doubt after three failures. That triggers the consult rule.
+   - Brief:
+     - The task and its class.
+     - The reproducer's findings.
+     - The question: why did three attempts fail, and is the spec, the test or the design at fault?
+     - What to return: a diagnosis and a concrete approach, with no implementation.
+     - A check on the class: confirm that nothing in the change touches `src/payments/`, auth or persisted personal data. If it does, the task rises to critical.
+
+**Stage 2: after your answer**
+
+3. **Implementer (not dispatched until you answer)**
+   - I suggest a frontier model, Fable, at medium effort. The reason is that sonnet failed twice and opus once, and the diagnosis may show that a stronger model is what's missing.
+   - If you decline, I'd use opus at medium effort with the diagnosis in the brief.
+   - Brief:
+     - The spec section and requirement ids.
+     - The failing test.
+     - The class (standard).
+     - The diagnosis from step 2, with the failure modes to avoid.
+
+4. **Code reviewer**
+   - Model: opus. Effort: high.
+   - One review is enough for a standard task. I'll record the base commit (`cf632e1`) before the implementer starts.
+   - Brief:
+     - The spec, the requirement, the plan task and the merge request description.
+     - The diff as a file computed from the recorded base, not pasted inline.
+
+No refuter or compliance review is needed for standard class. I'd write `Routing: frontier implementer proposed (3 failures), awaiting user` in the plan task.
+
+Do you want Fable as the implementer after the diagnosis, or should I stay with opus?

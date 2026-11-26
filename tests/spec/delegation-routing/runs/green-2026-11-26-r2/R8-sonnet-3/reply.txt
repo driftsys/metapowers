@@ -1,0 +1,38 @@
+**Class:** standard (user-facing feature, set by you). `src/ui/settings_view.py` is not under `src/payments/`, so the critical rule doesn't apply. A cross-check against the "highest class among the code touched" rule is part of the brief below.
+
+**Routing state:** The skill's escalation rule is already used up. Sonnet failed twice, then Opus (the strongest default model) failed the third attempt. Another implementer attempt would repeat the failure, so I would dispatch a diagnosis first and not another implementer. Per the skill, I'd also suggest a frontier model to you in the same answer as the diagnosis, and wait for your reply before dispatching one.
+
+## Subagents I would dispatch now
+
+**1. Root-cause diagnostician (one subagent, read-only)**
+- **Model:** opus
+- **Reasoning effort:** high (debugging a root cause)
+- **Brief:**
+  - The task: add a dark-mode toggle to the settings screen in `src/ui/settings_view.py`. Class: standard.
+  - Three attempts failed: sonnet twice, opus once. I'd include whatever failure evidence exists (diffs, test output, error text, reviewer notes). If none was kept, the first job is to reproduce the failure.
+  - Files to read: `src/ui/settings_view.py`, how settings are stored and loaded, how theming works (if it exists), the existing UI tests, and any spec for the toggle.
+  - Questions to answer:
+    - Why did each attempt fail? Is it a missing spec (what "dark mode" means, where the preference is persisted, whether it applies per user), a hidden dependency, a test harness problem, or an environment problem?
+    - Does the toggle touch auth, user preference storage tied to personal data, or `src/payments/`? If so, the class rises.
+  - Constraints: do not edit files, return the diagnosis, a concrete fix design, and a failing test the next implementer can run, and say whether the cause was the model or the task.
+- **Why I'm using opus here:** this session runs on Sonnet, below the strongest model. The skill's consult-in-doubt rule applies because three attempts have failed and the routing is unclear.
+
+## Subagents I would dispatch after the diagnosis
+
+These depend on your answer on the frontier model.
+
+**2. Implementer (only if the diagnosis finds a fixable task or spec problem)**
+- **Model:** opus, or the frontier model if you ask for one.
+- **Reasoning effort:** medium if the change follows an existing pattern, otherwise medium (never above it).
+- **Brief:** the spec section, the requirement ids, the failing test from step 1, the diagnosis and its fix design, the class (standard), and the base commit.
+
+**3. Code reviewer (one review, standard class)**
+- **Model:** opus
+- **Reasoning effort:** high
+- **Brief:** the spec, the requirement, the plan task, the merge request description, and the diff as a file computed from the base recorded before the task started. Not the diff alone.
+- **Cross-family review:** Claude Code offers one model family here, so there is no cross-family review. That gap only needs flagging on critical tasks.
+
+I would not dispatch a refuter, a compliance review, or an ops (haiku) subagent. Standard class needs one code review and none of the others.
+
+## Decision for you
+If the diagnosis doesn't settle the cause, or the next opus attempt also fails, I'd recommend a frontier model (Fable) and wait for your approval first. I'd also write any override you give me into the plan task, for example `Routing: <change> (user, 2026-11-26)`.

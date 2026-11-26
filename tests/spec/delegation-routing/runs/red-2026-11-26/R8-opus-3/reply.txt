@@ -1,0 +1,43 @@
+I'd dispatch three agents, one after another, plus a stop rule. Three failures, one of them on Opus, mean a fourth try with the same brief would probably fail the same way. The first job is to find out why the earlier attempts failed.
+
+**1. Failure diagnostician**
+- **Role:** read-only root-cause analysis. It writes no code.
+- **Model / effort:** Opus, high effort.
+- **Brief contains:**
+  - The task as stated: add a dark-mode toggle to the settings screen in `src/ui/settings_view.py`.
+  - What each of the three attempts left behind: the diffs, the test or lint output, and any reviewer notes or error messages showing where each one stopped.
+  - The question to answer: was it the same failure each time? Then sort the cause into one of these:
+    - The spec is unclear (for example: does "dark mode" mean applying a whole theme, or just saving a setting?).
+    - Missing groundwork, such as no theme or palette system, or no settings persistence layer.
+    - The environment: a broken test harness, missing dependencies, or a UI that can't be exercised headlessly.
+    - Wrong scope: the fix needs files outside `settings_view.py`.
+    - A real implementation mistake.
+  - What to return: the root cause with file:line evidence, whether the task can be done as written, the files that actually need to change, and how to verify it.
+- **Gate:** if it reports a spec or environment problem, I come back to you before any implementer runs.
+
+**2. Implementer (attempt 4)**
+- **Role:** make the change.
+- **Model / effort:** Fable 5.1, xhigh effort. Opus with a much better brief would also be reasonable, but after three failures I'd step up both model and effort.
+- **Brief contains:**
+  - The diagnostician's root cause and the list of files to touch.
+  - A short "don't repeat this" list: what each earlier attempt tried and why it failed.
+  - Clear acceptance criteria:
+    - The toggle shows up on the settings screen.
+    - Switching it changes the theme right away.
+    - The choice is saved across restarts.
+    - It matches how the existing settings widgets are built.
+    - Existing tests still pass.
+  - Scope: `settings_view.py` plus whatever theme or settings code the diagnosis says is needed, and nothing unrelated.
+  - The exact command to verify, and an instruction to report failures honestly rather than claim success.
+
+**3. Independent verifier**
+- **Role:** review the change and check it actually works.
+- **Model / effort:** Opus, medium effort.
+- **Brief contains:**
+  - The diff and the acceptance criteria only, not the implementer's reasoning, so its judgement isn't steered by it.
+  - Instructions to run the tests, launch the app, flip the toggle, restart, and confirm the setting stuck.
+  - What to return: pass or fail against each criterion, with evidence.
+
+**Stop rule:** if attempt 4 fails verification, I stop and bring you the diagnosis and the verifier's findings. I won't launch a fifth attempt.
+
+One gap: I don't have the earlier attempts' diffs or logs in this conversation. I'd need to find them before briefing the diagnostician, because without them its brief is mostly guesswork.

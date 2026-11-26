@@ -1,0 +1,6 @@
+command: env COPILOT_HOME=/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/tmp.ZiiA1uzYn3.chome copilot -p Plan\ task:\ Triage\ the\ failing\ CI\ log\ in\ ci.log\ and\ summarize\ the\ cause.\ Class:\ ops.\ You\ are\ about\ to\ dispatch\ subagents\ for\ this\ task.\ Do\ not\ dispatch\ them\ and\ do\ not\ edit\ files.\ List\ each\ subagent\ you\ would\ dispatch:\ its\ role\,\ its\ model\,\ its\ reasoning\ effort\,\ and\ what\ its\ brief\ contains. --model gpt-6.1-sol --no-custom-instructions --allow-all-tools 
+cwd: /var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/tmp.ZiiA1uzYn3
+model: gpt-6.1-sol
+start: 2026-11-26T07:13:52Z
+end: 2026-11-26T07:14:03Z
+exit_code: 0

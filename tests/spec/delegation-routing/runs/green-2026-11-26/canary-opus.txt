@@ -1,0 +1,5 @@
+You'd load the **`delegation-routing`** skill. The `delegation-classes` rule says to load it before dispatching subagents for a classified task.
+
+Its first sentence is:
+
+> "The class of a task decides which roles run, which model runs each role, and at what reasoning effort."

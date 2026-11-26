@@ -1,0 +1,18 @@
+ ● skill(delegation-routing)
+
+Add a dark-mode toggle to `src/ui/settings_view.py`.
+Class: standard (user-specified; applies to implementation and related tests).
+
+| Subagent role | Model | Reasoning effort | Brief contents |
+|---|---|---|---|
+| Implementer | `claude-sonnet-5.5` | medium | Task specification, requirement IDs and failing test if available, and standard class. Inspect existing settings/theme patterns; implement the toggle and focused tests, preserve existing behavior, and run relevant checks. |
+| Code reviewer | `gpt-6.2-sol` | high | Specification, requirement, plan task, proposed PR description, and a diff file computed against the base recorded before implementation. Review correctness, regressions, and test coverage. |
+
+No compliance reviewer or refuter is required for standard work. No subagents dispatched or files edited.
+
+
+
+Changes    +0 -0
+AI Credits 2.37 (10s)
+Tokens     ↑ 33.8k (26.3k cached, 7.4k written) • ↓ 250 (49 reasoning)
+Resume     copilot --resume=c36c0cff-200d-456b-bb5f-df8a141b7b2c

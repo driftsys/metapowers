@@ -1,0 +1,26 @@
+One subagent. Ops work gets no reviewers.
+
+**Task:** Triage the failing CI log in `ci.log` and summarize the cause.
+Class: ops (user, set in the task; read-only log reading with no behavior change)
+Routing: delegation-routing skill, ops row
+
+**Subagent 1: CI log triager (ops role)**
+- **Model:** `haiku`. The skill gives the ops role to Haiku for every class, and its examples of ops work include "triage, log reading".
+- **Reasoning effort:** `high`. The skill's effort table doesn't list read-only triage. The closest row is "debugging a root cause", which is high, and naming the cause is the core of this task. Low effort would risk naming the first error line instead of the actual cause.
+- **Brief:**
+  - **Goal:** find why the CI run in `<repo>/ci.log` failed and report the cause.
+  - **Scope:** read-only. Don't edit files, re-run CI, push, or open issues or PRs. Reading related source or config files to confirm the cause is fine.
+  - **What to look for:** the first failure, not the errors that follow from it. Separate the actual cause from noise like retries, warnings and teardown errors. Also say whether the failure looks deterministic, flaky or caused by the environment (network, runner, cache, secrets).
+  - **Report format:**
+    1. The failing job and step.
+    2. A one-paragraph summary of the cause.
+    3. The exact log lines that support it, with line numbers.
+    4. The likely file or files in the repo involved, with a confidence level.
+    5. Anything it couldn't confirm from the log alone.
+  - **Flag:** if the cause is in `src/payments/` or touches secrets, say so explicitly. AGENTS.md classes `src/payments/` as critical, so a fix there would need its own critical-class plan task.
+
+**Not dispatched:**
+- **Reviewer or refuter:** the skill requires no reviews for ops work. I'll check the subagent's summary against the log lines it cites.
+- **Implementer:** this task is triage only. Fixing the failure would be a separate plan task, classed by the code it touches. In `src/payments/`, that means critical: an Opus implementer plus code review, compliance review, a refuter, and `Routing: no cross-family review`.
+
+**Delegate or do it inline?** The project rules say to delegate only above roughly four tool calls. If `ci.log` is short and the cause is obvious, reading it myself is cheaper than starting a subagent. I'd dispatch the triager only if the log is large or confirming the cause means reading code.

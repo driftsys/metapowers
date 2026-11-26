@@ -1,0 +1,33 @@
+Here's how I'd dispatch this. Nothing has been sent and no files were edited.
+
+**Plan task:** Add a dark-mode toggle to the settings screen in `src/ui/settings_view.py`.
+Class: standard (set in the plan task; it's a user-facing feature, which matches the default)
+Routing: implementer moved up from sonnet to opus after two failed sonnet attempts (escalation rule, 2026-11-26)
+
+Before dispatching, I'd record the base commit (currently `b26dc44`) so the reviewer's diff can be computed from it.
+
+### 1. Implementer
+- **Model:** `opus`. For standard work the table says sonnet. The escalation rule says that after two failed attempts, the next one goes to the strongest model available, which is Opus.
+- **Effort:** `medium`. Implementation is capped at medium, and this isn't a simple change that follows an existing pattern, since two attempts have already failed.
+- **Brief:**
+  - The spec section for the settings screen and dark mode, with its requirement ids.
+  - The failing test that defines done. If none exists yet, the brief asks the implementer to write it first.
+  - The class: standard.
+  - What the two sonnet attempts tried and how each one failed (test output, review findings), so it doesn't repeat them.
+  - Scope: `src/ui/settings_view.py` and its tests only.
+
+### 2. Code reviewer (one review, as standard class requires)
+- **Model:** `opus`. Standard review runs on Opus. The rule prefers a reviewer from a different model family than the implementer, but Claude Code only offers Claude models, so this review is same-family.
+- **Effort:** `high`. Reviews run at high effort.
+- **Brief:**
+  - The spec and the requirement ids.
+  - The plan task, including its class and routing line.
+  - The merge request description.
+  - The diff, saved as a file and computed from the recorded base.
+
+### Not dispatched
+- **No compliance review, refuter or expert review.** Those are for critical tasks only. This task doesn't touch `src/payments/` or any other critical code.
+- **No Fable.** Frontier models are dispatched only on your request. If the Opus attempt also fails, I'll suggest Fable to you with the reason and wait for your answer.
+- **No separate Haiku agent to summarise the failed attempts.** It's a few tool calls, so I'd do it myself while writing the implementer's brief.
+
+After the review passes, the change goes to normal human review.

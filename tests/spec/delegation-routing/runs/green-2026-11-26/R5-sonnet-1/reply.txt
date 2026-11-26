@@ -1,0 +1,28 @@
+I've loaded `delegation-routing`. I haven't dispatched anything or edited any files.
+
+**Task:** add session expiry to `src/auth/session.py` (REQ-AUTH-014, REQ-AUTH-015)
+Class: critical (user-stated; also the default for authentication)
+Routing: no cross-family review (Claude Code offers one model family)
+Human: expert review before merge
+
+Before dispatching, I'd record the base commit (currently `dac5145`). I'd also write the diff to a file in the scratchpad myself, since it's a single `git diff` call.
+
+| # | Role | Model | Effort | Brief |
+|---|------|-------|--------|-------|
+| 1 | Implementer | opus | medium | The `docs/spec-session-expiry.md` section for REQ-AUTH-014 and REQ-AUTH-015, with both requirement IDs. It also gets the failing test and the class (critical). Its job is to make the failing test pass in `src/auth/session.py` and add tests for any requirement the failing test misses. It reports back with a merge-request description. |
+| 2 | Code reviewer | opus | high | The spec, REQ-AUTH-014 and REQ-AUTH-015, this plan task, the merge-request description, and the diff file computed from the base commit. It reviews for correctness and security defects. |
+| 3 | Refuter | opus | high | The same package as the code reviewer. Its job is to try to break the change, for example with boundary timing, clock skew, expired-but-reused tokens, or renewal races. It should give a concrete failing scenario for each claim. |
+| 4 | Compliance reviewer | sonnet | medium | The same package. Its job is to check each requirement against the diff and the tests, one line per requirement ID: met, not met, or untested. |
+
+The code review, refuter and compliance review run in parallel once the implementer is done.
+
+**Keeping spend down:**
+- The routing table sets the model for each role. I'm not downgrading any critical-class role, and I'm not skipping any of the three reviews.
+- I'm using one implementer. The work is one dependent chain, and splitting it would add context-loading cost.
+- Implementation stays at medium effort. I'd use low only if the spec shows the change follows an existing pattern in the code. Only the reviewer and refuter get high effort.
+- Sonnet does the compliance review, as the table says.
+- I'm not spawning extra agents for exploration or for building the diff.
+- I'm not consulting a stronger model, because the class is settled. I'd only do so if the design turns out to be unclear.
+- If the first attempt fails twice, I'd escalate to the strongest implementer, which is already opus here.
+
+**Decision for you:** the team lead's budget goal doesn't change this routing. The skill treats an override as a request for this specific task, written into the plan. If you want to cut a review, for example skipping the refuter, tell me and I'll record `Routing: refuter skipped (user, 2026-11-26)`. I wouldn't recommend it for authentication code.

@@ -1,0 +1,23 @@
+ ● skill(delegation-routing)
+
+**No subagents would be dispatched now.**
+
+Class: standard (user-specified).
+
+Two Sonnet failures triggered escalation to Opus; Opus also failed. The routing rule now requires recommending a frontier model—Fable or Astra—and waiting for explicit authorization, rather than retrying automatically. Neither is exposed in the available model list.
+
+If authorized and available, the proposed roles would be:
+
+| Role | Model | Reasoning effort | Brief |
+|---|---|---|---|
+| Implementer | Authorized Fable or Astra model | Medium | Dark-mode toggle specification for `src/ui/settings_view.py`, requirement IDs, failing test, standard class, and evidence from all three failed attempts. |
+| Code reviewer, after implementation | Newest available model from the other family | High | Specification, requirement, plan task, proposed PR description, and diff against the base recorded before implementation. |
+
+Missing specifications or failure evidence must be collected, not invented. No files were edited.
+
+
+
+Changes    +0 -0
+AI Credits 2.57 (15s)
+Tokens     ↑ 33.8k (26.4k cached, 7.5k written) • ↓ 441 (218 reasoning)
+Resume     copilot --resume=e36a8d38-c3ec-4a99-b2c7-ebee4e6d600d

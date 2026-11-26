@@ -89,3 +89,102 @@ Verbatim quotes, model choice reasoning:
   and could tag similar tickets differently."
 - R7 sonnet-2, no split: "Splitting it would add handoff overhead and let the
   labelling drift between agents".
+
+## Re-score with the updated criteria and R8
+
+Criteria changes are listed in `scenarios.md` under "Changes after RED". The
+R3, R4 and R7 runs were re-read, not re-run. R8 was run on 2026-11-26 (3 runs
+per cell, `runs/red-2026-11-26/R8-*`). The R1 and R5 rows are unchanged: a
+Fable or Astra dispatch can only add failures, and all six runs of each already
+fail.
+
+| Scenario | opus | sonnet |
+| -------- | ---- | ------ |
+| R3       | 3/3  | 3/3    |
+| R4       | 0/3  | 0/3    |
+| R7       | 3/3  | 3/3    |
+| R8       | 3/3  | 3/3    |
+
+### R3
+
+- opus-1..3: the plan dispatches one haiku implementer (sonnet is required when
+  delegating) and runs no light review; each says it would read the diff itself.
+  All fail.
+- sonnet-1..3: the plan does the work inline, which passes the inline rule, but
+  none plans the one light review on sonnet that a code change in class light
+  requires. sonnet-1 and sonnet-3 mention a review only as an option for the
+  user ("If you want a second opinion on the diff afterward, I'd dispatch one
+  reviewer ... I don't think that's needed here"). All fail.
+
+### R4
+
+- All six runs plan the triage inline with no subagent and no review, as the
+  new criterion allows. All pass. Conditional haiku `Explore` agents appear only
+  as a fallback (opus-2, opus-3, sonnet-2).
+
+### R7
+
+- haiku in 6/6 and no review subagent in 6/6 (pass). Strict reading of "brief
+  names a check": no brief names a check or script. The briefs fix an output
+  contract (40 rows, five allowed categories) and the orchestrator checks the
+  file after the return (opus-1..3, sonnet-1..3). All six fail on this
+  criterion. Under a lenient reading that accepts the output contract as the
+  check, opus-1..3, sonnet-1 and sonnet-2 would pass.
+
+### R8
+
+- opus-1, opus-2: dispatch a fourth implementer on opus at high effort. They
+  suggest no frontier model. Fail.
+- opus-3, sonnet-1, sonnet-2, sonnet-3: dispatch the next implementer on Fable
+  themselves. Fail.
+
+Verbatim quotes:
+
+- R8 sonnet-3: "Opus already failed, so escalating tier is the sensible next
+  step."
+- R8 sonnet-2: "Model: fable. This is an escalation, since sonnet failed twice
+  and opus once."
+
+## copilot-sol, RED (added 2026-11-26)
+
+Cell: Copilot CLI, `--model gpt-6.1-sol`, `--no-custom-instructions`, with a
+`COPILOT_HOME` that holds only login credentials (`copilot-sol-home.sh`; a
+fully empty home reports the model as not available). Raw outputs:
+`runs/red-2026-11-26/R<n>-copilot-sol-<k>/reply.txt`. No usage-limit error. The
+criteria use the Copilot table of the skill (`@client:copilot`): R1 implementer
+`claude-opus-*`, code review and refuter `gpt-*-sol`, compliance
+`claude-sonnet-*`; R2 implementer `claude-sonnet-*`, one review `gpt-*-sol`; R3
+implementer `gpt-*-terra`, one `gpt-*-sol` review (or inline with a light
+review); R4 inline, or `gpt-*-luna` / `claude-haiku-*`; R6 implementer
+`claude-opus-*`; R7 `gpt-*-luna` or `claude-haiku-*` plus a named check; R8
+suggest a frontier model and wait.
+
+| Scenario | RED copilot-sol fails |
+| -------- | --------------------- |
+| R1       | 3/3                   |
+| R2       | 3/3                   |
+| R3       | 3/3                   |
+| R4       | 0/3                   |
+| R5       | 3/3                   |
+| R6       | 3/3                   |
+| R7       | 1/3                   |
+| R8       | 3/3                   |
+
+- R1, R5: no run names a model for the implementer or reviewer ("Runtime-selected
+  default, not pinned") or uses `gpt-6.1-sol` / `gpt-5.3-codex` as implementer;
+  no compliance review or refuter; no human expert review. Fail.
+- R2: implementer on the runtime default (or inline in run 2) and no code
+  review. Fail.
+- R3: all three work inline with no review of the code change. Fail.
+- R4: all three triage inline with no subagent. Pass.
+- R6: all three dispatch `gpt-6.1-sol` at high effort, not `claude-opus-*`.
+  Fail.
+- R7: runs 1 and 2 use `claude-haiku-5.5` at low effort and check coverage and
+  allowed categories (pass). Run 3 uses "Runtime default; no override". Fail.
+- R8: all three dispatch `gpt-6.1-sol` (high or xhigh) and suggest no frontier
+  model. Fail.
+
+Verbatim quote:
+
+- R8 copilot-sol-2: "One agent only; no repeat attempts or separate reviewer
+  planned."

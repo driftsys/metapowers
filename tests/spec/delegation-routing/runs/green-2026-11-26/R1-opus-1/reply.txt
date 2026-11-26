@@ -1,0 +1,22 @@
+Here's the dispatch plan. Nothing has been dispatched and no files were edited. I haven't opened the spec, so the briefs point to its sections rather than quoting them.
+
+**Plan task**
+1. Add session expiry to `src/auth/session.py` per `docs/spec-session-expiry.md` (REQ-AUTH-014, REQ-AUTH-015).
+   Class: critical (default: authentication; AGENTS.md sets no class for `src/auth/`)
+   Routing: no cross-family review (Claude Code only offers the Claude family, so the code reviewer and refuter can't come from another model family)
+
+Before dispatching, I'd record the base commit (`a0d5b85`, on `main`, clean). The reviewers get a diff computed from that commit.
+
+| # | Role | Model | Effort | What the brief contains |
+|---|---|---|---|---|
+| 0 | Test author (step 0, before the implementer) | opus | medium | The spec sections for REQ-AUTH-014 and REQ-AUTH-015, the requirement ids, class critical. It writes tests that fail now: sessions expire, an expired session is rejected, and any boundary or renewal behaviour the spec defines. It doesn't touch `src/`. Tests take the class of the code they test, so this needs a critical-tier model. I could also do this step myself. |
+| 1 | Implementer | opus | medium | The spec sections, REQ-AUTH-014 and REQ-AUTH-015, the failing tests from step 0, class critical, and the target `src/auth/session.py`. Done means those tests pass and no other tests break. Medium is the top effort for implementation. |
+| 2 | Code reviewer | opus | high | The full spec, both requirements, the plan task above, the merge request description, and the diff file from `a0d5b85`. It looks for correctness and security problems: clock and timezone handling, off-by-one at the expiry boundary, expiry that can be skipped or extended by the client, and expired sessions still accepted somewhere. |
+| 3 | Compliance reviewer | sonnet | high | Same inputs as #2. It checks each clause of REQ-AUTH-014 and REQ-AUTH-015 against the diff and the tests and reports any clause that isn't met or isn't tested. |
+| 4 | Refuter | opus | high | Same inputs as #2. It tries to prove the change wrong with a concrete failing scenario or a falsifying test, such as using a session after it expires, or replaying or refreshing a token to get past expiry. |
+| — | Human expert review | — | — | Not a subagent. It's required for critical work before merge, and the note about no cross-family review goes to that reviewer. |
+
+How it runs:
+- Reviewers 2, 3 and 4 work independently, so they run in parallel once the implementer finishes.
+- If the implementer fails twice, the third attempt still goes to opus, since it's already the strongest default model. If that also fails, I'd suggest a frontier model and wait for your answer before using one.
+- I'd write the diff file and the merge request description myself rather than spend a haiku subagent on it, because it's only a couple of tool calls.

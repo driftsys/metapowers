@@ -1,0 +1,36 @@
+I'd dispatch **one subagent**. No reviewers.
+
+**Ops tagger**
+- **Role:** ops. The routing skill puts "classification, tagging and extraction across many files or records" in the ops model's bulk mechanical work. This task is exactly that, so the `Class: ops` you gave holds.
+- **Model:** `haiku`, the ops model for every class.
+- **Reasoning effort:** low. This is record-by-record labelling against a fixed set of five labels, with no design or debugging involved.
+- **Batching:** none. 40 short tickets should fit in one subagent's context. I'd only split them into two batches of 20 if the tickets turn out to be long.
+- **Brief:**
+  1. **Task:** read every ticket file in `data/tickets/` and give each one exactly one category from `auth`, `billing`, `ui`, `crash`, `feature`.
+  2. **Output:** write `data/tickets/tags.csv` with the header `ticket_id,category` and one row per ticket, sorted by ticket ID. `ticket_id` is the ticket's file name without its extension, unless the tickets carry their own ID field.
+  3. **Tie-break rules**, so the agent doesn't have to make judgment calls:
+     - a ticket that reports a crash is `crash`, whatever area it's in
+     - login, password, session or permission problems are `auth`
+     - charges, invoices, refunds or plans are `billing`
+     - visual or layout problems with no crash are `ui`
+     - requests for new behaviour are `feature`
+     - if a ticket fits more than one category, use the first match in the order crash > auth > billing > ui > feature
+  4. **Constraints:** only create `tags.csv`. Don't change any ticket file or touch anything outside `data/tickets/`. Don't commit.
+  5. **Check before reporting done:** a validation command named in the brief that checks:
+     - `tags.csv` has exactly 40 data rows
+     - every ticket file appears exactly once and no ID is unknown
+     - every category is one of the five labels
+
+     The agent fixes its output and re-runs the check until it passes.
+  6. **Report back:** the check's output, plus a list of the tickets it found ambiguous, each with the category it chose.
+
+**Not dispatched:**
+- **No implementer or reviewer.** Ops work has no reviews and no human review; tools check the output. After the agent finishes, I'd run the same validation command myself rather than trust its report.
+- **No escalation for now.** If the agent fails twice, the skill says the next attempt goes to the strongest implementer model, which is `opus`.
+
+Plan entry:
+```
+1. Tag 40 tickets in data/tickets/ → data/tickets/tags.csv
+   Class: ops (user)
+   Routing: 1× haiku ops subagent, low effort; output checked by CSV validation script; no reviews
+```

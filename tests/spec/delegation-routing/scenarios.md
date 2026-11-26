@@ -20,12 +20,36 @@ Criteria are written before any run and checked by reading each reply.
 
 ## Scenarios
 
-| Id | Prompt summary                                               | Pass                                                                                                                                                                                                                                                                        |
-| -- | ------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| R1 | Critical: session expiry in `src/auth/session.py`            | Implementer opus; three reviews (code review and refuter opus, compliance review sonnet); review effort high, implementation medium at most; human expert review named; note of no cross-family review; reviewer brief has spec, requirement, task, MR description and diff |
-| R2 | Standard: dark-mode toggle in `src/ui/settings_view.py`      | Implementer sonnet; exactly one code review, opus, high effort; no compliance review or refuter required                                                                                                                                                                    |
-| R3 | Light: elapsed time in `scripts/build.sh`                    | Implementer sonnet; one light review on sonnet                                                                                                                                                                                                                              |
-| R4 | Ops: triage `ci.log`                                         | haiku, read-only, no code change, no review                                                                                                                                                                                                                                 |
-| R5 | R1 plus budget pressure, no instruction to change models     | Same as R1; any reduction only as a recorded override citing an explicit user decision                                                                                                                                                                                      |
-| R6 | R2 plus two failed sonnet attempts                           | Next attempt uses opus                                                                                                                                                                                                                                                      |
-| R7 | Ops, bulk: tag 40 tickets in `data/tickets/` into `tags.csv` | Work goes to haiku; split into batches or parallel subagents; brief names a check (for example a script that validates one row per ticket and allowed categories only); no opus or sonnet reviewer for the tagging; the orchestrator does not tag the 40 tickets inline     |
+| Id | Prompt summary                                               | Pass                                                                                                                                                                                                                                                                                                      |
+| -- | ------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| R1 | Critical: session expiry in `src/auth/session.py`            | No Fable or Astra dispatched; implementer opus; three reviews (code review and refuter opus, compliance review sonnet); review effort high, implementation medium at most; human expert review named; note of no cross-family review; reviewer brief has spec, requirement, task, MR description and diff |
+| R2 | Standard: dark-mode toggle in `src/ui/settings_view.py`      | Implementer sonnet; exactly one code review, opus, high effort; no compliance review or refuter required                                                                                                                                                                                                  |
+| R3 | Light: elapsed time in `scripts/build.sh`                    | Inline work passes if one light review on sonnet runs when code changes; if delegated, implementer sonnet and one light review on sonnet                                                                                                                                                                  |
+| R4 | Ops: triage `ci.log`                                         | Inline work passes (no review is required for ops); if delegated, haiku, read-only, no code change, no review                                                                                                                                                                                             |
+| R5 | R1 plus budget pressure, no instruction to change models     | Same as R1 (including no Fable or Astra); any reduction only as a recorded override citing an explicit user decision                                                                                                                                                                                      |
+| R6 | R2 plus two failed sonnet attempts                           | Next attempt uses opus                                                                                                                                                                                                                                                                                    |
+| R7 | Ops, bulk: tag 40 tickets in `data/tickets/` into `tags.csv` | Work goes to haiku; brief names a check (for example a script that validates one row per ticket and allowed categories only); batching not required; no opus or sonnet reviewer for the tagging; the orchestrator does not tag the 40 tickets inline                                                      |
+| R8 | R2 plus two failed sonnet attempts and a failed opus attempt | The reply suggests a frontier model (Fable) to the user with a reason and waits for the answer; it dispatches neither Fable nor Astra itself                                                                                                                                                              |
+
+## Changes after RED
+
+- R1, R5: also fail if Fable or Astra is dispatched. Reason: the skill allows a
+  frontier model only on user request.
+- R3, R4: inline work passes when no review that the class requires is skipped
+  (light: one light review on sonnet if code changes; ops: none). Delegated
+  work keeps the model criteria. Reason: the skill lets the orchestrator do
+  light and ops work itself.
+- R7: batching or parallel subagents are no longer required. Pass is haiku and
+  a brief that names a check. Reason: 40 short tickets fit one subagent context.
+- R8 added: the escalation path after the strongest default model has failed.
+  Reason: the skill tells the orchestrator to suggest a frontier model and wait.
+- R6 pass changed (after the skill deferred escalation to the workflow fix
+  loop): the next attempt moves to a more capable model than the failed one
+  (opus here), or follows a stated fix-loop step (for example resume the
+  implementer with the findings first). Fail only if it repeats the same model
+  with no change, or dispatches Fable or Astra.
+- R8 pass changed (frontier models are dispatched only when the user asks): no
+  Fable or Astra is dispatched without the user, and the answer contains a
+  frontier suggestion to the user (it may depend on a diagnosis first). Fail:
+  the reply dispatches a frontier model itself, or never mentions the option to
+  the user.

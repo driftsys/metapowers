@@ -1,0 +1,29 @@
+I'd hold off on another implementer. The routing skill says that once the strongest default model has failed a task, I should suggest a frontier model to you, give the reason, and wait for your answer. Opus is the strongest default and it failed the third attempt, so the implementer below is conditional on your decision. Three failures may also point to a problem in the task itself (the spec, the test or the environment) rather than in the model. So the first step is to find out why the attempts failed.
+
+**Task:** Add a dark-mode toggle to the settings screen in `src/ui/settings_view.py`.
+Class: standard (given in the plan task; it also matches the default for a user-facing feature)
+
+### 1. Failure triage (read-only)
+- **Model:** haiku. **Effort:** low.
+- **Why:** this is read-only ops work, and haiku is the ops model for every class.
+- **Brief:** where the three failed attempts are (diffs or branches, test output, reviewer comments), plus `src/ui/settings_view.py` and the failing test. The question to answer: for each attempt, what was tried, which check failed, and the exact error. It should also say whether all three failed the same way. It reports facts only, with no fixes and no edits.
+
+### 2. Root-cause diagnosis (only if triage doesn't settle it)
+- **Model:** opus. **Effort:** high.
+- **Why:** the routing table doesn't list this role, so the model follows the vendor guidance. Debugging a root cause runs at high effort. I'd do this in the main loop if it fits in about four tool calls.
+- **Brief:** the triage report, the spec section, the failing test, and the class. The question: is the cause in the code, a wrong or contradictory spec, a test that can't pass, or the environment (theme framework, missing dependency)? It should name the evidence and not write the fix.
+- **If the cause is the spec or the test:** that comes back to you. I wouldn't send it to any implementer, frontier or not.
+
+### 3. Implementer (blocked until you decide)
+- **Model:** Fable (frontier), only if you approve it. The reason to suggest it is that sonnet failed twice and opus once. If you decline, the fallback is opus again, but with the root-cause findings, which earlier attempts didn't have.
+- **Effort:** medium, which is the ceiling for implementation. Raising effort isn't the fix here.
+- **Brief:** the spec section, the requirement ids, the failing test, `Class: standard`, the triage and diagnosis findings, and what each earlier attempt tried so it isn't repeated. It also gets the base commit, recorded before the attempt starts (currently `86ed121`).
+
+### 4. Code reviewer
+- **Model:** opus. **Effort:** high.
+- **Why:** a standard task gets one code review, by opus. Claude Code offers only one model family, so the review can't come from a different family than the implementer.
+- **Brief:** the spec, the requirement, this plan task, the merge request description, and the diff as a file computed from the recorded base.
+
+Standard tasks get no refuter and no compliance review, and the human review is the normal one.
+
+**Decision needed:** do you approve a Fable implementer for attempt four, or should I retry with opus once the root cause is known?

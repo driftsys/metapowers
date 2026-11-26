@@ -1,0 +1,41 @@
+I wouldn't send a fourth implementer straight away. Three failures across two models, including opus, suggest the cause isn't the implementer's skill. More likely the spec is missing something, there's a constraint nobody wrote down, the environment is broken, or the theming support the toggle needs doesn't exist. So I'd find the cause first, then implement, then check the result with someone who didn't write it.
+
+### 1. Diagnostician (dispatched first, alone)
+- **Model:** opus
+- **Effort:** high
+- **Type:** read-only (Explore or Plan), so it can't start fixing things on its own.
+- **Brief:**
+  - **Goal:** find out why three attempts to add a dark-mode toggle to `src/ui/settings_view.py` failed. It should not fix anything.
+  - **Inputs:** the diffs, test output and final reports from all three attempts, labelled by model and attempt number. If I don't have these records, I'd get them before dispatching anything, because without them this agent is guessing.
+  - **What to read:** `settings_view.py`, wherever theming or styling lives, how settings are saved and loaded, and the tests for the settings screen.
+  - **Questions to answer:**
+    - Did all three attempts fail the same way?
+    - Does a theme system exist that a toggle can switch, or does one have to be built? If it has to be built, the task is bigger than a "standard" class task.
+    - Do tests or the environment fail before anyone touches the code?
+    - Is the spec unclear on any of these: system default vs. manual choice, whether the setting persists, whether it applies immediately or after a restart?
+  - **Output:** the root cause with file:line evidence, whether the task can be done as specified, and a short list of what an implementer must do differently.
+  - **Stop rule:** if the cause is in the spec or the environment rather than the code, say so plainly. That goes back to you, not to an implementer.
+
+### 2. Implementer (only if the diagnosis says the task can be done as written)
+- **Model:** opus
+- **Effort:** high, or xhigh if the diagnosis finds the theme system has to be built
+- **Brief:**
+  - The task, plus the diagnostician's root cause and the specific mistakes to avoid. These go in as constraints, not as background reading.
+  - The exact files to change.
+  - **Acceptance criteria:**
+    - The toggle appears on the settings screen.
+    - Switching it changes the theme straight away.
+    - The choice persists across restarts.
+    - The existing tests pass, and there's a new test for the toggle.
+  - **How to check its own work:** the test command, plus launching the app to look at the screen.
+  - **Stop rule:** if it hits the same blocker the diagnosis named, or a new one it can't get past, it stops and reports. No workarounds, no weakening tests.
+
+### 3. Verifier (after the implementer)
+- **Model:** sonnet. It works from a fixed checklist, so it doesn't need opus, and a different model gives a second opinion.
+- **Effort:** medium
+- **Brief:**
+  - The diff and the acceptance criteria only. It gets neither the implementer's report nor the diagnosis, so it isn't anchored on their conclusions.
+  - **What to do:** run the tests, launch the app and toggle the setting, restart and check the choice stuck, and look for regressions in other settings or screens.
+  - **Output:** a pass or fail for each criterion, with evidence.
+
+**Deliberately not dispatched:** another sonnet implementer, or several implementers in parallel. Neither addresses whatever made the last three fail.

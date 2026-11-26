@@ -1,0 +1,40 @@
+I would dispatch two subagents, one after the other. I haven't dispatched anything or edited any files.
+
+**Task**
+1. Add a dark-mode toggle to the settings screen in `src/ui/settings_view.py`.
+   Class: standard (user-facing feature; AGENTS.md records a class only for `src/payments/`).
+   Routing: the standard class gives one implementer and one code review, with no refuter or compliance review.
+
+**Subagent 1: implementer**
+- **Agent and model:** `Agent` with `model: "sonnet"`, the standard implementer.
+- **Reasoning effort:** medium. I would drop it to low only if the file already has a toggle pattern to copy. I'd keep it at or below medium because the skill sets medium as the ceiling for implementation.
+- **Brief:**
+  - The task and its class (`standard (default: user-facing feature)`).
+  - The spec section and requirement ids for the toggle, or the user's one-line request if no spec exists.
+  - The target file, `src/ui/settings_view.py`.
+  - A pointer to how existing settings controls and theme or preference storage work, so it follows the code's conventions.
+  - A request for tests of the toggle, which get the class of the code they test (standard).
+  - The base commit `9ac86c6`, recorded before work starts.
+  - A constraint to stay out of `src/payments/` and `src/auth` code.
+  - A request for a merge-request description as its output.
+
+**Subagent 2: code reviewer**
+- **Agent and model:** `Agent` with `model: "opus"`, the standard reviewer. Cross-family review isn't needed for standard, and Claude Code offers only one family anyway.
+- **Reasoning effort:** high.
+- **Brief:**
+  - The spec and requirement for the toggle.
+  - The plan task, with its class and routing line.
+  - The implementer's merge-request description.
+  - The diff as a file computed from base `9ac86c6`, not pasted inline.
+  - The review question: correctness bugs, whether the toggle is wired to real state and persisted, and whether the code matches the surrounding conventions and the tests.
+  - A reminder that it is read-only.
+
+**Not dispatched**
+- **Refuter and compliance review:** these apply only to critical work.
+- **Ops subagent:** there is no bulk mechanical or read-only work here.
+- **Consult of a stronger model:** the class is settled, so none is needed.
+
+**Open points**
+- **Personal data:** if the settings screen shows personal data and no spec says whether privacy applies, I should ask you. I'd keep the task at standard until you answer.
+- **Class changes:** if you set a different class for `src/ui/`, I can record it in the "Delegation classes" section of AGENTS.md. If you'd rather not change that file, I'd save it to memory.
+- **Commit attribution:** any commit would end with `Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>`.

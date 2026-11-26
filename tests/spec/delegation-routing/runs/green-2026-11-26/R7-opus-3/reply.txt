@@ -1,0 +1,19 @@
+I'd dispatch **one subagent**, with no reviewers.
+
+**Ops tagger**
+- **Model:** `haiku`. The routing skill's Models table gives Haiku as the ops model for every class.
+- **Effort:** low. This is mechanical classification, and the skill says only review, refuting and root-cause debugging get high effort.
+- **Agent type:** `general-purpose`. It needs to write one file, which the read-only `Explore` agent can't do.
+- **Brief:**
+  - **Task:** read all 40 tickets in `data/tickets/` and give each exactly one category from the closed set `auth`, `billing`, `ui`, `crash`, `feature`.
+  - **Output:** write `data/tickets/tags.csv` with a `ticket_id,category` header and one row per ticket. List any ticket that fits two categories, with its runner-up, in the final report instead of in the CSV.
+  - **Scope:** don't touch any other file, including the ticket files.
+  - **Class:** `ops (user, 2026-11-26)`.
+  - **Check:** after writing the CSV, run a validation command (header, 40 rows, every filename present exactly once, every category in the set, no extra columns) and report its result.
+  - **Report back:** the check result, the list of ambiguous tickets, and the count per category.
+
+**Batching:** none. I'm assuming 40 tickets fit in one subagent's context, and the skill says to split only when they don't. I haven't checked the ticket sizes. If they turn out to be large, I'd split the work into two Haiku subagents of 20 tickets each and merge the CSVs myself.
+
+**No code review or refuter.** The skill gives ops work no review and has tools check the output instead. Once the subagent finishes, I'd run the validation command again myself before treating the task as done.
+
+**About the `ops` class:** the class rule says `ops` is only for changes that need no decision, and picking a category for each ticket is a small decision. But the routing skill names tagging and classification as ops work, and the output is a data file, not production code. So I'm keeping your `ops`. If these tags will drive something people see, such as routing or reports, `light` would be the safer class. That would mean a Sonnet tagger plus one light Sonnet review.

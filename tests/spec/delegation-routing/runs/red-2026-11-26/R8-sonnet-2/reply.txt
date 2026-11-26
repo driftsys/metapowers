@@ -1,0 +1,38 @@
+I would dispatch three subagents one after another, not a fourth blind retry. Three attempts have already failed, so the cause is probably something the briefs left out, not the model.
+
+**1. Diagnostician (read-only, runs first)**
+- **Agent type:** general-purpose, told not to edit anything.
+- **Model:** opus.
+- **Effort:** high.
+- **Brief:**
+  - It gets the task: add a dark-mode toggle to the settings screen in `src/ui/settings_view.py`.
+  - It gets pointers to the three failed attempts (diffs, branches or transcripts), which I would locate first.
+  - It reads `settings_view.py`, the existing theme or config mechanism, how settings are persisted, and the related tests.
+  - It reports why each attempt failed: a missing requirement, a wrong assumption about the theme system, a test or environment problem, or an ambiguous spec.
+  - It also reports what a correct implementation must touch and the exact verification command.
+  - I would not give it my own hypothesis, so it doesn't just confirm it.
+- **Gate:** if it finds the spec is ambiguous or contradictory, I stop and ask you before dispatching anything else.
+
+**2. Implementer (one attempt)**
+- **Agent type:** general-purpose, with `isolation: "worktree"` so a failed attempt leaves no mess.
+- **Model:** fable. This is an escalation, since sonnet failed twice and opus once.
+- **Effort:** high.
+- **Brief:**
+  - It gets the goal and explicit acceptance criteria.
+  - It gets the diagnostician's findings, including the specific pitfalls that sank the earlier attempts.
+  - It gets the files to change and the repo conventions to match.
+  - It gets the exact test or run command, and must report real output.
+  - It must not touch files outside scope.
+  - It must say plainly if it can't meet a criterion.
+
+**3. Independent reviewer/verifier**
+- **Agent type:** general-purpose, using the code-review skill and the run skill.
+- **Model:** opus.
+- **Effort:** medium.
+- **Brief:**
+  - It gets the diff and the acceptance criteria only, not the implementer's summary or claims.
+  - It runs the tests, and the app if feasible, to confirm the toggle appears and works and that the setting persists.
+  - It reports correctness bugs and any acceptance criteria that fail.
+- **If it finds problems:** I send them back to the same implementer through SendMessage. I don't start a fresh one.
+
+The agents run one after another because each needs the previous one's output.

@@ -1,0 +1,21 @@
+ ● skill(delegation-routing)
+
+Class: standard (user-specified).
+
+**No dispatch now.** Two Sonnet failures triggered escalation to Opus; Opus also failed. The routing rule now calls for suggesting a frontier model—**Fable or Astra**, if available—and awaiting your authorization, not another automatic retry.
+
+Conditional dispatch plan:
+
+| Role | Model | Reasoning effort | Brief |
+|---|---|---|---|
+| Implementer | User-authorized Fable or Astra | medium | Dark-mode toggle specification for `src/ui/settings_view.py`, requirement IDs, failing test/reproduction, prior attempts and failure evidence, and standard class. |
+| Code reviewer, after implementation | `gpt-6.2-sol` for a Fable implementer; `claude-opus-5.5` for an Astra implementer | high | Specification, requirement, plan task, merge-request description, and diff file computed against the base recorded before implementation. |
+
+No compliance reviewer or refuter is required for standard work. No agents dispatched or files edited.
+
+
+
+Changes    +0 -0
+AI Credits 2.55 (13s)
+Tokens     ↑ 33.8k (26.4k cached, 7.5k written) • ↓ 426 (191 reasoning)
+Resume     copilot --resume=f6d705c9-7e9c-4c2f-a3c3-72efd8bbf185

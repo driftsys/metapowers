@@ -1,0 +1,21 @@
+ ● skill(delegation-routing)
+
+ SH Read scripts/build.sh 4 lines read
+
+ MD Read AGENTS.md 11 lines read
+
+Class: light (user-specified; applies to `scripts/build.sh` and any focused tests).
+
+| Role | Model | Reasoning effort | Brief |
+|---|---|---|---|
+| Implementer | `gpt-6.1-terra` | medium | Spec/R1: print elapsed build time while preserving compilation, `build done`, and failure behavior. Include the current script, a reproduction demonstrating missing timing output, the light classification, and focused validation requirements. |
+| Light code reviewer | `claude-opus-5.5` | high | Include the spec/R1, plan task, proposed PR description, and diff file against the base recorded before implementation. Check timing correctness, Bash compatibility, failure behavior, and scope. Uses the other model family as required. |
+
+No subagents dispatched or files edited.
+
+
+
+Changes    +0 -0
+AI Credits 2.86 (17s)
+Tokens     ↑ 51.7k (44.0k cached, 7.7k written) • ↓ 496 (174 reasoning)
+Resume     copilot --resume=f99a993e-e872-457d-a743-86e184966c27

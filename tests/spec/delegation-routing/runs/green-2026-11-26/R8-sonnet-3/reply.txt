@@ -1,0 +1,36 @@
+Class is standard, which the skill maps to one implementer and one code review. Nothing is dispatched or edited yet.
+
+**Routing note.** The skill says to escalate to the client's strongest model after two failed attempts. The strongest model here is Opus, and the third attempt already used it. So I wouldn't dispatch a fourth implementer straight away. I'd diagnose first, and I'd suggest a frontier model to you only if the next attempt also fails.
+
+**1. Diagnostic consult (read-only, runs first)**
+- Model: opus
+- Effort: high (root-cause debugging)
+- Brief:
+  - The task, the class (`standard`), and the target file `src/ui/settings_view.py`.
+  - The three failed attempts: the model that made each one, what each produced, and how each failed (test output or review rejection, if available).
+  - The question: why did three attempts fail, and what design should the next one follow? Is the cause a missing spec, an unclear settings or theme mechanism, or a wrong test?
+  - A request for the root cause, a design for the toggle (where the state lives, how it is applied), and the acceptance test.
+  - A statement that it must not edit files.
+- Why: this is the "consult in doubt" case. Two routings both look valid, and the session runs below the strongest model. Three failures also point to a structural problem rather than a weak implementer.
+
+**2. Implementer (after the diagnosis)**
+- Model: opus (the escalation target, so the next attempt uses the strongest model)
+- Effort: medium (the ceiling for implementation)
+- Brief:
+  - The spec section, the requirement ids, the failing test, and `Class: standard`.
+  - The diagnostic's root cause and design.
+  - A list of what the earlier attempts got wrong.
+  - Scope limited to `src/ui/settings_view.py` and its tests, and no changes under `src/payments/`.
+- If it fails, I stop and propose a frontier model to you with the reason, then wait for your answer.
+
+**3. Code reviewer (one review, after the implementer)**
+- Model: opus
+- Effort: high
+- Brief:
+  - The spec, the requirement, the plan task, and the merge request description.
+  - The diff as a file, computed from the base commit I record before the implementer starts (currently `262a7fd`).
+- A refuter, compliance review, and cross-family note aren't needed for standard.
+
+**Plan lines to record**
+- `Class: standard (user-stated)`
+- `Routing: escalated to opus after 2 sonnet failures; opus failed once; diagnostic consult added`

@@ -1,0 +1,28 @@
+Here is how I'd dispatch it, following the `delegation-routing` skill. Nothing has been dispatched and no files have been edited.
+
+**Plan task:** Add a dark-mode toggle to the settings screen in `src/ui/settings_view.py`.
+Class: standard (user's call; also the default for a user-facing feature. The path isn't under `src/payments/`, so the critical class from AGENTS.md doesn't apply)
+Routing: implementer escalated to opus after 2 failed sonnet attempts (skill, "Escalation", 2026-11-26)
+
+### 1. Implementer (attempt 3)
+- **Model:** `opus`. A standard task normally gets sonnet, but the skill says to use the strongest implementer model after two failed attempts.
+- **Effort:** medium. That's the cap for implementation, so it doesn't go up just because earlier attempts failed.
+- **Brief:**
+  - The spec section for the settings screen and theme behaviour, and the requirement IDs for the toggle.
+  - The failing test that defines done. If none exists yet, it would cover: the toggle renders on the settings screen, switching it applies the dark theme, and the choice persists.
+  - The class (standard) and the base commit recorded before the task starts.
+  - What the two sonnet attempts did and why each failed (diffs or failure output), so it doesn't repeat them.
+  - Scope: limited to `src/ui/settings_view.py` plus any theme or test files the spec names. If the work turns out to touch payments, auth or personal data, it stops and reports back.
+
+### 2. Code reviewer (one review, as standard requires)
+- **Model:** `opus`. The skill's model table assigns opus to code review for standard tasks.
+- **Effort:** high.
+- **Brief:** the spec, the requirement IDs, this plan task, the merge request description, and the diff saved as a file computed from the recorded base, not just pasted inline. I'd also tell it about the two earlier failures so it checks whether those failure modes are really fixed.
+- **Model family:** the skill prefers a reviewer from a different model family than the implementer, but Claude Code only offers one family, so the reviewer will be the same family as the implementer. That note is only required on critical tasks, but it applies here too.
+
+### Not dispatched
+- **No refuter and no compliance review.** Those are only required for critical tasks.
+- **No frontier model (Fable).** The skill only allows one when the user asks. If the opus attempt also fails, I'll suggest Fable to you with the reason and wait for your answer.
+- **No ops subagent.** Gathering the earlier attempts' failure output for the implementer's brief takes fewer than four tool calls, so I'd do it inline.
+
+After the review, the change goes through a normal human review.

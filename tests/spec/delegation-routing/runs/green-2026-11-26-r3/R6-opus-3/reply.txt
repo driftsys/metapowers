@@ -1,0 +1,32 @@
+I wouldn't dispatch any of these yet. The task stays **Class: standard**, as given in the plan, and I'd send two subagents plus one optional helper.
+
+### 1. Implementer: Opus, medium effort
+- **Why Opus and not Sonnet:** for standard tasks the routing table starts the implementer on Sonnet. Sonnet has now failed this task twice, so the next step is the strongest default model, Opus. I'm not moving to a frontier model like Fable because the routing skill only allows that if Opus also fails, and even then I'd ask you first.
+- **Why medium:** the routing skill caps implementation effort at medium, because higher effort costs more without better results.
+- **Brief:**
+  - The spec section for the dark-mode toggle and its requirement IDs.
+  - The failing test (or acceptance test) for the toggle.
+  - The class: standard.
+  - The target file: `src/ui/settings_view.py`.
+  - The history of the two failed Sonnet attempts: what each tried, its diff, the test or reviewer output, and why it was rejected. This is the most useful thing the brief can carry, so the third attempt doesn't repeat the first two.
+- **Plan note:** `Routing: implementer escalated sonnet→opus after 2 failed sonnet attempts (2026-11-26)`
+
+### 2. Code reviewer: Opus, high effort
+- **Why:** standard tasks get one code review before merge, run by Opus at high effort.
+- **Brief:**
+  - The spec and the requirement.
+  - The plan task.
+  - The merge request description.
+  - The diff, saved as a file and computed from the base commit I record before the implementer starts.
+  - A short summary of how the earlier attempts failed, so the reviewer checks those specific points.
+- **Gap:** the skill asks for a reviewer from a different model family than the implementer, but Claude Code only offers Claude models. So Opus would review Opus's work, and I'd note that in the plan.
+
+### 3. Optional: failure triage, Haiku, low effort
+- **Role:** read-only work: gather the two failed attempts' diffs, test logs and review comments, and summarize why each failed. That summary goes into the implementer's brief.
+- **When I'd send it:** only if this takes more than about four tool calls. If the attempts are in a couple of branches or logs, I'd read them myself.
+
+### What I'm leaving out
+- **Root-cause debugging at high effort:** only if the failures come from an unclear root cause (for example, a broken theme system) rather than mistakes in the implementation. If so, I'd do the diagnosis before the implementer starts.
+- **Compliance review, refuter and expert human review:** these are only required for critical tasks. Normal human review still applies.
+
+If Opus fails as well, I'll suggest a frontier model (Fable) to you with the reason, and wait for your answer before using it.

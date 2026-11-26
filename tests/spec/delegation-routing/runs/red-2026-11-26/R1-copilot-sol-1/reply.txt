@@ -1,0 +1,28 @@
+ $ Shell Inspect repository, session expiry specification, and implementation 36 lines…
+   pwd && git status --short && ls -la && if [ -f docs/spec-session-expiry.md ]; then sed -n
+   '1,240p' docs/spec-session-expiry.md; fi && if [ -f src/auth/session.py ]; then sed -n '1,260p'
+   src/auth/session.py; fi
+
+ MD Read AGENTS.md 11 lines read
+
+ / Search "**/*" in src, tests, docs 9 files found
+
+ PY Read tests/test_session.py 10 lines read
+
+ MD Read README.md 3 lines read
+
+No subagents dispatched; no files edited. For this **critical** task, I would use two sequential agents:
+
+| Role | Model | Reasoning effort | Brief |
+|---|---|---|---|
+| Implementation (`general-purpose`) | Runtime-selected default, not pinned | Runtime default, not overridden | Read `AGENTS.md`, the specification, session code, and existing tests. Implement REQ-AUTH-014: expire after 30 minutes of inactivity and refresh activity on accepted requests. Implement REQ-AUTH-015 using the established authentication-error convention; resolve its relationship to the current `None` return. Add deterministic tests for inactivity refresh, expiry boundary, expired-session rejection, and existing behavior. Run relevant checks; avoid unrelated changes. |
+| Independent review (`code-review`) | Runtime-selected default, not pinned | Runtime default, not overridden | Review the resulting diff against both requirements. Check timeout boundaries, activity refresh, rejection behavior, clock handling, compatibility, and test gaps. Report actionable correctness issues without editing files. |
+
+Exact model IDs and effort levels are runtime-resolved; none were selected or verified here.
+
+
+
+Changes    +0 -0
+AI Credits 2.77 (21s)
+Tokens     ↑ 62.6k (56.7k cached, 5.9k written) • ↓ 724 (174 reasoning)
+Resume     copilot --resume=2159511e-5e3e-4865-8d9f-f3466b8b4f77

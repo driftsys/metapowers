@@ -1,0 +1,24 @@
+Class: standard (user-given). I'd dispatch two subagents, one after the other.
+
+**1. Implementer (attempt 3)**
+- **Model:** `opus`. Two sonnet attempts have failed, so the skill escalates to the strongest implementer model the client offers. I would not use Fable or Astra unless you ask for one. If opus also fails, I'd suggest a frontier model with the reason and wait for your answer.
+- **Effort:** medium. That is the ceiling for implementation, and the task is more than a local pattern-following change.
+- **Brief:**
+  - The task: add a dark-mode toggle to the settings screen in `src/ui/settings_view.py`.
+  - `Class: standard (user-given)`, and `Routing: escalated to opus after 2 failed sonnet attempts`.
+  - The spec section and requirement ids for the toggle, plus a failing test if one exists.
+  - What the two failed attempts did and why they failed, so it doesn't repeat them. I'd collect this from their diffs and outputs first.
+  - Scope: touch only `src/ui/settings_view.py` and the code it needs to persist and apply the theme. Stay out of `src/payments/` (critical). If the change reaches into it, stop and report, because that would raise the task's class.
+  - Get the toggle working, with tests, and report the diff.
+  - The base commit is `b26dc44`, recorded before the task starts.
+
+**2. Code reviewer (one review)**
+- **Model:** `opus`. That is the table's reviewer for standard. No cross-family reviewer exists in Claude Code, and the standard class doesn't require noting that gap.
+- **Effort:** high.
+- **Brief:**
+  - The spec, the requirement, the plan task and the merge request description.
+  - The diff as a file computed from base `b26dc44`, not pasted inline.
+  - The task's class (standard).
+  - Review for correctness, and report findings only.
+
+There is no refuter, no compliance review and no ops subagent. A refuter and a compliance review are for critical work only, and the task has no mechanical sweep. Human review is normal. I would not run the reviewer until the implementer's diff exists.

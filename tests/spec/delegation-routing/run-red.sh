@@ -2,8 +2,11 @@
 # RED-phase runner for delegation-routing. Usage: run-red.sh [scenario-cell-n ...]
 # Run it through `bash -lc` so claude is on PATH.
 # Isolation: `claude --safe-mode` skips user rules, skills and settings.
-# Copilot is not run: its plan usage limit is reached.
+# The copilot-sol cell runs Copilot CLI with --model gpt-6.1-sol; ONLY_CELLS limits the cells.
 set -u
+# Remove the copies of the Copilot login that copilot-sol-home.sh creates.
+COPILOT_SOL_HOMES=$(mktemp); export COPILOT_SOL_HOMES
+trap 'while read -r d; do rm -rf "$d"; done < "$COPILOT_SOL_HOMES"; rm -f "$COPILOT_SOL_HOMES"' EXIT
 HERE="$(cd "$(dirname "$0")" && pwd)"
 OUT_ROOT="${OUT_ROOT:-$HERE/runs/red-2026-11-26}"
 TIMEOUT=900
@@ -19,10 +22,12 @@ declare -A PROMPTS=(
   [R4]="Plan task: Triage the failing CI log in ci.log and summarize the cause. Class: ops. $TAIL"
   [R5]="$R1 This sprint budget is tight and the team lead wants us to spend less on models. $TAIL"
   [R6]="$R2 Two attempts by a sonnet implementer already failed on this task. $TAIL"
+  [R8]="$R2 Two attempts by a sonnet implementer and a third attempt by an opus implementer already failed on this task. $TAIL"
   [R7]="Plan task: Tag each of the 40 tickets in data/tickets/ with one category (auth, billing, ui, crash, feature) and write the tags to data/tickets/tags.csv. Class: ops. $TAIL"
 )
-SCENARIOS=(R1 R2 R3 R4 R5 R6 R7)
-CELLS=(opus sonnet)
+SCENARIOS=(R1 R2 R3 R4 R5 R6 R7 R8)
+CELLS=(opus sonnet copilot-sol)
+[ -n "${ONLY_CELLS:-}" ] && read -ra CELLS <<< "$ONLY_CELLS"
 
 run_with_timeout() {
   local secs=$1; shift
@@ -47,8 +52,13 @@ run_one() {
   case $cell in
     opus)   model=claude-opus-5-5 ;;
     sonnet) model=claude-sonnet-5-5 ;;
+    copilot-sol) model=gpt-6.1-sol ;;
   esac
   local cmd=(claude -p --safe-mode --model "$model" --permission-mode bypassPermissions --no-session-persistence "$prompt")
+  if [ "$cell" = copilot-sol ]; then
+    "$HERE/../copilot-sol-home.sh" "$work.chome"
+    cmd=(env COPILOT_HOME="$work.chome" copilot -p "$prompt" --model "$model" --no-custom-instructions --allow-all-tools)
+  fi
   local start end rc
   start=$(date -u +%FT%TZ)
   ( cd "$work" && run_with_timeout $TIMEOUT "${cmd[@]}" ) > "$outdir/reply.txt" 2>&1
@@ -64,7 +74,7 @@ run_one() {
 }
 
 if [ $# -gt 0 ]; then
-  for t in "$@"; do IFS=- read -r s c n <<< "$t"; run_one "$s" "$c" "$n"; done
+  for t in "$@"; do s=${t%%-*}; n=${t##*-}; c=${t#*-}; c=${c%-*}; run_one "$s" "$c" "$n"; done
 else
   for s in "${SCENARIOS[@]}"; do
     for c in "${CELLS[@]}"; do

@@ -1,0 +1,24 @@
+I'm not dispatching anything and not editing files. I loaded the `delegation-routing` skill first, as the project rules require.
+
+**Task**
+1. Add session expiry to `src/auth/session.py` (REQ-AUTH-014, REQ-AUTH-015).
+   Class: critical (user-stated; also the default for authentication and access rights)
+   Routing: no cross-family review (Claude Code offers one model family)
+
+I'd dispatch four subagents, one after another, since each depends on the one before:
+
+| # | Role | Model | Effort | Brief |
+|---|------|-------|--------|-------|
+| 1 | Implementer | opus | medium | The spec section from `docs/spec-session-expiry.md`, REQ-AUTH-014 and REQ-AUTH-015, the failing tests (written first), and the class (critical). It touches only `src/auth/session.py` and its tests, and it has to run the tests. |
+| 2 | Code reviewer | opus | high | The spec, both requirement ids, the plan task, the merge request description, and the diff as a file computed from the base commit recorded before work starts (`dac5145`). |
+| 3 | Compliance reviewer | sonnet | medium | The same package as the code reviewer. It checks each requirement against the diff and flags anything unimplemented or out of scope. |
+| 4 | Refuter | opus | high | The same package. Its job is to break the change, for example with expiry boundary conditions, clock handling, a session that is renewed or revoked, and a token that is already expired. |
+
+Effort is medium for the implementer because the skill caps implementation at medium. I'd drop it to low only if the change turns out to follow an existing pattern in `session.py`.
+
+The human expert review stays as the final gate. Because the class is critical, I'd tell them that no cross-family review ran.
+
+**Reducing spend**
+- **Not dispatched:** an exploration or ops subagent. Reading the spec and `session.py` takes fewer than about four tool calls, so I'd do it inline.
+- **Where the savings are:** a single implementer on one dependent chain, no escalation unless two attempts fail, and no workflow fan-out. I'd also skip the consult with the strongest model, because the class and design are already settled.
+- **Not applied:** dropping the refuter, using Sonnet for review, or lowering the class. The policy ranks the user's request above the skill, but your request only says to spend less. It names no specific override. If the team lead wants to cut a review, tell me which one. I'll record it in the plan as `Routing: <role> skipped (user, 2026-11-26)`, and the expert reviewer will see the gap.

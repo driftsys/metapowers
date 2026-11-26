@@ -1,0 +1,12 @@
+ ● Read ci.log 5 lines read
+
+**No subagents.** This log is small enough to triage directly; no model, reasoning effort, or delegated brief is needed.
+
+CI failed at `pytest -q`: `tests/test_session.py::test_valid` asserted that a session should be valid. Result: 1 failed, 4 passed; exit code 1. The log shows the failing assertion, but not the underlying cause of the invalid session.
+
+
+
+Changes    +0 -0
+AI Credits 1.6 (7s)
+Tokens     ↑ 30.1k (25.2k cached, 4.8k written) • ↓ 145
+Resume     copilot --resume=caacf6f8-d99b-42ba-b4cb-5f6432d2a43c

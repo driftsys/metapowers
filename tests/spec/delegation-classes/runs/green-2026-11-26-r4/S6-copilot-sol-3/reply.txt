@@ -1,0 +1,16 @@
+ PY Read src/ui/settings_view.py 6 lines read
+
+ / Search "**/*.py" 8 files found
+
+1. Update `src/ui/settings_view.py` to display the user's HTML-escaped email, preserving the name and theme. Assume display-only use; omit the email when unavailable.
+   Class: standard (default: screen displaying personal data; privacy requirements unspecified)
+
+2. Add focused rendering tests for present, missing, and HTML-sensitive email values.
+   Class: standard (tests of standard code)
+
+
+
+Changes    +0 -0
+AI Credits 2.23 (11s)
+Tokens     ↑ 49.0k (42.7k cached, 6.2k written) • ↓ 251 (89 reasoning)
+Resume     copilot --resume=2e33bc3c-8ef9-4824-a8f5-01c889d473fd

@@ -46,7 +46,9 @@ reason, and wait for the answer.
 | ----------------------------------------------- | ------ |
 | Local change that follows a pattern in the code | low    |
 | Any other implementation, design, gardening     | medium |
-| Code review, refuter, debugging a root cause    | high   |
+| Code review, compliance review, refuter         | high   |
+| Debugging a root cause                          | high   |
+| Read-only ops work, bulk mechanical work        | low    |
 
 Medium is the ceiling for implementation. Higher effort costs more for no
 better result.
@@ -61,8 +63,9 @@ better result.
 
 ## Escalation
 
-After two failed attempts at a task, dispatch the next attempt with the
-strongest implementer model of the client.
+Follow the fix loop of the workflow you run, for example the one in
+`superpowers:subagent-driven-development`, for when to move a task to a more
+capable model. This skill decides which model each class starts with.
 
 ## Consult a deep-thinking model in doubt
 

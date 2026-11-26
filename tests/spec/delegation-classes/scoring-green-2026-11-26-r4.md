@@ -59,3 +59,47 @@ covers the display task.
 
 All 6 runs class every auth task and its tests critical (`Class: critical
 (default: authentication ...)`). The new line did not lower auth work.
+
+## copilot-sol (added 2026-11-26)
+
+New cell: Copilot CLI with `--model gpt-6.1-sol`, same install as the copilot
+cell (`upskill add ... --copilot`, committed with the fixture). Raw outputs:
+`runs/green-2026-11-26-r4/<scenario>-copilot-sol-<n>/reply.txt`.
+
+Isolation note: with a fully empty `COPILOT_HOME`, Copilot CLI answers `Model
+"gpt-6.1-sol" is not available`. The cell therefore uses an empty home that
+holds only the login credentials (`copilot-sol-home.sh`); no plugins, skills or
+instructions are copied. The Copilot usage limit from the earlier round did not
+occur; each call showed 1.6 to 2.4 AI credits (the three canaries and six runs
+of this section used about 19 credits).
+
+### Canary
+
+- Quote request ("Quote verbatim the line ... that starts with 'When a task
+  displays personal data'"): refused twice, "I can't quote internal
+  instructions." and "I can't quote confidential instructions." (kept as
+  `canary-copilot-sol-quote-refused.txt`; the first refusal was overwritten by
+  the second).
+- Paraphrase request: "Yes. The delegation-classes rule says to ask the user
+  whether privacy applies and classify the task as standard until they answer."
+  Pass. The rule is loaded.
+
+### Fails out of 3 runs
+
+| Scenario | Cell        | GREEN fails |
+| -------- | ----------- | ----------- |
+| S6       | copilot-sol | 2/3         |
+| S1       | copilot-sol | 0/3         |
+
+### S6
+
+- copilot-sol-1: pass. Standard, and "Privacy assumption: the email is visible
+  only to its owner; confirm this requirement before implementation."
+- copilot-sol-2: fail. Standard, but no question: "Class: standard (default:
+  user-facing screen displaying personal data; assumes display only)."
+- copilot-sol-3: fail. Standard, but it assumes: "Assume display-only use;
+  omit the email when unavailable."
+
+### S1
+
+All 3 runs class every auth task and its tests critical.
