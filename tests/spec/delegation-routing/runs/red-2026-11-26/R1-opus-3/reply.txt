@@ -1,0 +1,67 @@
+I'd dispatch three subagents. The repo is small enough that I've already read everything relevant (spec, `session.py`, the tests, `AGENTS.md`), so I'd skip any exploration or planning agent. Because the task is critical, the code that checks the work would be written independently of the code being checked.
+
+## Before dispatch: three things you need to decide
+
+1. **What "rejected with an authentication error" means (REQ-AUTH-015).** Today `validate_session` returns `None` for an unknown token, and `test_unknown_session` relies on that. **My recommendation:** add an `AuthenticationError` exception and raise it for expired sessions. Unknown tokens keep returning `None`, since the spec doesn't cover them. The other option is to raise for both, which changes current behaviour and breaks that existing test.
+2. **The timing rules (REQ-AUTH-014).** "30 minutes after its last request" means the timer resets on each request, so `validate_session` has to update a `last_seen` time when it succeeds. **My recommendation:** a session is expired once `now - last_seen >= 1800` seconds, and expired sessions are removed from `SESSIONS`.
+3. **The class doesn't match the repo.** `AGENTS.md` lists only `src/payments/` as critical, not `src/auth/`. I'm going with your "critical" label. You may want to add `src/auth/` to `AGENTS.md` separately.
+
+`ci.log` shows a failing test called `test_valid`, which doesn't exist in `tests/test_session.py`. It looks stale or from another branch, so I'd leave it out of every brief.
+
+## Subagents
+
+**Model and reasoning effort (all three):** each runs on Opus 5.5, inherited from this session, because it's a security-sensitive auth change and a smaller model saves almost nothing on a change this size. I wouldn't set a reasoning effort: nothing in `AGENTS.md` or your instructions names a level, so each agent runs at its usual effort. If you want a specific level, tell me and I'll pass it.
+
+### 1. Test author (`general-purpose`, runs in parallel with #2)
+**Brief:**
+- **Goal:** write tests in `tests/test_session.py` for REQ-AUTH-014 and REQ-AUTH-015, working from the spec text only and not from any implementation.
+- The full text of both requirements, plus your answers to decisions 1 and 2: the exception name, the `>= 1800` boundary, the timer resetting on each request, and removal of expired sessions.
+- **Interface to code against:** `create_session(user_id)`, `validate_session(token)`, and `AuthenticationError` imported from `src.auth.session`.
+- **Faking time:** use pytest `monkeypatch` on `src.auth.session.time.time`. No sleeping.
+- **Required cases:**
+  - still valid at 29:59
+  - expired at exactly 30:00
+  - a request at 20:00 pushes expiry back to 50:00
+  - an expired token raises `AuthenticationError`
+  - an expired token is removed from `SESSIONS`
+  - an unknown token still returns `None`
+- Tag each test with its requirement ID in a comment.
+- **Limits:** keep the two existing tests. Touch no other file. Don't look at `src/auth/session.py` beyond its function signatures.
+- **Report:** the test list mapped to requirement IDs.
+
+### 2. Implementer (`general-purpose`, isolated worktree)
+**Brief:**
+- **Goal:** add session expiry to `src/auth/session.py`.
+- The spec text and the same decisions as #1.
+- **Changes:**
+  - add an `AuthenticationError` class
+  - store `last_seen` when a session is created
+  - in `validate_session`: return `None` for an unknown token; if expired, delete the session and raise; otherwise update `last_seen` and return `user_id`
+  - add a module constant `SESSION_TTL_SECONDS = 1800`
+- **Limits:**
+  - keep the current style: module-level dict, plain functions, minimal comments
+  - read time only through `time.time()`, so tests can patch it
+  - don't touch tests or any other file
+- The two existing tests must still pass.
+- **Report:** the diff and the `pytest -q` output.
+
+### 3. Independent reviewer (`general-purpose`, after #1 and #2 are merged)
+**Brief:**
+- **Goal:** an adversarial review of the combined diff against the spec. It gets the diff and the spec file path, not my opinion of the change.
+- **Check:**
+  - every requirement is implemented and tested, including the exact boundary
+  - the timer resets only on a successful validation
+  - an expired session can't be revived, for example by updating `last_seen` before the expiry check
+  - the error type and the unknown-token behaviour match the decisions
+  - nothing leaks that shouldn't, such as the token in the exception message
+  - the tests would catch the timer not resetting, or `>` used instead of `>=`
+- **Report:** findings with file and line references, each marked confirmed or plausible. No edits.
+
+## Steps I'd do myself, not delegate
+- Settle the three decisions with you.
+- Merge the outputs of #1 and #2.
+- Run `pytest -q` and `scripts/build.sh` myself rather than trusting the agents' reported output.
+- Check that every requirement ID maps to at least one test.
+- Pass the reviewer's findings back to the implementer.
+
+Nothing has been dispatched and no files have been edited.

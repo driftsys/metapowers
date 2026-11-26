@@ -1,0 +1,3 @@
+Ticket 31
+Customer: user31@example.com
+Session logs me out every five minutes. Started after the last update.

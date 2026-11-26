@@ -9,7 +9,14 @@ metadata:
 
 The class of a task decides which roles run, which model runs each role, and at
 what reasoning effort. The `delegation-classes` rule gives each task its class;
-this skill turns that class into dispatch settings.
+this skill turns that class into dispatch settings. The class sets the reviews
+for all work, done inline or delegated. The model tables apply to the work you
+delegate; you may do light and ops work yourself.
+
+Dispatch a frontier model (Fable, Astra) only when the user asks for one.
+When the strongest default model has also failed a task, or a consult in doubt
+did not settle the question, suggest a frontier model to the user with the
+reason, and wait for the answer.
 
 ## Roles and reviews per class
 
@@ -22,8 +29,15 @@ this skill turns that class into dispatch settings.
 
 - Dispatch the code reviewer and the refuter from the other model family than
   the implementer when the client offers both families.
-- Give ops models read-only work: triage, log reading, exploration, merge
-  request descriptions, tool runs.
+- Give ops models two kinds of work:
+  - Read-only work: triage, log reading, exploration, summaries, merge request
+    descriptions, tool runs.
+  - Bulk mechanical work: classification, tagging and extraction across many
+    files or records, and edits that change no behavior. Name the tool that
+    checks each edit (formatter, linter, compiler, tests) in the brief. Split
+    the work into batches only when it does not fit in one subagent's context.
+- Give a change that needs a decision to an implementer model; it takes the
+  class of its code.
 - Give production code only to implementer models from the table in "Models".
 
 ## Reasoning effort
@@ -50,12 +64,47 @@ better result.
 After two failed attempts at a task, dispatch the next attempt with the
 strongest implementer model of the client.
 
+## Consult a deep-thinking model in doubt
+
+When the session runs on a model below the strongest of the client, consult
+the strongest model in a subagent before you plan in these cases: the class of
+a task stays uncertain after the `delegation-classes` rule, a critical task has
+no clear design, or two routings both look valid. Give it the task, the class
+and the question, and follow its answer or report the disagreement to the user.
+
 ## Overrides
 
 Settings resolve in this order, and the later one wins: this skill, the
 "Delegation" section of AGENTS.md, the user's request for the task. Write each
 override in the plan task, for example
 `Routing: refuter skipped (user, 2026-11-26)`.
+
+## Vendor recommendations
+
+Use these when no table in "Models" covers the work, for example a new kind of
+task or a model the tables do not name. Sources fetched 2026-11-26.
+
+| Family | The vendor recommends it for                                                                   |
+| ------ | ---------------------------------------------------------------------------------------------- |
+| Fable  | Demanding reasoning, agent sessions that run for hours, when Opus at higher effort falls short |
+| Opus   | Most workloads; long-running agentic coding, large-scale refactoring, complex systems          |
+| Sonnet | Everyday coding, agent and enterprise work; subagents under an Opus orchestrator               |
+| Haiku  | High-volume, latency-sensitive work: classification, routing, extraction, subagent tasks       |
+| Astra  | The hardest projects; long-horizon coding with continuous planning                             |
+| Sol    | Complex coding, computer use, professional work                                                |
+| Terra  | Everyday agentic coding and terminal work; clear writing                                       |
+| Luna   | Focused, high-volume, cost-sensitive tasks                                                     |
+
+- Anthropic: an Opus orchestrator with Sonnet subagents cost about a third less
+  and scored about the same as Opus alone. Haiku subagents are "an alternative
+  to lowering effort, not better". Keep one dependent chain of work in one
+  session instead of splitting it across subagents.
+- Anthropic: tuning effort is often a better lever than switching models.
+
+Sources: platform.claude.com/docs/en/about-claude/models/choosing-a-model,
+platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence,
+developers.openai.com/api/docs/models,
+docs.github.com/en/copilot/reference/ai-models/model-comparison.
 
 ## Models
 

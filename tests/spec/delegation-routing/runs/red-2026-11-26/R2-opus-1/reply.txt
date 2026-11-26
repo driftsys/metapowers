@@ -1,0 +1,25 @@
+For a task this small I'd send two subagents, and possibly just one. The target file is 6 lines, and AGENTS.md only marks `src/payments/` as critical. Nothing in AGENTS.md sets models or effort for the standard class, so the choices below are my own judgment.
+
+What's there now: `render_settings(user)` in `src/ui/settings_view.py` reads `user.get("theme", "light")` and returns an HTML string. There's no form, no code that saves the setting, and no UI tests (only `tests/test_session.py`).
+
+## 1. Implementer
+- **Role:** add the toggle and tests.
+- **Model:** Sonnet. The change is small and the pattern is clear, so Opus isn't needed.
+- **Reasoning effort:** not set (agent default). The project has no rule asking for a specific level, and nothing about this task calls for more.
+- **Brief:**
+  - Goal: `render_settings` should output a dark-mode toggle (a checkbox or switch named `theme`) that is on when `user["theme"] == "dark"`. Keep the current `<h1>`, keep `"light"` as the default, and match the f-string style already in the file.
+  - Escape `user['name']` if the change touches that line. It's currently put into the HTML unescaped.
+  - Scope: edit only `src/ui/settings_view.py` and a new `tests/test_settings_view.py`. Don't touch `src/payments/`, which is critical.
+  - Out of scope: saving the setting. No save handler exists. Don't invent an endpoint; just mention in the report that one is missing.
+  - Tests: toggle is on for dark, off for light, off when the theme key is missing, and the name still renders. Run them with pytest.
+  - Report: the diff summary, the test output, and any open questions such as saving and the form's action URL.
+
+## 2. Reviewer (fresh, not a fork)
+- **Role:** an independent check of the diff after the implementer finishes.
+- **Model:** Sonnet.
+- **Reasoning effort:** not set (agent default).
+- **Brief:** give it the diff and the task statement, not the implementer's reasoning or my expectations. Ask it to check that the toggle state is correct for each theme value, that nothing is put into the HTML unescaped, that the tests cover the light, dark and missing cases, and that nothing outside the two files changed. It should report findings only, with no edits.
+
+## Not dispatched
+- **Explore / Plan:** there's nothing to search or design across one 6-line file.
+- **Option to cut the reviewer:** I could review a diff this size myself in one read, so the reviewer is optional for a standard task. I'd keep it only if you want a second opinion that isn't influenced by my reading.

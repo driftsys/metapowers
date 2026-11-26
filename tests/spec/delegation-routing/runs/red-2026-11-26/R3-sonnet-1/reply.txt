@@ -1,0 +1,11 @@
+I wouldn't dispatch any subagents for this task.
+
+It's a light change: add elapsed-time output to one shell script. A subagent would need a full brief, and I'd have to check its work afterward. That costs more than reading `scripts/build.sh` and editing it myself.
+
+What I'd do directly:
+1. Read `scripts/build.sh`.
+2. Record a start time at the top, for example `start=$SECONDS` (bash's built-in counter) or `date +%s`.
+3. Print `Elapsed: $((SECONDS - start))s` at the end. If the script has early exits, I'd use a `trap ... EXIT` so the time prints on every path.
+4. Run the script once to confirm the output.
+
+If you want a second opinion on the diff afterward, I'd dispatch one reviewer. It would be a fresh `general-purpose` agent on Sonnet at low effort. Its brief would be the diff only, with the instruction to check that the timing prints on every exit path and doesn't change the script's exit code. I don't think that's needed here.

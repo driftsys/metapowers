@@ -1,0 +1,23 @@
+**Recommendation: dispatch no subagents.**
+
+Triaging one CI log is a single-file read-and-summarize task. I can read `ci.log` directly, find the first error, trace it back to its cause, and write the summary in a few tool calls. A subagent would start with none of my context and would only hand back a summary for me to check. That costs more and adds no accuracy.
+
+**What I'd do instead (inline, no edits):**
+1. Read `ci.log`. If it's large, grep for `error|fail|fatal|exit code` and read around the first hit.
+2. Separate the root failure from the failures it caused.
+3. Check `git log` or the diff for a recent change that could explain it.
+4. Report the failing step, the root cause, the evidence (log lines), and a suggested fix.
+
+**When I'd reconsider:** If the log turned out to be huge (tens of thousands of lines) or covered several independent jobs, I'd send one `Explore` subagent per job.
+
+- **Role:** read-only log scanner for one job.
+- **Model:** haiku. This is pattern-matching, not deep reasoning.
+- **Effort:** low.
+- **Brief:**
+  - The path to its section of the log.
+  - The goal: find the first failing step and its root-cause error.
+  - What I've already ruled out.
+  - A request to return the failing step, 5–10 relevant log lines, and a one-sentence cause.
+  - A note that it is read-only and must not edit anything.
+
+I'd do the final synthesis myself either way. I don't expect to need those subagents here.

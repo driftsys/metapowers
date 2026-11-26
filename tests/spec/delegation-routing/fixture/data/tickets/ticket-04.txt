@@ -1,0 +1,3 @@
+Ticket 04
+Customer: user4@example.com
+The mobile app freezes and then quits when I open the camera screen.

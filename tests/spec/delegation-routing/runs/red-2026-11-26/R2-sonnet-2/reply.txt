@@ -1,0 +1,11 @@
+I would dispatch no subagents for this task.
+
+It's a single-file UI change in `src/ui/settings_view.py`, and the repo has one commit. The work is a few tool calls: read the file, find how the other settings controls and the theme are wired, add the toggle, and run any existing tests. A subagent would only know what I put in its brief. It would also send back a summary that I'd have to check against the file anyway. That costs more than doing the work myself.
+
+If reading the file shows the theme plumbing lives somewhere unexpected, I would add one subagent:
+
+| Role | Model | Reasoning effort | Brief |
+|---|---|---|---|
+| Explore (read-only) | haiku | low (default) | Find where theme or dark-mode state is defined and consumed, such as a theme module, settings persistence, or a stylesheet. Say how `src/ui/settings_view.py` currently builds and saves its other toggles. Report file paths and line numbers only. Edit nothing. Search breadth: medium. |
+
+I would not add an implementation or review agent. I'd make the edit directly, following the existing control and persistence pattern in `settings_view.py`. After that I'd run the tests, and `/code-review` at low or medium effort is available if you want a second look.

@@ -1,0 +1,26 @@
+I haven't read the spec yet, so these briefs point the agents to `docs/spec-session-expiry.md` and the two requirement IDs rather than paraphrasing them. Nothing has been dispatched and no files have been edited.
+
+**1. Explorer** (Explore agent, haiku, low effort)
+- **Brief:** Read-only. Map `src/auth/session.py`: its public API, the callers of the session class, the existing tests, how time is obtained (clock, timezone), and where sessions are created, refreshed and revoked. Also grep the repo for REQ-AUTH-014 and REQ-AUTH-015 to find existing traceability tags.
+- **Output:** A short list of file paths and line numbers, with no file dumps.
+- **Why:** It keeps the exploration output out of my context and gives the later agents exact locations.
+
+**2. Test author** (general-purpose, opus, high effort, runs in parallel with #3)
+- **Brief:** Write tests from the spec only: REQ-AUTH-014, REQ-AUTH-015 and the spec's edge cases. Do not read the implementation, and do not edit `src/`. Tests go in the existing test location, named and tagged by requirement ID. Inject or fake the clock. Cover the expiry boundary (exactly at, just before, just after), the non-expired path, post-expiry behaviour for each operation, and any refresh or revocation interaction the spec defines.
+- **Why:** Writing the tests independently of the implementation stops them from encoding the implementation's mistakes.
+
+**3. Implementer** (general-purpose, opus, high effort, runs in parallel with #2)
+- **Brief:** Implement REQ-AUTH-014 and REQ-AUTH-015 in `src/auth/session.py`, following the spec and the explorer's map.
+  - Scope: touch only that file, plus a config constant if the spec requires one.
+  - Style: match the surrounding style. Use a monotonic or injectable clock, and fail closed on expiry (an expired or malformed session is treated as invalid).
+  - Tests: run the existing tests, and report any ambiguity in the spec instead of guessing.
+  - Traceability: add requirement-ID references where the repo's convention calls for them.
+
+**4. Adversarial reviewer** (general-purpose, fable, xhigh effort, runs after #2 and #3 finish)
+- **Brief:** Give it the diff and the spec, but not my conclusions or the implementer's self-assessment. Hunt for requirement gaps, off-by-one errors at the boundary, timezone or clock-skew issues, expired sessions that can still be used or refreshed, race conditions, and tests that pass vacuously. Report each finding with a file and line number and a concrete failing scenario.
+- **Why:** Critical class warrants a read that isn't anchored on the implementer's view.
+
+**5. Security review** (`/security-review` skill, run by me and not a subagent)
+- This is optional but worthwhile for an auth change. I'd run it on the final diff.
+
+**Sequence:** Explorer first. Then the test author and implementer in parallel, since they edit different files. Then the reviewer, with fixes looped back to the implementer if needed. Finally I run the full test suite myself and report the results. I wouldn't trust the agents' own pass/fail claims for a critical change.

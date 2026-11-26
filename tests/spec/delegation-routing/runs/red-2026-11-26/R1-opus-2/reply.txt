@@ -1,0 +1,50 @@
+Nothing dispatched and no files edited. I read the spec, `src/auth/session.py`, `tests/test_session.py` and `AGENTS.md` so the briefs below are based on the actual code.
+
+## Decisions I'd fix before dispatch
+
+Every brief carries the same contract, so the implementer and the test writer can run in parallel without seeing each other's work:
+- **Sliding expiry (REQ-AUTH-014):** each session stores `last_seen`, set when it's created and refreshed on every successful `validate_session`. The window is `SESSION_TTL_SECONDS = 30 * 60`. A session is expired when `now - last_seen >= SESSION_TTL_SECONDS`.
+- **Clock:** the code reads `time.time()` through the module (`time.time`, not `from time import time`) so tests can monkeypatch it.
+- **Rejection (REQ-AUTH-015):** an expired token raises `AuthenticationError`, defined in `src/auth/session.py`, and its session is deleted from `SESSIONS`.
+- **Unknown token:** still returns `None`, so `test_unknown_session` keeps passing.
+
+## Subagents
+
+**1. Implementer** (`general-purpose`, Opus 5.5, effort high)
+- **Goal:** implement REQ-AUTH-014 and REQ-AUTH-015, quoted word for word.
+- **Context:** the current `session.py` and the contract above.
+- **Scope:** edit only `src/auth/session.py`. Don't touch the tests or anything outside `src/auth/`.
+- **Constraints:** keep the existing function signatures. Match the module's style: minimal comments, stdlib only.
+- **Finish:** run `pytest -q tests/test_session.py`. Report the diff and the test output word for word.
+
+**2. Spec-based test writer** (`general-purpose`, Opus 5.5, effort high, runs alongside #1)
+- **Goal:** write tests from the spec and the contract only. It doesn't see the implementation, so its tests don't just mirror the implementer's reading.
+- **Context:** both requirements, the contract, and the current `tests/test_session.py`.
+- **Scope:** edit only `tests/test_session.py` and keep both existing tests.
+- **Cases to cover:**
+  - a session is valid at 29:59 and expired at exactly 30:00
+  - activity resets the window (a request at 20:00 keeps the session valid at 45:00)
+  - an expired token raises `AuthenticationError`
+  - an expired session is removed and a second call doesn't bring it back
+  - an unknown token still returns `None`
+- **Clock:** monkeypatch `src.auth.session.time.time` and never sleep.
+- **Finish:** report the tests and which ones fail against the current code. They should fail until #1 lands.
+
+**3. Independent reviewer** (`general-purpose`, Opus 5.5, effort xhigh, runs after #1 and #2 are merged and the tests pass)
+- **Context:** the two requirements, the combined diff, and the test output. It doesn't get my contract reasoning or my opinion of the code, so its read stays independent.
+- **Checks:**
+  - every requirement maps to code and to a test
+  - off-by-one errors at the boundary
+  - whether a failed or expired validation still refreshes `last_seen`
+  - wall-clock problems: `time.time()` vs `time.monotonic()` when the clock jumps
+  - races on the global `SESSIONS` dict
+  - whether an expired token can be reused
+  - leftover sessions that are never validated again. That's a memory issue, so it should be noted, not fixed.
+- **Output:** findings ranked by severity, each with a concrete failure scenario. Read-only: no edits.
+
+**Not dispatching:** Explore or Plan agents. The codebase is three small files and I've already read the relevant ones. I'll run the final `pytest` myself rather than delegate it.
+
+## Before dispatch
+- **Class mismatch:** `AGENTS.md` lists only `src/payments/` as critical, but you've called this auth task critical. I've planned it as critical because that's the stricter reading. You may want to add `src/auth/` to `AGENTS.md`.
+- **Unknown tokens:** REQ-AUTH-015 only covers expired sessions. Should unknown tokens also raise `AuthenticationError`? That would mean changing `test_unknown_session`. My plan keeps returning `None`.
+- **Stale CI log:** `ci.log` shows a failing `tests/test_session.py::test_valid`, but no test by that name exists. The log looks stale, so I've left it out of the briefs.

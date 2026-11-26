@@ -1,0 +1,46 @@
+Nothing dispatched and no files edited. I read the spec, `src/auth/session.py`, `tests/test_session.py` and `AGENTS.md` first so the briefs could be specific.
+
+## Two things to settle before dispatching
+
+1. **REQ-AUTH-015 is ambiguous.** "Rejected with an authentication error" doesn't fit the current contract, where `validate_session` returns `None` for an unknown token. My recommendation is a new `AuthenticationError` that's raised for expired sessions, with `None` kept for unknown tokens so existing callers and `test_unknown_session` keep working. If you'd rather unknown tokens raise too, the briefs change. I'd rather settle this now than have a subagent guess.
+2. **The class differs from the repo.** `AGENTS.md` marks only `src/payments/` as critical. I'm treating `src/auth/` as critical because you said so, and because session handling is security-sensitive. It may be worth adding auth to `AGENTS.md` later.
+
+## Subagents I'd dispatch (2)
+
+### 1. Implementer
+- **Model:** Sonnet 5.5
+- **Effort:** medium
+- **Why not cheaper:** This is about 20 lines, fully specified, in one file, so Opus would be wasted. But it's critical-class auth code, so I wouldn't go down to Haiku.
+- **Brief contains:**
+  - Both requirements copied word for word, and the current contents of `src/auth/session.py`.
+  - The design decisions already made, so it doesn't reinvent them:
+    - Store `last_seen` on create.
+    - Expiry slides: a successful `validate_session` resets the clock.
+    - A session counts as expired when `now - last_seen >= 1800s`. The 30 minutes is a module constant.
+    - Expired sessions are removed from `SESSIONS`.
+    - Raise `AuthenticationError` per decision 1 above.
+  - Keep both existing tests passing.
+  - Add tests that control the clock by monkeypatching `time.time`, with no real sleeps. They cover: valid just before 30 minutes, rejected at exactly 30 minutes, the clock resetting on use, and an expired session being removed. Each test names REQ-AUTH-014 or REQ-AUTH-015 in its name or docstring.
+  - Scope: change only `src/auth/session.py` and `tests/test_session.py`, and report the diff plus the pytest output.
+
+### 2. Independent reviewer
+- **Model:** Opus 5.5
+- **Effort:** high
+- **Why spend here:** Because the task is critical, this is the one place the extra cost is worth it. I'd use high rather than xhigh or max because the change is so small.
+- **Brief contains:**
+  - The spec text and the diff only, without my reasoning or the implementer's summary, so its read isn't anchored on ours.
+  - What to check:
+    - Is the 30-minute boundary correct, with no off-by-one?
+    - Does a rejected request wrongly reset the clock?
+    - Is the clock choice sound (`time.time` vs `time.monotonic`)?
+    - Can an expired token still get through some other path?
+    - Do the tests actually prove each requirement?
+    - Does anything outside the file call `validate_session` and depend on its old return contract?
+  - Output: findings ranked by severity, each with a concrete failure scenario, and a sentence saying whether REQ-AUTH-014 and REQ-AUTH-015 are each met.
+
+## What I'd skip, to save budget
+- **Explore or Plan agents:** the repo is tiny and I've already read everything relevant.
+- **A separate test-writer:** the implementer writes the tests, and the reviewer checks that they cover the spec. If you want more independence on a critical item, the cheapest addition is a Haiku agent at low effort that writes tests from the spec text alone.
+- **Running tests and checking the diff:** I'd do this myself between the two agents rather than paying for another one.
+
+One more thing: `ci.log` shows a failure in `test_valid`, but no test with that name exists in `tests/test_session.py`. The log looks stale, so I'd keep it out of both briefs rather than send the agents after it.

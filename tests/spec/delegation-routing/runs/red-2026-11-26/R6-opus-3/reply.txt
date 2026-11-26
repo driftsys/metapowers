@@ -1,0 +1,26 @@
+I'd dispatch two subagents. I'd do the diagnosis myself first, because a third attempt is only worth running if its brief says why the first two failed.
+
+**Step 0, done by me (no subagent):** read the two failed attempts (diffs, test output, or reviewer notes) and `src/ui/settings_view.py`, and find where theming and settings persistence already live. That's a known file plus a few lookups, so it doesn't need an Explore agent. It gives me the facts the briefs below depend on.
+
+**1. Implementer**
+- **Type / model:** general-purpose on **Opus**. Two Sonnet failures on the same task mean I should move up a model, not send the same setup a third time.
+- **Effort:** I'd leave it at the default. The tool only lets me set effort when the user or project instructions ask for a level. If you want one, I'd use `high` for this agent.
+- **Brief contains:**
+  - **Goal and acceptance criteria:** a toggle on the settings screen that switches the theme right away, persists across restarts, and defaults to the current behavior.
+  - **What failed before and why:** the specific causes from step 0, such as the toggle not being wired to the theme system, the setting not persisting, or tests breaking. It also says which approaches are ruled out.
+  - **Where to look:** `src/ui/settings_view.py`, the existing theme or style mechanism, the settings store, and an existing toggle in the codebase to copy.
+  - **Scope:** only the files needed, no refactors of nearby code, and the toggle should match the existing settings-row style.
+  - **Verification:** the exact test command. It adds a test for the toggle and for persistence, and launches the app to check that the toggle works if that's possible.
+  - **What to report back:** files changed, test output, anything it couldn't verify, and any assumptions it made.
+
+**2. Reviewer** (after the implementer finishes)
+- **Type / model:** general-purpose on **Opus**, starting fresh with none of the implementer's context.
+- **Effort:** default, for the same reason as above.
+- **Brief contains:**
+  - The original task statement, the acceptance criteria, and the diff.
+  - The two earlier failure causes, so it can check that this attempt doesn't repeat them.
+  - It does **not** get the implementer's reasoning or my opinion of the fix, so its review isn't anchored on either.
+  - **What to check:** whether the toggle actually drives the theme, whether the setting persists and loads at startup, whether the default is unchanged, whether the tests cover the real behavior, and whether any unrelated changes slipped in.
+  - **What to report back:** findings ranked by severity, each with a concrete way it fails, or a clear pass.
+
+**What I'm leaving out:** no Explore or Plan agent, because the scope is one known file and I've already done the lookup. No parallel implementers, because two diffs on the same file would conflict and I'd have to merge them by hand. If the reviewer finds real problems, I'd send them back to the same implementer with SendMessage so it keeps its context, rather than starting a new one.

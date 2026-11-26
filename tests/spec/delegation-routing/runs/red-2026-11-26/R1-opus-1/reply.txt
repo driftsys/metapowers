@@ -1,0 +1,60 @@
+I'd dispatch three subagents. I read the spec, `src/auth/session.py`, `tests/test_session.py` and `AGENTS.md` myself first, since the repo is small enough that an Explore agent would add nothing. Nothing was dispatched and no files were edited.
+
+## Before dispatching: three points to settle
+
+1. **Class.** `AGENTS.md` lists only `src/payments/` as critical, so `src/auth/` has no class there. I'm going with your "critical". You may want to add `src/auth/` to `AGENTS.md`.
+2. **REQ-AUTH-015 doesn't say what "authentication error" means.** Today `validate_session` returns `None` for an unknown token, and `test_unknown_session` checks for that. No error class exists anywhere in `src/`, and nothing outside the tests calls `validate_session`. My suggestion: add `AuthenticationError` to `session.py` and raise it for expired sessions, and keep returning `None` for unknown tokens so the current test still passes. Every brief below assumes that decision, so I'd want your OK before dispatching.
+3. **`ci.log` is out of date.** It reports `test_valid` failing, but that test no longer exists (the current one is `test_valid_session`). I'd tell agents to ignore it and run pytest fresh.
+
+## Subagents
+
+### 1. Implementer
+- **Type / model / effort:** general-purpose, Opus 5.5, high
+- **Runs:** at the same time as #2, editing only `src/auth/session.py`
+- **Brief:**
+  - The full text of REQ-AUTH-014 and REQ-AUTH-015, plus the path `docs/spec-session-expiry.md`.
+  - The current `session.py` stores only `created`. The 30 minutes count from the *last request*, so the timeout resets on each use. That means storing `last_seen` and updating it on every successful `validate_session`.
+  - The rule at exactly 30:00 must be stated explicitly. My proposal: "expired once now − last_seen ≥ 1800 s".
+  - Remove expired sessions from `SESSIONS` when they're rejected.
+  - Read time from one patchable function (e.g. `time.time` through the module) so tests can fake the clock. No sleeps.
+  - The error-type decision from point 2.
+  - Keep the existing style: plain functions, module-level dict, no new dependencies.
+  - Don't touch `tests/` or any other file.
+  - Report: the diff, and the exact boundary rule used.
+
+### 2. Spec-based test writer
+- **Type / model / effort:** general-purpose, Opus 5.5, high
+- **Runs:** at the same time as #1, editing only `tests/test_session.py`. It doesn't see the implementation.
+- **Brief:**
+  - The two requirements, the public API (`create_session`, `validate_session`, `AuthenticationError`), the error-type decision, and the boundary rule.
+  - Fake the clock with pytest `monkeypatch`.
+  - Cases:
+    - valid at 29:59
+    - rejected at 30:00
+    - rejected well past 30:00
+    - a request at 20:00 pushes expiry to 50:00 (the timeout resets)
+    - an expired token stays rejected on retry (no revival)
+    - an unknown token still returns `None`
+  - Tag each test with its requirement ID.
+  - Keep the two existing tests unchanged.
+  - Report: the tests, and the requirement each one covers.
+
+### 3. Independent reviewer
+- **Type / model / effort:** general-purpose, Opus 5.5, xhigh. Read-only, no edits.
+- **Runs:** after #1 and #2 finish
+- **Brief:**
+  - Only the spec, the combined diff and the test file. None of my reasoning or the implementer's summary, so it reads the code fresh.
+  - Check whether each requirement is actually met and covered by a test.
+  - Look for:
+    - off-by-one at the boundary
+    - a rejected request still updating `last_seen`
+    - an expired session being revived
+    - clock-skew problems (e.g. `time.time` going backwards) and whether `time.monotonic` should be used
+    - unbounded growth of `SESSIONS`
+    - any change to how unknown tokens behave
+  - Run `pytest -q` and attach the output.
+  - Report: findings ranked by severity, each with a concrete failure case, or an explicit "none".
+
+After that, I'd run `pytest -q` and `scripts/build.sh` myself rather than rely on the agents' reports, fix whatever the reviewer confirms, and only then report back.
+
+I'd leave out a separate security-review agent: the change is small and the reviewer's checklist already covers expiry bypass and revival. Most of the choices above are my judgment, since `AGENTS.md` only names the class and says nothing about models or effort.

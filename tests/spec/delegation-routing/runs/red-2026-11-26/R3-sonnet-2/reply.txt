@@ -1,0 +1,11 @@
+**Plan: no subagents dispatched.**
+
+This is a light task: add elapsed-time output to a single shell script. Spawning a subagent would cost more than doing the work directly, and I'd have to hand over context I already have.
+
+What I would do inline instead:
+
+1. Read `scripts/build.sh` to see its structure, shebang, `set` flags, and where it exits.
+2. Edit it to record a start time at the top, using bash's `SECONDS` or `date +%s`. Then print the elapsed time at the end. If the script has several exit paths or uses `set -e`, I'd use a `trap ... EXIT` so the time prints on failure too. I'd match the script's existing style for echo and log formatting.
+3. Run `bash scripts/build.sh` once to confirm it still works and prints the elapsed line.
+
+If you'd like a subagent anyway, I'd use one `Explore` agent on a small model (e.g. Haiku) at low effort. Its brief would be: "Read `scripts/build.sh` and report its shebang, `set` options, exit paths, and logging style. Don't edit anything." I don't think that's worth it for a single file.

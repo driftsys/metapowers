@@ -12,6 +12,9 @@ Delegate bounded mechanical work to a Sonnet subagent — the `Agent` tool with
 interrogation, reproducing a reported failure, mechanical sweeps across many
 files, and reading a large artifact to answer one specific question.
 
+When a task has a class from the `delegation-classes` rule, choose the model
+with the `delegation-routing` skill instead.
+
 Delegate above roughly four tool calls. Below that, a subagent's fresh context
 load costs more than running the work inline.
 

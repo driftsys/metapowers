@@ -1,0 +1,49 @@
+I read the spec, `src/auth/session.py`, `tests/test_session.py` and `AGENTS.md`. The change is small: about 15 lines in one file plus tests. To save budget I'd skip the Explore and Plan agents, because I already have all the context they would gather. The savings go to keeping one strong independent review, since the task is critical. That makes three subagents.
+
+## 1. Implementer
+- **Type / model / effort:** general-purpose, **Sonnet, medium**
+- **Why this tier:** The spec is fully written and the change is small. Opus would cost more without changing the result, and the reviewer catches any slips.
+- **Brief contains:**
+  - REQ-AUTH-014 and REQ-AUTH-015 quoted word for word, and the current `session.py` contents.
+  - **Decisions already made**, so it doesn't have to guess:
+    - Expiry is **sliding**: store `last_seen`, refresh it on each successful `validate_session`, and expire at `now - last_seen >= 1800s`. Today the code only stores `created`, which would give fixed expiry and fail REQ-AUTH-014.
+    - An expired token raises a new `AuthenticationError` and is removed from `SESSIONS`.
+    - An unknown token still returns `None`, so the existing contract and `test_unknown_session` keep working.
+    - Time is read through one module-level clock function that tests can monkeypatch.
+  - **Scope:** edit `src/auth/session.py` only. No test edits, no commit.
+  - **Report back:** the diff and `pytest -q` output.
+
+## 2. Spec-based test author (runs in parallel with #1)
+- **Type / model / effort:** general-purpose, **Sonnet, low**
+- **Why a separate agent:** Tests written from the spec, not from the implementation, give independent checking at little cost. #1 and #2 touch different files, so they don't conflict.
+- **Brief contains:**
+  - The two requirements and the same decisions as #1: the `AuthenticationError` name, the clock function name, and unknown token → `None`.
+  - **It does not get the implementation.**
+  - Tests to add to `tests/test_session.py`, each tagged with its REQ ID in a comment or docstring:
+    - valid just under 30 min
+    - expired at exactly 30 min
+    - activity at 20 min pushes expiry out (the sliding case)
+    - an expired token raises `AuthenticationError`
+    - an expired token stays rejected on a second call
+  - **Scope:** tests only.
+
+## 3. Independent reviewer (after #1 and #2 merge and I've run pytest)
+- **Type / model / effort:** general-purpose (read-only by instruction), **Opus, high**
+- **Why this tier:** It's critical auth code, and this is the one place I wouldn't drop to a cheaper model.
+- **Brief contains:**
+  - The spec, the combined diff and the test output.
+  - **Not my conclusions**, so the review isn't anchored on them.
+  - What to check:
+    - REQ coverage: sliding versus fixed expiry, and the boundary condition.
+    - Whether the error behaviour meets "rejected with an authentication error".
+    - Expired sessions piling up in `SESSIONS`.
+    - Clock choice: `time.time` versus `monotonic`.
+    - Gaps in the tests.
+  - **Report back:** a ranked list of findings with failure scenarios. No edits.
+
+**Fix-ups:** if the reviewer finds problems, I'd send them to implementer #1 with SendMessage rather than start a new agent. It keeps its context, which is cheaper. I run pytest and do the final check myself.
+
+## Before dispatching
+- **Your call on REQ-AUTH-015:** I planned for expired → raise, unknown → `None`. Making unknown tokens raise too would be more consistent with the spec's wording, but it breaks the current `validate_session` contract. Please confirm before I dispatch.
+- **Critical class:** `AGENTS.md` lists only `src/payments/` as critical. I'm treating auth as critical because you said so and it controls who can access the service. You may want to add it to `AGENTS.md`.
+- **`ci.log` doesn't match the code:** it shows a failing `test_session.py::test_valid`, but no test by that name exists. It looks like a log from another branch or an older run, so I'm not treating it as a signal for this task.

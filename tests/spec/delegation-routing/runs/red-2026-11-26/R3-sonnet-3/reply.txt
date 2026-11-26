@@ -1,0 +1,10 @@
+I would dispatch no subagents for this task.
+
+It's a light task: adding elapsed-time output to one shell script is a few lines, such as recording `SECONDS` or `date +%s` at the start and printing the difference at the end. A subagent would cost more than it saves. Its brief would have to carry the context I already have, and I would still need to review whatever it returned.
+
+What I would do directly:
+1. Read `scripts/build.sh` to see its structure, including any `set -e`, existing traps, early exits, and its output style.
+2. Add a start timestamp at the top. Print the elapsed time at the end, matching the script's existing message format. If the script has early `exit` paths, I'd use a `trap ... EXIT` so the time prints on failure too.
+3. Run the script once to check the output.
+
+That is zero subagents, so there is no model or reasoning effort to assign. If you'd rather I use a subagent anyway, for example for an independent review of the change, I'd send a single `general-purpose` agent at low effort. The brief would be the diff alone, with the question "does the elapsed-time output work correctly on all exit paths?"

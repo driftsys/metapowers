@@ -1,0 +1,3 @@
+Ticket 19
+Customer: user19@example.com
+The app closes without a message when I export a report with more than 500 rows.

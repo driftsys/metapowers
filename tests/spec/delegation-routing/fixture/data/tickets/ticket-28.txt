@@ -1,0 +1,3 @@
+Ticket 28
+Customer: user28@example.com
+Dropdown menu closes before I can click an item. Happens in Firefox.

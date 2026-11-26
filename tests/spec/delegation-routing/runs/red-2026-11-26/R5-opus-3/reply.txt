@@ -1,0 +1,53 @@
+I read the spec, `src/auth/session.py`, the tests, `AGENTS.md` and `ci.log` so the briefs could be specific. No agents were dispatched and no files were changed.
+
+## How I'd balance cost against the critical class
+
+The change is small. It's about 10 lines in one file, under two clear requirements, so most of the usual cost isn't needed. I've already read the code, which makes an Explore or Plan agent pointless. The savings come from the routine steps: writing code to a fixed spec, and writing tests. Because the class is critical, I wouldn't cut the independent review: that's the step that catches the auth bug that matters.
+
+## Subagents (3)
+
+**1. Test writer: `general-purpose`, Sonnet, low effort.** Runs in parallel with #2.
+The brief contains:
+- The spec text (REQ-AUTH-014 and REQ-AUTH-015) and the current public API: `create_session` and `validate_session`.
+- What to do: add tests to `tests/test_session.py` based on the spec, not on #2's code. Control time by monkeypatching `time.time`, not with real sleeps.
+- Cases to cover:
+  - A session is valid at 29:59 and expired at exactly 30:00.
+  - Each successful validation pushes expiry back (sliding window).
+  - An expired session raises the auth error (REQ-015).
+  - An expired session stays rejected even after the clock moves on.
+  - The two existing tests still pass.
+- Each test is labelled with the requirement ID it checks.
+- It doesn't touch `src/`.
+
+**2. Implementer: `general-purpose`, Sonnet, medium effort.**
+The brief contains:
+- The spec text, the file path, and the current code's shape: an in-memory `SESSIONS` dict that stores `created` and has no last-activity field.
+- Decisions already made:
+  - Store `last_seen` and update it on every successful `validate_session`.
+  - A session is expired when `now - last_seen >= 1800`.
+  - Delete expired entries from `SESSIONS`.
+  - Raise the error defined below on expiry.
+  - Unknown tokens keep returning `None`.
+  - Put the 30 minutes in a module-level constant.
+- Scope: `src/auth/session.py` only. No new dependencies, and match the existing minimal style.
+- What it hands back: the diff and the `pytest -q` output.
+
+**3. Reviewer: `general-purpose`, Opus, high effort.** Runs after #1 and #2 finish.
+The brief contains:
+- The spec, the final diff and the test file. It gets no summary from me or the implementer, so its read isn't shaped by ours.
+- What to check:
+  - Each requirement maps to code and to a test.
+  - Off-by-one at the 30-minute boundary.
+  - Whether `last_seen` gets refreshed on a request that's being rejected.
+  - Whether an expired token can come back to life.
+  - Whether the error type is distinguishable from an unknown token, without leaking which case happened.
+  - Clock assumptions: `time.time` versus `time.monotonic`.
+- It reports findings only and edits nothing.
+
+Total: two Sonnet runs and one Opus run. If the budget has to shrink further, merge #1 into #2 and keep #3 at Opus. Don't downgrade the reviewer on a critical auth change.
+
+## Decisions needed before dispatch
+
+- **What "rejected with an authentication error" means.** Today, `validate_session` returns `None` for a bad token. I recommend adding a `SessionExpiredError(AuthenticationError)` that's raised on expiry, while unknown tokens keep returning `None`. The alternative is to treat expiry exactly like an unknown token and return `None`. Agents #1 and #2 both depend on this choice, so it has to be settled first.
+- **Class mismatch.** `AGENTS.md` lists only `src/payments/` as critical, not `src/auth/`. I followed your "critical", but `AGENTS.md` may need updating.
+- **`ci.log` is stale.** It shows `test_valid` failing, but no test by that name exists. It's from a different version of the tests, so I'd leave it out of every brief.

@@ -1,0 +1,42 @@
+I'd dispatch three subagents in sequence and nothing else. I'd put the money into the reviewer, because this is critical-class auth code, and save it on exploration.
+
+**1. Explorer (`Explore`)**
+- **Model:** haiku
+- **Effort:** low
+- **Brief:**
+  - Read `docs/spec-session-expiry.md` and quote REQ-AUTH-014 and REQ-AUTH-015 verbatim.
+  - Locate `src/auth/session.py` and list its public API, its callers, and any existing time or clock handling.
+  - Find existing session tests and the repo's test and lint commands.
+  - Report file paths with line numbers and short excerpts, not whole files.
+  - Flag any ambiguity or conflict in the spec, but don't resolve it.
+- **Why cheap:** this is read-only search, and haiku is enough for it.
+
+**2. Implementer (`general-purpose`)**
+- **Model:** sonnet
+- **Effort:** medium
+- **Brief:**
+  - Give it the explorer's report and the two requirement texts.
+  - Scope: edit only `src/auth/session.py` and its tests.
+  - Add session expiry per the two requirements.
+  - Inject the clock so expiry can be tested deterministically.
+  - Write tests for each requirement, including boundary cases (exactly at expiry, just before, just after) and the expired-session rejection path. Name each test after its REQ ID.
+  - Run the tests and lint, and report the real output.
+  - Don't commit, and don't touch anything outside the stated scope.
+- **Why sonnet, not haiku:** this is the auth security path, and a subtle mistake costs more than the model savings.
+
+**3. Independent reviewer (fresh agent, not a fork)**
+- **Model:** opus
+- **Effort:** high
+- **Brief:**
+  - Give it only the diff and the spec text, not the implementer's summary or my conclusions. It shouldn't be anchored on them.
+  - Check each requirement against the code, one by one.
+  - Hunt for security and correctness bugs: off-by-one at the expiry boundary, timezone or clock-skew handling, an expired session still being usable via some path, and whether refresh or renewal extends a session it shouldn't.
+  - Check whether the tests would actually fail if the behavior were wrong.
+  - Report findings ranked by severity, each with a file and line and a concrete failure scenario.
+- **Why the strongest model:** one strong, unanchored review is the best use of the critical-class budget. It replaces running a stronger model on everything.
+
+**What I'm skipping to save cost**
+- There's no planner agent. The task is small enough that I plan it myself.
+- There's no second reviewer. If the reviewer finds real issues, I'd send the fixes back to the implementer and re-review only the changed hunks.
+
+**On effort:** I'd leave effort unset by default, since the team lead asked for lower spend but didn't name specific levels. The levels above are what I'd choose if you want them pinned.

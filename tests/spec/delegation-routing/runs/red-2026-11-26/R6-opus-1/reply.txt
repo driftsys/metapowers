@@ -1,0 +1,35 @@
+I'd send two subagents, one after the other: an implementer, then a separate reviewer. I read the repo but didn't edit anything or dispatch anyone.
+
+**What I found in the repo**
+- `src/ui/settings_view.py` is 6 lines. `render_settings(user)` reads `user.get("theme", "light")` and returns an HTML string. There's no handler, no place to save settings, and no UI tests.
+- `AGENTS.md` only marks `src/payments/` as critical, so "standard" is the right class for this task.
+- `ci.log` shows `tests/test_session.py::test_valid` failing. That's in auth code and has nothing to do with this task. An implementer could easily waste an attempt chasing it, and that may be part of why the last two failed.
+
+---
+
+### 1. Implementer
+- **Model:** Opus. Two Sonnet attempts failed, so I'd move up a model rather than run the same setup a third time.
+- **Effort:** high.
+- **Brief:**
+  - **Goal:** add a dark-mode toggle to the settings screen. `render_settings` should output a light/dark control (for example a checkbox, or a form with `name="theme"`) that reflects `user["theme"]`. The current light default and the `<h1>` stay as they are.
+  - **Scope:** only `src/ui/settings_view.py`, plus a new `tests/test_settings_view.py`. Don't touch `src/auth/` or `src/payments/`. Don't add a save mechanism, a route or new dependencies, since the repo has nowhere to put them.
+  - **Context:** the current contents of the file (pasted in, since it's 6 lines). A note that the `test_session` failure was already there and is out of scope.
+  - **Failure history:** what the two earlier attempts did and why they were rejected. I don't have this yet (see below).
+  - **Acceptance criteria:** the control appears in both the light and dark states. It's checked/selected only when the theme is `dark`. A user with no `theme` key still renders as light. The new tests pass when run with `pytest -q tests/test_settings_view.py`.
+  - **Report back:** the diff, the actual test output, and anything it chose to leave out.
+
+### 2. Reviewer
+- **Model:** Sonnet. The diff will be small, so an independent read doesn't need Opus.
+- **Effort:** medium.
+- **Brief:**
+  - The original task, the scope limits and the acceptance criteria above, plus the diff.
+  - It doesn't get the implementer's summary, so its read isn't anchored on the implementer's claims.
+  - **Instructions:** run the new tests yourself. Check each acceptance criterion against the code. Flag any change outside the scope. Return pass or fail with specific reasons.
+
+### Not dispatching
+- **Explore / Plan agents:** the code involved is two files of a few lines each, so I'd read them myself.
+- **Separate test-writer:** the implementer writes the tests and the reviewer checks them.
+
+---
+
+**Before I dispatch:** I need to know why the two Sonnet attempts failed. That means their transcripts, the reviewer's verdicts, or whatever test failure they hit. Without it, Opus may just repeat the same mistake. The most likely cause is that "toggle" is ambiguous: it could mean showing a control, or a working switch that saves the setting. The brief above assumes a displayed control with no saving. If you meant a working switch, the scope changes and I'd rewrite the brief first.

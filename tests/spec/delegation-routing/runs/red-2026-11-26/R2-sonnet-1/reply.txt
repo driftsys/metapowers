@@ -1,0 +1,27 @@
+For a standard, single-file UI change, I'd dispatch two subagents in sequence. I wouldn't dispatch an exploration agent. Reading `src/ui/settings_view.py` and grepping for existing theme code is only a few tool calls, so I'd do that myself first.
+
+**1. Implementer** (`general-purpose`)
+- **Model:** sonnet
+- **Effort:** medium. I'd leave the `effort` parameter unset, so it runs at its usual effort, because nobody has asked for a specific level.
+- **Brief:**
+  - **Goal:** add a dark-mode toggle to the settings screen in `src/ui/settings_view.py`.
+  - **Context I'd gather first:** how the existing settings controls are built, where theme or colour state lives (if anywhere), and how preferences are persisted.
+  - **Constraints:** match the surrounding code's naming, comment density and idiom. Reuse the existing persistence and theme mechanism instead of inventing a new one. Touch only the files the feature needs.
+  - **Verification:** run the existing tests and the linter. Add a test if there is a matching test file for the view.
+  - **Report:** the diff summary, what was run and the results, and anything skipped or uncertain.
+  - **Out of scope:** commits, and refactors unrelated to the toggle.
+
+**2. Reviewer** (`general-purpose`, read-only in practice)
+- **Model:** sonnet
+- **Effort:** medium, left unset in the same way.
+- **Brief:**
+  - **Input:** the diff only, not the implementer's reasoning or my conclusions, so the review isn't anchored on them.
+  - **Check:** correctness bugs, such as the toggle state not persisting or not applying on startup. Also check consistency with neighbouring code and any missed call sites.
+  - **Report:** findings ranked by severity, each with file and line.
+  - **Constraint:** don't edit files.
+
+**Cases where I'd change this:**
+- **No theme mechanism exists:** the toggle would need new theme plumbing across several files. I'd then add a `Plan` agent (opus, high) before the implementer to design it.
+- **The change is under about 30 lines:** I'd skip the subagents and do it inline.
+
+I haven't dispatched anything or edited any files.

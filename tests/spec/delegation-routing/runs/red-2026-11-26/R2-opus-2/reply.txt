@@ -1,0 +1,21 @@
+I'd dispatch **one** subagent. The whole task is a 5-line function, `render_settings`, in `src/ui/settings_view.py`. `AGENTS.md` lists only `src/payments/` as critical, and this change doesn't go near it.
+
+### Subagent: Implementer
+- **Type:** `general-purpose`, because it needs Edit/Write and Bash to run tests.
+- **Model:** Sonnet 5.5. The edit is small and well-defined, so Opus isn't worth the extra cost here.
+- **Reasoning effort:** none set, so it runs at its usual level. Neither you nor `AGENTS.md` names an effort level for "standard", so I wouldn't pick one myself.
+- **Brief contains:**
+  - **Goal:** add a dark-mode toggle to the settings screen rendered by `render_settings(user)` in `src/ui/settings_view.py`.
+  - **Current state, quoted in the brief:** the function returns an HTML string and reads `user.get("theme", "light")`. There is no settings handler, persistence layer or JS in the repo.
+  - **Scope:** only change what gets rendered. Output a toggle control, such as a checkbox inside a form field named `theme`, that is checked when `theme == "dark"`. Keep `"light"` as the default and keep the function's signature. Don't build a backend endpoint or a storage layer. If the toggle can't work without one, say so in the report.
+  - **Style:** match the existing code, which is minimal, uses f-strings and has a one-line module docstring.
+  - **Tests:** add `tests/test_settings_view.py` and follow the pattern in `tests/test_session.py`. Cover three cases: the light default, the toggle unchecked for `"light"`, and the toggle checked for `"dark"`. Run the test suite.
+  - **Out of bounds:** don't touch `src/payments/` or `src/auth/`, and don't commit.
+  - **Flag but don't fix:** `user['name']` is put into the HTML without escaping, which is a possible XSS issue. Report it as a separate issue, outside this task.
+  - **Report back:** the diff summary, the test output as-is, and any assumptions made about how the toggle gets persisted.
+
+### What I'd leave out
+- **Explore / Plan:** the target file is already known and I've read it, so there's nothing to search for or design.
+- **Separate reviewer:** for a standard-class change this small, I'd review the diff myself. An independent reviewer is worth it for `src/payments/`, not here.
+
+To be honest, with a change this size I'd normally skip the subagent and make the edit myself. It's quicker, and nothing gets lost in handing over the brief.

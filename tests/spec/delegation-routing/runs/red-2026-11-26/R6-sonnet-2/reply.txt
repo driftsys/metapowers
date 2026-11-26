@@ -1,0 +1,41 @@
+I'd dispatch three subagents, one after another. Each depends on the previous result. I'd change the implementer's model, because the same sonnet brief has already failed twice.
+
+**1. Diagnostician (Explore agent)**
+- **Model and effort:** sonnet, medium.
+- **Why:** I don't know why the first two attempts failed, and a third attempt without that knowledge would probably fail the same way.
+- **Brief:**
+  - Goal: understand what a dark-mode toggle in `src/ui/settings_view.py` needs.
+  - Read-only. It must not edit files.
+  - What to find:
+    - How `settings_view.py` builds its widgets and handles events.
+    - Whether the app already has a theme or style mechanism, and where.
+    - How settings are persisted.
+    - Which tests or run commands cover the UI.
+  - Look for traces of the two failed attempts, such as leftover branches, stashes, diffs or test output. Report the likely cause of each failure.
+  - Return a short report with file and line references, not file dumps.
+
+**2. Implementer (general-purpose)**
+- **Model and effort:** opus, high.
+- **Why:** this is a step up from sonnet, justified by the two failures. The task is standard, so I wouldn't go to the top tier.
+- **Brief:**
+  - Goal: add the dark-mode toggle to the settings screen in `src/ui/settings_view.py`.
+  - The diagnostician's findings: the theme mechanism, the persistence path, and the failure modes to avoid.
+  - Scope: touch only the files needed, and match the surrounding code's style and idioms.
+  - Done means:
+    - The toggle renders.
+    - Toggling changes the theme.
+    - The choice persists, if the app persists other settings.
+    - Existing tests pass, and a test is added if the repo has a UI test pattern.
+  - It must run the tests and report the real output. If something fails, it says so instead of claiming success.
+  - It must not commit.
+
+**3. Independent reviewer (general-purpose)**
+- **Model and effort:** sonnet, medium. Review only needs a fresh read, not a stronger model.
+- **Brief:**
+  - Give it the diff and the original task statement only, without my or the implementer's conclusions, so it isn't anchored on them.
+  - Check correctness against the task, and check that the tests actually exercise the toggle.
+  - Look for regressions in the settings screen.
+  - Run the test suite itself.
+  - Return confirmed issues only, with file and line references.
+
+If the reviewer finds real issues, I'd send them back to the same implementer through SendMessage so it keeps its context. If it fails a third time, I'd stop and bring the diagnostician's findings to you rather than escalate again.

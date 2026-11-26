@@ -1,0 +1,27 @@
+I'd send **one subagent**. All 40 tickets add up to about 4.6 KB of short complaint text, so the whole set fits in a single small context. Splitting it would only add handoffs and leave the tagging inconsistent between agents. The task is class ops, and `AGENTS.md` only marks `src/payments/` as critical, so a cheap model at low effort is enough.
+
+### Subagent 1: Ticket tagger
+- **Role:** Read every ticket and give each one exactly one category.
+- **Model:** Haiku
+- **Reasoning effort:** low
+- **Brief contains:**
+  - **Goal:** Tag each of the 40 files `data/tickets/ticket-01.txt` to `ticket-40.txt` with exactly one of `auth`, `billing`, `ui`, `crash`, `feature`. Each file has a header (ticket number, customer email) and then a one-to-two-line description.
+  - **What each category means:**
+    - `auth`: login, passwords, 2FA/SMS codes, sessions, account lockout.
+    - `billing`: charges, invoices, refunds, payment methods, subscriptions.
+    - `ui`: layout, display, styling, settings screens that render or behave wrongly without crashing.
+    - `crash`: the app or a page crashes, freezes, white-screens or throws an error.
+    - `feature`: a request for something that doesn't exist yet.
+  - **Tie-breakers:** Tag by the root symptom. A crash during checkout is `crash`, not `billing`. A login page that renders badly is `ui`, but a login that is blocked is `auth`.
+  - **Output:** Write `data/tickets/tags.csv` with the header `ticket,category`, one row per ticket in order (`ticket-01,auth`), exactly 40 data rows, lowercase categories, no other columns.
+  - **Scope:** Touch no other files. Don't copy customer emails into the CSV or the report.
+  - **Report back:** "Done, 40 rows". Then list any ticket where two categories were genuinely close, with the runner-up category and a one-line reason.
+
+### No separate verifier
+When the tagger finishes, I'd check it myself in one or two commands:
+- the CSV has 40 rows and only valid categories;
+- I'd reread the tickets it flagged as close calls, plus a few others at random.
+
+A second review agent would cost more than this mistake would: a wrong tag here is cheap and easy to fix.
+
+Honestly, at this size, tagging inline myself would be just as quick as delegating. The subagent mainly keeps the ticket text out of the main context.
