@@ -34,6 +34,31 @@ jobs:
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
       - run: upskill lint skills --strict
 
+  packed-plugins:
+    name: packed plugins
+    runs-on: ubuntu-latest
+    env:
+      # Pinned: a new upskill release can change the packed output. To move
+      # to a new release, change this value, run the pack command below with
+      # that release, and commit the result in the same pull request.
+      UPSKILL_VERSION: v0.9.6
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install upskill
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/driftsys/upskill/main/install.sh | sh
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+      - run: upskill pack --all --force --source https://github.com/driftsys/metapowers --out packed --catalog .
+      - name: Fail when the committed output differs
+        run: |
+          status="$(git status --porcelain)"
+          if [ -n "$status" ]; then
+            echo "$status"
+            git diff --stat
+            echo "::error::packed/ or a marketplace file differs from a new pack run. Run 'upskill pack --all --force --source https://github.com/driftsys/metapowers --out packed --catalog .' with upskill $UPSKILL_VERSION and commit the result."
+            exit 1
+          fi
+
   e2e:
     name: e2e install round-trip
     runs-on: ubuntu-latest
@@ -83,7 +108,7 @@ jobs:
   ci:
     name: CI
     if: always()
-    needs: [dprint, markdownlint, upskill-lint, e2e, worktree-observer, convco]
+    needs: [dprint, markdownlint, upskill-lint, packed-plugins, e2e, worktree-observer, convco]
     runs-on: ubuntu-latest
     steps:
       - name: Check results

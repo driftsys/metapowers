@@ -5,6 +5,31 @@
   },
   "plugins": [
     {
+      "name": "delegation-policies",
+      "source": "./packed/delegation-policies-claude",
+      "description": "Delegation policies — when to delegate to a subagent, the class of each planned task (critical, standard, light, ops), and the models, reviews and reasoning effort each class gets per client"
+    },
+    {
+      "name": "diagrampowers",
+      "source": "./packed/diagrampowers-claude",
+      "description": "Technical diagramming skills — tool selection by journey and complexity, per-format authoring (ASCII, PlantUML, D2, draw.io) that produces durable version-controlled source+SVG diagrams, and co-located per-tool installer subagents"
+    },
+    {
+      "name": "gardenpowers",
+      "source": "./packed/gardenpowers-claude",
+      "description": "The engineering-documentation layer — gardens Superpowers working memory (specs, plans) into durable, traceable records (requirements, design, decisions, technotes) reconciled against the code, and flags drift between shipped docs and the as-built code"
+    },
+    {
+      "name": "metapowers",
+      "source": "./packed/metapowers-claude",
+      "description": "The metapowers baseline — composes Superpowers (TDD/brainstorm/plan, via plugin), metapowers-core (the scope-discipline and international-english rules), and delegation-policies (the delegation rules and the delegation-routing skill)"
+    },
+    {
+      "name": "metapowers-core",
+      "source": "./packed/metapowers-core-claude",
+      "description": "The scope-discipline and international-english rules, without Superpowers"
+    },
+    {
       "name": "upskill",
       "source": "./plugins/upskill-claude",
       "description": "One-shot install of the driftsys upskill discipline — meta-skills for authoring durable agent content (rules, skills, agents) under upskill management."

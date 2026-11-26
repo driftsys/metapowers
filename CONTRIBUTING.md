@@ -40,6 +40,10 @@ metapowers/
 │   │   ├── SKILL.md          # or RULE.md or AGENT.md
 │   │   └── ...               # optional supporting resources
 │   └── <name>.bundle.yaml    # bundle manifests live alongside items
+├── packed/                   # generated bundle plugins (upskill pack)
+├── plugins/                  # the upskill plugin, packed by the upskill release
+├── .claude-plugin/           # Claude Code marketplace file
+├── .github/plugin/           # Copilot CLI marketplace file
 └── docs/                     # reference documentation
 ```
 
@@ -87,6 +91,18 @@ upskill fmt                  # canonicalise YAML frontmatter
 
 `just fmt` / `just lint` cover community files and `docs/`. Item content
 under `skills/` and `bundles/` is validated and formatted via `upskill`.
+
+A change under `skills/` can change the generated plugins in `packed/` and the
+two marketplace files. Regenerate them with the upskill release that
+`UPSKILL_VERSION` names in `.github/workflows/ci.yml`, and commit the result
+in the same pull request:
+
+```bash
+upskill pack --all --force --source https://github.com/driftsys/metapowers --out packed --catalog .
+```
+
+`pack` deletes no plugin directory. When a bundle leaves `skills/`, delete its
+two directories in `packed/` yourself.
 
 ## Project philosophy
 

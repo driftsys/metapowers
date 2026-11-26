@@ -41,9 +41,36 @@ scope-discipline and international-english rules alone, without Superpowers.
 
 See the [upskill documentation](https://driftsys.github.io/upskill/) for more commands.
 
+## Bundle plugins (experimental)
+
+The marketplace of this repository also lists one plugin for each of these
+bundles, for Claude Code and for Copilot CLI: `metapowers`, `metapowers-core`,
+`delegation-policies`, `diagrampowers` and `gardenpowers`. `upskill pack`
+generates them from `skills/` into `packed/`, and CI fails when the committed
+output differs from a new run. The `superpowers` bundle only points at
+third-party plugins and has no plugin of its own.
+
+A plugin holds the skills and agents of its bundle. When the bundle has rules,
+the plugin also has an `init` skill, which installs the rules with
+`upskill add`, and a session-start hook, which runs `upskill update --notice`
+like the `upskill` plugin below. Both need upskill on your `PATH`. A plugin
+cannot install another plugin, so the `metapowers` plugin does not install
+Superpowers: its `init` skill lists it, and you install it separately. Plugin
+output is experimental in upskill until a smoke test in both clients passes.
+
+```bash
+# Claude Code
+claude plugin marketplace add driftsys/metapowers
+claude plugin install metapowers@metapowers
+
+# Copilot CLI
+copilot plugin marketplace add driftsys/metapowers
+copilot plugin install metapowers@metapowers
+```
+
 ## upskill plugins
 
-This repository publishes one plugin named `upskill` for each client: one for
+This repository publishes a plugin named `upskill` for each client: one for
 Claude Code and one for Copilot CLI. Each plugin is the upskill integration for
 that client. Today it does one thing: when a session starts, it reports the
 available upskill updates.

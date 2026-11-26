@@ -1,0 +1,6 @@
+{
+  "name": "metapowers",
+  "description": "The metapowers baseline — composes Superpowers (TDD/brainstorm/plan, via plugin), metapowers-core (the scope-discipline and international-english rules), and delegation-policies (the delegation rules and the delegation-routing skill)",
+  "version": "0.2.4",
+  "license": "MIT"
+}
