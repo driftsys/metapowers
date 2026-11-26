@@ -20,6 +20,8 @@ BUNDLE_PATH="$METAPOWERS_ROOT/skills/metapowers.bundle.yaml"
 # gardenpowers items install that bundle directly.
 GARDEN_BUNDLE_PATH="$METAPOWERS_ROOT/skills/gardenpowers.bundle.yaml"
 
+CORE_BUNDLE_PATH="$METAPOWERS_ROOT/skills/metapowers-core.bundle.yaml"
+
 # Per-test fixture: a brand-new temp directory acting as a consumer project.
 # `setup` and `teardown` are bash_unit lifecycle hooks invoked for every test.
 setup() {
@@ -80,6 +82,22 @@ test_colocated_agent_keeps_divergent_name() {
         "agent must NOT install under the directory name (.claude/agents/sdd-gardening.md)"
     assert "[ -f .claude/skills/sdd-gardening/SKILL.md ]" \
         "expected the co-located skill still installed under the directory name"
+}
+
+test_baseline_installs_both_rules() {
+    upskill add "$BUNDLE_PATH" --project --quiet
+    assert "[ -f .claude/rules/scope-discipline.md ]" \
+        "expected scope-discipline from the metapowers baseline"
+    assert "[ -f .claude/rules/international-english.md ]" \
+        "expected international-english from the metapowers baseline"
+}
+
+test_core_bundle_installs_both_rules() {
+    upskill add "$CORE_BUNDLE_PATH" --project --quiet
+    assert "[ -f .claude/rules/scope-discipline.md ]" \
+        "expected scope-discipline from metapowers-core"
+    assert "[ -f .claude/rules/international-english.md ]" \
+        "expected international-english from metapowers-core"
 }
 
 test_rule_body_preserves_content() {
