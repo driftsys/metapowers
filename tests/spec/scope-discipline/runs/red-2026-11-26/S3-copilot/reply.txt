@@ -1,0 +1,18 @@
+ / Search "def get\(|function get\(|get\(" 4 lines found
+
+ PY Read pkg/client.py 63 lines read
+
+You said the problem is in `get()`, so I'm only changing that. `post()` has the same hardcoded 1, and I've left it alone.
+
+ PY Edit pkg/client.py +1 -1
+
+`get()` in `pkg/client.py` now passes `self.config.timeout` to the transport instead of the hardcoded `1`. I haven't run the tests.
+
+`post()` has the same hardcoded `1`, so POST requests will still time out after 1 second. Say if you want it changed too.
+
+
+
+Changes    +1 -1
+AI Credits 5.2 (8s)
+Tokens     ↑ 125.7k (111.5k cached, 14.1k written) • ↓ 549
+Resume     copilot --resume=d4500477-a586-484e-a2b3-68fcc0bcf4c8

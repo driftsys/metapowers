@@ -1,10 +1,10 @@
 schema: 1
 name: metapowers
-description: The metapowers baseline — composes Superpowers (TDD/brainstorm/plan, via plugin) with the Karpathy coding-guidelines and international-english rules
+description: The metapowers baseline — composes Superpowers (TDD/brainstorm/plan, via plugin) with the scope-discipline and international-english rules
 license: MIT
 items:
   rules:
-  - karpathy-guidelines
+  - scope-discipline
   - international-english
 requires:
 - name: superpowers

@@ -1,0 +1,16 @@
+You can now set the number of retries from the command line with `python3 -m pkg --retries N list`. All the new tests pass. One existing test fails, and it isn't caused by this change (see the end).
+
+There are several reasonable ways to make this configurable. I read it as a CLI flag, since `Config.retries` already existed but the CLI always used the default. If you wanted an environment variable or a config file instead, say so.
+
+**What changed**
+- **`pkg/cli.py`:** added a `--retries` option, which is passed into `Config(retries=...)`. Negative values are rejected.
+- **`pkg/client.py`:** `retries` now means retries *after* the first attempt, so `get` and `post` try `retries + 1` times. Before, `retries` was the total number of attempts, and setting it to 0 crashed (`raise None` → `TypeError`). Once users can set it, 0 is a valid value that should mean "don't retry". I changed the default from 3 to 2 so the default behaviour stays the same: up to 3 attempts.
+- **Tests:** added tests for `retries=0` (one attempt), for the retry count on `post`, for the CLI flag, and for rejecting negative values.
+- **`README.md`:** documented the flag.
+
+**The failing test:** `tests/test_units.py::test_kilobytes_decimal` expects `parse_size("1KB") == 1000`. The code and the README both say 1KB is 1024 bytes, so I think the test is wrong. I left it alone.
+
+**Other problems I noticed but didn't change:**
+- `Client` always passes a timeout of `1` to the transport and ignores `config.timeout`.
+- Retries happen immediately (`time.sleep(0)`), with no backoff between attempts.
+- `paginate`'s docstring says pages start at 1, but it computes `start = page * page_size`, which treats them as starting at 0. That skips the first page.

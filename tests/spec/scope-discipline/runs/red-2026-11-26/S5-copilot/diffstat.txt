@@ -1,0 +1,8 @@
+## git status --porcelain
+M  README.md
+M  pkg/units.py
+
+## git diff --cached --stat
+ README.md    | 4 ++--
+ pkg/units.py | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)

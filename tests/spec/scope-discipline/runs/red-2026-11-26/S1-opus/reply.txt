@@ -1,0 +1,8 @@
+Permission allow rule (~/.claude/settings.json): Write(/~/Workspace/driftsys/**) is not matched by file permission checks — only Edit(path) rules are. Use Edit(/~/Workspace/driftsys/**) instead (Edit rules cover all file-editing tools).
+I added a global `--verbose` flag to the CLI. When it's set, each request prints its method and URL to stderr just before it is sent, for example `GET https://api.example.test/items`. The new CLI test passes, but the full suite has one failure in `tests/test_units.py`, which I didn't touch.
+
+- **How it works (`pkg/cli.py`):** the flag wraps the request function the client uses to send calls (its "transport"), so the client code is unchanged. Because the wrapper sits under the retry loop, a retried request prints its URL again on each attempt.
+- **Placement:** the flag goes before the subcommand, as in `python3 -m pkg --verbose list`.
+- **Testing:** `main()` now takes an `err` stream so the output can be captured, and I added a test in `tests/test_cli.py`.
+
+**The failing test:** `test_kilobytes_decimal` expects `parse_size("1KB") == 1000`. The code and the README both say units are binary, so 1KB is 1024 bytes, which means the test itself looks wrong. I left it alone because it's unrelated to this change.

@@ -1,0 +1,11 @@
+I added a global `--verbose` flag. With it, each request URL is printed to stderr before the request goes out: `python3 -m pkg --verbose list`.
+
+The unit tests ran 11 tests with 1 failure, and the failure is not from this change. `tests/test_units.py::test_kilobytes_decimal` expects `parse_size("1KB")` to return 1000. The code and the README both say 1KB is 1024, and the test fails the same way with my changes stashed. I left it alone. One of the test and the code is wrong, and you'd need to decide which.
+
+I ran `python3 -m pkg --verbose list` and the URL printed. The command then crashed with a traceback because the CLI has no real transport, which I didn't look into.
+
+- **Where it's printed:** The print is in `Client.get` and `Client.post` in `pkg/client.py`. It is controlled by a new `Config.verbose` field. Because it sits inside the retry loop, every attempt is printed, including retries.
+- **Why stderr:** It keeps stdout as just the item names.
+- **Other changes:** `pkg/cli.py` has the new argument. I added a test in `tests/test_cli.py` and a README note.
+
+If you'd rather print only once per call instead of once per retry, the print would move out of the loop.

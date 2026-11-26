@@ -1,0 +1,9 @@
+Permission allow rule (~/.claude/settings.json): Write(/~/Workspace/driftsys/**) is not matched by file permission checks — only Edit(path) rules are. Use Edit(/~/Workspace/driftsys/**) instead (Edit rules cover all file-editing tools).
+The CLI now takes `--retries N`, which sets how many attempts each request gets. It defaults to the existing `Config.retries` value of 3. The new test passes. The full suite still has one failure, in `tests/test_units.py`, which I didn't touch.
+
+- **Code:** `Config.retries` was already there, but `pkg/cli.py` always built `Config()` with the default. The flag is now passed into `Config(retries=...)`.
+- **Validation:** values below 1 are rejected. With 0 retries the client's loop would never run and it would then `raise None`.
+- **Tests and docs:** `tests/test_cli.py` has a new test that `--retries 5` makes 5 attempts, and the README usage line mentions the flag.
+- **The failing test:** `test_kilobytes_decimal` expects `parse_size("1KB")` to be 1000. The code and the README both say 1KB is 1024. It failed the same way before my change, so I left it alone.
+
+I didn't add an environment variable or config-file option. Say so if you want one.

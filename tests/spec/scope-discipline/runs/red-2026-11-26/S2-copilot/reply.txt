@@ -1,0 +1,12 @@
+ / Search "def paginate|function paginate|func paginate" 16 lines found
+
+ PY Edit pkg/client.py +1 -1
+
+I fixed the off-by-one in `paginate()` in `pkg/client.py`. The start index was `page * page_size`, which skipped the first page for 1-based pages. It is now `(page - 1) * page_size`. I didn't run any tests or the function itself.
+
+
+
+Changes    +1 -1
+AI Credits 4.58 (7s)
+Tokens     ↑ 93.5k (80.0k cached, 13.6k written) • ↓ 385
+Resume     copilot --resume=eb838470-a771-4d82-878f-5e738e18546a

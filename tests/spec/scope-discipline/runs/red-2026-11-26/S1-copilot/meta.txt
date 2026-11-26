@@ -1,0 +1,6 @@
+command: copilot -p Add\ a\ \`--verbose\`\ flag\ to\ the\ CLI\ that\ prints\ each\ request\ URL\ before\ it\ is\ sent. --no-custom-instructions --allow-all-tools 
+cwd: /var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/tmp.48qffkCAps
+model: default (observed in session events: claude-sonnet-5.5)
+start: 2026-11-26T03:52:03Z
+end: 2026-11-26T03:52:20Z
+exit_code: 0

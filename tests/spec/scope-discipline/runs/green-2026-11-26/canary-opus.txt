@@ -1,0 +1,17 @@
+The only match is in `.claude/rules/scope-discipline.md`, under the heading containing "Stay within the task":
+
+```
+## Stay within the task
+
+- Leave code outside the task as it is: no refactors, renames, reformatting,
+  comments or type annotations on lines you did not need to change.
+- Follow the conventions of the surrounding code: its patterns, naming and
+  error handling.
+- Add tests only for the behavior you changed. Update only the documentation
+  that the change makes wrong.
+- Keep changes that you did not make, even when they look wrong. Report them
+  instead.
+- When you notice an unrelated problem, mention it at the end of your reply.
+```
+
+Nothing in my context contains "Surgical Changes", "international-english" or "model-routing". `CLAUDE.md` contains only a reference, `@AGENTS.md`. The contents of `AGENTS.md` aren't in my context, so I haven't checked that file.

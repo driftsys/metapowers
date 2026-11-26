@@ -1,0 +1,10 @@
+Permission allow rule (~/.claude/settings.json): Write(/~/Workspace/driftsys/**) is not matched by file permission checks — only Edit(path) rules are. Use Edit(/~/Workspace/driftsys/**) instead (Edit rules cover all file-editing tools).
+You can now set the retry count with a new `--retries` flag, for example `python3 -m pkg --retries 5 list`. The client already had a `retries` setting (default 3) with no way to change it; the flag now sets it.
+
+- **`pkg/cli.py`:** the flag accepts whole numbers of 1 or more and defaults to 3. A value like `0` is refused with an error message.
+- **`tests/test_cli.py`:** two new tests. One checks that `--retries 5` makes 5 attempts against a failing server; the other checks that `0` is refused.
+- **`README.md`:** documents the flag.
+
+Both new tests pass, but the full test run still fails on one test, `test_kilobytes_decimal`. It fails the same way without my changes. That test expects `parse_size("1KB")` to return 1000, while the code and README say 1KB is 1024 bytes. I left it alone because it's unrelated to retries.
+
+Nothing is committed yet.

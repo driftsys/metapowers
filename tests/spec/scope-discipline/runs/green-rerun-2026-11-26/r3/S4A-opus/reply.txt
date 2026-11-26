@@ -1,0 +1,17 @@
+The CLI now takes a `--retries` option. Your new tests and all the existing ones pass, except `test_kilobytes_decimal`, which already failed before my change (details below).
+
+`Config.retries` was already a field, but the CLI always created a plain `Config()`, so the setting could only be changed from Python code. Now `python3 -m pkg --retries 5 list` passes the value through to the client.
+
+- **`pkg/cli.py`:** adds a top-level `--retries` option. It defaults to `Config.retries` (3), so the default lives in one place.
+- **Validation:** the value must be at least 1. The client treats `retries` as the total number of attempts (`range(retries)`), so 0 would make no request at all. It would then fail with `raise None` (a `TypeError`) instead of a clear error, so argparse now rejects 0 with a usage error.
+- **`tests/test_cli.py`:** one test checks that `--retries 5` gives exactly 5 attempts against a server that keeps returning 500, and one checks that 0 is rejected.
+- **`README.md`:** documents the option.
+
+I read the request as "set it from the command line". If you meant something else, like an environment variable or a config file, say so and I'll switch it.
+
+Two existing issues I left alone:
+- **Units test:** `tests/test_units.py::test_kilobytes_decimal` expects `parse_size("1KB") == 1000`. The code and the README both say binary units (1024), so the test looks wrong rather than the code.
+- **Client:**
+  - The name `retries` really means "attempts": `retries=3` makes 3 requests in total, not 1 plus 3 retries.
+  - `get` and `post` hardcode a timeout of `1` and ignore `config.timeout`.
+  - `paginate`'s docstring says pages are numbered from 1, but it computes `page * page_size`.

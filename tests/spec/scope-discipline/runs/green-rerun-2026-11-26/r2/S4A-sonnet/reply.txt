@@ -1,0 +1,14 @@
+Retries are now configurable from the CLI with `--retries N`, for example `python3 -m pkg --retries 5 list`. The new tests pass, but one existing test fails. That test, `test_kilobytes_decimal`, also fails without my change.
+
+`Config.retries` and the client's retry loop already existed. The only gap was that the CLI always used the default of 3. I assumed that's what you meant. Other readings are a backoff delay between attempts (the loop currently sleeps 0), an environment variable, or a config file. Tell me if you wanted one of those.
+
+- **`pkg/cli.py`:** `--retries` is the number of attempts per request and defaults to `Config.retries` (3). It rejects values below 1, because 0 attempts would make the client `raise None` and crash with a `TypeError`.
+- **Tests:** `tests/test_cli.py` has two new tests. One checks that 5 attempts are made. The other checks that 0 is rejected.
+- **`README.md`:** the usage section now documents the option.
+
+I ran `python3 -m unittest`. The failing test expects `parse_size("1KB") == 1000`, but `parse_size` returns 1024. The README says 1KB is 1024 bytes, so the test or the README is wrong. I left both alone.
+
+You didn't ask for these, so I didn't change them:
+- `Client.get` and `Client.post` duplicate the retry loop.
+- The transport timeout is hardcoded to `1` and ignores `Config.timeout`.
+- `paginate` treats pages as 0-based even though its docstring says 1-based.

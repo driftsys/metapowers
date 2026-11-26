@@ -1,0 +1,77 @@
+diff --git a/pkg/cli.py b/pkg/cli.py
+index 7143ee4..8ffa0da 100644
+--- a/pkg/cli.py
++++ b/pkg/cli.py
+@@ -8,14 +8,16 @@ from pkg.client import Client, Config, fetchAll
+ 
+ def build_parser() -> argparse.ArgumentParser:
+     parser = argparse.ArgumentParser(prog="items")
++    parser.add_argument("--verbose", action="store_true", help="print each request URL")
+     sub = parser.add_subparsers(dest="command", required=True)
+     sub.add_parser("list", help="list all items")
+     return parser
+ 
+ 
+-def main(argv=None, transport=None, out=sys.stdout) -> int:
++def main(argv=None, transport=None, out=sys.stdout, err=sys.stderr) -> int:
+     args = build_parser().parse_args(argv)
+-    client = Client(Config(), transport)
++    log = (lambda url: print(url, file=err)) if args.verbose else None
++    client = Client(Config(), transport, log)
+     if args.command == "list":
+         for item in fetchAll(client, "/items"):
+             print(item["name"], file=out)
+diff --git a/pkg/client.py b/pkg/client.py
+index c00e468..93a4969 100644
+--- a/pkg/client.py
++++ b/pkg/client.py
+@@ -12,15 +12,18 @@ class Config:
+ 
+ 
+ class Client:
+-    def __init__(self, config: Config, transport) -> None:
++    def __init__(self, config: Config, transport, log=None) -> None:
+         self.config = config
+         self.transport = transport
++        self.log = log
+ 
+     def get(self, path: str) -> dict:
+         url = self.config.base_url + path
+         last_error = None
+         for _ in range(self.config.retries):
+             try:
++                if self.log:
++                    self.log(url)
+                 response = self.transport("GET", url, None, 1)
+                 if response["status"] >= 500:
+                     raise RuntimeError("server error %d" % response["status"])
+@@ -35,6 +38,8 @@ class Client:
+         last_error = None
+         for _ in range(self.config.retries):
+             try:
++                if self.log:
++                    self.log(url)
+                 response = self.transport("POST", url, payload, 1)
+                 if response["status"] >= 500:
+                     raise RuntimeError("server error %d" % response["status"])
+diff --git a/tests/test_cli.py b/tests/test_cli.py
+index 8931036..d3329bb 100644
+--- a/tests/test_cli.py
++++ b/tests/test_cli.py
+@@ -13,3 +13,16 @@ class CliTest(unittest.TestCase):
+         }
+         self.assertEqual(main(["list"], transport=transport, out=out), 0)
+         self.assertEqual(out.getvalue(), "alpha\nbeta\n")
++
++    def test_verbose_prints_request_urls(self):
++        out, err = io.StringIO(), io.StringIO()
++        transport = lambda m, u, p, t: {"status": 200, "body": {"items": []}}
++        main(["--verbose", "list"], transport=transport, out=out, err=err)
++        self.assertEqual(err.getvalue(), "https://api.example.test/items\n")
++        self.assertEqual(out.getvalue(), "")
++
++    def test_no_url_output_without_verbose(self):
++        err = io.StringIO()
++        transport = lambda m, u, p, t: {"status": 200, "body": {"items": []}}
++        main(["list"], transport=transport, out=io.StringIO(), err=err)
++        self.assertEqual(err.getvalue(), "")

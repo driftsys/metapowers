@@ -1,0 +1,46 @@
+diff --git a/README.md b/README.md
+index dfb9d3d..d649ba8 100644
+--- a/README.md
++++ b/README.md
+@@ -5,9 +5,11 @@ A small client and CLI for the items API.
+ ## Usage
+ 
+ ```text
+-python3 -m pkg list
++python3 -m pkg [--retries N] list
+ ```
+ 
++`--retries` sets the attempts per request (default 3, minimum 1).
++
+ Run the tests with `python3 -m unittest`.
+ 
+ ## Sizes
+diff --git a/pkg/cli.py b/pkg/cli.py
+index 7143ee4..d1e7e0e 100644
+--- a/pkg/cli.py
++++ b/pkg/cli.py
+@@ -8,6 +8,12 @@ from pkg.client import Client, Config, fetchAll
+ 
+ def build_parser() -> argparse.ArgumentParser:
+     parser = argparse.ArgumentParser(prog="items")
++    parser.add_argument(
++        "--retries",
++        type=int,
++        default=Config.retries,
++        help="attempts per request (default: %(default)s)",
++    )
+     sub = parser.add_subparsers(dest="command", required=True)
+     sub.add_parser("list", help="list all items")
+     return parser
+@@ -15,7 +21,10 @@ def build_parser() -> argparse.ArgumentParser:
+ 
+ def main(argv=None, transport=None, out=sys.stdout) -> int:
+     args = build_parser().parse_args(argv)
+-    client = Client(Config(), transport)
++    if args.retries < 1:
++        print("--retries must be at least 1", file=sys.stderr)
++        return 2
++    client = Client(Config(retries=args.retries), transport)
+     if args.command == "list":
+         for item in fetchAll(client, "/items"):
+             print(item["name"], file=out)

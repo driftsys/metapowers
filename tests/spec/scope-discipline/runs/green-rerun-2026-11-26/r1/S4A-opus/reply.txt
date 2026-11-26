@@ -1,0 +1,16 @@
+I added a `--retries` option to the CLI. The client already had `Config.retries`, but the CLI always built `Config()` with the default of 3, so users couldn't change it.
+
+**Changes**
+- `pkg/cli.py`: `items --retries N list` sets `Config(retries=N)`. The default still comes from `Config.retries`, which is 3.
+- `tests/test_cli.py`: two new tests. One checks that `--retries 5` makes 5 attempts against a server that keeps returning 5xx errors. The other checks that `--retries 0` is rejected.
+- `README.md`: documented the option.
+
+The new tests pass. The full suite has one failure, `test_kilobytes_decimal`, which also fails on the untouched code (see below).
+
+**One choice to check:** in the client, `retries` is the total number of attempts, not the number of extra tries after the first. With `retries=0` the client never calls the server and crashes (`raise None`, which gives a `TypeError`). I kept that meaning and made the option reject values below 1. If you want `--retries 0` to mean "try once, never retry", the loop needs to change to `range(retries + 1)`, but that would also change the default from 3 attempts to 4. Tell me if you want that.
+
+**Other problems I noticed but didn't change:**
+- `Client.get` and `Client.post` always pass a timeout of `1` to the transport and ignore `Config.timeout`.
+- They also call `time.sleep(0)` between retries, so there is no real wait before retrying.
+- `paginate` says pages are numbered from 1 but treats them as starting at 0.
+- `tests/test_units.py::test_kilobytes_decimal` expects `1KB == 1000`, but the code and README both say units are binary (1024). The test is what's wrong, not the code.

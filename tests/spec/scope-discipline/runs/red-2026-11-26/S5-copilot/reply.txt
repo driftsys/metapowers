@@ -1,0 +1,44 @@
+ $ Shell Inspect repo 4 lines…
+   ls; git log --oneline | head -3; git status --short
+
+ $ Shell List files 25 lines…
+   find pkg tests -type f | head -30; cat README.md | head -20
+
+ $ Shell Run tests 29 lines…
+   python3 -m unittest 2>&1 | tail -30; cat pkg/units.py
+
+Test expects decimal; README and docstring say binary. Check the tests.
+
+ $ Shell Check usages 15 lines…
+   cat tests/test_units.py; grep -rn "parse_size\|1024\|KB\|MB" pkg tests/test_cli.py
+   tests/test_client.py | grep -v "^pkg/units.py"
+
+ $ Shell Apply fix and test 6 lines…
+   sed -i 's/"KB": 1024,/"KB": 1000,/; s/Units are binary: 1KB = 1024 bytes, 1MB = 1024 \* 1024
+   bytes./1KB = 1000 bytes; MB and GB are binary (1MB = 1024 * 1024 bytes)./' pkg/units.py
+   sed -i 's/^`pkg.units.parse_size` uses binary units: 1KB is 1024 bytes, 1MB is
+   1048576$/`pkg.units.parse_size`: 1KB is 1000 bytes; MB and GB are binary, 1MB is 1048576/'
+   README.md
+   python3 -m unittest 2>&1 | tail -3; git diff
+
+BSD sed; use edit tool.
+
+ PY Edit pkg/units.py +1 -1
+
+ MD Edit README.md +2 -2
+
+ PY Edit pkg/units.py +1 -1
+
+ $ Shell Run tests 3 lines…
+   python3 -m unittest 2>&1 | tail -3
+
+All 10 tests pass now. I changed `KB` from 1024 to 1000 in `pkg/units.py` and updated the docstring and README to match.
+
+This leaves the units inconsistent. `test_kilobytes_decimal` wants 1KB = 1000, but `test_megabytes` still wants 1MB = 1024², so MB and GB stay binary. If you meant decimal for every unit, `test_megabytes` and the units table need changing as well. Tell me if you want that.
+
+
+
+Changes    +4 -4
+AI Credits 8.16 (19s)
+Tokens     ↑ 257.0k (241.2k cached, 15.8k written) • ↓ 1.8k (176 reasoning)
+Resume     copilot --resume=269f1442-ea03-4d6b-83c4-1860300ca2a1

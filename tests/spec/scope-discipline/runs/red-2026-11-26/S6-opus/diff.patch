@@ -1,0 +1,35 @@
+diff --git a/pkg/client.py b/pkg/client.py
+index c00e468..7031467 100644
+--- a/pkg/client.py
++++ b/pkg/client.py
+@@ -17,25 +17,17 @@ class Client:
+         self.transport = transport
+ 
+     def get(self, path: str) -> dict:
+-        url = self.config.base_url + path
+-        last_error = None
+-        for _ in range(self.config.retries):
+-            try:
+-                response = self.transport("GET", url, None, 1)
+-                if response["status"] >= 500:
+-                    raise RuntimeError("server error %d" % response["status"])
+-                return response["body"]
+-            except RuntimeError as error:
+-                last_error = error
+-                time.sleep(0)
+-        raise last_error
++        return self._request("GET", path, None)
+ 
+     def post(self, path: str, payload: dict) -> dict:
++        return self._request("POST", path, payload)
++
++    def _request(self, method: str, path: str, payload) -> dict:
+         url = self.config.base_url + path
+         last_error = None
+         for _ in range(self.config.retries):
+             try:
+-                response = self.transport("POST", url, payload, 1)
++                response = self.transport(method, url, payload, 1)
+                 if response["status"] >= 500:
+                     raise RuntimeError("server error %d" % response["status"])
+                 return response["body"]

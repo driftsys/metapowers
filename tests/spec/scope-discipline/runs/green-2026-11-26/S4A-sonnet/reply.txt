@@ -1,0 +1,16 @@
+Retries are now configurable from the CLI with `--retries N`, for example `python3 -m pkg --retries 5 list`. The default is still 3. The new tests pass. One existing test, `test_kilobytes_decimal`, fails, and it fails the same way without my changes.
+
+`Config.retries` already controlled how many times `Client.get` and `Client.post` try a request. The CLI always built `Config()` with defaults, so there was no way to change it.
+
+- **`pkg/cli.py`**: added the `--retries` flag and passed its value into `Config`. I made the flag reject values below 1. The client loops `retries` times and then does `raise last_error`, so 0 would fail with a confusing `TypeError` (`raise None`).
+- **`tests/test_cli.py`**: one test checks that `--retries 5` makes five attempts. Another checks that `--retries 0` is rejected.
+- **`README.md`**: added a short usage note for the flag.
+
+Two choices you may want to change:
+- **"Retries" counts total attempts.** I kept the existing behavior, so `--retries 3` means three attempts, not one attempt plus three retries.
+- **Only a CLI flag.** I didn't add an environment variable or config file. Tell me if you want one.
+
+I noticed three things and left them alone:
+- **`test_kilobytes_decimal`:** it expects `parse_size("1KB")` to be 1000, but the code and README say 1024. The test or the code is wrong, and I don't know which you intend.
+- **`python3 -m pkg`:** `pkg/__main__.py` calls `main()` with no transport, so a real run would fail.
+- **`paginate` in `pkg/client.py`:** it uses `page * page_size` for a 1-based page, so it skips the first page.

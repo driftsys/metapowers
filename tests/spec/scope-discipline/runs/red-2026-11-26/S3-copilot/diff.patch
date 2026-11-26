@@ -1,0 +1,13 @@
+diff --git a/pkg/client.py b/pkg/client.py
+index c00e468..a707ba5 100644
+--- a/pkg/client.py
++++ b/pkg/client.py
+@@ -21,7 +21,7 @@ class Client:
+         last_error = None
+         for _ in range(self.config.retries):
+             try:
+-                response = self.transport("GET", url, None, 1)
++                response = self.transport("GET", url, None, self.config.timeout)
+                 if response["status"] >= 500:
+                     raise RuntimeError("server error %d" % response["status"])
+                 return response["body"]

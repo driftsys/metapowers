@@ -1,0 +1,6 @@
+Permission allow rule (~/.claude/settings.json): Write(/~/Workspace/driftsys/**) is not matched by file permission checks — only Edit(path) rules are. Use Edit(/~/Workspace/driftsys/**) instead (Edit rules cover all file-editing tools).
+Requests now use the configured timeout. In `pkg/client.py`, `get()` was passing a hardcoded `1` as the timeout to the transport. It now passes `self.config.timeout`, which defaults to 30s.
+
+`post()` had the same hardcoded `1`, so I fixed it too.
+
+Tests: 9 of 10 pass. The one failure, `test_kilobytes_decimal` in `tests/test_units.py`, is unrelated and fails the same way without my change. I didn't add a test that checks the timeout gets passed through. `fake_transport` already records it, so adding one would be easy. Nothing is committed.

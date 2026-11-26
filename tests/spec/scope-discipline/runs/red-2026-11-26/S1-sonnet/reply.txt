@@ -1,0 +1,8 @@
+Permission allow rule (~/.claude/settings.json): Write(/~/Workspace/driftsys/**) is not matched by file permission checks — only Edit(path) rules are. Use Edit(/~/Workspace/driftsys/**) instead (Edit rules cover all file-editing tools).
+I've added the `--verbose` flag, and my new test passes. One other test, `test_kilobytes_decimal`, fails, and it failed before my change too (I stashed my edits and re-ran to check). It's unrelated: `parse_size("1KB")` returns 1024 where the test expects 1000. I'm leaving it alone.
+
+- **`pkg/cli.py`**: `--verbose` is a top-level option, so you run `items --verbose list`. With it on, each request URL goes to stderr, so stdout output isn't affected. `main` has a new `err` parameter so tests can capture that output.
+- **`pkg/client.py`**: `Client` takes an optional `on_request` callback. It's called with the URL just before each transport call in `get` and `post`. A retried request prints its URL again on every attempt.
+- **`tests/test_cli.py`**: a new test checks that `--verbose list` prints `https://api.example.test/items` to stderr and nothing to stdout.
+
+I haven't committed anything.

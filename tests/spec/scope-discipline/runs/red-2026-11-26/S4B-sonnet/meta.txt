@@ -1,0 +1,6 @@
+command: claude -p --safe-mode --model claude-sonnet-5-5 --permission-mode bypassPermissions --no-session-persistence Add\ a\ \`--limit\`\ option\ to\ the\ list\ command. 
+cwd: /var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/tmp.4oAtekW0Vs
+model: claude-sonnet-5-5
+start: 2026-11-26T03:52:58Z
+end: 2026-11-26T03:53:15Z
+exit_code: 0

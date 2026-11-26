@@ -1,0 +1,6 @@
+command: claude -p --safe-mode --model claude-opus-5-5 --permission-mode bypassPermissions --no-session-persistence Add\ a\ \`--verbose\`\ flag\ to\ the\ CLI\ that\ prints\ each\ request\ URL\ before\ it\ is\ sent. 
+cwd: /var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/tmp.jaVPogWAjX
+model: claude-opus-5-5
+start: 2026-11-26T03:52:03Z
+end: 2026-11-26T03:52:25Z
+exit_code: 0

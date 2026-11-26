@@ -1,0 +1,12 @@
+The `list` command now has a `--limit N` option that prints at most N items. The new CLI tests pass, but the full test suite still has one failure (`test_kilobytes_decimal`), which was already failing before this change.
+
+**Changes:**
+- **`pkg/cli.py`**: added `--limit` to the `list` subcommand. With no limit, it prints every item as before. `--limit 0` prints nothing, and a limit larger than the number of items prints them all. A negative value is rejected with an error, because otherwise it would silently drop items from the end of the list.
+- **`tests/test_cli.py`**: added tests for a normal limit, a limit of zero, a limit larger than the number of items, and a negative limit.
+- **`README.md`**: added a usage example.
+
+The limit is applied after fetching, because `fetchAll` makes one request with no paging or limit parameter, so all items are still downloaded.
+
+**Problems I noticed but didn't change:**
+- **The failing test:** `test_kilobytes_decimal` expects `parse_size("1KB") == 1000`, but `parse_size` returns 1024. The README says sizes use binary units (1KB = 1024), so the test appears to be the one that's wrong.
+- **`paginate` in `pkg/client.py`:** its docstring says pages start at 1, but the code treats them as starting at 0, so `page=1` returns the second page.

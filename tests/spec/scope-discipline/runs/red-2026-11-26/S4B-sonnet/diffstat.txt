@@ -1,0 +1,8 @@
+## git status --porcelain
+M  pkg/cli.py
+M  tests/test_cli.py
+
+## git diff --cached --stat
+ pkg/cli.py        | 17 +++++++++++++++--
+ tests/test_cli.py | 11 +++++++++++
+ 2 files changed, 26 insertions(+), 2 deletions(-)

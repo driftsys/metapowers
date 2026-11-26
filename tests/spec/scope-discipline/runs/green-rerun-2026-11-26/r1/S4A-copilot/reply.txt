@@ -1,0 +1,87 @@
+ / Search "retr(y|ies)" 4 lines found
+
+ $ Shell List repo and read AGENTS.md 13 lines…
+   ls -a; cat AGENTS.md 2>/dev/null | head -50
+
+ $ Shell View client, docs, tests 121 lines…
+   cat pkg/client.py; ls pkg; cat README.md CLAUDE.md | head -60; sed -n 1,60p tests/test_client.py
+
+ $ Shell View CLI 27 lines…
+   cat pkg/cli.py pkg/__main__.py
+
+ $ Shell Add --retries flag and docs, test 38 lines…
+   python3 - <<'E'
+   import re
+   p='pkg/cli.py'
+   s=open(p).read()
+   s=s.replace('''    parser = argparse.ArgumentParser(prog="items")
+   ''','''    parser = argparse.ArgumentParser(prog="items")
+       parser.add_argument(
+           "--retries",
+           type=positive_int,
+           default=Config.retries,
+           help="attempts per request (default: %(default)s)",
+       )
+   ''')
+   s=s.replace('''def build_parser''','''def positive_int(value: str) -> int:
+       number = int(value)
+       if number < 1:
+           raise argparse.ArgumentTypeError("must be at least 1")
+       return number
+
+
+   def build_parser''')
+   s=s.replace("Client(Config(), transport)","Client(Config(retries=args.retries), transport)")
+   open(p,'w').write(s)
+   p='README.md'
+   s=open(p).read()
+   s=s.replace('''python3 -m pkg list
+   ```
+   ''','''python3 -m pkg [--retries N] list
+   ```
+
+   `--retries` sets how many attempts are made per request (default 3).
+   ''')
+   open(p,'w').write(s)
+   E
+   ls tests; python3 -m pkg --retries 0 list 2>&1 | tail -1; python3 -m unittest 2>&1 | tail -3
+
+ $ Shell Check failure is pre-existing 17 lines…
+   python3 -m unittest 2>&1 | head -20; git stash -q; python3 -m unittest 2>&1 | tail -3; git stash
+   pop -q
+
+Let me add a focused CLI test.
+
+ $ Shell View CLI tests 15 lines…
+   cat tests/test_cli.py
+
+ $ Shell Add and run test 13 lines…
+   cat >> tests/test_cli.py <<'E'
+
+       def test_retries_flag_limits_attempts(self):
+           calls = []
+
+           def transport(m, u, p, t):
+               calls.append(1)
+               return {"status": 500, "body": None}
+
+           with self.assertRaises(RuntimeError):
+               main(["--retries", "5", "list"], transport=transport, out=io.StringIO())
+           self.assertEqual(len(calls), 5)
+   E
+   python3 -m unittest tests.test_cli 2>&1 | tail -3
+
+Retries are now configurable from the CLI with `--retries N`. It sets the attempts per request and defaults to 3, the existing `Config.retries` default. `Config.retries` already existed but nothing could set it.
+
+- **Validation:** values below 1 are rejected. With 0 attempts, the client would hit `raise last_error` with `last_error` still `None`.
+- **Tests:** I added a test in `tests/test_cli.py`, and it passes.
+- **Docs:** the README usage line now shows the flag.
+- **Not set by env var or file:** if you wanted retries read from an environment variable or a config file instead, I didn't add that.
+- **Unrelated failure:** `tests/test_units.py::test_kilobytes_decimal` fails because it expects 1KB to be 1000 bytes, while the README and code use 1024. It fails the same way without my change, so I left it.
+
+
+
+Changes    +0 -0
+AI Credits 7.37 (19s)
+Tokens     ↑ 244.8k (231.9k cached, 12.8k written) • ↓ 1.8k (106 reasoning)
+Resume     copilot --resume=c0684f98-d68b-4682-9153-1add25fd8f0d

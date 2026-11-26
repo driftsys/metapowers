@@ -1,0 +1,7 @@
+command: env COPILOT_HOME=/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/tmp.R71FdCeK6e.chome copilot -p Refactor\ \`pkg/client.py\`\ to\ remove\ the\ duplicated\ request\ code\ in\ \`get\(\)\`\ and\ \`post\(\)\`. --allow-all-tools 
+cwd: /var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/tmp.R71FdCeK6e
+model: default (see session events)
+copilot_home: /var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/tmp.R71FdCeK6e.chome (session events under it)
+start: 2026-11-26T04:02:16Z
+end: 2026-11-26T04:02:33Z
+exit_code: 0

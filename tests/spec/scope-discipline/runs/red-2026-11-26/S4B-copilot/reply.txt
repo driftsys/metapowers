@@ -1,0 +1,60 @@
+ $ Shell Explore repo 16 lines…
+   git ls-files | head -50; grep -rniE "list" --include=* -l . 2>/dev/null | grep -v '^./.git/' |
+   head
+
+ $ Shell Read sources 101 lines…
+   cat pkg/cli.py pkg/client.py; grep -n -i list README.md; cat tests/test_cli.py
+
+ $ Shell Implement --limit and test 35 lines…
+   python3 - <<'E'
+   import re
+   p='pkg/cli.py';s=open(p).read()
+   s=s.replace('''    sub.add_parser("list", help="list all items")''','''    list_parser =
+   sub.add_parser("list", help="list items")
+       list_parser.add_argument(
+           "--limit", type=_positive_int, help="maximum number of items to show"
+       )''')
+   s=s.replace('''def build_parser''','''def _positive_int(value: str) -> int:
+       number = int(value)
+       if number < 1:
+           raise argparse.ArgumentTypeError("must be a positive integer")
+       return number
+
+
+   def build_parser''')
+   s=s.replace('''        for item in fetchAll(client, "/items"):''','''        items =
+   fetchAll(client, "/items")
+           if args.limit is not None:
+               items = items[: args.limit]
+           for item in items:''')
+   open(p,'w').write(s)
+   p='tests/test_cli.py';s=open(p).read()
+   s+='''
+       def test_list_limit(self):
+           out = io.StringIO()
+           transport = lambda m, u, p, t: {
+               "status": 200,
+               "body": {"items": [{"name": "alpha"}, {"name": "beta"}]},
+           }
+           main(["list", "--limit", "1"], transport=transport, out=out)
+           self.assertEqual(out.getvalue(), "alpha\\n")
+   '''
+   open(p,'w').write(s)
+   E
+   sed -i '' 's/^python3 -m pkg list$/python3 -m pkg list [--limit N]/' README.md
+   python3 -m unittest 2>&1 | tail -3
+
+ $ Shell Check failure vs baseline 17 lines…
+   python3 -m unittest 2>&1 | head -20; git stash -q; python3 -m unittest 2>&1 | tail -3; git stash
+   pop -q
+
+I added `--limit N` to `list` in `pkg/cli.py`. It shows only the first N items, and values below 1 are rejected. I also added a test for it in `tests/test_cli.py` and a `[--limit N]` usage note in the README.
+
+The new test passes. The suite still has one failure, `test_kilobytes_decimal` in `tests/test_units.py` (`parse_size("1KB")` returns 1024, not 1000). It fails the same way without my changes, so I left it alone.
+
+
+
+Changes    +0 -0
+AI Credits 6.43 (13s)
+Tokens     ↑ 160.2k (144.8k cached, 15.4k written) • ↓ 1.1k
+Resume     copilot --resume=7d6671bd-a0d0-474b-a84b-652c75593df5

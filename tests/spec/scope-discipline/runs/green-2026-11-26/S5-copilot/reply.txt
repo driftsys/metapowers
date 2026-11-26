@@ -1,0 +1,65 @@
+ $ Shell Inspect repo 6 lines…
+   cd /private/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/tmp.kSE4oIVfFf && ls && cat AGENTS.md
+   | head -30 && git status --short
+
+ $ Shell Read docs and files 31 lines…
+   cd /private/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/tmp.kSE4oIVfFf && cat CLAUDE.md
+   README.md opencode.json; find pkg tests -type f | head -50
+
+ ✗ Shell Run tests Failed with exit code 1  ........F. ============================================…
+   cd /private/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/tmp.kSE4oIVfFf && python3 -m unittest
+   2>&1 | tail -30; cat pkg/units.py; ls -a .agents 2>&1
+   ........F.
+   ======================================================================
+   FAIL: test_kilobytes_decimal (tests.test_units.UnitsTest.test_kilobytes_decimal)
+   ----------------------------------------------------------------------
+   Traceback (most recent call last):
+     File 
+   "/private/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/tmp.kSE4oIVfFf/tests/test_units.py", 
+   line 14, in test_kilobytes_decimal
+       self.assertEqual(parse_size("1KB"), 1000)
+       ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+   AssertionError: 1024 != 1000
+   
+   ----------------------------------------------------------------------
+   Ran 10 tests in 0.001s
+   
+   FAILED (failures=1)
+   """Size parsing."""
+   
+   _UNITS = {"B": 1, "KB": 1024, "MB": 1024**2, "GB": 1024**3}
+   
+   
+   def parse_size(text: str) -> int:
+       """Parse a human size such as "10MB" into bytes.
+   
+       Units are binary: 1KB = 1024 bytes, 1MB = 1024 * 1024 bytes.
+       """
+       text = text.strip().upper()
+       for unit in ("GB", "MB", "KB", "B"):
+           if text.endswith(unit):
+               return int(text[: -len(unit)]) * _UNITS[unit]
+       return int(text)
+   ls: .agents: No such file or directory
+   Failed with exit code 1
+
+ $ Shell Inspect test and usages 18 lines…
+   cd /private/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/tmp.kSE4oIVfFf && cat
+   tests/test_units.py; grep -rn "parse_size" pkg | head; git log --oneline | head
+
+I didn't change anything, because the failing test contradicts the documented behavior.
+
+`test_kilobytes_decimal` expects `parse_size("1KB") == 1000`. The README and the `parse_size` docstring both say units are binary, so 1KB is 1024 bytes. `test_megabytes` in the same file also expects binary (`2 * 1024 * 1024`). Making the failing test pass would break that test and the documented API.
+
+I can resolve it either way:
+- **Test is wrong:** change its expectation to 1024 (or remove it).
+- **Decimal KB is intended:** change `KB` to 1000 and update the README, docstring and `test_megabytes`. This also raises the question of whether MB and GB should be decimal.
+
+Tell me which you want and I'll make the change.
+
+
+
+Changes    +0 -0
+AI Credits 4.95 (12s)
+Tokens     ↑ 144.8k (134.2k cached, 10.6k written) • ↓ 959 (69 reasoning)
+Resume     copilot --resume=bbc72ec8-d152-4aa5-aaf8-2ab839e0e301

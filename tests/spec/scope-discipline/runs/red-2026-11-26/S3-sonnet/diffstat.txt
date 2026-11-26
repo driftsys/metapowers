@@ -1,0 +1,6 @@
+## git status --porcelain
+M  pkg/client.py
+
+## git diff --cached --stat
+ pkg/client.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)

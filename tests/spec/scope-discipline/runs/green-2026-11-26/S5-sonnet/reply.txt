@@ -1,0 +1,15 @@
+I haven't changed anything yet, because the failing test contradicts the rest of the code.
+
+`tests/test_units.py:14` expects `parse_size("1KB") == 1000`, which is decimal. Three other things say units are binary (1KB = 1024):
+- The docstring in `pkg/units.py`.
+- `README.md:15`.
+- `test_megabytes`, which expects `2MB` to be `2 * 1024 * 1024`.
+
+To make the test pass, I'd have to either:
+1. Make only KB decimal and leave MB and GB binary. That is inconsistent, and it contradicts the docs and the README.
+2. Switch every unit to decimal. That breaks `test_megabytes` and changes the documented behavior.
+
+Which do you want?
+- **A:** Binary units are correct, so the test is wrong. I'd change it to expect 1024.
+- **B:** Decimal units are correct. I'd change all the units, update `test_megabytes`, the docstring and the README.
+- **C:** Something else, such as KB decimal only.

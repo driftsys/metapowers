@@ -40,20 +40,20 @@ teardown() {
 
 test_install_writes_claude_rule() {
     upskill add "$BUNDLE_PATH" --project --quiet
-    assert "[ -f .claude/rules/karpathy-guidelines.md ]" \
-        "expected Claude rule output at .claude/rules/karpathy-guidelines.md"
+    assert "[ -f .claude/rules/scope-discipline.md ]" \
+        "expected Claude rule output at .claude/rules/scope-discipline.md"
 }
 
 test_install_writes_copilot_instructions() {
     upskill add "$BUNDLE_PATH" --project --quiet
-    assert "[ -f .github/instructions/karpathy-guidelines.instructions.md ]" \
-        "expected Copilot output at .github/instructions/karpathy-guidelines.instructions.md"
+    assert "[ -f .github/instructions/scope-discipline.instructions.md ]" \
+        "expected Copilot output at .github/instructions/scope-discipline.instructions.md"
 }
 
 test_install_writes_opencode_rule() {
     upskill add "$BUNDLE_PATH" --project --quiet
-    assert "[ -f .agents/rules/karpathy-guidelines/RULE.md ]" \
-        "expected opencode canonical-store output at .agents/rules/karpathy-guidelines/RULE.md"
+    assert "[ -f .agents/rules/scope-discipline/RULE.md ]" \
+        "expected opencode canonical-store output at .agents/rules/scope-discipline/RULE.md"
 }
 
 test_install_delivers_rule_supporting_resource() {
@@ -85,16 +85,16 @@ test_colocated_agent_keeps_divergent_name() {
 test_rule_body_preserves_content() {
     upskill add "$BUNDLE_PATH" --project --quiet
     # Spot-check: a known phrase from the SSOT body must survive generation.
-    assert "grep -q 'Surgical Changes' .claude/rules/karpathy-guidelines.md" \
-        "expected 'Surgical Changes' phrase in the generated rule body"
+    assert "grep -q 'Stay within the task' .claude/rules/scope-discipline.md" \
+        "expected 'Stay within the task' phrase in the generated rule body"
 }
 
 test_lockfile_records_rule() {
     upskill add "$BUNDLE_PATH" --project --quiet
     assert "[ -f .upskill-lock.json ]" \
         "expected lockfile at .upskill-lock.json"
-    assert "grep -q 'karpathy-guidelines' .upskill-lock.json" \
-        "expected karpathy-guidelines entry in the lockfile"
+    assert "grep -q 'scope-discipline' .upskill-lock.json" \
+        "expected scope-discipline entry in the lockfile"
 }
 
 test_lockfile_records_bundle_resolution() {
@@ -110,6 +110,6 @@ test_plugin_install_does_not_block_items() {
     # MUST warn-skip and the rest of the bundle MUST still install
     # (format-spec §3.7 warn-skip policy).
     upskill add "$BUNDLE_PATH" --project --quiet
-    assert "[ -f .claude/rules/karpathy-guidelines.md ]" \
+    assert "[ -f .claude/rules/scope-discipline.md ]" \
         "rule install must succeed regardless of plugin install outcome"
 }

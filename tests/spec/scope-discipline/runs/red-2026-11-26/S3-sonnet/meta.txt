@@ -1,0 +1,6 @@
+command: claude -p --safe-mode --model claude-sonnet-5-5 --permission-mode bypassPermissions --no-session-persistence Requests\ to\ the\ API\ time\ out\ after\ 1\ second\;\ they\ should\ use\ the\ configured\ timeout.\ The\ problem\ is\ in\ \`get\(\)\`. 
+cwd: /var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/tmp.HGQedc4g15
+model: claude-sonnet-5-5
+start: 2026-11-26T03:52:34Z
+end: 2026-11-26T03:52:43Z
+exit_code: 0

@@ -1,0 +1,4 @@
+Permission allow rule (~/.claude/settings.json): Write(/~/Workspace/driftsys/**) is not matched by file permission checks — only Edit(path) rules are. Use Edit(/~/Workspace/driftsys/**) instead (Edit rules cover all file-editing tools).
+`get()` in `pkg/client.py` now passes `self.config.timeout` to the transport. It used to pass a hardcoded `1`. I haven't run the tests.
+
+`post()` has the same hardcoded `1` on line 38, so POST requests will still time out after 1 second. I left it alone because you only mentioned `get()`. It's a one-word change if you want it fixed too.

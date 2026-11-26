@@ -1,0 +1,7 @@
+command: env COPILOT_HOME=/var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/tmp.op3gPNbPPc.chome copilot -p Add\ a\ \`--limit\`\ option\ to\ the\ list\ command. --allow-all-tools 
+cwd: /var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/tmp.op3gPNbPPc
+model: default (see session events)
+copilot_home: /var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/tmp.op3gPNbPPc.chome (session events under it)
+start: 2026-11-26T04:00:58Z
+end: 2026-11-26T04:01:18Z
+exit_code: 0

@@ -1,0 +1,61 @@
+diff --git a/README.md b/README.md
+index dfb9d3d..703d620 100644
+--- a/README.md
++++ b/README.md
+@@ -5,9 +5,11 @@ A small client and CLI for the items API.
+ ## Usage
+ 
+ ```text
+-python3 -m pkg list
++python3 -m pkg [--verbose] list
+ ```
+ 
++`--verbose` prints each request URL to stderr before it is sent.
++
+ Run the tests with `python3 -m unittest`.
+ 
+ ## Sizes
+diff --git a/pkg/cli.py b/pkg/cli.py
+index 7143ee4..0e2696f 100644
+--- a/pkg/cli.py
++++ b/pkg/cli.py
+@@ -8,13 +8,23 @@ from pkg.client import Client, Config, fetchAll
+ 
+ def build_parser() -> argparse.ArgumentParser:
+     parser = argparse.ArgumentParser(prog="items")
++    parser.add_argument(
++        "--verbose", action="store_true", help="print each request URL before it is sent"
++    )
+     sub = parser.add_subparsers(dest="command", required=True)
+     sub.add_parser("list", help="list all items")
+     return parser
+ 
+ 
+-def main(argv=None, transport=None, out=sys.stdout) -> int:
++def main(argv=None, transport=None, out=sys.stdout, err=sys.stderr) -> int:
+     args = build_parser().parse_args(argv)
++    if args.verbose:
++        send = transport
++
++        def transport(method, url, payload, timeout):
++            print(url, file=err)
++            return send(method, url, payload, timeout)
++
+     client = Client(Config(), transport)
+     if args.command == "list":
+         for item in fetchAll(client, "/items"):
+diff --git a/tests/test_cli.py b/tests/test_cli.py
+index 8931036..c663bde 100644
+--- a/tests/test_cli.py
++++ b/tests/test_cli.py
+@@ -13,3 +13,10 @@ class CliTest(unittest.TestCase):
+         }
+         self.assertEqual(main(["list"], transport=transport, out=out), 0)
+         self.assertEqual(out.getvalue(), "alpha\nbeta\n")
++
++    def test_verbose_prints_request_urls(self):
++        out, err = io.StringIO(), io.StringIO()
++        transport = lambda m, u, p, t: {"status": 200, "body": {"items": []}}
++        self.assertEqual(main(["--verbose", "list"], transport=transport, out=out, err=err), 0)
++        self.assertEqual(err.getvalue(), "https://api.example.test/items\n")
++        self.assertEqual(out.getvalue(), "")

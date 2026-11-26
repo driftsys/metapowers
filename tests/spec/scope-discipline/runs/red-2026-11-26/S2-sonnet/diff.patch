@@ -1,0 +1,13 @@
+diff --git a/pkg/client.py b/pkg/client.py
+index c00e468..a671bc1 100644
+--- a/pkg/client.py
++++ b/pkg/client.py
+@@ -47,7 +47,7 @@ class Client:
+ 
+ def paginate(items: list, page: int, page_size: int) -> list:
+     """Return the items of a 1-based page."""
+-    start = page * page_size
++    start = (page - 1) * page_size
+     end = start + page_size
+     return items[start:end]
+ 

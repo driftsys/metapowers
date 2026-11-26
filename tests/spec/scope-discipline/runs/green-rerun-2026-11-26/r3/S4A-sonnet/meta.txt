@@ -1,0 +1,6 @@
+command: claude -p --setting-sources project --model claude-sonnet-5-5 --permission-mode bypassPermissions --no-session-persistence Make\ retries\ configurable. 
+cwd: /var/folders/85/lrhw4g894xq10wxwqtl7w85h0000gn/T/tmp.32UR42jmTt
+model: claude-sonnet-5-5
+start: 2026-11-26T04:08:17Z
+end: 2026-11-26T04:08:35Z
+exit_code: 0

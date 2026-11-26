@@ -1,0 +1,6 @@
+Permission allow rule (~/.claude/settings.json): Write(/~/Workspace/driftsys/**) is not matched by file permission checks — only Edit(path) rules are. Use Edit(/~/Workspace/driftsys/**) instead (Edit rules cover all file-editing tools).
+I moved the retry loop that `get()` and `post()` each had their own copy of into one private method, `_request(method, path, payload)`. Both now just call it. Behaviour is unchanged: same URL building, same retry count, same 5xx handling, and the last error is still re-raised at the end.
+
+The client tests pass. One test in the full suite fails, `tests/test_units.py::test_kilobytes_decimal` (`parse_size("1KB")` returns 1024 where the test expects 1000). It fails the same way without my change, so the refactor didn't cause it. I left it alone.
+
+I also spotted a likely bug in `pkg/client.py` that I didn't touch, since it's outside this task. `paginate` says it takes a 1-based page number, but it computes `start = page * page_size`. So page 1 actually returns the second page.

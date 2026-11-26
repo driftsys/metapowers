@@ -1,0 +1,9 @@
+I added a `--verbose` flag to the CLI. `python3 -m pkg --verbose list` now prints each request URL to stderr before it is sent. Ten of the 11 tests pass, including the new one.
+
+The one failure is `test_kilobytes_decimal` in `tests/test_units.py`, which fails the same way without my changes. It expects `parse_size("1KB")` to be 1000, but `pkg/units.py` returns 1024. The README says 1KB is 1024 bytes, so the code and docs agree and the test looks wrong. I left it alone.
+
+- **Implementation:** the change is in `pkg/cli.py`. When the flag is set, the transport is wrapped so it prints the URL first. This covers every request, including retries, and `Client` is unchanged.
+- **Output stream:** I chose stderr so the URLs don't mix with the `list` output on stdout.
+- **Other changes:** `main` now takes an `err` argument, matching the existing `out` argument, so tests can capture the output. I added `test_verbose_prints_request_urls` to `tests/test_cli.py` and a line about the flag to the README usage section.
+
+`CLAUDE.md` imports an `AGENTS.md` that doesn't exist in the repo, so that import does nothing.

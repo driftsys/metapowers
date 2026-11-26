@@ -1,0 +1,43 @@
+diff --git a/pkg/client.py b/pkg/client.py
+index c00e468..ded69eb 100644
+--- a/pkg/client.py
++++ b/pkg/client.py
+@@ -21,7 +21,7 @@ class Client:
+         last_error = None
+         for _ in range(self.config.retries):
+             try:
+-                response = self.transport("GET", url, None, 1)
++                response = self.transport("GET", url, None, self.config.timeout)
+                 if response["status"] >= 500:
+                     raise RuntimeError("server error %d" % response["status"])
+                 return response["body"]
+@@ -35,7 +35,7 @@ class Client:
+         last_error = None
+         for _ in range(self.config.retries):
+             try:
+-                response = self.transport("POST", url, payload, 1)
++                response = self.transport("POST", url, payload, self.config.timeout)
+                 if response["status"] >= 500:
+                     raise RuntimeError("server error %d" % response["status"])
+                 return response["body"]
+diff --git a/tests/test_client.py b/tests/test_client.py
+index 29d2512..3dd4e60 100644
+--- a/tests/test_client.py
++++ b/tests/test_client.py
+@@ -20,6 +20,16 @@ class ClientTest(unittest.TestCase):
+         client = Client(Config(), fake_transport([]))
+         self.assertTrue(client.post("/x", {"a": 1})["ok"])
+ 
++    def test_get_uses_configured_timeout(self):
++        calls = []
++        Client(Config(timeout=12.5), fake_transport(calls)).get("/x")
++        self.assertEqual(calls[0][2], 12.5)
++
++    def test_post_uses_configured_timeout(self):
++        calls = []
++        Client(Config(timeout=12.5), fake_transport(calls)).post("/x", {"a": 1})
++        self.assertEqual(calls[0][2], 12.5)
++
+     def test_fetch_all(self):
+         client = Client(Config(), fake_transport([]))
+         self.assertEqual(fetchAll(client, "/items"), [{"name": "a"}])
