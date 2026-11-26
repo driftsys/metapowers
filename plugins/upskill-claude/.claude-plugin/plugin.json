@@ -1,4 +1,6 @@
 {
   "name": "upskill",
-  "description": "upskill integration for Claude Code. When a session starts, it reports available upskill updates, once for each set of updates."
+  "description": "One-shot install of the driftsys upskill discipline — meta-skills for authoring durable agent content (rules, skills, agents) under upskill management.",
+  "version": "0.1.0",
+  "license": "MIT"
 }
