@@ -7,7 +7,7 @@
     {
       "name": "upskill",
       "source": "./plugins/upskill-copilot",
-      "description": "upskill integration for Copilot CLI. When a session starts, it asks the agent to tell you about available upskill updates, at every session start until upskill update runs."
+      "description": "One-shot install of the driftsys upskill discipline — meta-skills for authoring durable agent content (rules, skills, agents) under upskill management."
     }
   ]
 }
