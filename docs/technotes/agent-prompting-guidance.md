@@ -72,6 +72,32 @@ same in both modes:
 Copilot does not show this text in its documentation. The captured content is
 specific to the version above and changes between releases.
 
+### Independent research
+
+[Evaluating AGENTS.md: Are Repository-Level Context Files Helpful for Coding
+Agents?][agentsmd-paper] (Gloaguen et al., ETH Zurich and LogicStar.ai,
+arXiv 2602.11988 v3, 2026-09-29; ICLR 2026 workshops).
+
+- **Method:** SWE-bench Lite (300 tasks) and a new benchmark of 138 tasks from
+  12 Python repositories that have developer-written AGENTS.md or CLAUDE.md
+  files. Agents: Claude Code with Sonnet 4.5, Codex with GPT-5.2 and GPT-5.1
+  mini, Qwen Code. Conditions: no file, an LLM-generated file (from each
+  agent's init command), and the developer-written file.
+- **Results:** LLM-generated files lowered success slightly (−0.5 and −2
+  points, not significant). Developer-written files did not change success
+  significantly compared with no file, and did better than LLM-generated files
+  by about 7 points. Context files raised cost by more than 20 % in every
+  model. Agents followed the instructions well: they ran more tests and
+  explored more, and used a tool named in the file about 160 times more often.
+- **Recommendation:** a human-written file "should only include instructions
+  required for coding agents that are not already present in the README", and
+  LLM-generated files should be left out for now.
+- **Limits for this repository:** the files tested were mostly repository
+  overviews and tooling notes, not behavior rules such as `scope-discipline`;
+  the models are older than the current ones; Python only. The result that
+  agents follow instructions, and the extra cost of every line, support
+  keeping rules short and limited to behavior the agent does not already show.
+
 ## 2. Where the sources agree
 
 | Topic                 | Agreement                                                                                                                                                                              |
@@ -137,3 +163,4 @@ should describe the behavior it asks for.
 [cc-bp]: https://code.claude.com/docs/en/best-practices
 [cc-memory]: https://code.claude.com/docs/en/memory
 [cc-steering]: https://claude.com/resources/articles/steering-claude-code-skills-hooks-rules-subagents-and-more
+[agentsmd-paper]: https://arxiv.org/abs/2602.11988
