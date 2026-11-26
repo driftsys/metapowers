@@ -5,6 +5,9 @@ description: Always active when changing code — deliver what was asked, at the
 license: MIT
 metadata:
   version: 0.2.4
+  derived_from: https://github.com/multica-ai/andrej-karpathy-skills
+  derived_from_license: MIT
+  lineage: docs/technotes/agent-prompting-guidance.md
 ---
 
 Deliver what was asked, at the scope the user intended, and finish all of it.
