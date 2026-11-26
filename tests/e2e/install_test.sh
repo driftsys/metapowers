@@ -19,6 +19,8 @@ BUNDLE_PATH="$METAPOWERS_ROOT/skills/metapowers.bundle.yaml"
 # The metapowers bundle no longer requires gardenpowers, so the tests of the
 # gardenpowers items install that bundle directly.
 GARDEN_BUNDLE_PATH="$METAPOWERS_ROOT/skills/gardenpowers.bundle.yaml"
+# The metapowers-core bundle holds the rules alone, with no Superpowers dependency.
+CORE_BUNDLE_PATH="$METAPOWERS_ROOT/skills/metapowers-core.bundle.yaml"
 
 # Per-test fixture: a brand-new temp directory acting as a consumer project.
 # `setup` and `teardown` are bash_unit lifecycle hooks invoked for every test.
@@ -34,6 +36,49 @@ setup() {
 teardown() {
     cd "$METAPOWERS_ROOT" || return
     rm -rf "$CONSUMER_DIR"
+}
+
+# ── Lockfile and output helpers ───────────────────────────────────────────────
+
+# Print the installed items of the lockfile as sorted "kind:name" lines, one
+# line per item of any kind (rules, skills, agents, commands, hooks).
+lock_items() {
+    python3 -c '
+import json
+lock = json.load(open(".upskill-lock.json"))
+print("\n".join(sorted(i["kind"] + ":" + i["name"] for i in lock["items"])))
+'
+}
+
+# Print the names of the bundle records of the lockfile, sorted, one per line.
+lock_bundles() {
+    python3 -c '
+import json
+lock = json.load(open(".upskill-lock.json"))
+print("\n".join(sorted(b["name"] for b in lock["bundles"])))
+'
+}
+
+# Print every file below the given directories, sorted, one per line.
+files_under() {
+    find "$@" -type f | LC_ALL=C sort
+}
+
+# Assert that the install holds exactly the two rules, for every client.
+assert_exactly_both_rules() {
+    local label="$1"
+    assert_equals "rule:international-english
+rule:scope-discipline" "$(lock_items)" \
+        "$label must install exactly the two rules and no other item"
+    assert_equals ".claude/rules/international-english.md
+.claude/rules/scope-discipline.md" "$(files_under .claude)" \
+        "$label must write exactly the two Claude rule files"
+    assert_equals ".github/instructions/international-english.instructions.md
+.github/instructions/scope-discipline.instructions.md" "$(files_under .github)" \
+        "$label must write exactly the two Copilot instruction files"
+    assert_equals ".agents/rules/international-english/RULE.md
+.agents/rules/scope-discipline/RULE.md" "$(files_under .agents)" \
+        "$label must write exactly the two opencode rule files"
 }
 
 # ── Bundle install round-trip ─────────────────────────────────────────────────
@@ -82,6 +127,27 @@ test_colocated_agent_keeps_divergent_name() {
         "expected the co-located skill still installed under the directory name"
 }
 
+test_baseline_installs_both_rules() {
+    upskill add "$BUNDLE_PATH" --project --quiet
+    assert "[ -f .claude/rules/scope-discipline.md ]" \
+        "expected scope-discipline from the metapowers baseline"
+    assert "[ -f .claude/rules/international-english.md ]" \
+        "expected international-english from the metapowers baseline"
+    assert_exactly_both_rules "the metapowers baseline"
+}
+
+test_core_bundle_installs_both_rules() {
+    upskill add "$CORE_BUNDLE_PATH" --project --quiet
+    assert "[ -f .claude/rules/scope-discipline.md ]" \
+        "expected scope-discipline from metapowers-core"
+    assert "[ -f .claude/rules/international-english.md ]" \
+        "expected international-english from metapowers-core"
+    assert_exactly_both_rules "metapowers-core"
+    # metapowers-core must stand alone: the lockfile records this bundle only.
+    assert_equals "metapowers-core" "$(lock_bundles)" \
+        "metapowers-core must be the only bundle recorded in the lockfile"
+}
+
 test_rule_body_preserves_content() {
     upskill add "$BUNDLE_PATH" --project --quiet
     # Spot-check: a known phrase from the SSOT body must survive generation.
@@ -99,10 +165,12 @@ test_lockfile_records_rule() {
 
 test_lockfile_records_bundle_resolution() {
     upskill add "$BUNDLE_PATH" --project --quiet
-    # Transitively-resolved bundle (`requires: superpowers`) must appear too —
-    # this verifies the bundle dependency walk worked.
-    assert "grep -q 'superpowers' .upskill-lock.json" \
-        "expected superpowers bundle to be recorded in the lockfile after transitive resolution"
+    # The bundle dependency walk must record exactly metapowers itself, its
+    # dependency metapowers-core and the transitive superpowers bundle.
+    assert_equals "metapowers
+metapowers-core
+superpowers" "$(lock_bundles)" \
+        "expected exactly the metapowers, metapowers-core and superpowers bundles in the lockfile"
 }
 
 test_plugin_install_does_not_block_items() {
