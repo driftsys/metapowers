@@ -41,7 +41,7 @@ jobs:
       # Pinned: a new upskill release can change the packed output. To move
       # to a new release, change this value, run the pack command below with
       # that release, and commit the result in the same pull request.
-      UPSKILL_VERSION: v0.9.6
+      UPSKILL_VERSION: v0.9.7
     steps:
       - uses: actions/checkout@v6
       - name: Install upskill
