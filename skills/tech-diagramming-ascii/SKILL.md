@@ -1,7 +1,7 @@
 ---
 schema: 1
 name: tech-diagramming-ascii
-description: Use when tech-diagramming has selected ASCII — inline monospace diagrams in code comments, READMEs, and console/CLI output. Covers the scratch vs durable split, shape routing, grid-code width discipline, charset rules, and the Phase-1 self-check.
+description: Use when tech-diagramming has selected ASCII — inline monospace diagrams in code comments, READMEs, and console/CLI output. Covers the scratch vs durable split, shape routing, grid-code width discipline, charset rules, and the self-check.
 license: MIT
 metadata:
   version: 0.2.4
@@ -58,15 +58,16 @@ Before drawing:
 4. Emit each border as **exactly** that many characters.
 5. **State the widths in your reasoning before you draw the diagram.**
 
-(Phase 2 `diagctl ascii`, story #14, will do this counting deterministically — the
-AI will supply only structure. Nothing here depends on it yet.)
+(You do this arithmetic yourself. No tool renders or counts ASCII diagrams for
+you. Strong models aligned diagrams reliably in a test on 2026-11-15; smaller
+models still misaligned long labels, nested boxes, and wide characters such as
+CJK or emoji, so keep the self-check below.)
 
-**Lever 2 — charset by who emits it.** When **you hand-emit** (Phase 1 — always
-right now): use **ASCII `+ - |`** only. Each is 1 byte and 1 column, so it is
-countable. Unicode box-drawing (`┌ ─ │`) is reserved for when a tool emits it
-(Phase 2). **Never mix charsets in one diagram.** **Forbid wide / ambiguous-width
-characters** — no `→` (write `->`), no emoji, no CJK; they render at unpredictable
-widths per terminal and destroy alignment.
+**Lever 2 — charset.** You emit every diagram by hand, so use **ASCII `+ - |`**
+only. Each is 1 byte and 1 column, so it is countable. Do not use Unicode
+box-drawing (`┌ ─ │`). **Never mix charsets in one diagram.**
+**Forbid wide / ambiguous-width characters** — no `→` (write `->`), no emoji,
+no CJK; they render at unpredictable widths per terminal and destroy alignment.
 
 ## Worked example — box-and-arrow pipeline
 
@@ -101,10 +102,9 @@ The `|` continuation under `handlers` sits in the same column as the `+` of
 `+-- handlers`; the last child of each level uses spaces (not `|`) before its
 `+--` so no dangling vertical edge is left.
 
-## Verify (Phase 1) — self-check, then human
+## Verify — self-check, then human
 
-There is no renderer to catch you in Phase 1. Run this self-check on every durable
-diagram:
+There is no renderer to catch you. Run this self-check on every durable diagram:
 
 - [ ] **Per-box width** — each box's top border, label row, and bottom border have
       the **same character count**. Count them.
@@ -113,7 +113,7 @@ diagram:
       stray space or letter.
 - [ ] **Connectors land** — trace each `->`, `--->`, or `+--` unbroken from its
       source to a box edge or child; no connector points into empty space.
-- [ ] **Charset** — only `+ - |` (Phase 1); no Unicode box-drawing, no `→`, no
+- [ ] **Charset** — only `+ - |`; no Unicode box-drawing, no `→`, no
       emoji/CJK; charsets not mixed.
 
 **On any failure: recompute the widths and regenerate the whole diagram. Never
@@ -124,5 +124,5 @@ of fixing it.
 understand the system. You cannot fully trust your own column count; have a human
 confirm the alignment on the diagrams that matter.
 
-(Phase 2 `diagctl ascii` renders deterministically and `diagctl check` validates
-width-aware — story #14. Until then this checklist plus human review is the gate.)
+(This checklist plus human review is the gate. `diagctl check` may validate
+alignment of hand-drawn diagrams in the future; it does not do so now.)
