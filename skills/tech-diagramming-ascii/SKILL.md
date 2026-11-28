@@ -58,15 +58,16 @@ Before drawing:
 4. Emit each border as **exactly** that many characters.
 5. **State the widths in your reasoning before you draw the diagram.**
 
-(Phase 2 `diagctl ascii`, story #14, will do this counting deterministically — the
-AI will supply only structure. Nothing here depends on it yet.)
+(You count the characters yourself. No tool renders or counts ASCII diagrams for
+you. Strong models aligned diagrams reliably in a test on 2026-11-15; smaller
+models still misaligned long labels, nested boxes, and wide characters such as
+CJK or emoji, so keep the self-check below.)
 
-**Lever 2 — charset by who emits it.** When **you hand-emit** (Phase 1 — always
-right now): use **ASCII `+ - |`** only. Each is 1 byte and 1 column, so it is
-countable. Unicode box-drawing (`┌ ─ │`) is reserved for when a tool emits it
-(Phase 2). **Never mix charsets in one diagram.** **Forbid wide / ambiguous-width
-characters** — no `→` (write `->`), no emoji, no CJK; they render at unpredictable
-widths per terminal and destroy alignment.
+**Lever 2 — charset by who emits it.** When **you hand-emit** (always): use
+**ASCII `+ - |`** only. Each is 1 byte and 1 column, so it is countable. Do not
+use Unicode box-drawing (`┌ ─ │`). **Never mix charsets in one diagram.**
+**Forbid wide / ambiguous-width characters** — no `→` (write `->`), no emoji,
+no CJK; they render at unpredictable widths per terminal and destroy alignment.
 
 ## Worked example — box-and-arrow pipeline
 
@@ -124,5 +125,5 @@ of fixing it.
 understand the system. You cannot fully trust your own column count; have a human
 confirm the alignment on the diagrams that matter.
 
-(Phase 2 `diagctl ascii` renders deterministically and `diagctl check` validates
-width-aware — story #14. Until then this checklist plus human review is the gate.)
+(This checklist plus human review is the gate. `diagctl check` may validate
+alignment of hand-drawn diagrams in the future; it does not do so now.)
